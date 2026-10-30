@@ -6,7 +6,7 @@ CSS = r"""
 --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
 --serif:Marcellus,"Pretendard Variable",Pretendard,serif;--shell:min(1240px,calc(100% - 64px));--radius:22px;--pill:9999px;
 --shadow:0 1px 2px rgba(22,24,29,.04),0 12px 32px rgba(22,24,29,.06);--ease:cubic-bezier(.34,1.56,.64,1)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.65;font-size:15px;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.65;font-size:15px;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}html,body{overflow-x:clip}
 a{color:inherit}.shell{width:var(--shell);margin:0 auto}
 .test-bar{background:var(--ink);color:#f5f2ea;text-align:center;font-size:12px;padding:5px;letter-spacing:.02em}
 /* 상단 메뉴 (188 .nav 방식) */
@@ -14,7 +14,7 @@ a{color:inherit}.shell{width:var(--shell);margin:0 auto}
 .wordmark{display:flex;align-items:center;gap:10px;text-decoration:none;white-space:nowrap}
 .lux-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--gold-fill);color:#fff;font-family:var(--serif);font-size:13px;box-shadow:0 4px 14px rgba(184,144,31,.3)}
 .wordmark__text{font-size:15px;color:var(--ink-2)}.wordmark__text b{color:var(--ink)}
-.nav nav{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}.nav nav::-webkit-scrollbar{display:none}
+.nav nav{display:flex;gap:4px;margin-left:auto;min-width:0;overflow-x:auto;scrollbar-width:none}.nav nav::-webkit-scrollbar{display:none}
 .nav nav a{padding:8px 12px;border-radius:var(--pill);text-decoration:none;font-size:14px;color:var(--ink-2);white-space:nowrap;transition:background .2s}
 .nav nav a:hover{background:var(--bg-3)}.nav nav a.on{background:var(--ink);color:#fff}
 /* 버튼 (188 .lux-btn 방식) */
@@ -31,21 +31,21 @@ a{color:inherit}.shell{width:var(--shell);margin:0 auto}
 .hero-title em,.section-head h2 em{font-style:normal;background:linear-gradient(100deg,#9b7a22,#d4ad3f 45%,#b8901f);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero-lead{margin:20px 0 0;font-size:clamp(17px,1.4vw,21px);color:var(--ink-2);max-width:640px}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
-.hero-proof{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
+.hero-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:56px}
 .metric{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow)}
-.metric__num{font-family:var(--serif);font-size:30px;color:var(--gold-lo)}.metric__label{font-weight:700}.metric__desc{font-size:13px;color:var(--mute)}
+.metric__num{font-variant-numeric:lining-nums;font-family:var(--font);font-weight:800;font-size:30px;color:var(--gold-lo)}.metric__label{font-weight:700}.metric__desc{font-size:13px;color:var(--mute)}
 /* 섹션·카드 (188 .section-head / .system-card 방식) */
 .section{padding:clamp(64px,8vw,112px) 0;border-top:1px solid var(--line-soft)}.section:nth-child(even){background:var(--bg-2)}
 .section-head{margin-bottom:36px}.eyebrow{display:flex;gap:10px;align-items:center;margin:0 0 12px}
 .eyebrow__num{display:inline-grid;place-items:center;min-width:28px;height:22px;padding:0 8px;border-radius:var(--pill);border:1px solid var(--line);font-size:11px}
 .section-head h2{margin:0;font-size:clamp(28px,3.2vw,46px);line-height:1.2;letter-spacing:-.025em}.section-desc{margin:12px 0 0;color:var(--mute)}
-.system-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.system-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:18px;align-items:start}.system-card.wide{grid-column:1/-1}.system-card.wide .link-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))}
 .system-card{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);transition:transform .28s var(--ease),box-shadow .28s,border-color .28s}
 .section:nth-child(even) .system-card{background:var(--bg)}
 .system-card:hover{transform:translateY(-3px);border-color:var(--line);box-shadow:0 20px 48px rgba(22,24,29,.09)}
 .system-card__top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .system-card__icon{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--bg-3);color:var(--gold-lo);font-size:18px}
-.system-card__top b{font-family:var(--serif);color:var(--gold);font-weight:400}
+.system-card__top b{font-family:var(--font);font-variant-numeric:lining-nums;color:var(--gold);font-weight:700;font-size:13px}
 .system-card h3{margin:0 0 8px;font-size:clamp(18px,1.4vw,21px)}.system-card p{margin:4px 0;color:var(--ink-2)}
 .link-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .link-list a{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-radius:14px;background:var(--bg-3);text-decoration:none;font-weight:600;font-size:14px;transition:background .2s}
@@ -70,7 +70,8 @@ def card_html(i, h, xs, r):
     body = "".join(f"<p class='{'pending' if '준비 중' in x or '정리 중' in x or '받는 대로' in x else ''}'>{x}</p>" for x in rest)
     if links:
         body += "<div class='link-list'>" + "".join(links) + "</div>"
-    return (f"<article class='system-card'><div class='system-card__top'><span class='system-card__icon'>{ICONS[i % len(ICONS)]}</span>"
+    wide = " wide" if len(links) > 4 else ""
+    return (f"<article class='system-card{wide}'><div class='system-card__top'><span class='system-card__icon'>{ICONS[i % len(ICONS)]}</span>"
             f"<b>{i+1:02d}</b></div><h3>{h}</h3>{body}</article>")
 
 def page(path, title, lead, sections, MENU):
@@ -84,6 +85,7 @@ def page(path, title, lead, sections, MENU):
         proof = ("<div class='hero-proof'><div class='metric'><div class='metric__num'>19</div><div class='metric__label'>함께하는 본부</div><div class='metric__desc'>기준일 표기 예정</div></div>"
                  "<div class='metric'><div class='metric__num'>1,100+</div><div class='metric__label'>소속 설계사</div><div class='metric__desc'>기준일 표기 예정</div></div>"
                  "<div class='metric'><div class='metric__num'>AI</div><div class='metric__label'>영업지원 도구</div><div class='metric__desc'>회원 전용 사용</div></div></div>")
+    actions = ('<div class="hero-actions"><a class="lux-btn lux-btn--gold" href="#tools">도구 바로가기 <span>↓</span></a></div>' if path == 'members/' else f'<div class="hero-actions"><a class="lux-btn lux-btn--gold" href="{r}join/">합류 상담 신청 <span>↗</span></a><a class="lux-btn lux-btn--ghost" href="{r}tools/">영업지원 도구 보기 <span>→</span></a></div>')
     hero_t = title if path else "설계사의 <em>성장</em>을<br><em>설계</em>합니다"
     return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>{title} | 프라임에셋 프리미엄 (테스트)</title>
@@ -96,8 +98,8 @@ def page(path, title, lead, sections, MENU):
 <nav aria-label="주요 메뉴">{nav}</nav><a class="nav-cta lux-btn lux-btn--gold lux-btn--sm" href="{r}join/">합류 상담 <span>↗</span></a></header>
 <main><section class="hero"><div class="shell"><p class="hero-kicker"><span class="lux-eyebrow">{eng}</span><span class="hero-kicker__ko">프라임에셋 프리미엄사업부</span></p>
 <h1 class="hero-title">{hero_t}</h1><p class="hero-lead">{lead}</p>
-<div class="hero-actions"><a class="lux-btn lux-btn--gold" href="{r}join/">합류 상담 신청 <span>↗</span></a><a class="lux-btn lux-btn--ghost" href="{r}tools/">영업지원 도구 보기 <span>→</span></a></div>{proof}</div></section>
-<section class="section"><div class="shell"><header class="section-head"><p class="eyebrow"><span class="eyebrow__num">01</span>{eng}</p><h2>{title}</h2></header>
+{actions}{proof}</div></section>
+<section class="section" id="tools"><div class="shell"><header class="section-head"><p class="eyebrow"><span class="eyebrow__num">01</span>{eng}</p><h2>{"바로가기" if path == "members/" else "메뉴 구성"}</h2></header>
 <div class="system-grid">{cards}</div></div></section></main>
 <footer class="footer"><div class="shell"><a class="wordmark" href="{r}"><span class="lux-mark">PA</span><span class="wordmark__text">프라임에셋 <b>프리미엄</b></span></a>
 <p>회사·사업자 정보(준비 중) · 연락처(준비 중) · 개인정보처리방침(준비 중) · <a href="{r}members/">설계사 로그인</a></p></div></footer>
