@@ -4,6 +4,11 @@ OUT = sys.argv[1]
 MENU = [("", "홈"), ("about/", "프리미엄 소개"), ("join/", "합류 안내"), ("tools/", "영업지원 쇼룸"),
         ("wiki/", "보험위키"), ("links/", "영업지원 사이트"), ("members/", "설계사 인트라넷")]
 
+import json
+_CHK = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "members_links_check.json")))
+TOOLS = [(x["name"], x["url"]) for x in _CHK if x["ok"] and "script.google.com" in x["url"] and "통합페이지" not in x["name"]]
+PORTALS = [(x["name"], x["url"]) for x in _CHK if x["ok"] and x["name"] in ("AI 영업도구 통합페이지", "MY포털")]
+
 PAGES = {
  "": ("프라임에셋 프리미엄", "19개 본부 · 약 1,100명 설계사가 함께하는 프리미엄사업부", [
     ("첫 화면", ["한 줄 문구 + [합류 상담 신청] [도구 체험하기] 버튼 + 이사님 전화 (내용 준비 중)"]),
@@ -30,7 +35,7 @@ PAGES = {
     ("정식 사용", ["<a href='{r}members/'>설계사 인트라넷</a>에서 사용 · <a href='{r}join/'>합류 상담 신청</a>"]),
  ]),
  "wiki/": ("보험위키", "보험위키는 별도 사이트에서 운영됩니다.", [
-    ("보험위키 바로가기", ["<a href='https://wiki.primeasset.info/' target='_blank' rel='noopener'>wiki.primeasset.info</a>"]),
+    ("보험위키 바로가기", ["<a href='http://wiki.primeasset.info/' target='_blank' rel='noopener'>wiki.primeasset.info</a>"]),
  ]),
  "links/": ("영업지원 사이트", "프리미엄 설계사가 자주 쓰는 사이트 모음", [
     ("프라임에셋 · 188본부", ["<a href='https://188.primeasset.info/' target='_blank' rel='noopener'>188본부</a>", "프라임에셋 본사 (링크 정리 중)"]),
@@ -40,7 +45,10 @@ PAGES = {
     ("보험사 · 협회 공시", ["(링크 정리 중)"]),
  ]),
  "members/": ("설계사 인트라넷", "로그인한 승인 회원만 사용하는 공간입니다. (테스트 단계: 로그인 기능 연결 전)", [
-    ("도구", ["GAS 도구 실제 주소는 이 페이지에만 넣습니다 (팀쿡·허과장 대조 후 연결)"]),
+    ("AI 영업도구 (GAS)", [f"<a href='{u}' target='_blank' rel='noopener'>{n}</a>" for n, u in TOOLS]),
+    ("포털 · 통합", [f"<a href='{u}' target='_blank' rel='noopener'>{n}</a>" for n, u in PORTALS]),
+    ("Gemini Gem · NotebookLM · GPT", ["상담연습 Gem · 질병정보·화법 Gem · DB영업 화법 Gem · NotebookLM(N대·종수술 / 실손의료비 / 전산매뉴얼 / 고지의무 판독기) · 영업능력진단 GPT — 주소 받는 대로 연결 (허과장 목록)"]),
+    ("업무 · 리크루팅", ["프리미엄 업무보드 · 양규철 리크루팅 — 주소 받는 대로 연결 (허과장 목록)"]),
     ("자료실", ["영업규정집 · 수수료/시책 · 승격 기준 · 브로슈어 (준비 중)"]),
     ("교육", ["(준비 중)"]), ("일정 · 공지", ["(준비 중)"]), ("우리 본부 (188 전용)", ["(준비 중)"]),
     ("관리 (관리자 전용)", ["회원 승인 · 유입 통계 (준비 중)"]),
