@@ -234,6 +234,6 @@ def home(MENU):
 </div></section>
 </main>
 <footer><div class="shell"><a class="wordmark" href="./"><span class="mark">PA</span>프라임에셋 프리미엄</a>
-<p>회사·사업자 정보(준비 중) · 연락처(준비 중) · 개인정보처리방침(준비 중) · <a href="members/">설계사 로그인</a></p></div></footer>
+<p>회사·사업자 정보(준비 중) · 연락처(준비 중) · <a href="privacy/">개인정보처리방침</a> · <a href="members/">설계사 로그인</a></p></div></footer>
 <div class="sticky"><a class="btn btn-ghost" href="#">전화(준비 중)</a><a class="btn btn-hot" href="join/">상담 신청</a></div>
 <script>{JS}</script></body></html>"""

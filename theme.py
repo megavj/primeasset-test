@@ -78,7 +78,7 @@ def page(path, title, lead, sections, MENU):
     r = "../" * path.count("/")
     nav = "".join(f"<a href='{p if p.startswith('http') else r + p}' class='{'on' if p == path else ''}'>{n}</a>" for p, n in MENU)
     eng = {"": "Prime Asset · Premium", "about/": "About Premium", "join/": "Join Us", "tools/": "Sales Support Showroom",
-           "wiki/": "Insurance Wiki", "links/": "Useful Links", "members/": "Members Only"}[path]
+           "wiki/": "Insurance Wiki", "links/": "Useful Links", "members/": "Members Only", "members/admin/": "Admin", "privacy/": "Privacy Policy"}.get(path, "Prime Asset · Premium")
     cards = "".join(card_html(i, h, xs, r) for i, (h, xs) in enumerate(sections))
     proof = ""
     if path == "":
@@ -102,6 +102,6 @@ def page(path, title, lead, sections, MENU):
 <section class="section" id="tools"><div class="shell"><header class="section-head"><p class="eyebrow"><span class="eyebrow__num">01</span>{eng}</p><h2>{"바로가기" if path == "members/" else "메뉴 구성"}</h2></header>
 <div class="system-grid">{cards}</div></div></section></main>
 <footer class="footer"><div class="shell"><a class="wordmark" href="{r}"><span class="lux-mark">PA</span><span class="wordmark__text">프라임에셋 <b>프리미엄</b></span></a>
-<p>회사·사업자 정보(준비 중) · 연락처(준비 중) · 개인정보처리방침(준비 중) · <a href="{r}members/">설계사 로그인</a></p></div></footer>
+<p>회사·사업자 정보(준비 중) · 연락처(준비 중) · <a href="{r}privacy/">개인정보처리방침</a> · <a href="{r}members/">설계사 로그인</a></p></div></footer>
 <div class="sticky-cta"><a class="lux-btn lux-btn--ghost lux-btn--sm" href="#">전화(준비 중)</a><a class="lux-btn lux-btn--gold lux-btn--sm" href="{r}join/">상담 신청</a></div>
 </body></html>"""
