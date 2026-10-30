@@ -1,0 +1,86 @@
+[
+ {
+  "name": "프라임 수당계산기",
+  "url": "https://script.google.com/macros/s/AKfycbz4ZR5EbyrzaIkOfhUR0Hqe0eTRokTf8Sa6ax9Q0paQlRPtJfmxG7AwC2RXIpUNq1XfYg/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "상품분석기",
+  "url": "https://script.google.com/macros/s/AKfycbwxsEPxs_uq5H4gH43Ie_FH0mrKAtdkrnzP-30b52GKTBMXVzARfgggs6_klkyadIVl/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "전산답변기",
+  "url": "https://script.google.com/macros/s/AKfycbwxsEPxs_uq5H4gH43Ie_FH0mrKAtdkrnzP-30b52GKTBMXVzARfgggs6_klkyadIVl/exec?itHelp=1",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "프리미엄 자료검색기",
+  "url": "https://script.google.com/macros/s/AKfycbx2R0eWsh6J9MyUPZahLHJj1bDiSdh1Ei147OOVJ85fCVZv1R-RQCeYIYgrkLiy7eh_/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "PrimeVault 자료검색기",
+  "url": "https://script.google.com/macros/s/AKfycbwUGsVEUfIPHjQJ2XpgTfp1dzaa6Mr-BpjcrI9wxsa3-dymJlkljUsj5_E7VpThRmF1/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "소식지 분석기",
+  "url": "https://script.google.com/macros/s/AKfycbxG-5S3ANCLCTgP3fuNRzqYgljPCsmzrYWa3I6ddxBsZH3nhPUwXYh9a9PrLkIaNZVk/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "보험보상답변기",
+  "url": "https://script.google.com/macros/s/AKfycbzNrEdi_UlbQJI0Qg5xkGV83nSh8se7hVoYAJTgtCDs5rgNt4hsT122SFfDGJTexjiCag/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "최신보험뉴스",
+  "url": "https://script.google.com/macros/s/AKfycbyYyYaZD3zH-DReuzAH_fUdl2Xe4jU_xhgf2snq2hpgR0g-7yx68bD-xAvpaXe0hnk/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "사업부 분기별 성과판",
+  "url": "https://script.google.com/macros/s/AKfycbxjuozPcdGt3mFGq8og6OiL4QKfxYXO_KGWgTZys098lrrSCTRsX-M2mWABY0deaVHp/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "AI영업비서(화법·상담연습)",
+  "url": "https://script.google.com/macros/s/AKfycbyKIz_hvVDlcVscBdGbJ1VCZIHRSz6yrLqRxyAH8WzJfqfQwdVMC-emgg2mPTxVPIk/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "188본부 시스템 안내서",
+  "url": "https://script.google.com/macros/s/AKfycbzqX3lETPADpPAG6syoAsEG1cSceMcUUqmeEhYj3ukkbFfHPEnbdvq8W448ttC0vcFefw/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "AI 영업도구 통합페이지",
+  "url": "https://script.google.com/macros/s/AKfycbz4moHHAAJ51F4f1CnAK6CbadsWN5Pmqy24ifeFODXAkpM-aBKipNSYXiZ52TtRaeFwWg/exec",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "MY포털",
+  "url": "https://188.primeasset.info/my/",
+  "code": 200,
+  "ok": true
+ },
+ {
+  "name": "보험위키",
+  "url": "http://wiki.primeasset.info/",
+  "code": 200,
+  "ok": true
+ }
+]

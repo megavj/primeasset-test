@@ -80,11 +80,13 @@ def page(path, title, lead, sections):
 <footer><div class="wrap">프라임에셋 프리미엄사업부 · 회사·사업자 정보(준비 중) · 연락처(준비 중) · 개인정보처리방침(준비 중) · <a href="{r}members/">설계사 로그인</a></div></footer>
 <div class="mob"><a href="#">전화(준비 중)</a><a href="{r}join/">상담 신청</a></div></body></html>"""
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import theme
 os.makedirs(f"{OUT}/assets", exist_ok=True)
-open(f"{OUT}/assets/style.css", "w").write(CSS)
+open(f"{OUT}/assets/style.css", "w").write(theme.CSS)
 for p, (t, l, s) in PAGES.items():
     os.makedirs(f"{OUT}/{p}", exist_ok=True)
-    open(f"{OUT}/{p}index.html", "w").write(page(p, t, l, s))
+    open(f"{OUT}/{p}index.html", "w").write(theme.page(p, t, l, s, MENU))
 open(f"{OUT}/robots.txt", "w").write("User-agent: *\nAllow: /\n")  # noindex 메타를 검색엔진이 읽을 수 있게 막지 않음
 open(f"{OUT}/.nojekyll", "w").write("")
 open(f"{OUT}/README.md", "w").write("# primeasset-test\n프라임에셋 프리미엄 홈페이지 개편 테스트페이지 (test.primeasset.info 예정). 정식 사이트 아님. 전체 noindex.\n생성기: build.py (HOME-04, 샘알트만)\n")
