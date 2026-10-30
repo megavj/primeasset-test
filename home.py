@@ -107,6 +107,7 @@ section.sec{padding:clamp(80px,10vw,140px) 0}
 .show h4{font-size:22px;margin:0 0 6px}.show p{margin:0;color:var(--ink2);font-size:14px}
 .show small{display:inline-block;margin-top:12px;font-weight:800;font-size:12px;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.35)}
 /* stats + cta */
+.stats-asof{margin:14px 0 0;text-align:right;font-size:13px;color:var(--mute)}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px}
 .stat{padding:28px;border-radius:22px;background:var(--bg2);border:1px solid var(--line)}
 .stat b{display:block;font-size:clamp(40px,5vw,64px);font-weight:900;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -225,10 +226,11 @@ def home(MENU):
 <div class="show">{show_html}</div></section>
 
 <section class="sec"><div class="shell"><div class="reveal"><div class="eyebrow">Premium in Numbers</div><h2>숫자로 보는 프리미엄</h2></div>
-<div class="stats"><div class="stat reveal"><b>19</b><span>함께하는 본부</span><small>기준일 표기 예정</small></div>
-<div class="stat reveal"><b>1,100+</b><span>소속 설계사</span><small>기준일 표기 예정</small></div>
-<div class="stat reveal"><b>20+</b><span>AI 영업도구</span><small>GAS · Gem · NotebookLM · GPT</small></div>
+<div class="stats"><div class="stat reveal"><b>19</b><span>함께하는 본부</span><small>19개 본부</small></div>
+<div class="stat reveal"><b>1,100+</b><span>소속 설계사</span><small>1,100명 이상</small></div>
+<div class="stat reveal"><b>20+</b><span>AI 영업도구</span><small>AI 도구 20개 이상 · GAS · Gem · NotebookLM · GPT</small></div>
 <div class="stat reveal"><b>4</b><span>서비스 채널</span><small>도구·시스템·보험노트·위키</small></div></div>
+<p class="stats-asof">2026년 10월 기준</p>
 <div class="cta reveal" style="margin-top:80px"><h2>다음 성장은<br>프리미엄에서.</h2><p>합류 상담은 김상현 이사가 직접 안내합니다.</p>
 <div class="acts" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn-w" href="join/">합류 상담 신청 ↗</a><a class="btn btn-ghost" href="about/">프리미엄 소개 →</a></div></div>
 </div></section>
