@@ -47,8 +47,19 @@ PAGES = {
  "members/": ("설계사 인트라넷", "로그인한 승인 회원만 사용하는 공간입니다. (테스트 단계: 로그인 기능 연결 전)", [
     ("AI 영업도구 (GAS)", [f"<a href='{u}' target='_blank' rel='noopener'>{n}</a>" for n, u in TOOLS]),
     ("포털 · 통합", [f"<a href='{u}' target='_blank' rel='noopener'>{n}</a>" for n, u in PORTALS]),
-    ("Gemini Gem · NotebookLM · GPT", ["상담연습 Gem · 질병정보·화법 Gem · DB영업 화법 Gem · NotebookLM(N대·종수술 / 실손의료비 / 전산매뉴얼 / 고지의무 판독기) · 영업능력진단 GPT (연결 준비 중)"]),
-    ("업무 · 리크루팅", ["프리미엄 업무보드 · 양규철 리크루팅 (연결 준비 중)"]),
+    ("Gemini Gem", [f"<a href='{u}' target='_blank' rel='noopener'>{n}</a>" for n, u in [
+        ("상담연습도우미", "https://gemini.google.com/gem/1RBqgRTkrr4LzMr3JnKgyijYhJurkz1lE?usp=sharing"),
+        ("실전 질병정보·화법도우미", "https://gemini.google.com/gem/101-BxFLO4jPay9sHh_Hi5tLDW-QeGTC1?usp=sharing"),
+        ("실전 DB영업 화법도우미", "https://gemini.google.com/gem/1O_fcD2VnwdValqYZE_IIaoCbAglL69M5?usp=sharing")]]),
+    ("NotebookLM", [f"<a href='{u}' target='_blank' rel='noopener'>{n}</a>" for n, u in [
+        ("N대·종수술 답변기", "https://notebooklm.google.com/notebook/55b40b2f-1242-4604-ac3a-b6609d376cac/preview"),
+        ("실손의료비 답변기", "https://notebooklm.google.com/notebook/38f4aa7f-a85c-4163-8404-15eb6ed51f9b/preview"),
+        ("전산매뉴얼 자동답변기", "https://notebooklm.google.com/notebook/6e0f60d8-6892-44b6-ac85-f8dbf5d76935"),
+        ("고지의무 판독기", "https://notebooklm.google.com/notebook/d4bc7ea8-f637-47ca-b9b5-a0e0784d620f")]] + ["구글 로그인 화면이 먼저 뜨는 것이 정상입니다"]),
+    ("GPT · 업무 · 리크루팅", [f"<a href='{u}' target='_blank' rel='noopener'>{n}</a>" for n, u in [
+        ("영업능력진단 봇 (GPT)", "https://chatgpt.com/g/g-69e87fb518608191afca2514b1f88ded"),
+        ("업무보드", "https://script.google.com/macros/s/AKfycbw_U7A7EvGQ8KbZIVBQHlaEzMHC-yUhMTZ36x02qk6F7e7wzpllQYQBiiAu2OCGsxn0/exec"),
+        ("양규철 리크루팅", "https://script.google.com/macros/s/AKfycbxn35qhPOkWcqsuzfPToyZRKoGnMFTsScGvO93e2_pfHpSDqauPM7HDYNBc3BVdHwfQiA/exec")]]),
     ("자료실", ["영업규정집 · 수수료/시책 · 승격 기준 · 브로슈어 (준비 중)"]),
     ("교육", ["(준비 중)"]), ("일정 · 공지", ["(준비 중)"]), ("우리 본부 (188 전용)", ["(준비 중)"]),
     ("관리 (관리자 전용)", ["회원 승인 · 유입 통계 (준비 중)"]),
@@ -89,5 +100,8 @@ for p, (t, l, s) in PAGES.items():
     open(f"{OUT}/{p}index.html", "w").write(theme.page(p, t, l, s, MENU))
 open(f"{OUT}/robots.txt", "w").write("User-agent: *\nAllow: /\n")  # noindex 메타를 검색엔진이 읽을 수 있게 막지 않음
 open(f"{OUT}/.nojekyll", "w").write("")
+import home
+open(f"{OUT}/assets/home.css", "w").write(home.CSS)
+open(f"{OUT}/index.html", "w").write(home.home(MENU))
 open(f"{OUT}/README.md", "w").write("# primeasset-test\n프라임에셋 프리미엄 홈페이지 개편 테스트페이지 (test.primeasset.info 예정). 정식 사이트 아님. 전체 noindex.\n생성기: build.py (HOME-04, 샘알트만)\n")
 print("ok", len(PAGES))
