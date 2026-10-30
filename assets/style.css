@@ -1,0 +1,10 @@
+*{box-sizing:border-box}body{margin:0;font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#1d2433;background:#f6f7fb;line-height:1.6}
+.test{background:#ffb703;color:#000;text-align:center;font-size:13px;padding:4px}
+header{background:#0b2545;color:#fff;position:sticky;top:0;z-index:5}.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;flex-wrap:wrap}.logo{color:#fff;font-weight:800;text-decoration:none;font-size:18px}
+nav a{color:#cfd8e8;text-decoration:none;margin-left:16px;font-size:15px}nav a.on,nav a:hover{color:#fff;font-weight:700}
+.hero{background:linear-gradient(135deg,#0b2545,#13315c 60%,#1b4b8f);color:#fff;padding:56px 0}.hero h1{margin:0 0 8px;font-size:32px}.hero p{margin:0;opacity:.85}
+main{padding:32px 0 80px}.card{background:#fff;border-radius:14px;padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}.card h2{margin:0 0 6px;font-size:19px;color:#0b2545}
+.card p{margin:4px 0;color:#4a5568}a{color:#1b4b8f}footer{background:#0b2545;color:#9fb0c8;font-size:13px;padding:24px 0}footer a{color:#cfd8e8}
+.mob{display:none}@media(max-width:720px){nav a{margin:0 12px 0 0;font-size:14px}nav{padding-bottom:10px;overflow-x:auto;white-space:nowrap;width:100%}.hero h1{font-size:24px}
+.mob{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:9}.mob a{flex:1;text-align:center;padding:14px;color:#fff;text-decoration:none;font-weight:700}.mob a:first-child{background:#13315c}.mob a:last-child{background:#e85d04}}
