@@ -2,7 +2,7 @@
 import os, sys
 OUT = sys.argv[1]
 MENU = [("", "홈"), ("about/", "프리미엄 소개"), ("join/", "합류 안내"), ("tools/", "영업지원 쇼룸"),
-        ("wiki/", "보험위키"), ("links/", "영업지원 사이트"), ("members/", "설계사 인트라넷")]
+        ("http://wiki.primeasset.info/", "보험위키"), ("links/", "영업지원 사이트"), ("members/", "설계사 인트라넷")]
 
 import json
 _CHK = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "members_links_check.json")))
@@ -33,9 +33,6 @@ PAGES = {
     ("도구 소개", ["수당계산기 · 상품분석기 · 전산답변기 · 자료검색기 · 소식지 분석기 · 보험보상답변기 · 최신보험뉴스 · AI영업비서 (소개 내용 준비 중)"]),
     ("1회 체험", ["가상 고객 예시로 체험 (준비 중)"]),
     ("정식 사용", ["<a href='{r}members/'>설계사 인트라넷</a>에서 사용 · <a href='{r}join/'>합류 상담 신청</a>"]),
- ]),
- "wiki/": ("보험위키", "보험위키는 별도 사이트에서 운영됩니다.", [
-    ("보험위키 바로가기", ["<a href='http://wiki.primeasset.info/' target='_blank' rel='noopener'>wiki.primeasset.info</a>"]),
  ]),
  "links/": ("영업지원 사이트", "프리미엄 설계사가 자주 쓰는 사이트 모음", [
     ("프라임에셋 · 188본부", ["<a href='https://188.primeasset.info/' target='_blank' rel='noopener'>188본부</a>", "프라임에셋 본사 (링크 정리 중)"]),

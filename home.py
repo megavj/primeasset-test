@@ -194,7 +194,7 @@ def home(MENU):
 <p>운영 기준·실적보드·시스템 안내까지, 검증된 운영 방식.</p><span class="go">188 바로가기 ↗</span></a>
 <a class="card c3 reveal" href="https://bohumnote.com/" target="_blank" rel="noopener"><span class="tag">보험노트</span><span class="big">✍</span><h3>보험노트</h3>
 <p>고객이 먼저 찾아오는 보험 콘텐츠 채널.</p><span class="go">bohumnote.com ↗</span></a>
-<a class="card c4 reveal" href="wiki/"><span class="tag">보험위키</span><span class="big">W</span><h3>보험위키</h3>
+<a class="card c4 reveal" href="http://wiki.primeasset.info/"><span class="tag">보험위키</span><span class="big">W</span><h3>보험위키</h3>
 <p>보장·용어·청구 가이드를 정리한 지식 베이스.</p><span class="go">위키 보기 →</span></a>
 <a class="card c5 reveal" href="tools/"><span class="tag">Gem · NotebookLM · GPT</span><span class="big">✦</span><h3>AI 어시스턴트</h3>
 <p>상담연습·질병화법·고지의무 판독까지 대화로.</p><span class="go">자세히 →</span></a>
@@ -208,7 +208,7 @@ def home(MENU):
 <h2>배우고, 영업하고,<br>성장하는 흐름.</h2></div>
 <div class="rows">
 <div class="row reveal" style="--accent:#00e5ff"><div><span class="num">01 · 배우기</span><h3>모르는 건 바로 묻고, 바로 배운다</h3>
-<p>보험위키와 NotebookLM 답변기로 약관·수술·고지의무를 즉시 확인합니다.</p><a class="btn btn-ghost btn-sm" href="wiki/">보험위키 →</a></div>
+<p>보험위키와 NotebookLM 답변기로 약관·수술·고지의무를 즉시 확인합니다.</p><a class="btn btn-ghost btn-sm" href="http://wiki.primeasset.info/">보험위키 →</a></div>
 <div class="mock"><div class="top"><i></i><i></i><i></i></div><div class="body"><div class="bubble me">갑상선암 수술, 몇 종 수술인가요?</div>
 <div class="bubble">약관 기준으로 정리해 드릴게요. 회사별 분류표를 함께 확인하세요 …</div><div class="bubble me">고지의무 대상인지도 알려줘</div><div class="bubble">가입하려는 상품의 고지 질문 기준으로 확인해 드릴게요 …</div></div></div></div>
 <div class="row reveal" style="--accent:#ff2e93"><div><span class="num">02 · 영업하기</span><h3>계산·분석·비교를 몇 초 만에</h3>

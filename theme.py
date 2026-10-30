@@ -76,7 +76,7 @@ def card_html(i, h, xs, r):
 
 def page(path, title, lead, sections, MENU):
     r = "../" * path.count("/")
-    nav = "".join(f"<a href='{r}{p}' class='{'on' if p == path else ''}'>{n}</a>" for p, n in MENU)
+    nav = "".join(f"<a href='{p if p.startswith('http') else r + p}' class='{'on' if p == path else ''}'>{n}</a>" for p, n in MENU)
     eng = {"": "Prime Asset · Premium", "about/": "About Premium", "join/": "Join Us", "tools/": "Sales Support Showroom",
            "wiki/": "Insurance Wiki", "links/": "Useful Links", "members/": "Members Only"}[path]
     cards = "".join(card_html(i, h, xs, r) for i, (h, xs) in enumerate(sections))
