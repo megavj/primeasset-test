@@ -152,7 +152,7 @@ document.querySelectorAll('.reveal').forEach(el=>/shot/.test(location.search)?el
 
 def home(MENU):
     nav = "".join(f"<a href='{p or './'}'>{n}</a>" for p, n in MENU)
-    tools = ["수당계산기", "상품분석기", "전산답변기", "자료검색기", "보상답변기", "소식지 분석기", "최신보험뉴스", "AI영업비서"]
+    tools = ["상품통합분석기", "수당계산기", "상품분석기", "전산답변기", "자료검색기", "보상답변기", "소식지 분석기", "최신보험뉴스", "AI영업비서"]
     mq_items = ["AI 영업도구", "<em>보험노트</em>", "보험위키", "188 영업지원시스템", "<em>Gemini Gem</em>", "NotebookLM 답변기",
                 "실적보드", "<em>합류 상담</em>", "수당계산기", "상품분석기", "고지의무 판독기", "최신보험뉴스"]
     mq = "".join(f"<span>{s}</span><span>✦</span>" for s in mq_items) * 2
@@ -207,6 +207,8 @@ def home(MENU):
 <div class="bento">
 <a class="card c1 reveal" href="members/#signup" data-tool><span class="tag">AI 영업도구 · GAS</span><span class="big">AI</span><h3>AI 영업도구</h3>
 <p>수당 계산, 상품 분석, 전산·보상 답변 등 현장에서 쓰는 도구.</p><div class="toolrow">{toolrow}</div><span class="go">회원가입하고 사용 →</span></a>
+<a class="card c6 reveal" href="members/#signup" data-tool><span class="tag">영업지원시스템 · NEW</span><span class="big">∑</span><h3>상품통합분석기</h3>
+<p>여러 보험사 상품을 한 번에 비교·분석하는 웹 도구 (테스트 중).</p><span class="go">회원가입하고 사용 →</span></a>
 <a class="card c5 reveal" href="members/#signup" data-tool><span class="tag">Gem · NotebookLM · GPT</span><span class="big">✦</span><h3>AI 어시스턴트</h3>
 <p>상담연습·질병화법·고지의무 판독까지 대화로.</p><span class="go">회원가입하고 사용 →</span></a>
 <a class="card c4 reveal" href="http://wiki.primeasset.info/"><span class="tag">보험위키</span><span class="big">W</span><h3>보험위키</h3>
