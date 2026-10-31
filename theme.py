@@ -85,7 +85,7 @@ def page(path, title, lead, sections, MENU):
         proof = ("<div class='hero-proof'><div class='metric'><div class='metric__num'>19</div><div class='metric__label'>함께하는 본부</div><div class='metric__desc'>기준일 표기 예정</div></div>"
                  "<div class='metric'><div class='metric__num'>1,100+</div><div class='metric__label'>소속 설계사</div><div class='metric__desc'>기준일 표기 예정</div></div>"
                  "<div class='metric'><div class='metric__num'>AI</div><div class='metric__label'>영업지원 도구</div><div class='metric__desc'>회원 전용 사용</div></div></div>")
-    actions = ('<div class="hero-actions"><a class="lux-btn lux-btn--gold" href="#tools">도구 바로가기 <span>↓</span></a></div>' if path == 'members/' else f'<div class="hero-actions"><a class="lux-btn lux-btn--gold" href="{r}join/">합류 상담 신청 <span>↗</span></a><a class="lux-btn lux-btn--ghost" href="{r}tools/">영업지원 도구 보기 <span>→</span></a></div>')
+    actions = ('<div class="hero-actions"><a class="lux-btn lux-btn--gold" href="#tools">도구 바로가기 <span>↓</span></a></div>' if path == 'members/' else f'<div class="hero-actions"><a class="lux-btn lux-btn--gold" href="{r}">합류 상담 신청 <span>↗</span></a><a class="lux-btn lux-btn--ghost" href="{r}">영업지원 도구 보기 <span>→</span></a></div>')
     hero_t = title if path else "설계사의 <em>성장</em>을<br><em>설계</em>합니다"
     return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>{title} | 프라임에셋 프리미엄 (테스트)</title>
@@ -95,7 +95,7 @@ def page(path, title, lead, sections, MENU):
 <link rel="stylesheet" href="{r}assets/style.css?v=2"></head><body>
 <div class="test-bar">테스트 페이지입니다 — 내용 준비 중</div>
 <header class="nav"><a class="wordmark" href="{r}"><span class="lux-mark">PA</span><span class="wordmark__text">프라임에셋 <b>프리미엄</b></span></a>
-<nav aria-label="주요 메뉴">{nav}</nav><a class="nav-cta lux-btn lux-btn--gold lux-btn--sm" href="{r}join/">합류 상담 <span>↗</span></a></header>
+<nav aria-label="주요 메뉴">{nav}</nav><a class="nav-cta lux-btn lux-btn--gold lux-btn--sm" href="{r}">합류 상담 <span>↗</span></a></header>
 <main><section class="hero"><div class="shell"><p class="hero-kicker"><span class="lux-eyebrow">{eng}</span><span class="hero-kicker__ko">프라임에셋 프리미엄사업부</span></p>
 <h1 class="hero-title">{hero_t}</h1><p class="hero-lead">{lead}</p>
 {actions}{proof}</div></section>
@@ -103,5 +103,5 @@ def page(path, title, lead, sections, MENU):
 <div class="system-grid">{cards}</div></div></section></main>
 <footer class="footer"><div class="shell"><a class="wordmark" href="{r}"><span class="lux-mark">PA</span><span class="wordmark__text">프라임에셋 <b>프리미엄</b></span></a>
 <p>회사·사업자 정보(준비 중) · 연락처(준비 중) · <a href="{r}privacy/">개인정보처리방침</a> · <a href="{r}members/">설계사 로그인</a></p></div></footer>
-<div class="sticky-cta"><a class="lux-btn lux-btn--ghost lux-btn--sm" href="#">전화(준비 중)</a><a class="lux-btn lux-btn--gold lux-btn--sm" href="{r}join/">상담 신청</a></div>
+<div class="sticky-cta"><a class="lux-btn lux-btn--ghost lux-btn--sm" href="#">전화(준비 중)</a><a class="lux-btn lux-btn--gold lux-btn--sm" href="{r}">상담 신청</a></div>
 </body></html>"""

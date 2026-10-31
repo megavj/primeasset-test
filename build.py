@@ -1,8 +1,9 @@
 # HOME-04 테스트페이지 빈 틀 생성기 (샘알트만) — 상대경로라 하위주소/정식주소 어디서든 동작
 import os, sys
 OUT = sys.argv[1]
-MENU = [("", "홈"), ("about/", "프리미엄 소개"), ("join/", "합류 안내"), ("tools/", "영업지원 쇼룸"),
-        ("http://wiki.primeasset.info/", "보험위키"), ("links/", "영업지원 사이트"), ("members/", "설계사 인트라넷")]
+MENU = [("", "홈"), ("http://wiki.primeasset.info/", "보험위키"), ("members/", "설계사 인트라넷")]
+# 2026-10-31 구조 개편: 삭제한 페이지 → 메인으로 보내는 안내 파일만 남김
+REMOVED = ["about/", "join/", "tools/", "links/"]
 
 # HOME-11: 도구 주소는 이 저장소에 두지 않음 (Supabase resources 표에만)
 
@@ -16,27 +17,6 @@ PAGES = {
     ("합류 안내", ["신입 / 경력 / 팀·지점 → <a href='{r}join/'>합류 안내</a>"]),
     ("자주 묻는 질문", ["(준비 중)"]),
     ("상담 신청", ["신청 배너 자리 (메일 연결은 별도 승인 후)"]),
- ]),
- "about/": ("프리미엄 소개", "프라임에셋 프리미엄사업부 소개 (내용 준비 중)", [
-    ("김상현 이사 소개", ["(준비 중)"]), ("성장 스토리", ["(준비 중)"]), ("방향과 목표", ["(준비 중)"]),
-    ("우리는 이렇게 일해요", ["(준비 중)"]), ("함께하는 본부 (19개)", ["(준비 중)"]), ("MVP · 연도대상 히스토리", ["(준비 중)"]),
- ]),
- "join/": ("합류 안내", "나에게 맞는 합류 경로를 확인하세요.", [
-    ("신입", ["(준비 중)"]), ("경력", ["(준비 중)"]), ("팀 · 지점 단위", ["(준비 중)"]),
-    ("자주 묻는 질문", ["(준비 중)"]),
-    ("상담 신청", ["이름 · 연락처 · 희망(신입/경력/팀) + 개인정보 수집 동의 — 신청 칸은 별도 승인 후 연결"]),
- ]),
- "tools/": ("영업지원 쇼룸", "프리미엄 설계사가 쓰는 AI 영업지원 도구를 소개합니다. 실제 사용은 회원 전용입니다.", [
-    ("도구 소개", ["수당계산기 · 상품분석기 · 전산답변기 · 자료검색기 · 소식지 분석기 · 보험보상답변기 · 최신보험뉴스 · AI영업비서 (소개 내용 준비 중)"]),
-    ("1회 체험", ["가상 고객 예시로 체험 (준비 중)"]),
-    ("정식 사용", ["<a href='{r}members/'>설계사 인트라넷</a>에서 사용 · <a href='{r}join/'>합류 상담 신청</a>"]),
- ]),
- "links/": ("영업지원 사이트", "프리미엄 설계사가 자주 쓰는 사이트 모음", [
-    ("프라임에셋 · 188본부", ["<a href='https://188.primeasset.info/' target='_blank' rel='noopener'>188본부</a>", "프라임에셋 본사 (링크 정리 중)"]),
-    ("보험노트", ["<a href='https://bohumnote.com/' target='_blank' rel='noopener'>프리미엄 보험노트 (bohumnote.com)</a>"]),
-    ("보험정보 공유", ["보험정보 공유 카페 · 익명질문방(늅늅방) · 고급정보 무한공유(전설의고무공) (링크 정리 중)"]),
-    ("교육", ["스탠다드 캠퍼스 (링크 정리 중)"]),
-    ("보험사 · 협회 공시", ["(링크 정리 중)"]),
  ]),
 }
 
@@ -77,6 +57,11 @@ open(f"{OUT}/.nojekyll", "w").write("")
 sys.path.insert(0, "/Volumes/MacWorkSSD/비서작업기록/샘알트만/20261030_HOME-11_로그인적용")
 import auth_pages
 auth_pages.build(OUT, theme, MENU)
+for p in REMOVED:
+    os.makedirs(f"{OUT}/{p}", exist_ok=True)
+    open(f"{OUT}/{p}index.html", "w").write('<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow">'
+        '<meta http-equiv="refresh" content="0; url=../"><link rel="canonical" href="../"><title>메인으로 이동</title>'
+        '<script>location.replace("../"+location.hash)</script></head><body><a href="../">메인으로 이동</a></body></html>')
 import home
 open(f"{OUT}/assets/home.css", "w").write(home.CSS)
 open(f"{OUT}/index.html", "w").write(home.home(MENU))

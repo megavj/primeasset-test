@@ -166,7 +166,7 @@ def home(MENU):
             ("📰", "최신보험뉴스", "매일 업데이트되는 업계 소식", "#ffd60a", "#ff8a00", "#7c3aed"),
             ("🤖", "AI 영업비서", "화법 연습·상담 시뮬레이션", "#7c3aed", "#ff2e93", "#00e5ff"),
             ("🧠", "NotebookLM 답변기", "N대수술·실손·고지의무", "#00e5ff", "#7c3aed", "#2bff88")]
-    show_html = "".join(f"<a href='tools/' style='--c1:{a};--c2:{b};--c3:{c}'><span class='ico'>{i}</span><h4>{t}</h4><p>{d}</p><small>체험·소개 보기 →</small></a>"
+    show_html = "".join(f"<a href='./' style='--c1:{a};--c2:{b};--c3:{c}'><span class='ico'>{i}</span><h4>{t}</h4><p>{d}</p><small>체험·소개 보기 →</small></a>"
                         for i, t, d, a, b, c in show)
     toolrow = "".join(f"<span>{t}</span>" for t in tools)
     return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -175,21 +175,21 @@ def home(MENU):
 <link rel="stylesheet" href="assets/home.css?v=1"></head><body>
 <div class="test-bar">테스트 페이지입니다 — 콘텐츠는 준비 중</div>
 <header class="nav"><a class="wordmark" href="./"><span class="mark">PA</span>프라임에셋 프리미엄</a><nav aria-label="주요 메뉴">{nav}</nav>
-<a class="btn btn-hot btn-sm" href="join/">합류 상담 ↗</a></header>
+<a class="btn btn-hot btn-sm" href="./">합류 상담 ↗</a></header>
 <main>
 <section class="hero"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
 <canvas id="fx" aria-hidden="true"></canvas><div class="grid-floor" aria-hidden="true"></div><div class="orbit" aria-hidden="true">{chip_html}</div>
 <div class="shell hero-inner"><span class="pill"><b>NEW</b>설계사를 위한 AI 영업지원 플랫폼</span>
 <h1>설계사의 영업,<br><span class="glow">AI로 <span class="rot"><span>계산하고<br>분석하고<br>답변하고<br>성장하고<br>계산하고</span></span></span></h1>
 <p class="lead">AI 영업도구, 영업지원시스템, 보험노트, 보험위키까지.<br>프라임에셋 프리미엄의 모든 서비스를 한곳에서 만나보세요.</p>
-<div class="acts"><a class="btn btn-hot" href="#services">모든 서비스 보기 ↓</a><a class="btn btn-ghost" href="join/">합류 상담 신청 ↗</a></div></div>
+<div class="acts"><a class="btn btn-hot" href="#services">모든 서비스 보기 ↓</a><a class="btn btn-ghost" href="./">합류 상담 신청 ↗</a></div></div>
 <div class="scroll-hint">SCROLL</div></section>
 <div class="marquee" aria-hidden="true"><div class="mq">{mq}</div></div>
 
 <section class="sec" id="services"><div class="shell"><div class="reveal"><div class="eyebrow">All Services</div>
 <h2>영업에 필요한 모든 것,<br>하나의 프리미엄.</h2><p class="desc">도구·시스템·콘텐츠·지식이 따로 놀지 않습니다. 설계사가 매일 쓰는 서비스를 한 번에 연결했습니다.</p></div>
 <div class="bento">
-<a class="card c1 reveal" href="tools/"><span class="tag">AI 영업도구 · GAS</span><span class="big">AI</span><h3>매일 쓰는 AI 영업도구</h3>
+<a class="card c1 reveal" href="./"><span class="tag">AI 영업도구 · GAS</span><span class="big">AI</span><h3>매일 쓰는 AI 영업도구</h3>
 <p>계산·분석·답변을 몇 초 만에. 현장에서 바로 쓰는 실전 도구 모음.</p><div class="toolrow">{toolrow}</div><span class="go">도구 쇼룸 보기 →</span></a>
 <a class="card c2 reveal" href="https://188.primeasset.info/" target="_blank" rel="noopener"><span class="tag">영업지원시스템</span><span class="big">188</span><h3>188 영업지원시스템</h3>
 <p>운영 기준·실적보드·시스템 안내까지, 검증된 운영 방식.</p><span class="go">188 바로가기 ↗</span></a>
@@ -197,9 +197,9 @@ def home(MENU):
 <p>고객이 먼저 찾아오는 보험 콘텐츠 채널.</p><span class="go">bohumnote.com ↗</span></a>
 <a class="card c4 reveal" href="http://wiki.primeasset.info/"><span class="tag">보험위키</span><span class="big">W</span><h3>보험위키</h3>
 <p>보장·용어·청구 가이드를 정리한 지식 베이스.</p><span class="go">위키 보기 →</span></a>
-<a class="card c5 reveal" href="tools/"><span class="tag">Gem · NotebookLM · GPT</span><span class="big">✦</span><h3>AI 어시스턴트</h3>
+<a class="card c5 reveal" href="./"><span class="tag">Gem · NotebookLM · GPT</span><span class="big">✦</span><h3>AI 어시스턴트</h3>
 <p>상담연습·질병화법·고지의무 판독까지 대화로.</p><span class="go">자세히 →</span></a>
-<a class="card c6 reveal" href="links/"><span class="tag">영업지원 사이트</span><span class="big">↗</span><h3>영업지원 사이트 모음</h3>
+<a class="card c6 reveal" href="./"><span class="tag">영업지원 사이트</span><span class="big">↗</span><h3>영업지원 사이트 모음</h3>
 <p>카페·교육·공시 등 자주 쓰는 사이트를 한곳에.</p><span class="go">사이트 모음 →</span></a>
 <a class="card c7 reveal" href="members/"><span class="tag">회원 전용</span><span class="big">🔒</span><h3>설계사 인트라넷</h3>
 <p>승인된 회원은 모든 도구를 바로 실행. 자료실·공지·교육까지.</p><span class="go">인트라넷 입장 →</span></a>
@@ -213,7 +213,7 @@ def home(MENU):
 <div class="mock"><div class="top"><i></i><i></i><i></i></div><div class="body"><div class="bubble me">갑상선암 수술, 몇 종 수술인가요?</div>
 <div class="bubble">약관 기준으로 정리해 드릴게요. 회사별 분류표를 함께 확인하세요 …</div><div class="bubble me">고지의무 대상인지도 알려줘</div><div class="bubble">가입하려는 상품의 고지 질문 기준으로 확인해 드릴게요 …</div></div></div></div>
 <div class="row reveal" style="--accent:#ff2e93"><div><span class="num">02 · 영업하기</span><h3>계산·분석·비교를 몇 초 만에</h3>
-<p>수당계산기, 상품분석기, 보상답변기로 상담 준비 시간을 줄입니다.</p><a class="btn btn-ghost btn-sm" href="tools/">도구 쇼룸 →</a></div>
+<p>수당계산기, 상품분석기, 보상답변기로 상담 준비 시간을 줄입니다.</p><a class="btn btn-ghost btn-sm" href="./">도구 쇼룸 →</a></div>
 <div class="mock"><div class="top"><i></i><i></i><i></i></div><div class="body"><div class="bar" style="--w:88%"></div><div class="bar" style="--w:64%"></div><div class="bar" style="--w:76%"></div><div class="bar" style="--w:42%"></div>
 <div class="kpis"><div><b>A안</b>예시</div><div><b>B안</b>예시</div><div><b>C안</b>예시</div></div></div></div></div>
 <div class="row reveal" style="--accent:#ffd60a"><div><span class="num">03 · 성장하기</span><h3>숫자로 보는 성장, 함께 가는 조직</h3>
@@ -232,10 +232,10 @@ def home(MENU):
 <div class="stat reveal"><b>4</b><span>서비스 채널</span><small>도구·시스템·보험노트·위키</small></div></div>
 <p class="stats-asof">2026년 10월 기준</p>
 <div class="cta reveal" style="margin-top:80px"><h2>다음 성장은<br>프리미엄에서.</h2><p>합류 상담은 김상현 이사가 직접 안내합니다.</p>
-<div class="acts" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn-w" href="join/">합류 상담 신청 ↗</a><a class="btn btn-ghost" href="about/">프리미엄 소개 →</a></div></div>
+<div class="acts" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn-w" href="./">합류 상담 신청 ↗</a><a class="btn btn-ghost" href="./">프리미엄 소개 →</a></div></div>
 </div></section>
 </main>
 <footer><div class="shell"><a class="wordmark" href="./"><span class="mark">PA</span>프라임에셋 프리미엄</a>
 <p>회사·사업자 정보(준비 중) · 연락처(준비 중) · <a href="privacy/">개인정보처리방침</a> · <a href="members/">설계사 로그인</a></p></div></footer>
-<div class="sticky"><a class="btn btn-ghost" href="#">전화(준비 중)</a><a class="btn btn-hot" href="join/">상담 신청</a></div>
+<div class="sticky"><a class="btn btn-ghost" href="#">전화(준비 중)</a><a class="btn btn-hot" href="./">상담 신청</a></div>
 <script>{JS}</script></body></html>"""
