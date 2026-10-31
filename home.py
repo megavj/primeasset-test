@@ -107,6 +107,9 @@ section.sec{padding:clamp(80px,10vw,140px) 0}
 .show h4{font-size:22px;margin:0 0 6px}.show p{margin:0;color:var(--ink2);font-size:14px}
 .show small{display:inline-block;margin-top:12px;font-weight:800;font-size:12px;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.35)}
 /* stats + cta */
+.branches{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:28px}
+.br{display:block;padding:16px;border-radius:16px;background:var(--bg2);border:1px solid var(--line);color:var(--ink);text-decoration:none;text-align:center}
+.br b{display:block;font-size:22px}.br small{display:block;color:var(--mute);font-size:12px}.br.off{opacity:.6}
 .stats-asof{margin:14px 0 0;text-align:right;font-size:13px;color:var(--mute)}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px}
 .stat{padding:28px;border-radius:22px;background:var(--bg2);border:1px solid var(--line)}
@@ -169,73 +172,66 @@ def home(MENU):
     show_html = "".join(f"<a href='./' style='--c1:{a};--c2:{b};--c3:{c}'><span class='ico'>{i}</span><h4>{t}</h4><p>{d}</p><small>체험·소개 보기 →</small></a>"
                         for i, t, d, a, b, c in show)
     toolrow = "".join(f"<span>{t}</span>" for t in tools)
+    BRANCHES = ['188', '227', '236', '242', '246', '249', '254', '255', '285', '308', '320', '338', '345', '346', '350', '364', '375', '379', '384']
+    branch_html = "".join((f"<a class='br' data-no='{n}' href='https://188.primeasset.info/' target='_blank' rel='noopener'><b>{n}</b>본부</a>" if n == "188"
+                           else f"<span class='br off' data-no='{n}'><b>{n}</b>본부<small>연결 준비 중</small></span>") for n in BRANCHES)
     return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#07060f"><title>프라임에셋 프리미엄 (테스트)</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="assets/home.css?v=1"></head><body>
 <div class="test-bar">테스트 페이지입니다 — 콘텐츠는 준비 중</div>
 <header class="nav"><a class="wordmark" href="./"><span class="mark">PA</span>프라임에셋 프리미엄</a><nav aria-label="주요 메뉴">{nav}</nav>
-<a class="btn btn-hot btn-sm" href="./">합류 상담 ↗</a></header>
+<a class="btn btn-ghost btn-sm" href="members/#login">로그인</a><a class="btn btn-hot btn-sm" href="members/#signup">회원가입</a></header>
 <main>
 <section class="hero"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
 <canvas id="fx" aria-hidden="true"></canvas><div class="grid-floor" aria-hidden="true"></div><div class="orbit" aria-hidden="true">{chip_html}</div>
 <div class="shell hero-inner"><span class="pill"><b>NEW</b>설계사를 위한 AI 영업지원 플랫폼</span>
 <h1>설계사의 영업,<br><span class="glow">AI로 <span class="rot"><span>계산하고<br>분석하고<br>답변하고<br>성장하고<br>계산하고</span></span></span></h1>
 <p class="lead">AI 영업도구, 영업지원시스템, 보험노트, 보험위키까지.<br>프라임에셋 프리미엄의 모든 서비스를 한곳에서 만나보세요.</p>
-<div class="acts"><a class="btn btn-hot" href="#services">모든 서비스 보기 ↓</a><a class="btn btn-ghost" href="./">합류 상담 신청 ↗</a></div></div>
+<div class="acts"><a class="btn btn-hot" href="members/#login">로그인</a><a class="btn btn-ghost" href="members/#signup">회원가입</a></div></div>
 <div class="scroll-hint">SCROLL</div></section>
 <div class="marquee" aria-hidden="true"><div class="mq">{mq}</div></div>
 
-<section class="sec" id="services"><div class="shell"><div class="reveal"><div class="eyebrow">All Services</div>
-<h2>영업에 필요한 모든 것,<br>하나의 프리미엄.</h2><p class="desc">도구·시스템·콘텐츠·지식이 따로 놀지 않습니다. 설계사가 매일 쓰는 서비스를 한 번에 연결했습니다.</p></div>
-<div class="bento">
-<a class="card c1 reveal" href="./"><span class="tag">AI 영업도구 · GAS</span><span class="big">AI</span><h3>매일 쓰는 AI 영업도구</h3>
-<p>계산·분석·답변을 몇 초 만에. 현장에서 바로 쓰는 실전 도구 모음.</p><div class="toolrow">{toolrow}</div><span class="go">도구 쇼룸 보기 →</span></a>
-<a class="card c2 reveal" href="https://188.primeasset.info/" target="_blank" rel="noopener"><span class="tag">영업지원시스템</span><span class="big">188</span><h3>188 영업지원시스템</h3>
-<p>운영 기준·실적보드·시스템 안내까지, 검증된 운영 방식.</p><span class="go">188 바로가기 ↗</span></a>
-<a class="card c3 reveal" href="https://bohumnote.com/" target="_blank" rel="noopener"><span class="tag">보험노트</span><span class="big">✍</span><h3>보험노트</h3>
-<p>고객이 먼저 찾아오는 보험 콘텐츠 채널.</p><span class="go">bohumnote.com ↗</span></a>
-<a class="card c4 reveal" href="http://wiki.primeasset.info/"><span class="tag">보험위키</span><span class="big">W</span><h3>보험위키</h3>
-<p>보장·용어·청구 가이드를 정리한 지식 베이스.</p><span class="go">위키 보기 →</span></a>
-<a class="card c5 reveal" href="./"><span class="tag">Gem · NotebookLM · GPT</span><span class="big">✦</span><h3>AI 어시스턴트</h3>
-<p>상담연습·질병화법·고지의무 판독까지 대화로.</p><span class="go">자세히 →</span></a>
-<a class="card c6 reveal" href="./"><span class="tag">영업지원 사이트</span><span class="big">↗</span><h3>영업지원 사이트 모음</h3>
-<p>카페·교육·공시 등 자주 쓰는 사이트를 한곳에.</p><span class="go">사이트 모음 →</span></a>
-<a class="card c7 reveal" href="members/"><span class="tag">회원 전용</span><span class="big">🔒</span><h3>설계사 인트라넷</h3>
-<p>승인된 회원은 모든 도구를 바로 실행. 자료실·공지·교육까지.</p><span class="go">인트라넷 입장 →</span></a>
-</div></div></section>
-
-<section class="sec" style="padding-top:0"><div class="shell"><div class="reveal"><div class="eyebrow">How It Works</div>
-<h2>배우고, 영업하고,<br>성장하는 흐름.</h2></div>
-<div class="rows">
-<div class="row reveal" style="--accent:#00e5ff"><div><span class="num">01 · 배우기</span><h3>모르는 건 바로 묻고, 바로 배운다</h3>
-<p>보험위키와 NotebookLM 답변기로 약관·수술·고지의무를 즉시 확인합니다.</p><a class="btn btn-ghost btn-sm" href="http://wiki.primeasset.info/">보험위키 →</a></div>
-<div class="mock"><div class="top"><i></i><i></i><i></i></div><div class="body"><div class="bubble me">갑상선암 수술, 몇 종 수술인가요?</div>
-<div class="bubble">약관 기준으로 정리해 드릴게요. 회사별 분류표를 함께 확인하세요 …</div><div class="bubble me">고지의무 대상인지도 알려줘</div><div class="bubble">가입하려는 상품의 고지 질문 기준으로 확인해 드릴게요 …</div></div></div></div>
-<div class="row reveal" style="--accent:#ff2e93"><div><span class="num">02 · 영업하기</span><h3>계산·분석·비교를 몇 초 만에</h3>
-<p>수당계산기, 상품분석기, 보상답변기로 상담 준비 시간을 줄입니다.</p><a class="btn btn-ghost btn-sm" href="./">도구 쇼룸 →</a></div>
-<div class="mock"><div class="top"><i></i><i></i><i></i></div><div class="body"><div class="bar" style="--w:88%"></div><div class="bar" style="--w:64%"></div><div class="bar" style="--w:76%"></div><div class="bar" style="--w:42%"></div>
-<div class="kpis"><div><b>A안</b>예시</div><div><b>B안</b>예시</div><div><b>C안</b>예시</div></div></div></div></div>
-<div class="row reveal" style="--accent:#ffd60a"><div><span class="num">03 · 성장하기</span><h3>숫자로 보는 성장, 함께 가는 조직</h3>
-<p>188 실적보드와 영업지원시스템으로 목표와 성과를 한눈에 봅니다.</p><a class="btn btn-ghost btn-sm" href="https://188.primeasset.info/" target="_blank" rel="noopener">188 시스템 ↗</a></div>
-<div class="mock"><div class="top"><i></i><i></i><i></i></div><div class="body"><div class="kpis"><div><b>19</b>본부</div><div><b>1,100+</b>설계사</div><div><b>20+</b>AI 도구</div></div>
-<div class="bar" style="--w:95%"></div><div class="bar" style="--w:70%"></div><div class="bar" style="--w:55%"></div></div></div></div>
-</div></div></section>
-
-<section class="sec" style="padding:0"><div class="shell reveal"><div class="eyebrow">Showroom</div><h2>도구 쇼룸</h2><p class="desc">옆으로 밀어서 둘러보세요. 실제 사용은 회원 전용입니다.</p></div>
-<div class="show">{show_html}</div></section>
-
-<section class="sec"><div class="shell"><div class="reveal"><div class="eyebrow">Premium in Numbers</div><h2>숫자로 보는 프리미엄</h2></div>
+<!-- 2. 소개 (예전 /about 일부) -->
+<section class="sec" id="about"><div class="shell"><div class="reveal"><div class="eyebrow">About Premium</div>
+<h2>프라임에셋 프리미엄사업부</h2><p class="desc">김상현 이사가 이끄는 프리미엄사업부는 19개 본부, 1,100명 이상의 설계사가 함께합니다. (소개 문구 준비 중)</p></div>
 <div class="stats"><div class="stat reveal"><b>19</b><span>함께하는 본부</span><small>19개 본부</small></div>
 <div class="stat reveal"><b>1,100+</b><span>소속 설계사</span><small>1,100명 이상</small></div>
 <div class="stat reveal"><b>20+</b><span>AI 영업도구</span><small>AI 도구 20개 이상 · GAS · Gem · NotebookLM · GPT</small></div>
 <div class="stat reveal"><b>4</b><span>서비스 채널</span><small>도구·시스템·보험노트·위키</small></div></div>
-<p class="stats-asof">2026년 10월 기준</p>
-<div class="cta reveal" style="margin-top:80px"><h2>다음 성장은<br>프리미엄에서.</h2><p>합류 상담은 김상현 이사가 직접 안내합니다.</p>
-<div class="acts" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn-w" href="./">합류 상담 신청 ↗</a><a class="btn btn-ghost" href="./">프리미엄 소개 →</a></div></div>
+<p class="stats-asof">2026년 10월 기준</p></div></section>
+
+<!-- 3·4. 도구 간단 소개 + 보험위키·자주 쓰는 링크 (도구는 비로그인 시 회원가입으로) -->
+<section class="sec" id="services"><div class="shell"><div class="reveal"><div class="eyebrow">Tools &amp; Links</div>
+<h2>영업에 필요한 도구와 링크</h2><p class="desc">도구는 회원 전용입니다. 누르면 회원가입·로그인 화면으로 이동합니다.</p></div>
+<div class="bento">
+<a class="card c1 reveal" href="members/#signup" data-tool><span class="tag">AI 영업도구 · GAS</span><span class="big">AI</span><h3>AI 영업도구</h3>
+<p>수당 계산, 상품 분석, 전산·보상 답변 등 현장에서 쓰는 도구.</p><div class="toolrow">{toolrow}</div><span class="go">회원가입하고 사용 →</span></a>
+<a class="card c5 reveal" href="members/#signup" data-tool><span class="tag">Gem · NotebookLM · GPT</span><span class="big">✦</span><h3>AI 어시스턴트</h3>
+<p>상담연습·질병화법·고지의무 판독까지 대화로.</p><span class="go">회원가입하고 사용 →</span></a>
+<a class="card c4 reveal" href="http://wiki.primeasset.info/"><span class="tag">보험위키</span><span class="big">W</span><h3>보험위키</h3>
+<p>보장·용어·청구 가이드를 정리한 지식 베이스.</p><span class="go">wiki.primeasset.info →</span></a>
+<a class="card c3 reveal" href="https://bohumnote.com/" target="_blank" rel="noopener"><span class="tag">자주 쓰는 링크</span><span class="big">✍</span><h3>보험노트</h3>
+<p>보험 콘텐츠 채널.</p><span class="go">bohumnote.com ↗</span></a>
+<a class="card c2 reveal" href="https://188.primeasset.info/" target="_blank" rel="noopener"><span class="tag">자주 쓰는 링크</span><span class="big">188</span><h3>188 영업지원시스템</h3>
+<p>운영 기준·실적보드·시스템 안내.</p><span class="go">188.primeasset.info ↗</span></a>
+<a class="card c6 reveal" href="members/#signup" data-tool><span class="tag">자주 쓰는 링크</span><span class="big">↗</span><h3>영업지원 사이트 모음</h3>
+<p>카페·교육·공시 등 (회원 전용, 링크 정리 중).</p><span class="go">회원가입하고 보기 →</span></a>
+</div></div></section>
+
+<!-- 5. 함께하는 본부 (번호만 공개. 주소는 관리자 모드 '본부'에서 추가) -->
+<section class="sec" id="branches"><div class="shell"><div class="reveal"><div class="eyebrow">Branches</div>
+<h2>함께하는 본부</h2><p class="desc">본부를 누르면 해당 본부 페이지로 이동합니다.</p></div>
+<div class="branches reveal" id="branch-list">{branch_html}</div>
+<p class="stats-asof">2026년 10월 기준 · 19개 본부</p></div></section>
+
+<!-- 6. 회원가입·문의 연락처 -->
+<section class="sec" id="contact"><div class="shell">
+<div class="cta reveal"><h2>회원가입 · 문의</h2><p>담당: 본부장 김상현 · 전화: <a href="tel:010-8714-9262" style="color:inherit;font-weight:800">010-8714-9262</a></p>
+<div class="acts" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a class="btn btn-w" href="members/#signup">회원가입 ↗</a><a class="btn btn-ghost" href="members/#login">로그인 →</a></div></div>
 </div></section>
 </main>
 <footer><div class="shell"><a class="wordmark" href="./"><span class="mark">PA</span>프라임에셋 프리미엄</a>
-<p>회사·사업자 정보(준비 중) · 연락처(준비 중) · <a href="privacy/">개인정보처리방침</a> · <a href="members/">설계사 로그인</a></p></div></footer>
-<div class="sticky"><a class="btn btn-ghost" href="#">전화(준비 중)</a><a class="btn btn-hot" href="./">상담 신청</a></div>
-<script>{JS}</script></body></html>"""
+<p><small><a href="privacy/">개인정보처리방침</a></small></p></div></footer>
+<div class="sticky"><a class="btn btn-ghost" href="tel:010-8714-9262">전화 문의</a><a class="btn btn-hot" href="members/#signup">회원가입</a></div>
+<script>{JS}</script><script src="assets/vendor/supabase-2.118.0.js"></script><script src="assets/auth-config.js?v=1"></script><script src="assets/branches.js?v=1"></script></body></html>"""

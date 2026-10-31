@@ -104,6 +104,9 @@ section.sec{padding:clamp(80px,10vw,140px) 0}
 .show h4{font-size:22px;margin:0 0 6px}.show p{margin:0;color:var(--ink2);font-size:14px}
 .show small{display:inline-block;margin-top:12px;font-weight:800;font-size:12px;padding:5px 10px;border-radius:999px;background:rgba(0,0,0,.35)}
 /* stats + cta */
+.branches{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:28px}
+.br{display:block;padding:16px;border-radius:16px;background:var(--bg2);border:1px solid var(--line);color:var(--ink);text-decoration:none;text-align:center}
+.br b{display:block;font-size:22px}.br small{display:block;color:var(--mute);font-size:12px}.br.off{opacity:.6}
 .stats-asof{margin:14px 0 0;text-align:right;font-size:13px;color:var(--mute)}
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px}
 .stat{padding:28px;border-radius:22px;background:var(--bg2);border:1px solid var(--line)}

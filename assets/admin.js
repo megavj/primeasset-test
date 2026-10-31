@@ -23,18 +23,18 @@
   const fmt = (t) => t ? new Date(t).toLocaleString("ko-KR") : "";
 
   async function load() {
-    const [g, m, r, p] = await Promise.all([
+    const [g, m, r, p, b] = await Promise.all([
       sb.from("grades").select("*").order("sort"),
       sb.from("members").select("*").order("created_at", { ascending: false }),
       sb.from("resources").select("*").order("kind").order("category").order("sort"),
-      sb.from("grade_permissions").select("*")]);
-    S.grades = g.data || []; S.members = m.data || []; S.resources = r.data || [];
+      sb.from("grade_permissions").select("*"), sb.from("branches").select("*").order("sort")]);
+    S.branches = (b && b.data) || []; S.grades = g.data || []; S.members = m.data || []; S.resources = r.data || [];
     S.perms = new Set((p.data || []).map(x => x.grade_id + ":" + x.resource_id));
     render();
   }
 
   const TABS = [["pending", "대기 회원"], ["members", "회원 목록"], ["admins", "관리자"], ["grades", "등급 관리"],
-                ["matrix", "권한 체크표"], ["resources", "페이지·도구"], ["audit", "변경 기록"], ["backup", "백업"]];
+                ["branches", "본부"], ["matrix", "권한 체크표"], ["resources", "페이지·도구"], ["audit", "변경 기록"], ["backup", "백업"]];
   let tab = "pending";
   function render() {
     const nav = el("div", { class: "pa-tabs" }, ...TABS.map(([k, t]) => el("button", { class: "pa-tab" + (k === tab ? " on" : ""), onclick: () => { tab = k; render(); } },
@@ -45,6 +45,22 @@
     el("thead", {}, el("tr", {}, ...heads.map(h => el("th", {}, h)))), el("tbody", {}, ...rows)));
 
   const VIEWS = {
+    branches() {
+      const no = el("input", { class: "pa-in pa-sm", placeholder: "본부 번호 (예: 227)" }), url = el("input", { class: "pa-in", placeholder: "본부 페이지 주소 (https://…, 비우면 '연결 준비 중')" });
+      const add = el("div", { class: "pa-row" }, no, url, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: () =>
+        run(sb.from("branches").upsert({ no: no.value.trim(), url: url.value.trim() || null, sort: (S.branches.length + 1) * 10 }), "저장했습니다") }, "추가·저장"));
+      return el("div", {}, el("p", { class: "pa-note" }, "메인 '함께하는 본부'에 번호만 보입니다. 주소를 넣으면 누를 때 그 페이지로 이동합니다. 이름·전화는 넣지 않습니다."), add,
+        table(["번호", "주소", "순서", "메인 표시", ""], S.branches.map(x => {
+          const u = el("input", { class: "pa-in pa-sm", value: x.url || "", placeholder: "연결 준비 중" });
+          u.addEventListener("change", () => run(sb.from("branches").update({ url: u.value.trim() || null, updated_at: new Date().toISOString() }).eq("no", x.no), "주소 저장"));
+          const o = el("input", { class: "pa-in pa-xs", value: String(x.sort) });
+          o.addEventListener("change", () => run(sb.from("branches").update({ sort: +o.value || 0 }).eq("no", x.no), "순서 저장"));
+          const v = el("input", { type: "checkbox", checked: x.visible });
+          v.addEventListener("change", () => run(sb.from("branches").update({ visible: v.checked }).eq("no", x.no), "표시 변경"));
+          return el("tr", {}, el("td", {}, x.no + "본부"), el("td", {}, u), el("td", {}, o), el("td", { class: "c" }, v),
+            el("td", {}, el("button", { class: "pa-mini", onclick: () => confirm(x.no + "본부를 목록에서 지울까요?") && run(sb.from("branches").delete().eq("no", x.no), "삭제했습니다") }, "삭제")));
+        })));
+    },
     pending() {
       const list = S.members.filter(m => m.status === "pending");
       if (!list.length) return el("p", { class: "pa-note" }, "대기 중인 회원이 없습니다.");
