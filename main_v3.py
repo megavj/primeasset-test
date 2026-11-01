@@ -50,7 +50,7 @@ def render(MENU):
             "<div class='wf-grid'>" + "".join(f"<div class='wf-item'><b>{a}</b><small>{c}</small></div>" for a, c in NUMS) + "</div>", "numbers")
         + b(next(n), "왜 우리인가", "일하는 방식·방향과 목표를 혜택 4개로 합침. 경력자용(수수료·제도) 먼저, 신입용(교육·AI 도구) 다음.",
             "".join(f"<div class='wf-item' style='margin:6px 0'><small>{who}에게</small><b>{t}</b><p>{d}</p></div>" for who, t, d in WHY)
-            + "<p><a href='story/'>방향과 목표 10개 · 일하는 방식 원문 보기 →</a></p>" + join_btn("합류 문의하기"), "why")
+            + "<p><a href='story/'>소개·숫자 더 보기 · 방향과 목표 10개 · 일하는 방식 원문 →</a></p>" + join_btn("합류 문의하기"), "why")
         + b(next(n), "도구 소개", "대표 4개 + 전부 보기(누르면 펼침). 누르면 회원가입.",
             "<div class='wf-grid'>" + "".join(tools[:4]) + "</div>"
             "<details class='faq'><summary>전부 보기 (AI 도구 9개 · 교육·정보 채널 6개)</summary><div class='wf-grid'>" + "".join(tools[4:]) + "</div></details>", "tools")
@@ -68,9 +68,12 @@ def render(MENU):
     )
     main = theme.frame(frm["path"], frm["title"], MENU, body, head_extra=SMALL_TOP, **{k: v for k, v in frm["kw"].items() if k != "head_extra"})
     # /story/ : 전체 연혁 + 방향과 목표 + 일하는 방식 원문
-    sb = (b(2, "성장 스토리 (전체 연혁)", "2017.03~2026.04 연혁 26개.", "<ul>" + "".join(f"<li><b>{d}</b> {t}</li>" for d, t in tl) + "</ul>", "history")
-          + b(3, "방향과 목표", "10개.", parts["방향과 목표"][len("<h3>방향과 목표</h3>"):], "goals")
-          + b(4, "우리는 이렇게 일해요", "설계사의 하루(기존 사이트 글 요약).", parts["우리는 이렇게 일해요"][len("<h3>우리는 이렇게 일해요</h3>"):], "work")
-          + b(5, "합류 문의", "카카오 오픈채팅 새 창 · 전화.", join_btn() + f"<p>전화 <a href='tel:{TEL}'>{TEL}</a></p>", "contact"))
+    intro = re.split(r"(?=<h3>)", S["about"][2])[0]
+    sb = (b(2, "소개 · 숫자 더 보기", "사업부 소개 원문과 공개 숫자 전체(성장률·188본부 순위 포함, 마감된 기간 기준).",
+            intro + parts["큰 숫자"][len("<h3>큰 숫자</h3>"):] + parts["김상현 이사 소개"][len("<h3>김상현 이사 소개</h3>"):] + parts["프라임에셋은요"][len("<h3>프라임에셋은요</h3>"):], "about")
+          + b(3, "성장 스토리 (전체 연혁)", "2017.03~2026.04 연혁 26개.", "<ul>" + "".join(f"<li><b>{d}</b> {t}</li>" for d, t in tl) + "</ul>", "history")
+          + b(4, "방향과 목표", "10개.", parts["방향과 목표"][len("<h3>방향과 목표</h3>"):], "goals")
+          + b(5, "우리는 이렇게 일해요", "설계사의 하루(기존 사이트 글 요약).", parts["우리는 이렇게 일해요"][len("<h3>우리는 이렇게 일해요</h3>"):], "work")
+          + b(6, "합류 문의", "카카오 오픈채팅 새 창 · 전화.", join_btn() + f"<p>전화 <a href='tel:{TEL}'>{TEL}</a></p>", "contact"))
     story = theme.frame("story/", "성장 스토리 · 방향과 목표 — 프라임에셋 프리미엄", MENU, sb, head_extra=SMALL_TOP)
     return main, story
