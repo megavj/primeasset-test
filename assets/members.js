@@ -98,7 +98,8 @@
                   : el("p", { class: "pa-note" }, "🔒 승인 후 열립니다."));
     const allHead = el("div", { class: "pa-card" }, el("h3", {}, "전체 도구 메뉴"), D("섹션 설명: 분류별 전체 메뉴. 등급 권한이 있으면 열리고, 없으면 🔒 잠금(주소는 내려오지 않음)."), ...cards);
     const news = el("div", { class: "pa-card" }, el("p", { style: "margin:2px 0" }, el("b", {}, "새 소식 "),
-      "사업부 실적보드 2026년 1~9월 반영 (2026-10 미마감)"), ...(banner ? [banner] : []));
+      ""), ...(banner ? [banner] : []));
+    sb.from("site_notice").select("text").eq("id", 1).maybeSingle().then(({ data: n }) => { news.firstChild.append(n && n.text ? n.text : "새 소식이 없습니다."); });
     const q = el("input", { class: "pa-in", type: "search", placeholder: "도구 이름이나 설명으로 찾기 (예: 상품, 수당, 약관)", "aria-label": "도구 검색" });
     const hits = el("ul", { class: "pa-list" });
     q.addEventListener("input", () => {

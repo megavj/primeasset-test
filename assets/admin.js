@@ -33,13 +33,13 @@
     render();
   }
 
-  const TABS = [["pending", "대기 회원"], ["members", "회원 목록"], ["admins", "관리자"], ["grades", "등급 관리"],
+  const TABS = [["notice", "새 소식"], ["pending", "대기 회원"], ["members", "회원 목록"], ["admins", "관리자"], ["grades", "등급 관리"],
                 ["branches", "본부"], ["matrix", "권한 체크표"], ["resources", "페이지·도구"], ["audit", "변경 기록"], ["backup", "백업"]];
-  const TAB_DESC = { pending: "가입 신청 후 승인 대기 중인 회원. 승인·등급 지정·거절.", members: "전체 회원 목록. 등급 변경·정지·해제.",
+  const TAB_DESC = { notice: "인트라넷 맨 위 '새 소식' 한 줄. 관리자만 고칠 수 있고, 고치면 변경 기록에 남습니다.", pending: "가입 신청 후 승인 대기 중인 회원. 승인·등급 지정·거절.", members: "전체 회원 목록. 등급 변경·정지·해제.",
     admins: "관리자 추가·해제(관리자 권한은 등급과 따로).", grades: "등급 이름·순서 관리.", branches: "메인 '함께하는 본부'의 번호·주소·순서·숨김.",
     matrix: "등급별로 어떤 페이지·도구를 열지 체크.", resources: "인트라넷 메뉴(페이지·도구) 이름·분류·주소 관리.", audit: "누가 무엇을 바꿨는지 기록.", backup: "회원 정보 백업 받기(30일 보관)." };
   // HOME-22: 승인 대기(승인 버튼) 맨 위 → 오늘 요약 숫자 → 회원·등급 관리 → 변경 기록 → 설정
-  const GROUPS = [["회원·등급 관리", ["members", "grades", "matrix", "admins"]], ["변경 기록", ["audit"]], ["설정", ["resources", "branches", "backup"]]];
+  const GROUPS = [["회원·등급 관리", ["members", "grades", "matrix", "admins"]], ["변경 기록", ["audit"]], ["설정", ["notice", "resources", "branches", "backup"]]];
   let tab = "members";
   function summary() {
     const c = (f) => S.members.filter(f).length;
@@ -62,6 +62,19 @@
     el("thead", {}, el("tr", {}, ...heads.map(h => el("th", {}, h)))), el("tbody", {}, ...rows)));
 
   const VIEWS = {
+    notice() {
+      const inp = el("input", { class: "pa-in", maxlength: "200", placeholder: "인트라넷 맨 위에 보일 한 줄 (200자 이내)" });
+      const info = el("p", { class: "pa-note" }, "불러오는 중…");
+      sb.from("site_notice").select("*").eq("id", 1).maybeSingle().then(({ data, error }) => {
+        if (error) { info.textContent = "불러오지 못했습니다: " + error.message; return; }
+        inp.value = (data && data.text) || ""; info.textContent = data ? `마지막 수정: ${fmt(data.updated_at)}${data.updated_by ? " · " + data.updated_by : ""}` : "";
+      });
+      return el("div", {}, el("div", { class: "pa-row" }, inp, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: async () => {
+        const t = inp.value.trim(); if (!t) { toast("내용을 입력해 주세요.", true); return; }
+        const me = (await sb.auth.getUser()).data.user;
+        if (await run(sb.from("site_notice").update({ text: t, updated_at: new Date().toISOString(), updated_by: me ? me.email : null }).eq("id", 1), "새 소식을 저장했습니다")) { tab = "notice"; render(); }
+      } }, "저장")), info);
+    },
     branches() {
       const no = el("input", { class: "pa-in pa-sm", placeholder: "본부 번호 (예: 227)" }), url = el("input", { class: "pa-in", placeholder: "본부 페이지 주소 (https://…, 비우면 '연결 준비 중')" });
       const add = el("div", { class: "pa-row" }, no, url, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: () =>
