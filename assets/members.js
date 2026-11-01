@@ -27,7 +27,7 @@
     const email = el("input", { type: "email", placeholder: "이메일 주소", class: "pa-in", autocomplete: "email" });
     const out = el("p", { class: "pa-note" }, note || "");
     const su = location.hash === "#signup";
-    show(el("div", { class: "pa-card" }, el("p", { style: "font-size:18px;font-weight:700;margin:4px 0" }, "가입하면 AI 도구 24개와 실적 자료를 쓸 수 있습니다.")),
+    show(el("div", { class: "pa-card" }, el("p", { style: "font-size:18px;font-weight:700;margin:4px 0" }, "가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.")),
       el("div", { class: "pa-card" }, el("h3", {}, su ? "회원가입 · 로그인" : "로그인"),
         D("섹션 설명: 구글 계정 버튼 하나로 로그인. 처음이면 로그인하는 순간 가입 신청이 됩니다."),
         el("button", { class: "lux-btn lux-btn--gold", onclick: () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: here } }) }, "구글 계정으로 로그인"),
