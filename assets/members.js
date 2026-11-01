@@ -93,14 +93,13 @@
   async function statsCard() {
     const { data, error } = await sb.rpc("members_stats");
     const card = el("div", { class: "pa-card" }, el("h3", {}, "실적 자료 (팜스 합계)"),
-      D("섹션 설명: 프라임에셋 전체·188본부·188계열 실적, 다른 본부 비교, 전환성적. 승인된 회원만 표가 열립니다. 설계사 개인 이름 없음."));
+      D("섹션 설명: 사업부 실적보드(188 사이트 /performance에서 옮김), 프라임에셋 전체·188본부·188계열 실적, 다른 본부 비교, 전환성적. 승인된 회원만 표가 열립니다. 설계사 개인 이름 없음."));
     if (error || !data) { card.append(el("p", { class: "pa-note" }, "자료를 불러오지 못했습니다.")); return card; }
-    if (data[0] && data[0].note) card.append(el("p", { class: "pa-note" }, data[0].note));
     for (const r of data) {
       if (!r.unlocked) { card.append(el("div", { class: "pa-card pa-locked" }, el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.title))); continue; }
       const t = el("table", { class: "pa-table" }, el("thead", {}, el("tr", {}, ...r.cols.map(c => el("th", {}, c)))),
         el("tbody", {}, ...r.rows.map(row => el("tr", {}, ...row.map(v => el("td", {}, fmt(v)))))));
-      card.append(el("details", { class: "pa-card" }, el("summary", {}, r.title + ` (${r.rows.length}줄)`), el("div", { class: "pa-scroll" }, t)));
+      card.append(el("details", { class: "pa-card" }, el("summary", {}, r.title + ` (${r.rows.length}줄)`), r.note ? el("p", { class: "pa-note" }, r.note) : null, el("div", { class: "pa-scroll" }, t)));
     }
     return card;
   }
