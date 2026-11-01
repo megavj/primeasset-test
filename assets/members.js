@@ -26,7 +26,7 @@
     const email = el("input", { type: "email", placeholder: "이메일 주소", class: "pa-in", autocomplete: "email" });
     const out = el("p", { class: "pa-note" }, note || "");
     show(el("div", { class: "pa-card" },
-      el("h3", {}, "설계사 로그인"),
+      el("h3", {}, location.hash === "#signup" ? "회원가입 · 로그인" : "설계사 로그인"),
       el("p", {}, "처음이면 로그인하는 순간 가입 신청이 됩니다. 관리자 승인 후 도구가 보입니다."),
       el("button", { class: "lux-btn lux-btn--gold", onclick: () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: here } }) }, "구글 계정으로 로그인"),
       el("div", { class: "pa-or" }, "또는 이메일 인증"),
@@ -57,31 +57,41 @@
 
   const logoutBtn = () => el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm pa-logout", onclick: async () => { await sb.auth.signOut(); boot(); } }, "로그아웃");
 
-  async function toolsView(p) {
-    const { data, error } = await sb.rpc("my_resources");
+  // 인트라넷: 전체 메뉴 이름은 보이고, 권한 없는 항목은 🔒 잠금(주소는 서버가 아예 안 내려줌)
+  async function intranetView(p, banner) {
+    const { data, error } = await sb.rpc("my_menu");
     if (error) { show(msg("목록을 불러오지 못했습니다", error.message), logoutBtn()); return; }
     const groups = {};
     for (const r of data) (groups[r.category] = groups[r.category] || []).push(r);
+    const open = data.filter(r => r.unlocked).length;
     const head = el("div", { class: "pa-card pa-me" },
-      el("b", {}, `${p.name || p.email}`), ` · ${p.grade || ""}${p.is_admin ? " · 관리자" : ""}`,
+      el("b", {}, `${p.name || p.email}`), ` · ${p.grade || ""}${p.is_admin ? " · 관리자" : ""} · 열린 메뉴 ${open}/${data.length}`,
       p.is_admin ? el("a", { class: "lux-btn lux-btn--gold lux-btn--sm", href: "admin/" }, "관리자 화면") : null, logoutBtn());
+    const links = el("div", { class: "pa-card" }, el("h3", {}, "바로가기"), el("ul", { class: "pa-list" },
+      el("li", {}, el("a", { href: "http://wiki.primeasset.info/", target: "_blank", rel: "noopener" }, "보험위키"), el("small", {}, " — 보장·용어·청구 가이드")),
+      el("li", {}, el("a", { href: "https://188.primeasset.info/", target: "_blank", rel: "noopener" }, "188 영업지원시스템")),
+      el("li", {}, el("a", { href: "https://bohumnote.com/", target: "_blank", rel: "noopener" }, "보험노트"))));
     const cards = Object.entries(groups).map(([cat, rs]) => el("div", { class: "pa-card" }, el("h3", {}, cat),
-      el("ul", { class: "pa-list" }, ...rs.map(r => el("li", {},
-        r.url ? el("a", { href: r.url, target: "_blank", rel: "noopener noreferrer" }, r.name) : el("span", {}, r.name + " (준비 중)"),
+      el("ul", { class: "pa-list" }, ...rs.map(r => el("li", { class: r.unlocked ? "" : "pa-locked" },
+        r.unlocked ? (r.url ? el("a", { href: r.url, target: "_blank", rel: "noopener noreferrer" }, r.name) : el("span", {}, r.name + " (준비 중)"))
+                   : el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.name),
         r.description ? el("small", {}, " — " + r.description) : null)))));
-    show(head, ...(cards.length ? cards : [msg("아직 열린 메뉴가 없습니다", "관리자에게 권한을 요청해 주세요.")]));
+    show(...(banner ? [banner] : []), head, links, ...cards);
   }
 
+  let logged = false;
   async function boot() {
     const { data: { session } } = await sb.auth.getSession();
-    if (!session) return loginView();
+    if (!session) return loginView(location.hash === "#signup" ? "처음 오셨나요? 구글 계정이나 이메일로 로그인하면 바로 가입 신청이 됩니다." : "");
+    if (!logged) { logged = true; sb.rpc("record_login", { p_method: (session.user.app_metadata || {}).provider || "", p_agent: navigator.userAgent }); }
+    if (location.hash) history.replaceState(null, "", location.pathname);
     const { data, error } = await sb.rpc("my_profile");
     const p = data && data[0];
     if (error || !p) return show(msg("회원 정보를 확인하지 못했습니다", error ? error.message : "잠시 후 다시 시도해 주세요."), logoutBtn());
     if (!p.profile_done) return profileView(p);
-    if (p.status === "pending") return show(msg("승인 대기 중입니다", "관리자가 확인 후 등급을 정해 드립니다. 승인되면 이 화면에 도구가 나타납니다."), logoutBtn());
     if (p.status === "suspended") return show(msg("이용이 정지된 계정입니다", "문의는 관리자에게 해 주세요."), logoutBtn());
-    return toolsView(p);
+    if (p.status === "pending") return intranetView(p, msg("승인 대기 중입니다", "인트라넷을 둘러보실 수 있지만 🔒 표시 메뉴는 관리자 승인 후 열립니다."));
+    return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("Guest 등급입니다", "🔒 표시 메뉴는 등급이 정해지면 열립니다.") : null);
   }
   sb.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" || ev === "SIGNED_OUT") boot(); });
   boot();
