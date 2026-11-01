@@ -1,1 +1,1 @@
-window.PA_AUTH = { url: "", anonKey: "" };
+window.PA_AUTH = { url: "https://ztypllzgjivutzorhayz.supabase.co", anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0eXBsbHpnaml2dXR6b3JoYXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0NjYwMjYsImV4cCI6MjEwOTA0MjAyNn0.DHxtA3bhP7uE8iseTwZpS4La8PQljic3OvY00iQI2fs" };
