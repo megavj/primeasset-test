@@ -38,12 +38,26 @@
   const TAB_DESC = { pending: "가입 신청 후 승인 대기 중인 회원. 승인·등급 지정·거절.", members: "전체 회원 목록. 등급 변경·정지·해제.",
     admins: "관리자 추가·해제(관리자 권한은 등급과 따로).", grades: "등급 이름·순서 관리.", branches: "메인 '함께하는 본부'의 번호·주소·순서·숨김.",
     matrix: "등급별로 어떤 페이지·도구를 열지 체크.", resources: "인트라넷 메뉴(페이지·도구) 이름·분류·주소 관리.", audit: "누가 무엇을 바꿨는지 기록.", backup: "회원 정보 백업 받기(30일 보관)." };
-  let tab = "pending";
+  // HOME-21 안3: 오늘 요약 + 4묶음(회원·권한·사이트·기록·보관)
+  const GROUPS = [["회원", ["pending", "members", "admins"]], ["권한", ["grades", "matrix", "resources"]], ["사이트", ["branches"]], ["기록·보관", ["audit", "backup"]]];
+  let tab = "pending", recent = null;
+  function summary() {
+    const box = el("div", { class: "pa-card" }, el("h3", {}, "오늘 요약"), el("p", { class: "wf-desc" }, "섹션 설명: 대기 회원 수, 전체 회원 수, 최근 변경 3건."),
+      el("p", {}, `대기 회원 ${S.members.filter(m => m.status === "pending").length}명 · 전체 회원 ${S.members.length}명 · 관리자 ${S.members.filter(m => m.is_admin).length}명`));
+    const ul = el("ul", { class: "pa-list" }, el("li", {}, "최근 변경 불러오는 중…")); box.append(ul);
+    const fill = (rows) => ul.replaceChildren(...(rows.length ? rows.map(r => el("li", {}, `${fmt(r.at)} · ${r.actor_email || ""} · ${r.target_table || ""} ${r.action || ""}`)) : [el("li", {}, "최근 변경 없음")]));
+    if (recent) fill(recent); else sb.from("audit_log").select("*").order("id", { ascending: false }).limit(3).then(({ data }) => { recent = data || []; fill(recent); });
+    return box;
+  }
   function render() {
-    const nav = el("div", { class: "pa-tabs" }, ...TABS.map(([k, t]) => el("button", { class: "pa-tab" + (k === tab ? " on" : ""), onclick: () => { tab = k; render(); } },
-      t + (k === "pending" ? ` (${S.members.filter(m => m.status === "pending").length})` : ""))));
+    const g = GROUPS.find(x => x[1].includes(tab));
+    const gnav = el("div", { class: "pa-tabs" }, ...GROUPS.map(([gn, ks]) => el("button", { class: "pa-tab" + (g[0] === gn ? " on" : ""), onclick: () => { tab = ks[0]; render(); } },
+      "[묶음] " + gn + (gn === "회원" ? ` (대기 ${S.members.filter(m => m.status === "pending").length})` : ""))));
+    const sub = el("div", { class: "pa-tabs" }, ...g[1].map(k => el("button", { class: "pa-tab" + (k === tab ? " on" : ""), onclick: () => { tab = k; render(); } },
+      (TABS.find(x => x[0] === k) || [, k])[1])));
     const name = (TABS.find(x => x[0] === tab) || [, ""])[1];
-    show(nav, el("div", { class: "pa-card" }, el("h3", {}, name), el("p", { class: "wf-desc" }, "섹션 설명: " + (TAB_DESC[tab] || "")), VIEWS[tab]()));
+    show(summary(), gnav, el("div", { class: "pa-card" }, el("h3", {}, `[묶음] ${g[0]}`), sub,
+      el("div", { class: "pa-card" }, el("h3", {}, name), el("p", { class: "wf-desc" }, "섹션 설명: " + (TAB_DESC[tab] || "")), VIEWS[tab]())));
   }
   const table = (heads, rows) => el("div", { class: "pa-scroll" }, el("table", { class: "pa-table" },
     el("thead", {}, el("tr", {}, ...heads.map(h => el("th", {}, h)))), el("tbody", {}, ...rows)));

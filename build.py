@@ -64,6 +64,7 @@ for p in REMOVED:
         '<script>location.replace("../"+location.hash)</script></head><body><a href="../">메인으로 이동</a></body></html>')
 import home
 open(f"{OUT}/assets/home.css", "w").write(home.CSS)
-open(f"{OUT}/index.html", "w").write(home.home(MENU))
+import main_a  # HOME-21: 메인은 안1 순서
+open(f"{OUT}/index.html", "w").write(main_a.render(MENU))
 open(f"{OUT}/README.md", "w").write("# primeasset-test\n프라임에셋 프리미엄 홈페이지 개편 테스트페이지 (test.primeasset.info 예정). 정식 사이트 아님. 전체 noindex.\n생성기: build.py (HOME-04, 샘알트만)\n")
 print("ok", len(PAGES))
