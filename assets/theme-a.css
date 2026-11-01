@@ -1,0 +1,34 @@
+/* HOME-31 실제 페이지 A안(밝은 신뢰형) — design.py A안 + 설명 15px + 휴대폰 메뉴 */
+
+.wf-tag{display:none}
+body{font-size:16px;line-height:1.7}
+.wrap{max-width:1040px;padding:0 20px}
+.wf,.pa-card{padding:28px 30px;margin:20px 0}
+.wf-name,.pa-card h3{font-size:22px;letter-spacing:-.01em;margin:0 0 8px}
+#hero p[style]{font-size:32px!important;line-height:1.35;letter-spacing:-.02em}
+.wf-desc,.pa-card>p.wf-desc{font-size:15px!important;font-weight:400!important}
+.wf-bar .wf-btns a,.wf-bar nav a{padding:8px 14px;font-size:14px}
+#numbers .wf-item b{font-size:22px;margin-bottom:4px;word-break:keep-all}
+.wf-grid{gap:12px}.wf-item,.pa-list li{padding:16px 18px}
+.wf-btns.big a{display:inline-block}
+@media (max-width:600px){.wf,.pa-card{padding:18px 16px;margin:12px 0}#hero p[style]{font-size:25px!important}.wf-btns.big a{display:block;text-align:center}}
+
+:root{--bg:#ffffff;--bg-2:#f5f7fb;--bg-3:#e8edf6;--ink:#111827;--ink-2:#374151;--mute:#4b5563;--line:#dbe2ee;--line-soft:#e5eaf2;--gold:#1e3a8a;--btn:#1e3a8a;
+--font:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+a{color:#1e3a8a}
+.wf,.pa-card{background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 1px 3px rgba(17,24,39,.06)}
+.wf-item,.br,.pa-list li,.pa-card .pa-card,details.faq{border-radius:8px;border-color:var(--line)}
+#hero{background:#1e3a8a;border-color:#1e3a8a;color:#fff}#hero p{color:#e0e7ff}
+#hero .wf-btns a.pri{background:#fff;color:#1e3a8a;border-color:#fff}
+#hero .wf-name,#hero .wf-desc{color:#e0e7ff}
+#numbers .wf-item b{color:#1e3a8a}
+.wf-btns a,.lux-btn,.pa-tab,.pa-in{border-radius:6px}
+.wf-bar nav a,.wf-btns a{border-color:var(--line)}
+
+/* HOME-31 휴대폰 상단 메뉴 한 줄 정리 */
+@media (max-width:600px){
+.wf-bar{gap:8px}.wf-bar .wf-logo{flex:1 0 100%}
+.wf-bar nav,.wf-bar .wf-btns{margin-left:0;flex-wrap:nowrap;gap:4px}
+.wf-bar{flex-wrap:wrap}.wf-bar nav{flex:0 0 auto}
+.wf-bar nav a,.wf-bar .wf-btns a{padding:7px 9px;font-size:13px;white-space:nowrap}
+}
