@@ -27,8 +27,8 @@ a{color:#1e3a8a}
 
 /* HOME-31 휴대폰 상단 메뉴 한 줄 정리 */
 @media (max-width:600px){
-.wf-bar{gap:8px}.wf-bar .wf-logo{flex:1 0 100%}
-.wf-bar nav,.wf-bar .wf-btns{margin-left:0;flex-wrap:nowrap;gap:4px}
+.wf-bar{gap:6px}.wf-bar .wf-logo{flex:1 0 100%}
+.wf-bar nav,.wf-bar .wf-btns{margin-left:0;flex-wrap:nowrap;gap:3px}
 .wf-bar{flex-wrap:wrap}.wf-bar nav{flex:0 0 auto}
-.wf-bar nav a,.wf-bar .wf-btns a{padding:7px 9px;font-size:13px;white-space:nowrap}
+.wf-bar nav a,.wf-bar .wf-btns a{padding:7px 6px;font-size:13px;white-space:nowrap}
 }
