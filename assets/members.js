@@ -12,6 +12,7 @@
   };
   const box = $("#pa-app");
   const show = (...nodes) => { box.replaceChildren(...nodes); };
+  const D = (t) => el("p", { class: "wf-desc" }, t);
   const msg = (t, sub) => el("div", { class: "pa-card" }, el("h3", {}, t), sub ? el("p", {}, sub) : null);
 
   if (!C.url || !C.anonKey || !window.supabase) {
@@ -27,6 +28,7 @@
     const out = el("p", { class: "pa-note" }, note || "");
     show(el("div", { class: "pa-card" },
       el("h3", {}, location.hash === "#signup" ? "회원가입 · 로그인" : "설계사 로그인"),
+      D("섹션 설명: 구글 계정 로그인 버튼과 이메일 인증 메일 받기. 로그인하면 이 화면이 인트라넷으로 바뀜."),
       el("p", {}, "처음이면 로그인하는 순간 가입 신청이 됩니다. 관리자 승인 후 도구가 보입니다."),
       el("button", { class: "lux-btn lux-btn--gold", onclick: () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: here } }) }, "구글 계정으로 로그인"),
       el("div", { class: "pa-or" }, "또는 이메일 인증"),
@@ -46,7 +48,7 @@
     const ok = el("input", { type: "checkbox", id: "pa-consent" });
     const out = el("p", { class: "pa-note" });
     show(el("div", { class: "pa-card" },
-      el("h3", {}, "가입 정보 입력"), el("p", {}, `로그인 계정: ${p.email || ""}`), n, b, ph,
+      el("h3", {}, "가입 정보 입력"), D("섹션 설명: 처음 로그인한 분만 보임. 이름·소속 본부·휴대폰 번호와 [필수] 개인정보 수집 동의 체크."), el("p", {}, `로그인 계정: ${p.email || ""}`), n, b, ph,
       el("label", { class: "pa-consent", for: "pa-consent" }, ok, " [필수] 개인정보 수집·이용에 동의합니다. ",
         el("a", { href: "../privacy/", target: "_blank" }, "개인정보처리방침 보기")),
       el("button", { class: "lux-btn lux-btn--gold", onclick: async () => {
@@ -64,14 +66,14 @@
     const groups = {};
     for (const r of data) (groups[r.category] = groups[r.category] || []).push(r);
     const open = data.filter(r => r.unlocked).length;
-    const head = el("div", { class: "pa-card pa-me" },
+    const head = el("div", { class: "pa-card" }, el("h3", {}, "내 정보"), D("섹션 설명: 이름, 등급, 관리자 여부, 열린 메뉴 수, 관리자 화면 버튼(관리자만), 로그아웃."), el("div", { class: "pa-me" },
       el("b", {}, `${p.name || p.email}`), ` · ${p.grade || ""}${p.is_admin ? " · 관리자" : ""} · 열린 메뉴 ${open}/${data.length}`,
-      p.is_admin ? el("a", { class: "lux-btn lux-btn--gold lux-btn--sm", href: "admin/" }, "관리자 화면") : null, logoutBtn());
-    const links = el("div", { class: "pa-card" }, el("h3", {}, "바로가기"), el("ul", { class: "pa-list" },
+      p.is_admin ? el("a", { class: "lux-btn lux-btn--gold lux-btn--sm", href: "admin/" }, "관리자 화면") : null, logoutBtn()));
+    const links = el("div", { class: "pa-card" }, el("h3", {}, "바로가기"), D("섹션 설명: 보험위키·188 영업지원시스템·보험노트 바로 연결."), el("ul", { class: "pa-list" },
       el("li", {}, el("a", { href: "http://wiki.primeasset.info/", target: "_blank", rel: "noopener" }, "보험위키"), el("small", {}, " — 보장·용어·청구 가이드")),
       el("li", {}, el("a", { href: "https://188.primeasset.info/", target: "_blank", rel: "noopener" }, "188 영업지원시스템")),
       el("li", {}, el("a", { href: "https://bohumnote.com/", target: "_blank", rel: "noopener" }, "보험노트"))));
-    const cards = Object.entries(groups).map(([cat, rs]) => el("div", { class: "pa-card" }, el("h3", {}, cat),
+    const cards = Object.entries(groups).map(([cat, rs]) => el("div", { class: "pa-card" }, el("h3", {}, cat), D("섹션 설명: 이 분류의 도구·링크. 등급 권한이 있으면 열리고, 없으면 🔒 잠금(주소는 내려오지 않음)."),
       el("ul", { class: "pa-list" }, ...rs.map(r => el("li", { class: r.unlocked ? "" : "pa-locked" },
         r.unlocked ? (r.url ? el("a", { href: r.url, target: "_blank", rel: "noopener noreferrer" }, r.name) : el("span", {}, r.name + " (준비 중)"))
                    : el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.name),

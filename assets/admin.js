@@ -35,11 +35,15 @@
 
   const TABS = [["pending", "대기 회원"], ["members", "회원 목록"], ["admins", "관리자"], ["grades", "등급 관리"],
                 ["branches", "본부"], ["matrix", "권한 체크표"], ["resources", "페이지·도구"], ["audit", "변경 기록"], ["backup", "백업"]];
+  const TAB_DESC = { pending: "가입 신청 후 승인 대기 중인 회원. 승인·등급 지정·거절.", members: "전체 회원 목록. 등급 변경·정지·해제.",
+    admins: "관리자 추가·해제(관리자 권한은 등급과 따로).", grades: "등급 이름·순서 관리.", branches: "메인 '함께하는 본부'의 번호·주소·순서·숨김.",
+    matrix: "등급별로 어떤 페이지·도구를 열지 체크.", resources: "인트라넷 메뉴(페이지·도구) 이름·분류·주소 관리.", audit: "누가 무엇을 바꿨는지 기록.", backup: "회원 정보 백업 받기(30일 보관)." };
   let tab = "pending";
   function render() {
     const nav = el("div", { class: "pa-tabs" }, ...TABS.map(([k, t]) => el("button", { class: "pa-tab" + (k === tab ? " on" : ""), onclick: () => { tab = k; render(); } },
       t + (k === "pending" ? ` (${S.members.filter(m => m.status === "pending").length})` : ""))));
-    show(nav, VIEWS[tab]());
+    const name = (TABS.find(x => x[0] === tab) || [, ""])[1];
+    show(nav, el("div", { class: "pa-card" }, el("h3", {}, name), el("p", { class: "wf-desc" }, "섹션 설명: " + (TAB_DESC[tab] || "")), VIEWS[tab]()));
   }
   const table = (heads, rows) => el("div", { class: "pa-scroll" }, el("table", { class: "pa-table" },
     el("thead", {}, el("tr", {}, ...heads.map(h => el("th", {}, h)))), el("tbody", {}, ...rows)));
