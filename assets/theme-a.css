@@ -32,3 +32,7 @@ a{color:#1e3a8a}
 .wf-bar{flex-wrap:wrap}.wf-bar nav{flex:0 0 auto}
 .wf-bar nav a,.wf-bar .wf-btns a{padding:7px 6px;font-size:13px;white-space:nowrap}
 }
+
+/* HOME-32 메뉴·로그인·회원가입 버튼 모서리 통일 (카드와 같은 살짝 둥근 모양) */
+.wf-bar nav a,.wf-bar .wf-btns a,.wf-btns a{border-radius:8px!important}
+.wf,.pa-card{border-radius:10px}
