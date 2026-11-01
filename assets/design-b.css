@@ -1,0 +1,29 @@
+
+.wf-tag{display:none}
+body{font-size:16px;line-height:1.7}
+.wrap{max-width:1040px;padding:0 20px}
+.wf,.pa-card{padding:28px 30px;margin:20px 0}
+.wf-name,.pa-card h3{font-size:22px;letter-spacing:-.01em;margin:0 0 8px}
+#hero p:first-of-type{font-size:30px!important;line-height:1.35;letter-spacing:-.02em}
+#numbers .wf-item b{font-size:24px;margin-bottom:4px}
+.wf-grid{gap:12px}.wf-item,.pa-list li{padding:16px 18px}
+.wf-btns.big a{display:inline-block}
+.design-bar{font-size:13px;padding:8px 12px;text-align:center}
+.design-bar a{margin:0 6px;font-weight:700}
+@media (max-width:600px){.wf,.pa-card{padding:18px 16px;margin:12px 0}#hero p:first-of-type{font-size:24px!important}.wf-btns.big a{display:block;text-align:center}}
+
+:root{--bg:#111315;--bg-2:#1a1d21;--bg-3:#23272c;--ink:#f1ece2;--ink-2:#d9d2c3;--mute:#a9a293;--line:#3a3530;--line-soft:#2c2925;--gold:#d4af5f;--btn:#d4af5f;
+--font:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+body{background:var(--bg);color:var(--ink)}
+a{color:#e2c27a}
+.wf-name,.pa-card h3,#hero p:first-of-type,#numbers .wf-item b{font-family:"Nanum Myeongjo","AppleMyungjo","Batang",serif;font-weight:700}
+.wf,.pa-card{background:var(--bg-2);border:1px solid var(--line);border-top:2px solid #d4af5f;border-radius:2px}
+.wf-item,.br,.pa-list li,.pa-card .pa-card,details.faq,.pa-scroll,.pa-in,.pa-tab,.wf-bar nav a,.wf-btns a,.lux-btn,.pa-mini{background:var(--bg-3);color:var(--ink);border-color:var(--line)}
+.wf-item small,.br small,.pa-note,.wf-desc,.pa-card p.wf-desc{color:var(--mute)}
+.pa-card p{color:var(--ink-2)}
+.wf-logo,.wf-item,.br,.pa-list a{color:var(--ink)}
+.wf-btns a.pri,.lux-btn--gold,.pa-tab.on,.wf-bar nav a.on{background:#d4af5f;color:#111315;border-color:#d4af5f}
+#numbers .wf-item b{color:#e2c27a}
+.pa-table th,.pa-table td{border-color:var(--line);color:var(--ink)}
+.pa-toast{background:#d4af5f;color:#111315}
+.design-bar{background:#23272c;color:#f1ece2}

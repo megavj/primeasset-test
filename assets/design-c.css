@@ -1,0 +1,26 @@
+
+.wf-tag{display:none}
+body{font-size:16px;line-height:1.7}
+.wrap{max-width:1040px;padding:0 20px}
+.wf,.pa-card{padding:28px 30px;margin:20px 0}
+.wf-name,.pa-card h3{font-size:22px;letter-spacing:-.01em;margin:0 0 8px}
+#hero p:first-of-type{font-size:30px!important;line-height:1.35;letter-spacing:-.02em}
+#numbers .wf-item b{font-size:24px;margin-bottom:4px}
+.wf-grid{gap:12px}.wf-item,.pa-list li{padding:16px 18px}
+.wf-btns.big a{display:inline-block}
+.design-bar{font-size:13px;padding:8px 12px;text-align:center}
+.design-bar a{margin:0 6px;font-weight:700}
+@media (max-width:600px){.wf,.pa-card{padding:18px 16px;margin:12px 0}#hero p:first-of-type{font-size:24px!important}.wf-btns.big a{display:block;text-align:center}}
+
+:root{--bg:#fbf6ee;--bg-2:#fffaf2;--bg-3:#f4e9d8;--ink:#2b2118;--ink-2:#4a3b2c;--mute:#6f5f4d;--line:#ead9c0;--line-soft:#f0e3cf;--gold:#c2410c;--btn:#c2410c;
+--font:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+body{background:var(--bg)}
+a{color:#b4380a}
+.wf,.pa-card{background:var(--bg-2);border:1px solid var(--line);border-radius:18px}
+.wf-item,.br,.pa-list li,.pa-card .pa-card,details.faq{background:#fff;border-radius:14px;border-color:var(--line)}
+.wf-btns a,.lux-btn,.pa-tab,.wf-bar nav a{border-radius:999px}
+.pa-in{border-radius:12px}
+#hero{background:#fde9d4;border-color:#f6cfa6}
+#numbers .wf-item b{color:#c2410c}
+.wf-btns a.pri,.lux-btn--gold,.pa-tab.on,.wf-bar nav a.on{background:#c2410c;border-color:#c2410c;color:#fff}
+.design-bar{background:#f4e9d8;color:#2b2118}
