@@ -1,6 +1,6 @@
 /* PAGE 7 · 오류 복구 화면 전용. glass.css의 색·간격 토큰을 재사용.
    offline.html에도 같은 내용을 인라인 포함: 네트워크 없이 완전히 표시해야 한다. */
-:root{color-scheme:dark;--bg-0:#070a12;--bg-1:#0c111c;--bg-2:#131a29;--text:#f2eee6;--text-2:#aab4c4;--text-3:#8a96a9;--gold:#d6b97e;--gold-hi:#e3c994;--on-gold:#15110a;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.16);--font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+:root{color-scheme:dark;--bg-0:#070a12;--bg-1:#0c111c;--bg-2:#131a29;--text:#f2eee6;--text-2:#bec8d7;--text-3:#adb9ca;--gold:#d6b97e;--gold-hi:#e3c994;--on-gold:#15110a;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.16);--font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
 *{box-sizing:border-box}
 html{background:var(--bg-0);-webkit-text-size-adjust:100%}
 body.recovery{margin:0;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;background:var(--bg-0);color:var(--text);font-family:var(--font);font-size:1.0625rem;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased}

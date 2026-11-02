@@ -141,8 +141,8 @@
     const dm = data.find(r => r.unlocked && r.key === "division_monthly");
     const tot = dm && dm.rows.find(x => String(x[0]).includes("합계"));
     if (tot) card.append(el("div", { class: "pa-card" }, el("h3", {}, "실적 요약"),
-      el("p", {}, `사업부 2026년 1~9월 합계: 월보험료 ${fmt(tot[1])}천원 · 계약 ${fmt(tot[2])}건 (생명 ${fmt(tot[3])} · 손해 ${fmt(tot[4])}천원)`),
-      el("p", { class: "pa-note" }, "아래 표를 누르면 펼쳐집니다. 2026-10은 미마감.")));
+      el("p", {}, `사업부 ${tot[0]}: 월보험료 ${fmt(tot[1])}천원 · 계약 ${fmt(tot[2])}건${dm.cols.length === 5 ? ` (생명 ${fmt(tot[3])} · 손해 ${fmt(tot[4])}천원)` : ""}`),
+      el("p", { class: "pa-note" }, "아래 표를 누르면 펼쳐집니다. 기간·출처는 각 표의 제목과 기준을 확인해 주세요.")));
     for (const r of data) {
       if (!r.unlocked) { card.append(el("div", { class: "pa-card pa-locked" }, el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.title))); continue; }
       const t = el("table", { class: "pa-table" }, el("thead", {}, el("tr", {}, ...r.cols.map(c => el("th", {}, c)))),

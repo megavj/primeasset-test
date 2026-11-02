@@ -57,6 +57,16 @@
   --navy:var(--text);--navy-2:var(--text);--navy-soft:rgba(255,255,255,.06);
   --glass-2:var(--bg-1);--ring:transparent;--shadow:var(--shadow-1);--shadow-sm:var(--shadow-1);--inset:0 0 0 transparent;
 }
+/* FIX-V2: 하위 화면의 보조 글자만 선명하게. 공개 메인(body.g-main 단독)은
+   기존 :root 값을 유지한다. 옛 이름도 이 범위에서 다시 연결해야 상속 중
+   :root의 이전 색으로 고정되지 않는다. 가장 밝은 기본 면 #131a29 대비
+   --text-2 10.30:1, --text-3 8.75:1. 오프라인 독립 사본은 recovery.css와 동기화. */
+body:is(.g-members,.g-admin,.g-perf,.product-page,.g-story,.g-privacy,.recovery){
+  --text-2:#bec8d7;
+  --text-3:#adb9ca;
+  --ink-2:var(--text-2);
+  --mute:var(--text-3);
+}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--bg-0)}
 body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg-0);line-height:var(--lh-body);font-size:var(--fs-body);font-weight:var(--fw-body);word-break:keep-all;overflow-wrap:anywhere;min-height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}

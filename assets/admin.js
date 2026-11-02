@@ -61,7 +61,8 @@
     dirty = false; edited.clear(); tab = next;
     if (filters[next]) {
       if (values.q !== undefined && next === 'members') Object.assign(filters[next],{grade:'',status:''});
-      if (values.q !== undefined && next === 'pending') filters[next].complete = '';
+      // 숫자·전체 목록·개별 검토 어느 경로든 이전 검색 조건을 물려받지 않는다.
+      if (next === 'pending') Object.assign(filters[next], {q:'',complete:''});
       Object.assign(filters[next], {page:1}, values);
     }
     history.replaceState(null, '', '#' + tab); render(true);
@@ -158,8 +159,10 @@
     finally { setBusy(false); }
   }
   const badge = text => el('span',{class:'adm-badge'},text);
+  // 대기 숫자, 첫 화면 목록, 가입 승인 표가 같은 회원·정렬 기준을 공유한다.
+  const pendingMembers = () => S.members.filter(m => m.status === 'pending').sort((a,b) => String(a.created_at).localeCompare(String(b.created_at)) || String(a.id).localeCompare(String(b.id)));
   function render(focus = false) {
-    const pending = S.members.filter(m => m.status === 'pending').length;
+    const pending = pendingMembers().length;
     const count = key => key === 'pending' ? pending : key === 'requests' ? (S.requestError ? '—' : S.requests.length) : null;
     const nav = el('nav',{class:'adm-sidebar','aria-label':'관리 업무'},...groups.map(([label,keys]) => el('div',{class:'adm-nav-group'},el('p',{class:'adm-nav-label'},label),...keys.map(key => button(el('span',{class:'adm-nav-text'},TABS[key][0],count(key) !== null ? badge(typeof count(key) === 'number' ? num(count(key)) : count(key)) : null),() => go(key),'nav',{'aria-current':key === tab ? 'page' : null,'data-tab':key})))));
     const view = (views[tab] || settings[tab])();
@@ -196,10 +199,10 @@
   }
   const views = {
     tasks() {
-      const pending = S.members.filter(m => m.status === 'pending').sort((a,b) => String(a.created_at).localeCompare(String(b.created_at)));
+      const pending = pendingMembers(), preview = pending.slice(0,20);
       const stat = (label,value,next,detail) => button(el('span',{class:'adm-stat-inner'},el('span',{},label),el('strong',{},value),el('small',{},detail)),() => go(next),'stat');
       const featured = el('div',{class:'adm-task-panel'},el('div',{class:'adm-panel-heading'},el('div',{},el('p',{class:'adm-eyebrow'},'먼저 확인하세요'),el('h3',{},pending.length ? '가입을 기다리는 회원이 있습니다' : '가입 승인 대기를 모두 확인했습니다')),button('가입 승인 열기',() => go('pending'),'primary')),
-        pending.length ? el('div',{class:'adm-task-list'},...pending.slice(0,3).map(m => el('div',{class:'adm-task-row'},person(m),el('div',{class:'adm-task-meta'},badge(m.consent_at ? '정보 입력 완료' : '정보 미입력'),el('span',{class:'adm-note'},fmt(m.created_at)),button('검토',() => go('pending',{q:m.email || m.name})))))) : el('p',{class:'adm-note'},'새 가입 신청이 도착하면 이곳에서 확인할 수 있습니다.'));
+        pending.length ? el('div',{},el('p',{class:'adm-note',role:'status'},`가입 승인 대기 전체 ${num(pending.length)}명 · 현재 ${num(preview.length)}명 표시${pending.length > preview.length ? ` · 나머지 ${num(pending.length - preview.length)}명은 가입 승인 전체 목록에서 확인할 수 있습니다(첫 화면 최대 20명).` : ''}`),el('div',{class:'adm-task-list'},...preview.map(m => el('div',{class:'adm-task-row'},person(m),el('div',{class:'adm-task-meta'},badge(m.consent_at ? '정보 입력 완료' : '정보 미입력'),el('span',{class:'adm-note'},fmt(m.created_at)),button('검토',() => go('pending',{q:m.email || m.name}))))))) : el('p',{class:'adm-note'},'새 가입 신청이 도착하면 이곳에서 확인할 수 있습니다.'));
       return el('div',{class:'adm-stack'},el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보 확인 → 승인'),stat('확인된 승인 요청',S.requestError ? '—' : num(S.requests.length),'requests',S.requestError ? '목록 연결 확인 필요' : '최근 조회 · 최대 300건'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`)),featured,
         el('div',{class:'adm-two-col'},el('section',{class:'adm-panel'},el('div',{class:'adm-panel-heading'},el('h3',{},'승인 요청'),button('모두 보기',() => go('requests'))),S.requestError ? empty('요청 목록을 확인할 수 없습니다','승인 요청 화면에서 다시 불러올 수 있습니다.') : S.requests.length ? el('div',{class:'adm-task-list'},...S.requests.slice(0,3).map(r => el('div',{class:'adm-request-preview'},el('strong',{},r.member_name || '회원'),el('span',{},r.resource_name || '승인 요청'),el('small',{class:'adm-note'},r.resource_category || '가입')))) : empty('열린 요청이 없습니다','요청이 접수되면 여기에 표시됩니다.')),
         el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
@@ -217,11 +220,14 @@
       },'primary',{disabled:true});
       const sync = () => { summary.textContent = `${selected.size}명 선택`; approve.disabled = !selected.size || !grade.value; };
       const draw = () => {
-        const list = S.members.filter(m => m.status === 'pending' && matches(f.q,m.name,m.branch,m.email) && (!f.complete || (f.complete === 'yes') === !!m.consent_at)).sort((a,b) => String(a.created_at).localeCompare(String(b.created_at)));
+        const pending = pendingMembers();
+        const list = pending.filter(m => matches(f.q,m.name,m.branch,m.email) && (!f.complete || (f.complete === 'yes') === !!m.consent_at));
         const paging = pager(list,f,() => {selected.clear();draw();});
         const slice = pageRows(list,f);
         const all = check('현재 페이지 대기 회원 모두 선택',slice.length > 0 && slice.every(m => selected.has(m.id)),e => { slice.forEach(m => e.target.checked ? selected.add(m.id) : selected.delete(m.id)); draw(); });
-        body.replaceChildren(list.length ? el('div',{class:'adm-select-page'},all,el('span',{},'현재 페이지 모두 선택')) : el('span'),list.length ? table(['선택','가입 정보','신청일·정보 입력','승인 등급','처리'],slice.map(m => {
+        const shown = list.length ? `${num((f.page - 1) * 20 + 1)}~${num((f.page - 1) * 20 + slice.length)}번째` : '0명';
+        const countNote = `가입 승인 대기 전체 ${num(pending.length)}명 · 검색·필터 결과 ${num(list.length)}명 · 현재 ${shown} 표시${pending.length > list.length ? ` · 검색·정보 입력 조건으로 ${num(pending.length - list.length)}명이 목록에서 제외되어 있습니다.` : ''}`;
+        body.replaceChildren(el('p',{class:'adm-note',role:'status'},countNote),list.length ? el('div',{class:'adm-select-page'},all,el('span',{},'현재 페이지 모두 선택')) : el('span'),list.length ? table(['선택','가입 정보','신청일·정보 입력','승인 등급','처리'],slice.map(m => {
           const gs = filter(gradeSelect(`${m.name || m.email} 승인 등급`,rowGrades.get(m.id) ?? defaultGrade()));
           gs.addEventListener('change',()=>rowGrades.set(m.id,gs.value));
           return el('tr',{},el('td',{},check(`${m.name || m.email} 선택`,selected.has(m.id),e => {e.target.checked ? selected.add(m.id) : selected.delete(m.id);sync();all.querySelector('input').checked = slice.every(x => selected.has(x.id));})),el('td',{},person(m),el('small',{class:'adm-note'},m.phone || '연락처 미입력')),el('td',{},el('span',{},fmt(m.created_at)),el('br'),badge(m.consent_at ? '정보 입력 완료' : '정보 미입력')),el('td',{},gs),el('td',{},el('div',{class:'adm-actions'},button('승인',() => mutate(() => checkedUpdate(m.id,{status:'active',grade_id:+gs.value},true),'가입을 승인했습니다.'),'primary',{disabled:!S.grades.length}),button('거절',() => { if (confirmAction(`${m.name || m.email} 님의 가입을 거절하고 계정을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) mutate(() => sb.rpc('reject_member',{p_id:m.id}),'가입을 거절했습니다.'); },'danger'))));
@@ -230,7 +236,7 @@
       };
       q.addEventListener('input',() => { f.q = q.value; f.page = 1; selected.clear(); draw(); }); complete.addEventListener('change',() => {f.complete = complete.value;f.page = 1;selected.clear();draw();});
       draw();
-      return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('대기 회원 검색',q),field('가입 정보',complete)),el('p',{class:'adm-note'},'먼저 신청한 회원부터 표시합니다. 정보가 미입력된 경우 승인 전에 확인해 주세요.'),el('div',{class:'adm-bulk'},summary,field('선택 회원에게 부여할 등급',grade),approve),body);
+      return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('대기 회원 검색',q),field('가입 정보',complete),button('검색·필터 초기화',() => go('pending'))),el('p',{class:'adm-note'},'먼저 신청한 회원부터 표시합니다. 정보가 미입력된 경우 승인 전에 확인해 주세요.'),el('div',{class:'adm-bulk'},summary,field('선택 회원에게 부여할 등급',grade),approve),body);
     },
     members() {
       const f = filters.members;

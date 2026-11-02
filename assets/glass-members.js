@@ -352,7 +352,11 @@
       try {
         const { data: n, error: err } = await sb.from("site_notice").select("text").eq("id", 1).maybeSingle();
         if (err) throw err;
-        const t = n && n.text ? String(n.text).trim() : "";
+        const raw = n && n.text ? String(n.text).trim() : "";
+        // S5 SQL 전에도 이미 마감된 10월 전체를 미마감으로 안내하지 않음. 다른 공지는 그대로.
+        const t = raw === "사업부 실적보드 2026년 1~9월 반영 (2026-10 미마감)"
+          ? "공개 실적보드: 2026년 1~10월 팜스 월별 합계 반영. 인트라넷 상세표는 각 표에 표시된 기간·출처를 확인해 주세요."
+          : raw;
         const render = () => {
           const closed = t && store.get(NOTICE_KEY, "") === t;
           noticeBody.replaceChildren(el("p", {}, closed ? "새 소식을 접어 두었습니다." : t || "등록된 새 소식이 없습니다."), t ? el("button", { class: "pa-text-button", type: "button", onclick: () => { store.set(NOTICE_KEY, closed ? "" : t); render(); } }, closed ? "새 소식 다시 보기" : "접어 두기") : "");
@@ -425,12 +429,14 @@
   }
   // 3. 실적 막대그래프(순수 SVG, assets/glass-chart.js). 표 key별 설정: x=이름 열, s=값 열, mult=원 환산 배수, limit=표의 앞 N줄만, skip=합계 줄 제외, short=가로축 글자 수
   //    숫자는 members_stats 가 내려준 표 값만 씀(새 숫자 없음). 설정에 없는 표는 그래프 없이 표만.
-  const CHART = { division_monthly: { x: 0, s: [3, 4], orient: "v", mult: 1000, skip: /합계/ }, division_branches: { x: 1, s: [2], orient: "h", mult: 1000 },
+  const CHART = { division_monthly: { x: 0, s: [3, 4], orient: "v", mult: 1000, skip: /합계/ }, division_monthly_detail: { x: 0, s: [3, 4], orient: "v", mult: 1000, skip: /합계/ }, division_branches: { x: 1, s: [2], orient: "h", mult: 1000 },
     division_carriers: { x: 1, s: [3], orient: "h", mult: 1000, limit: 10 }, company_yearly: { x: 0, s: [2], orient: "v", mult: 1, short: 4 }, "188_conv_monthly": { x: 0, s: [1], orient: "v", mult: 1 } };
   const num = (v) => { const t = String(v ?? "").replace(/,/g, "").trim(); const n = Number(t); return t && Number.isFinite(n) ? n : null; };
   const colName = (s) => String(s ?? "").replace(/\s*\([^)]*\)\s*$/, "");
   function chartFor(r) {
-    const c = CHART[r.key]; if (!c || !window.PA_CHART || !Array.isArray(r.rows) || !Array.isArray(r.cols)) return null;
+    const base = CHART[r.key]; if (!base || !window.PA_CHART || !Array.isArray(r.rows) || !Array.isArray(r.cols)) return null;
+    // S5의 팜스 월별 표는 합계·건수 3열. 생손보 분해는 보존한 1~9월 상세표만 그린다.
+    const c = r.key === "division_monthly" && r.cols.length === 3 ? { ...base, s: [1] } : base;
     let rows = r.rows.filter(row => Array.isArray(row) && !(c.skip && c.skip.test(String(row[c.x]))) && c.s.some(i => num(row[i]) != null));
     if (c.limit) rows = rows.slice(0, c.limit);
     if (rows.length < 2) return null;
@@ -448,6 +454,32 @@
     const totalK = sum(j.total), count = sum(j.count_total);
     return totalK > 0 ? { period: String(j.period || ""), basis: String(j.basis || ""), totalK, count, eok: (totalK / 100000).toFixed(2) } : null;
   }).catch(e => { console.debug("[perf-data]", e); return null; });
+  // 표의 숫자·열·행은 서버 원자료 그대로. S5 SQL 전에도 다른 집계 기간을 구분한다.
+  function statsBasis(r) {
+    const notes = {
+      division_monthly: "2026년 1~9월 상세 원자료(188 실적보드). 10월 생보·손보별 자료 미수령. 팜스 1~10월 월별 합계는 위 요약과 공개 실적보드에서 확인할 수 있습니다.",
+      division_monthly_detail: "2026년 1~9월 상세 원자료(188 실적보드). 10월 생보·손보별 자료 미수령. 팜스 월별 합계와 출처가 달라 직접 합산하지 않습니다.",
+      division_branches: "2026년 1~9월 누적 순위(188 실적보드 원자료). 같은 출처의 10월 누적 순위 자료 미수령. 팜스 19개 본부 10월 단월 자료와 합산하지 않습니다.",
+      division_carriers: "2026년 1~9월 누적 기준. 10월 보험사별 자료 미수령.",
+      company_yearly: "1~9월 비교 열은 같은 기간끼리 비교한 원자료입니다. 회사 전체의 10월 마감 자료 미수령. 기존 10월 포함 잠정값은 수집 당시 미마감 기준입니다.",
+      company_monthly: "회사 전체의 10월 마감 자료 미수령. 표의 10월 값은 수집 당시 미마감 잠정값입니다.",
+      "188_rank_history": "2026년 확정 비교 순위는 1~9월 기준(실적 본부 266개). 전사 10월 누적 순위 자료 미수령. 기존 10월 포함 순위는 수집 당시 잠정값입니다.",
+      family_188_yearly: "1~9월 전년 대비 열은 같은 기간끼리 비교한 원자료입니다. 계열 관계별 10월 마감 비교 자료 미수령. 기존 10월 포함 값은 수집 당시 잠정값입니다.",
+      "188_children_table": "보험료는 2026년 1~9월, 전사 순위는 2026년 9월 기준. 전사 10월 순위 자료 미수령. 팜스 19개 본부 10월 단월 실적만으로 이 표 전체를 갱신하지 않습니다.",
+      "188_person_yearly": "10월 확정 실적자 수·1인 월평균 자료 미수령. 기존 10월 포함 값은 수집 당시 잠정값입니다.",
+      "188_conv_monthly": "2026년 자료는 급여적용월 1~9월 기준. 10월 전환성적 자료 미수령.",
+      promotion_cohort_summary: "기존 수집 시점의 신설 본부 집계입니다. 10월 마감 기준 후속 집계 자료 미수령.",
+      bonbu_children_rank: "표에 표시된 2026년 10월 본부분할 개수 기준입니다. 월보험료 실적 순위와 다른 자료입니다."
+    };
+    if (r.key === "division_monthly" && Array.isArray(r.cols) && r.cols.length === 3) return "2026년 1~10월 팜스 본부별 마감(사업부 본부 합계). 생보·손보 구성은 별도의 1~9월 상세 원자료 표를 확인해 주세요.";
+    if (r.key === "188_children_table" && Array.isArray(r.cols) && r.cols.some(c => String(c).includes("1~10월 보험료"))) return "기존 1~9월 보험료·9월 전사 순위는 그대로이며, 마지막 열은 팜스 19개 본부의 1~10월 마감 보험료입니다. 소멸 2개 본부는 10월 원자료가 없어 —로 표시합니다. 전사 10월 순위 자료 미수령.";
+    return notes[r.key] || "";
+  }
+  function statsNote(r) {
+    const note = String(r.note || "").replace("2026-10은 진행 중 월(10/30경 수집)이라 미마감.", "기존 10월 값은 10/30경 수집 당시 미마감 잠정값입니다.");
+    const basis = statsBasis(r);
+    return basis && !note.includes(basis) ? [basis, note].filter(Boolean).join(" ") : note;
+  }
   async function statsCard() {
     const { data, error } = await sb.rpc("members_stats");
     const card = el("div", { class: "pa-card" }, el("h3", {}, "실적 요약 · 실적 표"),
@@ -466,7 +498,7 @@
       if (!r.unlocked) { card.append(el("div", { class: "pa-card pa-locked" }, el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.title + " · 승인 후 열림"))); continue; }
       const t = el("table", { class: "pa-table" }, el("thead", {}, el("tr", {}, ...r.cols.map(c => el("th", { scope: "col" }, c)))),
         el("tbody", {}, ...r.rows.map(row => el("tr", {}, ...row.map(v => el("td", {}, fmt(v)))))));
-      card.append(el("details", { class: "pa-card" }, el("summary", {}, r.title + ` (${r.rows.length}줄)`), r.note ? el("p", { class: "pa-note" }, r.note) : null, chartFor(r), el("p", { class: "pa-note pa-swipe" }, "← 옆으로 밀어 보기"), el("div", { class: "pa-scroll", tabindex: "0", role: "region", "aria-label": r.title + " 표 · 좌우로 스크롤" }, t)));
+      card.append(el("details", { class: "pa-card" }, el("summary", {}, r.title + ` (${r.rows.length}줄)`), statsNote(r) ? el("p", { class: "pa-note" }, statsNote(r)) : null, chartFor(r), el("p", { class: "pa-note pa-swipe" }, "← 옆으로 밀어 보기"), el("div", { class: "pa-scroll", tabindex: "0", role: "region", "aria-label": r.title + " 표 · 좌우로 스크롤" }, t)));
     }
     return card;
   }
