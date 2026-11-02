@@ -2,8 +2,7 @@
    188 홈 '프리미엄사업부 실적보드' 블록(.pb.pb-home, 마크업·숫자 188 그대로)을 메인 숫자 줄 바로 아래에 둔다.
    컴포넌트 규칙은 assets/perf-board.css(188 규칙 + 어두운 톤)를 그대로 쓰고, 여기는 메인 페이지 배치만 적는다. */
 .g-board-eyebrow{margin:0 0 var(--s2)}
-.g-board>h2{margin-bottom:var(--s2)}
-.g-board .g-lead{margin-bottom:var(--s5)}
+.g-board>h2{margin-bottom:var(--s2)} /* 설명 아래 간격은 공통 .g-lead(PC 48·휴대폰 32)를 따름 */
 .g-board .pb-home{--pb-combo-h:380px}
 .g-board .pb-home__board{margin:0}
 .g-board .pb-home__more{margin:var(--s3) 0 0} /* 글자 링크(그 밖의 이동은 버튼 대신 링크) */
