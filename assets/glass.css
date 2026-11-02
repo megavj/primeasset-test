@@ -3,7 +3,8 @@
    원칙: 흐린 배경 위 반투명 카드(알파 .66 이상), 얇은 밝은 테두리, 큰 제목·넉넉한 여백, 남색 포인트 1색.
    가독성: 글자는 항상 진한 색, 카드 배경 충분히 불투명. backdrop-filter 미지원·투명도 줄이기 설정이면 불투명 배경으로 대체.
    글꼴: Pretendard Variable(assets/fonts/pretendard/, OFL) — 각 페이지가 pretendardvariable-dynamic-subset.css 를 먼저 불러옴. 화면 글씨는 모두 14px 이상.
-   v=5(3단계): 인트라넷 새 소식 배너·도구 검색·최근 쓴 도구·승인 요청 버튼·막대그래프(.pa-chart)·관리자 승인 요청/방문 합계 카드 */
+   v=5(3단계): 인트라넷 새 소식 배너·도구 검색·최근 쓴 도구·승인 요청 버튼·막대그래프(.pa-chart)·관리자 승인 요청/방문 합계 카드
+   v=6(4단계, web-design-guidelines 점검): 휴대폰 터치 영역 44px(메뉴·작은 버튼·목록 링크·동의 체크), 앵커·포커스 이동 시 고정 메뉴에 가리지 않게 scroll-margin, 호버 표시, touch-action, 자리표시 글자색, 제목 균형 줄바꿈, h2.pa-h3(제목 순서용) */
 
 :root{
   --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
@@ -23,8 +24,11 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;font-family:var(--font);color:var(--ink);background:#eceff5;line-height:1.6;font-size:17px;word-break:keep-all;overflow-wrap:anywhere;min-height:100vh}
 a{color:var(--navy)}
 b,strong{font-weight:700}
-h1,h2,h3{margin:0;line-height:1.2}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}
 :focus-visible{outline:3px solid rgba(30,58,138,.6);outline-offset:3px;border-radius:12px}
+a,button,summary,input,select,textarea,label,[tabindex]{touch-action:manipulation;-webkit-tap-highlight-color:rgba(30,58,138,.12)} /* 두 번 탭 확대 지연 제거, 탭 강조색은 포인트색으로 */
+a,button,summary,input,select,[tabindex]{scroll-margin-top:calc(var(--nav-h) + 30px)} /* Tab 키로 이동할 때 고정 메뉴 아래에 숨지 않게 */
+::placeholder{color:#5b6b82;opacity:1} /* 자리표시 글: 흰 바탕 5.4:1 */
 button,input[type=checkbox]{font:inherit} /* 체크박스도 글자 계산값 14px 이상(브라우저 기본 13.33px) */
 img,svg{display:inline-block;vertical-align:middle}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -79,7 +83,8 @@ img,svg{display:inline-block;vertical-align:middle}
 /* 상단 메뉴: 떠 있는 둥근 유리 막대(스크롤 시 고정) */
 .g-nav{position:sticky;top:10px;z-index:50;max-width:var(--wrap);margin:10px auto 0;padding:0 16px}
 .g-nav .g-bar{display:flex;align-items:center;gap:8px;min-height:var(--nav-h);padding:8px 10px 8px 20px;border-radius:999px}
-.g-logo{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:18px;letter-spacing:-.01em;color:var(--ink);text-decoration:none;white-space:nowrap}
+.g-logo{display:inline-flex;align-items:center;gap:9px;min-height:44px;font-weight:800;font-size:18px;letter-spacing:-.01em;color:var(--ink);text-decoration:none;white-space:nowrap}
+.g-logo:hover{color:var(--navy)}
 .g-logo .g-mark{width:28px;height:28px;border-radius:9px;background:var(--navy);color:#fff;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
 .g-menu{display:flex;gap:2px;margin-left:auto}
 .g-menu a{display:inline-flex;align-items:center;min-height:44px;padding:8px 15px;border-radius:999px;font-size:16px;font-weight:600;color:var(--ink-2);text-decoration:none}
@@ -90,7 +95,7 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-menu .g-menu-login{color:var(--navy)}
 
 /* 공통 섹션 */
-.g-sec{max-width:var(--wrap);margin:0 auto;padding:44px 16px}
+.g-sec{max-width:var(--wrap);margin:0 auto;padding:44px 16px;scroll-margin-top:48px} /* #faq 같은 앵커로 올 때 제목이 고정 메뉴(아래 74px) 밑에 숨지 않게 */
 .g-sec>h2,.g-h2{font-size:clamp(27px,3.2vw,40px);letter-spacing:-.025em;line-height:1.18;margin:0 0 10px}
 .g-lead{font-size:18px;color:var(--mute);margin:0 0 26px;max-width:42em}
 .g-kicker{display:inline-block;font-size:14px;font-weight:700;color:var(--navy);letter-spacing:.02em;margin:0 0 6px}
@@ -102,6 +107,7 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-tile p{margin:0;color:var(--ink-2);font-size:17px}
 .g-more{margin:12px 0 0}
 .g-more summary{cursor:pointer;color:var(--navy);font-weight:600;font-size:15px;list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:-10px 0} /* 글 높이는 그대로, 터치 영역만 44px */
+.g-more summary:hover{text-decoration:underline}
 .g-more summary::-webkit-details-marker{display:none}
 .g-more summary::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s}
 .g-more[open] summary::after{transform:rotate(-135deg) translateY(-2px)}
@@ -112,7 +118,7 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-link:hover{text-decoration:underline}
 .g-links{display:flex;flex-wrap:wrap;gap:4px 26px;margin:16px 0 0}
 .g-note--sec{margin:18px 0 0;max-width:46em}
-.g-note--sec .g-link{min-height:auto}
+.g-note--sec .g-link{margin:-10px 0} /* 터치 영역 44px는 유지하고 줄 간격만 원래대로 */
 .g-small{font-size:14px;color:var(--mute)}
 
 /* 첫 화면 */
@@ -141,6 +147,7 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-fold-h small{font-size:14px;font-weight:400;color:var(--mute)}
 .g-fold{margin:16px 0 0}
 .g-fold>summary{cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 20px;border-radius:999px;font-weight:700;color:var(--navy);background:rgba(255,255,255,.78);border:1px solid rgba(30,58,138,.28);list-style:none;box-shadow:var(--inset)}
+.g-fold>summary:hover{background:#fff}
 .g-fold>summary::-webkit-details-marker{display:none}
 .g-fold>summary::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px)}
 .g-fold[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
@@ -177,7 +184,7 @@ img,svg{display:inline-block;vertical-align:middle}
 .br small{display:block;font-size:14px;color:var(--mute);margin-top:3px}
 .br.off{color:var(--mute);background:rgba(255,255,255,.5)}
 .br.off b{color:var(--ink-2);opacity:.7}
-a.br{border-color:rgba(30,58,138,.35);box-shadow:var(--inset),0 0 0 1px rgba(30,58,138,.25),var(--shadow-sm)}
+a.br{border-color:rgba(30,58,138,.35);box-shadow:var(--inset),0 0 0 1px rgba(30,58,138,.25),var(--shadow-sm);transition:transform .12s ease}
 a.br:hover{transform:translateY(-2px)}
 .g-188{margin:16px 0 0;font-size:16px;color:var(--ink-2)}
 .g-188 b{color:var(--ink)}
@@ -185,6 +192,7 @@ a.br:hover{transform:translateY(-2px)}
 /* FAQ */
 details.g-faq{border-radius:var(--r-tile);padding:0;margin:0 0 10px;overflow:hidden}
 details.g-faq summary{cursor:pointer;list-style:none;padding:16px 50px 16px 22px;font-weight:700;font-size:18px;position:relative;min-height:56px;display:flex;align-items:center}
+details.g-faq summary:hover{background:rgba(255,255,255,.5)}
 details.g-faq summary::-webkit-details-marker{display:none}
 details.g-faq summary::after{content:"";position:absolute;right:24px;top:50%;width:9px;height:9px;border-right:2px solid var(--navy);border-bottom:2px solid var(--navy);transform:translateY(-70%) rotate(45deg)}
 details.g-faq[open] summary::after{transform:translateY(-30%) rotate(-135deg)}
@@ -197,6 +205,9 @@ details.g-faq p{margin:0;padding:0 22px 18px;color:var(--ink-2);font-size:17px}
 .g-contact .g-actions{justify-content:center}
 .g-contact-lines{margin:28px 0 0;font-size:15px;color:var(--mute);line-height:1.8}
 .g-contact-lines a{color:var(--navy);text-decoration:none;font-weight:600}
+.g-contact-lines a:hover{text-decoration:underline}
+/* 문장 속 링크: 글 배치는 그대로 두고(인라인 패딩은 줄 높이에 영향 없음) 누르는 영역만 위아래로 넓힘 */
+.g-contact-lines a,.g-foot a,.g-prose a,.g-lead a,.g-policy a,.pa-card p a,.pa-note a{padding:6px 0}
 .g-letter{text-align:left;margin:22px auto 0;max-width:46em}
 .g-letter summary{justify-content:center;width:100%;text-align:center}
 .g-letter p{margin:12px 0 0;font-size:16px;color:var(--ink-2)}
@@ -205,6 +216,7 @@ details.g-faq p{margin:0;padding:0 22px 18px;color:var(--ink-2);font-size:17px}
 /* 바닥글 */
 .g-foot{max-width:var(--wrap);margin:0 auto;padding:20px 16px 44px;text-align:center;font-size:14px;color:var(--mute)}
 .g-foot a{color:var(--mute)}
+.g-foot a:hover{color:var(--navy)}
 
 /* 휴대폰 하단 고정 '합류 문의' 유리 막대(메인) · 인트라넷 탭바: 아래 글자가 비치지 않게 조금 더 불투명 */
 .g-cta-bar{display:none}
@@ -219,7 +231,7 @@ body.pa-logged .g-menu--public{display:none}
 #pa-app{display:block}
 .pa-card{margin:0 0 16px}
 .pa-card .pa-card{margin:10px 0}
-.pa-card h3{font-size:21px;letter-spacing:-.01em;margin:0 0 8px}
+.pa-card h3,.pa-card .pa-h3{font-size:21px;letter-spacing:-.01em;margin:0 0 8px} /* .pa-h3: 제목 순서(h1→h2)를 지키며 h3처럼 보이는 h2 */
 .pa-card p{color:var(--ink-2);margin:6px 0 10px}
 .pa-note{color:var(--mute);font-size:15px}
 p.pa-note{margin:4px 0 10px}
@@ -230,8 +242,8 @@ p.pa-note{margin:4px 0 10px}
 .pa-in:focus{border-color:var(--navy)}
 .pa-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0 4px}
 .pa-row .pa-in{flex:1;min-width:200px;margin:0}
-.pa-consent{display:block;margin:8px 0 16px;font-size:16px}
-.pa-consent input{width:20px;height:20px;vertical-align:-4px;margin-right:4px}
+.pa-consent{display:flex;align-items:flex-start;gap:8px;min-height:44px;margin:8px 0 16px;font-size:16px;cursor:pointer} /* 라벨 전체가 44px 터치 영역 */
+.pa-consent input{width:20px;height:20px;flex:none;margin:3px 0 0}
 .pa-steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;counter-reset:s}
 .pa-steps li{background:var(--glass-2);border:1px solid var(--glass-line);border-radius:var(--r-tile);padding:16px 18px;font-size:16px;color:var(--ink-2);box-shadow:var(--inset),0 0 0 1px var(--ring)}
 .pa-steps li::before{counter-increment:s;content:counter(s);display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;align-items:center;justify-content:center;margin:0 0 8px;font-size:15px}
@@ -241,7 +253,7 @@ p.pa-note{margin:4px 0 10px}
 .pa-login .pa-card--hero{padding:34px 28px}
 .pa-login details summary{cursor:pointer;font-weight:600;color:var(--navy);min-height:44px;display:flex;align-items:center}
 .pa-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 14px;padding:0 6px}
-.pa-who{font-size:17px;color:var(--mute)}
+.pa-who{font-size:17px;color:var(--mute);min-width:0}
 .pa-who b{font-size:22px;color:var(--ink);letter-spacing:-.01em;margin-right:2px}
 .pa-who .pa-grade{color:var(--navy);font-weight:700}
 .pa-head-btns{display:flex;gap:8px;flex-wrap:wrap}
@@ -263,11 +275,13 @@ p.pa-note{margin:4px 0 10px}
 .pa-tool--stats small{color:rgba(255,255,255,.85)}
 .pa-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .pa-list li{border:1px solid var(--glass-line);border-radius:var(--r-tile);padding:14px 16px;font-size:17px;line-height:1.45}
-.pa-list a{font-weight:700;text-decoration:none;color:var(--navy)}
+.pa-list a{font-weight:700;text-decoration:none;color:var(--navy);padding:12px 0} /* 인라인 패딩: 줄 배치 그대로, 터치 영역 44px */
+.pa-list a:hover{text-decoration:underline}
 .pa-list small{display:block;color:var(--mute);font-size:14px;margin-top:2px}
 .pa-list li.pa-locked{color:var(--mute);background:rgba(255,255,255,.5)}
 .pa-cat{margin:14px 0 0}
 .pa-cat>summary{cursor:pointer;list-style:none;font-size:19px;font-weight:700;min-height:48px;display:flex;align-items:center;gap:8px}
+.pa-cat>summary:hover{color:var(--navy)}
 .pa-cat>summary::-webkit-details-marker{display:none}
 .pa-cat>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--navy);border-bottom:2px solid var(--navy);transform:rotate(45deg) translateY(-2px);margin-left:2px}
 .pa-cat[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
@@ -280,11 +294,13 @@ p.pa-note{margin:4px 0 10px}
 .pa-table tr:last-child td{border-bottom:0}
 .pa-table td:not(:first-child){font-variant-numeric:tabular-nums}
 details.pa-card>summary{cursor:pointer;font-weight:700;font-size:19px;list-style:none;display:flex;align-items:center;gap:8px;min-height:44px}
+details.pa-card>summary:hover{color:var(--navy)}
 details.pa-card>summary::-webkit-details-marker{display:none}
 details.pa-card>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--navy);border-bottom:2px solid var(--navy);transform:rotate(45deg) translateY(-2px)}
 details.pa-card[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
 details.pa-fold>summary{font-size:18px}
 details.pa-fold p{font-size:16px}
+details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px(인라인 패딩, 배치 그대로) */
 .pa-stat-sum{font-size:18px}
 .pa-stat-sum b{font-size:22px;color:var(--navy)}
 .pa-locked{color:var(--mute)}
@@ -315,9 +331,11 @@ details.pa-fold p{font-size:16px}
   .g-nav-btns{margin-left:auto;order:2}
   .g-menu{order:3}
   .g-nav-btns{gap:5px}
-  .g-nav-btns .g-btn{min-height:38px;padding:6px 11px;font-size:14px}
+  .g-nav-btns .g-btn{min-height:44px;padding:6px 11px;font-size:14px}
   .g-menu{flex-basis:100%;margin-left:0;gap:2px;overflow-x:auto}
-  .g-menu a{font-size:14px;padding:7px 10px;min-height:40px;white-space:nowrap}
+  .g-menu a{font-size:14px;padding:7px 10px;min-height:44px;min-width:44px;justify-content:center;white-space:nowrap} /* '홈'처럼 짧은 글도 44×44 */
+  .g-btn--sm{min-height:44px}
+  a,button,summary,input,select,[tabindex]{scroll-margin-bottom:104px} /* 아래 고정 막대(합류 문의·탭바)에 가리지 않게 */
   .g-menu .g-menu-login{margin-left:auto}
   body.pa-logged .g-menu--in{display:none}
   .g-hero{padding:22px 12px 8px}
@@ -329,7 +347,7 @@ details.pa-fold p{font-size:16px}
   .g-stat{padding:14px 14px 12px}
   .g-stat b{font-size:19px}
   .g-stat small{font-size:14px;margin-top:4px;line-height:1.35}
-  .g-sec{padding:30px 12px}
+  .g-sec{padding:30px 12px;scroll-margin-top:100px} /* 휴대폰 고정 메뉴는 두 줄(아래 110px) */
   .g-card,.pa-card{padding:20px 18px;border-radius:22px}
   .g-tile,.pa-card .pa-card{padding:16px 16px}
   .g-lead{font-size:16px;margin-bottom:18px}
@@ -361,6 +379,7 @@ details.pa-fold p{font-size:16px}
   .g-tabbar .g-bar{display:flex;padding:6px;border-radius:26px;gap:4px}
   .g-tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:60px;border-radius:20px;text-decoration:none;color:var(--ink-2);font-size:14px;font-weight:700}
   .g-tabbar a svg{width:26px;height:26px}
+  .g-tabbar a:hover{background:rgba(30,58,138,.06)}
   .g-tabbar a.on{background:var(--navy-soft);color:var(--navy)}
   .pa-head{padding:0 2px}
   .pa-head .pa-head-btns{display:none}
@@ -394,7 +413,7 @@ details.pa-fold p{font-size:16px}
 
 /* 승인 대기·Guest 안내 배너 (이름 줄 바로 아래) */
 .pa-banner{background:rgba(255,247,214,.9);padding:18px 24px}
-.pa-banner h3{font-size:19px}
+.pa-banner h3,.pa-banner .pa-h3{font-size:19px}
 .pa-banner p{margin:4px 0 0}
 
 /* 소개·개인정보처리방침 페이지 ------------------------------- */
@@ -453,8 +472,8 @@ details.pa-fold p{font-size:16px}
 .g-story .g-contact-lines{margin-top:18px}
 /* 개인정보처리방침 본문 카드 */
 .g-policy .g-card{padding:38px 42px}
-.g-policy h3{font-size:20px;letter-spacing:-.01em;margin:30px 0 10px}
-.g-policy h3:first-of-type{margin-top:18px}
+.g-policy h2,.g-policy h3{font-size:20px;letter-spacing:-.01em;margin:30px 0 10px} /* 조항 제목은 h2(h1 바로 아래) */
+.g-policy h2:first-of-type,.g-policy h3:first-of-type{margin-top:18px}
 .g-policy p,.g-policy li{font-size:17px;color:var(--ink-2);line-height:1.75}
 .g-policy p{margin:0 0 10px}
 .g-policy ul{padding-left:1.2em;margin:0}
@@ -487,14 +506,14 @@ body.g-admin .g-admin-head h1{font-size:clamp(26px,3vw,34px);letter-spacing:-.02
 body.g-admin .g-admin-head .pa-note{margin:0;flex:1 1 100%;font-size:15px}
 body.g-admin .pa-card{margin:0 0 16px;padding:26px 28px}
 body.g-admin .pa-card .pa-card{margin:12px 0 0;padding:18px 20px}
-body.g-admin .pa-card h3{font-size:20px;letter-spacing:-.01em;margin:0 0 8px}
+body.g-admin .pa-card h3,body.g-admin .pa-card .pa-h3{font-size:20px;letter-spacing:-.01em;margin:0 0 8px}
 body.g-admin .pa-card .pa-card h3{font-size:18px}
 body.g-admin .pa-card p{margin:4px 0 10px}
 body.g-admin .wf-desc{display:none} /* admin.js가 넣는 개발용 "섹션 설명:" 문구는 화면에 보이지 않게 (스크립트는 그대로) */
 body.g-admin .pa-note{font-size:15px;color:var(--mute)}
 body.g-admin .wf-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 body.g-admin .wf-item{display:block;background:var(--glass-2);border:1px solid var(--glass-line);border-radius:var(--r-tile);padding:14px 16px 12px;box-shadow:var(--inset),0 0 0 1px var(--ring);text-decoration:none;color:var(--ink)}
-body.g-admin .wf-item b{display:block;font-size:28px;color:var(--navy);letter-spacing:-.02em;line-height:1.1}
+body.g-admin .wf-item b{display:block;font-size:28px;color:var(--navy);letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
 body.g-admin .wf-item small{display:block;font-size:14px;color:var(--mute);margin-top:4px}
 body.g-admin .pa-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
 body.g-admin .pa-card .pa-tabs{margin:6px 0 0}
@@ -506,6 +525,7 @@ body.g-admin .pa-table{border-collapse:collapse;width:100%;font-size:14px;backgr
 body.g-admin .pa-table th,body.g-admin .pa-table td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap;color:var(--ink)}
 body.g-admin .pa-table th{background:#eef2fb;font-weight:700;position:sticky;top:0;z-index:1}
 body.g-admin .pa-table tr:last-child td{border-bottom:0}
+body.g-admin .pa-table td{font-variant-numeric:tabular-nums}
 body.g-admin .pa-table .c{text-align:center}
 body.g-admin .pa-table tr.suspended td,body.g-admin .pa-table tr.off td{color:var(--mute)}
 body.g-admin .pa-table input[type=checkbox]{width:20px;height:20px;vertical-align:middle;accent-color:var(--navy)}
@@ -526,6 +546,7 @@ body.g-admin .lux-btn--gold{background:var(--navy);color:#fff;border-color:var(-
 body.g-admin .lux-btn--gold:hover{background:var(--navy-2)}
 body.g-admin .lux-btn--sm{min-height:36px;padding:5px 12px;font-size:14px}
 body.g-admin .pa-mini{font:inherit;font-size:14px;font-weight:700;min-height:28px;padding:2px 10px;border-radius:999px;border:1px solid rgba(30,58,138,.28);background:#fff;color:var(--navy);margin:3px 2px 0;cursor:pointer}
+body.g-admin .pa-mini:hover{background:var(--navy-soft)}
 body.g-admin .pa-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(15,23,42,.9);color:#fff;padding:12px 20px;border-radius:999px;z-index:99;font-size:15px;font-weight:600;box-shadow:0 12px 32px rgba(15,23,42,.25);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);max-width:calc(100% - 32px)}
 body.g-admin .pa-toast.bad{background:rgba(180,35,24,.92)}
 @media (max-width:720px){
@@ -533,7 +554,10 @@ body.g-admin .pa-toast.bad{background:rgba(180,35,24,.92)}
   body.g-admin .pa-card .pa-card{padding:14px 14px}
   body.g-admin .wf-grid{grid-template-columns:repeat(2,1fr);gap:8px}
   body.g-admin .wf-item b{font-size:24px}
-  body.g-admin .pa-tab{min-height:40px;padding:7px 13px;font-size:14px}
+  body.g-admin .pa-tab{min-height:44px;padding:7px 13px;font-size:14px}
+  body.g-admin .lux-btn--sm,body.g-admin .pa-mini{min-height:44px}
+  body.g-admin .pa-in.pa-sm,body.g-admin .pa-in.pa-xs,body.g-admin td .pa-in.pa-sm{min-height:44px}
+  body.g-admin .pa-table input[type=checkbox]{width:28px;height:28px} /* 체크표: 라벨이 없어 44px은 못 채움(admin.js 범위) — 크기만 키움 */
   body.g-admin .pa-row .pa-in:not(.pa-sm):not(.pa-xs){flex-basis:100%}
 }
 
@@ -541,7 +565,7 @@ body.g-admin .pa-toast.bad{background:rgba(180,35,24,.92)}
 .pa-notice-box:empty{display:none}
 .pa-notice{display:flex;align-items:flex-start;gap:12px;padding:16px 16px 16px 20px;margin:0 0 14px;background:linear-gradient(120deg,rgba(255,247,214,.94),rgba(255,255,255,.80));border-color:rgba(234,179,8,.5)}
 .pa-notice-ico{font-size:22px;line-height:1.3;flex:0 0 auto;padding-top:2px}
-.pa-notice p{margin:0;flex:1 1 auto;font-size:17px;color:var(--ink);line-height:1.5;padding-top:3px}
+.pa-notice p{margin:0;flex:1 1 auto;min-width:0;font-size:17px;color:var(--ink);line-height:1.5;padding-top:3px}
 .pa-notice p b{color:var(--navy);margin-right:2px}
 .pa-notice-x{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.85);font:inherit;font-size:24px;line-height:1;cursor:pointer;color:var(--ink-2);margin:-4px -4px -4px 0}
 .pa-notice-x:hover{background:#fff;color:var(--ink)}
@@ -569,8 +593,7 @@ body.g-admin .pa-toast.bad{background:rgba(180,35,24,.92)}
 .pa-chart .pa-val{fill:var(--ink);font-weight:700}
 .pa-chart .pa-grid{stroke:rgba(15,23,42,.1);stroke-width:1}
 .pa-chart .pa-axis{stroke:rgba(15,23,42,.28);stroke-width:1}
-.pa-chart .pa-bar{outline:none}
-.pa-chart .pa-bar:hover path,.pa-chart .pa-bar:focus-visible path{filter:brightness(.86)}
+.pa-chart .pa-bar:hover path{filter:brightness(.86)} /* 막대는 포커스 대상이 아님(값은 표에 있음) → tabindex·outline:none 제거 */
 .pa-chart figcaption{font-size:14px;color:var(--mute);margin:6px 0 0;line-height:1.5}
 .pa-chart figcaption b{color:var(--ink-2);font-weight:700}
 .pa-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--ink-2);margin:0 0 8px}

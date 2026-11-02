@@ -1,4 +1,5 @@
 /* 프라임에셋 프리미엄 — 회원 로그인·도구 목록 (Supabase). 유리(Liquid Glass) 디자인용: assets/members.js 사본, 화면 배치·클래스만 다름. 3단계: 검색(초성)·최근 쓴 도구·새 소식 배너·승인 요청·막대그래프(assets/glass-chart.js) 추가. Supabase 호출·권한 판정은 그대로(새 함수 request_access 는 없으면 오픈채팅 안내로 대체).
+   4단계(web-design-guidelines): 입력칸 이름(aria-label)·autocomplete·inputmode, 보내는 동안 버튼 잠금, 결과 문구 aria-live, 카드 제목은 h2.pa-h3(h1→h2 순서). 호출·인자는 그대로.
    도구 주소는 이 파일에 없음: 로그인 후 서버(my_resources)가 권한 있는 것만 내려줌 */
 (function () {
   const C = window.PA_AUTH || {};
@@ -15,7 +16,7 @@
   const show = (...nodes) => { box.replaceChildren(...nodes); };
   const D = () => null; // 개발용 '섹션 설명' 문구는 유리 시안 화면에서 뺌
   const N = (t) => el("p", { class: "pa-note" }, t); // 아주 짧은 안내만
-  const msg = (t, sub) => el("div", { class: "pa-card" }, el("h3", {}, t), sub ? el("p", {}, sub) : null);
+  const msg = (t, sub) => el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, t), sub ? el("p", {}, sub) : null);
   const mode = (inside) => document.body.classList.toggle("pa-logged", !!inside); // 로그인 후: 4개 메뉴·휴대폰 탭바 표시
 
   if (!C.url || !C.anonKey || !window.supabase) {
@@ -28,49 +29,54 @@
 
   function loginView(note) {
     mode(false);
-    const email = el("input", { type: "email", placeholder: "이메일 주소", class: "pa-in", autocomplete: "email" });
-    const out = el("p", { class: "pa-note" }, note || "");
+    const email = el("input", { type: "email", name: "email", placeholder: "이메일 주소", class: "pa-in", autocomplete: "email", inputmode: "email", spellcheck: "false", autocapitalize: "off", "aria-label": "이메일 주소" });
+    const out = el("p", { class: "pa-note", role: "status" }, note || "");
     const su = location.hash === "#signup";
     show(el("div", { class: "pa-login" },
       el("div", { class: "pa-card pa-card--hero" }, el("p", { class: "pa-pitch" }, "가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.")),
-      el("div", { class: "pa-card" }, el("h3", {}, su ? "회원가입 · 로그인" : "로그인"),
+      el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, su ? "회원가입 · 로그인" : "로그인"),
         N("구글 계정 버튼 하나로 로그인. 처음이면 로그인하는 순간 가입 신청이 됩니다."),
-        el("button", { class: "g-btn g-btn--pri g-btn--lg g-wide", onclick: () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: here } }) }, "구글 계정으로 로그인"),
+        el("button", { class: "g-btn g-btn--pri g-btn--lg g-wide", type: "button", onclick: () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: here } }) }, "구글 계정으로 로그인"),
         el("details", { style: "margin-top:14px" }, el("summary", {}, "구글 계정이 없으면: 이메일로 로그인"),
           el("div", { class: "pa-row" }, email,
-            el("button", { class: "g-btn g-btn--ghost", onclick: async () => {
-              if (!/^\S+@\S+\.\S+$/.test(email.value)) { out.textContent = "이메일 주소를 확인해 주세요."; return; }
+            el("button", { class: "g-btn g-btn--ghost", type: "button", onclick: async (ev) => {
+              const btn = ev.currentTarget;
+              if (!/^\S+@\S+\.\S+$/.test(email.value)) { out.textContent = "이메일 주소를 확인해 주세요."; email.focus(); return; }
+              btn.disabled = true; btn.textContent = "보내는 중…"; // 요청이 시작된 뒤에만 잠금(두 번 보내기 방지)
               const { error } = await sb.auth.signInWithOtp({ email: email.value.trim(), options: { emailRedirectTo: here } });
-              out.textContent = error ? "보내기 실패: " + error.message : "메일함에서 로그인 링크를 눌러 주세요. (스팸함도 확인)";
+              btn.disabled = false; btn.textContent = "인증 메일 받기";
+              out.textContent = error ? "보내기 실패: " + error.message + " — 잠시 후 다시 시도해 주세요." : "메일함에서 로그인 링크를 눌러 주세요. (스팸함도 확인)";
             } }, "인증 메일 받기"))),
         out),
-      el("div", { class: "pa-card" }, el("h3", {}, "가입 · 승인 · 이용 3단계"),
+      el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "가입 · 승인 · 이용 3단계"),
         el("ol", { class: "pa-steps" }, el("li", {}, el("b", {}, "가입"), "구글로 로그인 → 이름·소속 본부·휴대폰 입력, 개인정보 동의"),
           el("li", {}, el("b", {}, "승인"), "관리자가 확인하고 등급을 정합니다"),
           el("li", {}, el("b", {}, "이용"), "등급에 맞는 AI 도구·실적 자료가 열립니다 (승인 전에는 🔒)"))),
-      el("div", { class: "pa-card" }, el("h3", {}, "연락처"), N("가입·승인 문의."),
+      el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "연락처"), N("가입·승인 문의."),
         el("p", {}, "프라임에셋 이사 김상현 · 전화 ", el("a", { href: "tel:010-8714-9262" }, "010-8714-9262"), " · ",
           el("a", { href: "https://open.kakao.com/o/sFMF26y", target: "_blank", rel: "noopener" }, "카카오 오픈채팅")))));
   }
 
   function profileView(p) {
     mode(false);
-    const n = el("input", { class: "pa-in", placeholder: "이름" });
-    const b = el("input", { class: "pa-in", placeholder: "소속 본부·지사 (예: 188본부)" });
-    const ph = el("input", { class: "pa-in", placeholder: "휴대폰 번호", type: "tel" });
+    const n = el("input", { class: "pa-in", placeholder: "이름", name: "name", autocomplete: "name", "aria-label": "이름" });
+    const b = el("input", { class: "pa-in", placeholder: "소속 본부·지사 (예: 188본부)", name: "organization", autocomplete: "organization", "aria-label": "소속 본부·지사" });
+    const ph = el("input", { class: "pa-in", placeholder: "휴대폰 번호", type: "tel", name: "tel", autocomplete: "tel", inputmode: "tel", "aria-label": "휴대폰 번호" });
     const ok = el("input", { type: "checkbox", id: "pa-consent" });
-    const out = el("p", { class: "pa-note" });
+    const out = el("p", { class: "pa-note", role: "status" });
     show(el("div", { class: "pa-login" }, el("div", { class: "pa-card" },
-      el("h3", {}, "가입 정보 입력"), N("처음 로그인한 분만 보입니다. 이름·소속 본부·휴대폰 번호와 [필수] 개인정보 수집 동의."), el("p", {}, `로그인 계정: ${p.email || ""}`), n, b, ph,
+      el("h2", { class: "pa-h3" }, "가입 정보 입력"), N("처음 로그인한 분만 보입니다. 이름·소속 본부·휴대폰 번호와 [필수] 개인정보 수집 동의."), el("p", {}, `로그인 계정: ${p.email || ""}`), n, b, ph,
       el("label", { class: "pa-consent", for: "pa-consent" }, ok, " [필수] 개인정보 수집·이용에 동의합니다. ",
         el("a", { href: "../privacy/", target: "_blank" }, "개인정보처리방침 보기")),
-      el("div", { class: "pa-head-btns" }, el("button", { class: "g-btn g-btn--pri g-btn--lg", onclick: async () => {
+      el("div", { class: "pa-head-btns" }, el("button", { class: "g-btn g-btn--pri g-btn--lg", type: "button", onclick: async (ev) => {
+        const btn = ev.currentTarget; btn.disabled = true; btn.textContent = "보내는 중…";
         const { error } = await sb.rpc("complete_profile", { p_name: n.value, p_branch: b.value, p_phone: ph.value, p_consent: ok.checked });
-        if (error) out.textContent = error.message; else boot();
+        btn.disabled = false; btn.textContent = "가입 신청";
+        if (error) out.textContent = error.message + " — 입력 내용을 확인한 뒤 다시 눌러 주세요."; else boot();
       } }, "가입 신청"), logoutBtn()), out)));
   }
 
-  const logoutBtn = () => el("button", { class: "g-btn g-btn--ghost g-btn--sm pa-logout", onclick: async () => { await sb.auth.signOut(); boot(); } }, "로그아웃");
+  const logoutBtn = () => el("button", { class: "g-btn g-btn--ghost g-btn--sm pa-logout", type: "button", onclick: async () => { await sb.auth.signOut(); boot(); } }, "로그아웃");
 
   // ─── 3단계: 도구 검색(초성)·최근 쓴 도구(이 기기만)·새 소식 배너·잠긴 메뉴 '승인 요청' ───
   const OPENCHAT = "https://open.kakao.com/o/sFMF26y";
@@ -225,7 +231,7 @@
     const { data, error } = await sb.rpc("members_stats");
     const card = el("div", { class: "pa-card" }, el("h3", {}, "실적 요약 · 실적 표"),
       N("승인된 회원만 표가 열립니다. 설계사 개인 이름 없음."));
-    if (error || !data) { card.append(el("p", { class: "pa-note" }, "자료를 불러오지 못했습니다.")); return card; }
+    if (error || !data) { card.append(el("p", { class: "pa-note", role: "status" }, "자료를 불러오지 못했습니다. 새로고침해 주세요.")); return card; }
     const dm = data.find(r => r.unlocked && r.key === "division_monthly");
     const tot = dm && dm.rows.find(x => String(x[0]).includes("합계"));
     if (tot) card.append(el("div", { class: "pa-card" }, el("h3", {}, "실적 요약"),
@@ -243,6 +249,7 @@
   // 메뉴(홈·실적·자료·내 정보) 현재 위치 표시 — 배치용, 데이터와 무관
   function markTab() {
     const cur = (location.hash || "#home").slice(1);
+    if (cur === "main") return; // 건너뛰기 링크(#main)는 탭 표시를 바꾸지 않음
     document.querySelectorAll("[data-tab]").forEach(a => a.classList.toggle("on", a.getAttribute("data-tab") === cur));
   }
   window.addEventListener("hashchange", markTab);

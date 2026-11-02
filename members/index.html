@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eceff5">
 <meta name="robots" content="noindex,nofollow">
 <title>설계사 인트라넷 | 프라임에셋 프리미엄 (테스트)</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
@@ -21,9 +22,10 @@
 <meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,123명 설계사, 월 보험료 50억 2,332만 원">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-<link rel="stylesheet" href="../assets/glass.css?v=5">
+<link rel="stylesheet" href="../assets/glass.css?v=6">
 </head>
 <body class="g-members">
+<a class="g-skip" href="#main">본문으로 건너뛰기</a>
 <div class="g-bg" aria-hidden="true"></div>
 <div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
 
@@ -44,8 +46,9 @@
   </div>
 </header>
 
-<main class="g-sec g-sec--app">
-  <div id="pa-app"><div class="pa-card"><h3>불러오는 중…</h3></div></div>
+<main class="g-sec g-sec--app" id="main">
+  <h1 class="sr">설계사 인트라넷</h1><!-- 낭독용 제목(h1): 화면 카드 제목은 h2 -->
+  <div id="pa-app"><div class="pa-card"><h2 class="pa-h3">불러오는 중…</h2></div></div>
   <noscript>자바스크립트를 켜야 로그인할 수 있습니다.</noscript>
 </main>
 
@@ -63,8 +66,8 @@
 
 <script src="../assets/vendor/supabase-2.118.0.js"></script>
 <script src="../assets/auth-config.js?v=2"></script>
-<script src="../assets/glass-chart.js?v=1"></script>
-<script src="../assets/glass-members.js?v=3"></script>
+<script src="../assets/glass-chart.js?v=2"></script>
+<script src="../assets/glass-members.js?v=4"></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(로그인 전/후 모두, 이름·이메일·식별자 없음) -->
 <script src="../assets/stats-beacon.js?v=1" data-page="/members/"></script>
 </body>

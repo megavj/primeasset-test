@@ -3,6 +3,7 @@
    원칙: 막대는 얇게(최대 24px), 데이터 쪽 끝만 4px 둥글게, 쌓은 막대 사이 2px 흰 틈, 격자는 가는 실선.
    값 글씨는 막대에 다 붙이지 않고 가장 큰 것·마지막 것만. 나머지는 마우스를 올리면(title) 보이고 표에 있음.
    색 2개는 dataviz 색 검사(명도대·채도·색각이상 분리·3:1 대비) 통과: 파랑 #2a5bd7, 주황 #d97706. 글씨는 항상 14px 이상, 진한 회색.
+   v=2(4단계): 막대 묶음(g)의 tabindex 제거 — 누르는 동작이 없는 요소라 Tab 순서에서 빼고(그래프마다 10~19개 정지점이 생겼음), 값은 title·표로 제공.
    PA_CHART.bars({ labels:[], series:[{name, values:[]}], orient:'v'|'h', fmt, title, note, short }) → <figure class="pa-chart"> */
 (function () {
   const NS = "http://www.w3.org/2000/svg";
@@ -32,7 +33,7 @@
     const svg = sv("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": o.title || "" });
     for (const t of T) { const yy = f2(y(t)); svg.append(sv("line", { x1: x0, x2: x0 + plotW, y1: yy, y2: yy, class: "pa-grid" }), sv("text", { x: x0 - 6, y: yy + 5, "text-anchor": "end", class: "pa-tick" }, fmt(t))); }
     for (let i = 0; i < n; i++) {
-      const g = sv("g", { class: "pa-bar", tabindex: "0" });
+      const g = sv("g", { class: "pa-bar" });
       g.append(sv("title", {}, `${o.labels[i]} · ` + o.series.map(s => `${s.name} ${fmt(s.values[i] || 0)}`).join(" · ")));
       g.append(sv("rect", { x: f2(x0 + band * i), y: TOP, width: f2(band), height: plotH, fill: "transparent" })); // 넓은 hover 영역
       let acc = 0, placed = 0;
@@ -68,7 +69,7 @@
     for (const t of T) { const xx = f2(x(t)); svg.append(sv("line", { x1: xx, x2: xx, y1: TOP, y2: TOP + n * RH, class: "pa-grid" }), sv("text", { x: xx, y: H - 7, "text-anchor": t === 0 ? "start" : "middle", class: "pa-tick" }, fmt(t))); }
     const iMax = vals.indexOf(max);
     for (let i = 0; i < n; i++) {
-      const yy = TOP + i * RH; const g = sv("g", { class: "pa-bar", tabindex: "0" });
+      const yy = TOP + i * RH; const g = sv("g", { class: "pa-bar" });
       g.append(sv("title", {}, `${o.labels[i]} · ${o.series[0].name} ${fmt(vals[i])}`), sv("rect", { x: 0, y: yy, width: W, height: RH, fill: "transparent" }),
         sv("text", { x: x0 - 8, y: yy + RH / 2 + 5, "text-anchor": "end", class: "pa-cat" }, cut(o.labels[i], lw - 10)));
       if (vals[i] > 0) g.append(sv("path", { d: right(x0, yy + (RH - BH) / 2, f2(x(vals[i]) - x0), BH, 4), fill: COLORS[0] }));

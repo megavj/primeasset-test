@@ -8,7 +8,7 @@
   const box = document.getElementById("pa-app"); if (!box) return;
   const el = (tag, attrs, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs || {})) { if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v); } for (const k of kids) if (k != null) e.append(k.nodeType ? k : document.createTextNode(String(k))); return e; };
   const sb = window.supabase.createClient(C.url, C.anonKey);
-  const toast = (t, bad) => { const n = el("div", { class: "pa-toast" + (bad ? " bad" : "") }, t); document.body.append(n); setTimeout(() => n.remove(), 3500); };
+  const toast = (t, bad) => { const n = el("div", { class: "pa-toast" + (bad ? " bad" : ""), role: "status" }, t); document.body.append(n); setTimeout(() => n.remove(), 3500); }; // role=status: 낭독기에 결과 알림
   const table = (heads, rows) => el("div", { class: "pa-scroll" }, el("table", { class: "pa-table" }, el("thead", {}, el("tr", {}, ...heads.map(h => el("th", {}, h)))), el("tbody", {}, ...rows)));
   const when = (t) => t ? new Date(t).toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" }) : "";
   const n = (v) => Number(v || 0).toLocaleString("ko-KR");
@@ -33,12 +33,12 @@
       list.length ? table(["요청일", "이름", "소속", "등급", "요청한 메뉴", ""], list.map(a => el("tr", {},
         el("td", {}, when(a.created_at)), el("td", {}, a.member_name || ""), el("td", {}, a.member_branch || ""), el("td", {}, a.grade || ""),
         el("td", {}, el("small", {}, a.resource_category || ""), " ", a.resource_name || ""),
-        el("td", {}, el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm", onclick: async () => {
+        el("td", {}, el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm", type: "button", onclick: async () => {
           const { error: e } = await sb.rpc("resolve_access_request", { p_id: a.id });
           if (e) { toast(e.message, true); return; } toast("완료로 표시했습니다"); reload();
         } }, "완료 표시")))))
       : el("p", { class: "pa-note" }, "열린 요청이 없습니다."),
-      el("div", { class: "pa-row" }, el("button", { class: "lux-btn lux-btn--sm", onclick: reload }, "새로고침")));
+      el("div", { class: "pa-row" }, el("button", { class: "lux-btn lux-btn--sm", type: "button", onclick: reload }, "새로고침")));
     draw(data);
     return card;
   }
