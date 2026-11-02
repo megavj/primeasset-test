@@ -126,7 +126,7 @@
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "가입 · 승인 · 이용 3단계"),
         el("ol", { class: "pa-steps" }, el("li", {}, el("b", {}, "가입"), "구글로 로그인 → 이름·소속 본부·휴대폰 입력, 개인정보 동의"),
           el("li", {}, el("b", {}, "승인"), "관리자가 확인하고 등급을 정합니다"),
-          el("li", {}, el("b", {}, "이용"), "등급에 맞는 AI 도구·실적 자료가 열립니다 (승인 전에는 🔒)"))),
+          el("li", {}, el("b", {}, "이용"), "등급에 맞는 도구·실적 자료가 열립니다 (승인 전에는 🔒)"))),
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "연락처"), N("가입·승인 문의."),
         el("p", {}, "프라임에셋 이사 김상현 · 전화 ", el("a", { href: "tel:010-8714-9262" }, "010-8714-9262"), " · ",
           el("a", { href: "https://open.kakao.com/o/sFMF26y", target: "_blank", rel: "noopener" }, "카카오 오픈채팅")))));
@@ -276,8 +276,8 @@
     const ok = data.filter(r => r.unlocked && r.url);
     const favs = [...new Set([...PRI.map(rx => ok.find(r => rx.test(r.name))).filter(Boolean), ...ok.filter(r => FAV.test(r.name) || FAV.test(r.category || "")), ...ok])].slice(0, 6);
     const statsTile = el("a", { class: "pa-tool pa-tool--stats", href: "#stats" }, el("span", { class: "pa-no" }, "표"), el("b", {}, "실적표 바로가기"), el("small", {}, "실적 요약 · 실적 표"), el("span", { class: "pa-go", "aria-hidden": "true" }, "아래로 이동 ↓"));
-    const fav = el("div", {}, el("h2", { class: "pa-sec-title" }, "자주 쓰는 AI 도구", el("small", {}, "한 번 누르면 새 창에서 열립니다")),
-      D("섹션 설명: 자주 쓰는 AI 도구 6개(상품통합분석기·수당계산기·상품분석기·전산답변기·보상답변기·자료검색기 순). 권한 있는 도구만 보입니다."),
+    const fav = el("div", {}, el("h2", { class: "pa-sec-title" }, "자주 쓰는 도구", el("small", {}, "한 번 누르면 새 창에서 열립니다")),
+      D("섹션 설명: 자주 쓰는 도구 6개(상품통합분석기·수당계산기·상품분석기·전산답변기·보상답변기·자료검색기 순). 권한 있는 도구만 보입니다."),
       favs.length ? null : el("p", { class: "pa-note" }, "🔒 승인 후 열립니다."),
       el("div", { class: "pa-tools" }, ...favs.map((r, i) => tile(r, i + 1)), statsTile));
     // 승인 대기: 메뉴 31개 카드·버튼 대신 맨 위 안내 카드(pendingCard) 안의 접힌 목록만
