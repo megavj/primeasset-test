@@ -235,6 +235,8 @@
 
 <!-- 후기·사진 데이터 파일을 읽어 그림(비어 있으면 섹션 숨김 유지). 본부 목록은 /story/ 로 옮겨 그곳에서 branches.js 를 부름. -->
 <script src="assets/glass-main.js?v=1" defer></script>
+<!-- 첫 화면 3D 로고(회전 가감속 + 반짝이는 파티클 64개): WebGL 되고 움직임 줄이기가 아니면 위 WebP 자리에 실시간 3D를 그림. three.js r187(MIT)은 assets/three/ 안, 외부 요청 없음. 안 되면 WebP 그대로 -->
+<script src="assets/three/logo3d-loader.js?v=1" defer></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(이름·이메일·쿠키·식별자 없음). 설정은 auth-config.js 재사용 -->
 <script src="assets/auth-config.js?v=2"></script>
 <script src="assets/stats-beacon.js?v=1" data-page="/"></script>
