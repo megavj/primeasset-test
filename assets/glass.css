@@ -1,10 +1,11 @@
 /* 프라임에셋 프리미엄 — 유리(Liquid Glass) 디자인 공용 스타일
    쓰는 곳: index.html(공개 메인), members/index.html(설계사 인트라넷), story/·privacy/(소개·개인정보처리방침), members/admin/(관리자 화면, body.g-admin 범위)
    원칙: 흐린 배경 위 반투명 카드(알파 .66 이상), 얇은 밝은 테두리, 큰 제목·넉넉한 여백, 남색 포인트 1색.
-   가독성: 글자는 항상 진한 색, 카드 배경 충분히 불투명. backdrop-filter 미지원·투명도 줄이기 설정이면 불투명 배경으로 대체. */
+   가독성: 글자는 항상 진한 색, 카드 배경 충분히 불투명. backdrop-filter 미지원·투명도 줄이기 설정이면 불투명 배경으로 대체.
+   글꼴: Pretendard Variable(assets/fonts/pretendard/, OFL) — 각 페이지가 pretendardvariable-dynamic-subset.css 를 먼저 불러옴. 화면 글씨는 모두 14px 이상. */
 
 :root{
-  --font:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --ink:#0f172a;--ink-2:#334155;--mute:#475569;
   --navy:#1e3a8a;--navy-2:#16307a;--navy-soft:rgba(30,58,138,.10);
   --glass:rgba(255,255,255,.70);--glass-2:rgba(255,255,255,.84);--glass-line:rgba(255,255,255,.72);
@@ -23,7 +24,7 @@ a{color:var(--navy)}
 b,strong{font-weight:700}
 h1,h2,h3{margin:0;line-height:1.2}
 :focus-visible{outline:3px solid rgba(30,58,138,.6);outline-offset:3px;border-radius:12px}
-button{font:inherit}
+button,input[type=checkbox]{font:inherit} /* 체크박스도 글자 계산값 14px 이상(브라우저 기본 13.33px) */
 img,svg{display:inline-block;vertical-align:middle}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
@@ -58,7 +59,7 @@ img,svg{display:inline-block;vertical-align:middle}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
 /* 시안 표시 띠 */
-.g-strip{text-align:center;font-size:12px;line-height:1.4;padding:5px 12px;color:#1f2937;background:rgba(253,230,138,.85);position:relative;z-index:1}
+.g-strip{text-align:center;font-size:14px;line-height:1.4;padding:5px 12px;color:#1f2937;background:rgba(253,230,138,.85);position:relative;z-index:1}
 
 /* 버튼: 알약형 */
 .g-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:11px 22px;border-radius:999px;border:1px solid transparent;font:inherit;font-size:17px;font-weight:700;line-height:1.2;text-decoration:none;cursor:pointer;color:var(--navy);white-space:nowrap;transition:transform .12s ease,box-shadow .12s ease}
@@ -150,7 +151,7 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-branches,.branches{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px}
 .br{display:block;text-align:center;padding:12px 6px 10px;border-radius:16px;text-decoration:none;color:var(--ink);font-size:14px;line-height:1.3}
 .br b{display:block;font-size:22px;letter-spacing:-.02em;color:var(--navy)}
-.br small{display:block;font-size:12px;color:var(--mute);margin-top:3px}
+.br small{display:block;font-size:14px;color:var(--mute);margin-top:3px}
 .br.off{color:var(--mute);background:rgba(255,255,255,.5)}
 .br.off b{color:var(--ink-2);opacity:.7}
 a.br{border-color:rgba(30,58,138,.35);box-shadow:var(--inset),0 0 0 1px rgba(30,58,138,.25),var(--shadow-sm)}
@@ -282,7 +283,6 @@ details.pa-fold p{font-size:16px}
 }
 @media (max-width:720px){
   body{font-size:16px}
-  .g-strip{font-size:11px}
   .g-nav{top:8px;margin-top:8px;padding:0 10px}
   .g-nav .g-bar{flex-wrap:wrap;border-radius:24px;padding:8px 10px 8px 14px;gap:6px;min-height:56px}
   .g-logo{font-size:16px}
@@ -295,12 +295,12 @@ details.pa-fold p{font-size:16px}
   .g-hero{padding:22px 12px 8px}
   .g-hero h1{margin-bottom:10px}
   .g-hero .g-tag{font-size:16px;margin-bottom:16px}
-  .g-hero .g-basis{font-size:12px;margin-bottom:8px}
+  .g-hero .g-basis{font-size:14px;margin-bottom:8px}
   .g-hero .g-btn--lg{min-height:54px;font-size:18px;padding:12px 24px;width:100%}
   .g-stats{grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}
   .g-stat{padding:14px 14px 12px}
   .g-stat b{font-size:19px}
-  .g-stat small{font-size:12px;margin-top:4px;line-height:1.35}
+  .g-stat small{font-size:14px;margin-top:4px;line-height:1.35}
   .g-sec{padding:30px 12px}
   .g-card,.pa-card{padding:20px 18px;border-radius:22px}
   .g-tile,.pa-card .pa-card{padding:16px 16px}
@@ -310,12 +310,12 @@ details.pa-fold p{font-size:16px}
   .g-tool{padding:14px 14px}
   .g-tool .g-ico{width:38px;height:38px;margin-bottom:10px}
   .g-tool b{font-size:17px}
-  .g-tool small{font-size:13px}
+  .g-tool small{font-size:14px}
   .g-tl{grid-template-columns:1fr;gap:8px}
   .g-tl li{padding:12px 14px 12px 36px}
   .g-tl li::before{position:absolute;left:14px;top:17px;margin:0}
-  .g-branches,.branches{grid-template-columns:repeat(4,1fr);gap:7px}
-  .br{padding:10px 4px 8px;font-size:13px}.br b{font-size:19px}.br small{font-size:11px}
+  .g-branches,.branches{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:7px}
+  .br{padding:10px 4px 8px;font-size:14px}.br b{font-size:19px}.br small{font-size:14px}
   details.g-faq summary{font-size:16px;padding:14px 44px 14px 16px}
   details.g-faq p{padding:0 16px 16px;font-size:16px}
   .g-contact-lines{font-size:14px}
@@ -328,7 +328,7 @@ details.pa-fold p{font-size:16px}
   body.g-members.pa-logged{padding-bottom:96px}
   body.pa-logged .g-tabbar{display:block;position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:60}
   .g-tabbar .g-bar{display:flex;padding:6px;border-radius:26px;gap:4px}
-  .g-tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:60px;border-radius:20px;text-decoration:none;color:var(--ink-2);font-size:13px;font-weight:700}
+  .g-tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:60px;border-radius:20px;text-decoration:none;color:var(--ink-2);font-size:14px;font-weight:700}
   .g-tabbar a svg{width:26px;height:26px}
   .g-tabbar a.on{background:var(--navy-soft);color:var(--navy)}
   .pa-head{padding:0 2px}
@@ -351,11 +351,10 @@ details.pa-fold p{font-size:16px}
 }
 @media (max-width:380px){
   .g-logo{font-size:15px}
-  .g-nav-btns .g-btn{padding:6px 10px;font-size:13px}
-  .g-menu a{font-size:13px;padding:7px 9px}
+  .g-nav-btns .g-btn{padding:6px 10px;font-size:14px}
+  .g-menu a{font-size:14px;padding:7px 9px}
   .g-hero h1{font-size:30px}
   .g-stat b{font-size:17px}
-  .g-branches,.branches{grid-template-columns:repeat(3,1fr)}
 }
 @media (min-width:721px){
   .pa-swipe{display:none}
@@ -459,7 +458,7 @@ body.g-admin .pa-card .pa-card{margin:12px 0 0;padding:18px 20px}
 body.g-admin .pa-card h3{font-size:20px;letter-spacing:-.01em;margin:0 0 8px}
 body.g-admin .pa-card .pa-card h3{font-size:18px}
 body.g-admin .pa-card p{margin:4px 0 10px}
-body.g-admin .wf-desc{margin:0 0 12px;color:var(--mute);font-size:15px}
+body.g-admin .wf-desc{display:none} /* admin.js가 넣는 개발용 "섹션 설명:" 문구는 화면에 보이지 않게 (스크립트는 그대로) */
 body.g-admin .pa-note{font-size:15px;color:var(--mute)}
 body.g-admin .wf-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
 body.g-admin .wf-item{display:block;background:var(--glass-2);border:1px solid var(--glass-line);border-radius:var(--r-tile);padding:14px 16px 12px;box-shadow:var(--inset),0 0 0 1px var(--ring);text-decoration:none;color:var(--ink)}
@@ -478,8 +477,9 @@ body.g-admin .pa-table tr:last-child td{border-bottom:0}
 body.g-admin .pa-table .c{text-align:center}
 body.g-admin .pa-table tr.suspended td,body.g-admin .pa-table tr.off td{color:var(--mute)}
 body.g-admin .pa-table input[type=checkbox]{width:20px;height:20px;vertical-align:middle;accent-color:var(--navy)}
-body.g-admin .pa-matrix th.c{font-size:13px;line-height:1.35}
-body.g-admin .pa-matrix td small{color:var(--mute);font-size:13px}
+body.g-admin .pa-matrix th.c{font-size:14px;line-height:1.35}
+body.g-admin .pa-matrix td small{color:var(--mute);font-size:14px}
+body.g-admin .pa-table small{font-size:14px}
 body.g-admin .pa-in{font-size:16px;padding:11px 14px;margin:4px 0 10px;background:#fff;border-radius:12px}
 body.g-admin .pa-in.pa-sm{width:auto;min-width:120px;padding:7px 10px;margin:0;font-size:15px;border-radius:10px}
 body.g-admin .pa-in.pa-xs{width:72px;padding:7px 8px;margin:0;font-size:15px;border-radius:10px}
@@ -493,7 +493,7 @@ body.g-admin .lux-btn:hover{background:#fff}
 body.g-admin .lux-btn--gold{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 6px 16px rgba(30,58,138,.25),inset 0 1px 0 rgba(255,255,255,.25)}
 body.g-admin .lux-btn--gold:hover{background:var(--navy-2)}
 body.g-admin .lux-btn--sm{min-height:36px;padding:5px 12px;font-size:14px}
-body.g-admin .pa-mini{font:inherit;font-size:12px;font-weight:700;min-height:26px;padding:2px 9px;border-radius:999px;border:1px solid rgba(30,58,138,.28);background:#fff;color:var(--navy);margin:3px 2px 0;cursor:pointer}
+body.g-admin .pa-mini{font:inherit;font-size:14px;font-weight:700;min-height:28px;padding:2px 10px;border-radius:999px;border:1px solid rgba(30,58,138,.28);background:#fff;color:var(--navy);margin:3px 2px 0;cursor:pointer}
 body.g-admin .pa-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(15,23,42,.9);color:#fff;padding:12px 20px;border-radius:999px;z-index:99;font-size:15px;font-weight:600;box-shadow:0 12px 32px rgba(15,23,42,.25);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);max-width:calc(100% - 32px)}
 body.g-admin .pa-toast.bad{background:rgba(180,35,24,.92)}
 @media (max-width:720px){
