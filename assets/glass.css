@@ -5,7 +5,8 @@
    글꼴: Pretendard Variable(assets/fonts/pretendard/, OFL) — 각 페이지가 pretendardvariable-dynamic-subset.css 를 먼저 불러옴. 화면 글씨는 모두 14px 이상.
    v=5(3단계): 인트라넷 새 소식 배너·도구 검색·최근 쓴 도구·승인 요청 버튼·막대그래프(.pa-chart)·관리자 승인 요청/방문 합계 카드
    v=6(4단계, web-design-guidelines 점검): 휴대폰 터치 영역 44px(메뉴·작은 버튼·목록 링크·동의 체크), 앵커·포커스 이동 시 고정 메뉴에 가리지 않게 scroll-margin, 호버 표시, touch-action, 자리표시 글자색, 제목 균형 줄바꿈, h2.pa-h3(제목 순서용)
-   v=7(LOGO-LAYOUT-20261102): 새 로고(방패 R 모노그램 assets/logo.svg) 메뉴 마크, 첫 화면 '대표문구 + 3D 로고'(.g-hero--logo), 숫자 타일 라벨 위, 중간 합류 유도 줄(.g-cta-row), 회사 정보 바닥글(.g-foot--full) — 파일 끝 */
+   v=7(LOGO-LAYOUT-20261102): 새 로고(방패 R 모노그램 assets/logo.svg) 메뉴 마크, 첫 화면 '대표문구 + 3D 로고'(.g-hero--logo), 숫자 타일 라벨 위, 중간 합류 유도 줄(.g-cta-row), 회사 정보 바닥글(.g-foot--full)
+   v=8(HOME-PLUS-20261102): 유리 효과 강화 'glassy dashboard v7 + CRM' — 생동감 있는 배경, 반투명 그라데이션 카드·밝은 테두리·빛 반사·긴 그림자, KPI 악센트 — 파일 끝 */
 
 :root{
   --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
@@ -660,3 +661,78 @@ body.g-admin details.pa-fold>summary{cursor:pointer;font-weight:700;min-height:4
   .g-cta-row .g-btn{flex:1 1 100%}
 }
 @media (max-width:380px){.g-hero-logo img{width:130px}}
+
+/* ---------- v=8 (HOME-PLUS-20261102, 2번): 유리 효과 강화 — "glassy dashboard v7 + CRM"(페이스북 릴스 Code XR) 스타일 ----------
+   참고 요소: 반투명 카드 + 배경 흐림, 밝은 1px 테두리와 왼쪽 위 빛 반사(sheen), 부드럽고 긴 그림자, 생동감 있는 그라데이션 배경(보라·파랑·하늘·분홍 빛 덩어리),
+   KPI 타일 색 악센트. 기존 '투명한 물방울'(빛 고리)은 유지하고 유리 재질(흐림·안쪽 빛)로 강화. 글자색·카드 불투명도(평균 .70 이상)는 그대로 → 대비 유지.
+   적용 범위: 메인·/members/·story·privacy·관리자(body.g-admin)·/performance/ 공통 선택자(.g-bar .g-card .g-tile .pa-card .br .pa-list li .pa-tool .pa-steps li). */
+:root{--glass-v8:linear-gradient(135deg,rgba(255,255,255,.84) 0%,rgba(255,255,255,.66) 55%,rgba(255,255,255,.58) 100%);
+  --glass-v8-2:linear-gradient(135deg,rgba(255,255,255,.90) 0%,rgba(255,255,255,.74) 60%,rgba(255,255,255,.68) 100%);
+  --glass-v8-line:rgba(255,255,255,.88);
+  --glass-v8-shadow:0 2px 6px rgba(15,23,42,.04),0 28px 64px -20px rgba(30,58,138,.26);
+  --glass-v8-shadow-sm:0 1px 3px rgba(15,23,42,.04),0 18px 40px -16px rgba(30,58,138,.20);
+  --glass-v8-inset:inset 0 1px 0 rgba(255,255,255,.98),inset 0 0 0 1px rgba(255,255,255,.42),inset 0 -1px 0 rgba(30,58,138,.05);
+  --blur:blur(26px) saturate(190%)}
+
+/* 배경: 생동감 있는 빛 덩어리(인디고·하늘·보라·분홍·금) — 글은 항상 카드 위에 있어 대비에 영향 없음 */
+.g-bg{background:
+    radial-gradient(40% 36% at 4% 0%,rgba(99,102,241,.78) 0,rgba(99,102,241,0) 70%),
+    radial-gradient(40% 38% at 96% 10%,rgba(56,189,248,.80) 0,rgba(56,189,248,0) 70%),
+    radial-gradient(36% 34% at 84% 60%,rgba(168,85,247,.50) 0,rgba(168,85,247,0) 70%),
+    radial-gradient(42% 34% at 8% 86%,rgba(236,72,153,.36) 0,rgba(236,72,153,0) 70%),
+    radial-gradient(30% 26% at 52% 34%,rgba(255,255,255,.98) 0,rgba(255,255,255,0) 70%),
+    radial-gradient(28% 24% at 66% 94%,rgba(245,158,11,.34) 0,rgba(245,158,11,0) 70%),
+    radial-gradient(36% 30% at 24% 26%,rgba(255,255,255,.62) 0,rgba(255,255,255,0) 70%),
+    linear-gradient(180deg,#f1f4fa 0%,#e4e9f6 55%,#dfe5f3 100%)}
+/* 물방울(빛 고리): 유리 재질로 — 고리 자체가 뒤를 살짝 흐리고 안쪽에 빛이 맺힘, 아주 천천히 떠오름 */
+.g-bg::before,.g-bg::after{border-color:rgba(255,255,255,.66);
+  box-shadow:0 0 0 1px rgba(255,255,255,.75),inset 0 0 0 1px rgba(255,255,255,.75),inset 0 0 48px rgba(255,255,255,.55),0 40px 90px -30px rgba(30,58,138,.22);
+  -webkit-backdrop-filter:blur(5px) saturate(140%);backdrop-filter:blur(5px) saturate(140%);
+  animation:g-drift 22s ease-in-out infinite}
+.g-bg::after{animation-duration:30s;animation-delay:-9s}
+@keyframes g-drift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-28px,0)}}
+
+/* 유리 카드: 반투명 그라데이션 + 밝은 테두리 + 안쪽 빛 + 긴 그림자, 왼쪽 위 빛 반사(::after, 클릭 통과) */
+.g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.br{background:var(--glass-v8);border-color:var(--glass-v8-line);box-shadow:var(--glass-v8-inset),0 0 0 1px rgba(30,58,138,.05),var(--glass-v8-shadow)}
+.g-tile,.br,.pa-card .pa-card,.pa-list li,.pa-tool,.pa-steps li{background:var(--glass-v8-2);box-shadow:var(--glass-v8-inset),0 0 0 1px rgba(30,58,138,.05),var(--glass-v8-shadow-sm)}
+.pa-list li,.pa-tool,.pa-steps li{border-color:var(--glass-v8-line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
+.g-card,.g-tile,.pa-card,.br,.pa-list li,.pa-tool,.pa-steps li,.g-nav .g-bar{position:relative}
+.g-card::after,.g-tile::after,.pa-card::after,.br::after,.pa-list li::after,.pa-tool::after,.pa-steps li::after,.g-nav .g-bar::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.60) 0%,rgba(255,255,255,.16) 26%,rgba(255,255,255,0) 50%)}
+.g-card>*,.g-tile>*,.pa-card>*,.br>*,.pa-tool>*{position:relative;z-index:1} /* 글·버튼은 빛 반사 위에 */
+.g-tool:hover,.pa-tool:hover,a.br:hover{box-shadow:var(--glass-v8-inset),0 0 0 1px rgba(30,58,138,.08),0 30px 60px -18px rgba(30,58,138,.34)}
+details.g-faq summary:hover{background:rgba(255,255,255,.55)}
+/* 색이 있던 카드는 그대로(알림·배너·실적 타일·잠긴 도구) */
+.pa-card.pa-notice{background:linear-gradient(120deg,rgba(255,247,214,.94),rgba(255,255,255,.80))}
+.pa-card.pa-banner,.pa-news .pa-card{background:rgba(255,247,214,.9)}
+.pa-tool.pa-tool--stats{background:linear-gradient(135deg,#2a4cb3 0%,var(--navy) 55%,#172f72 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 18px 40px -12px rgba(30,58,138,.5)}
+.pa-tool.pa-tool--locked{background:rgba(255,255,255,.55)}
+.pa-list li.pa-locked,.br.off{background:rgba(255,255,255,.5)}
+/* 상단 메뉴·아래 고정 막대: 글자가 비치지 않게 조금 더 불투명, 테두리만 밝게 */
+.g-nav .g-bar{background:linear-gradient(135deg,rgba(255,255,255,.90),rgba(255,255,255,.76))}
+.g-cta-bar .g-bar,.g-tabbar .g-bar{background:rgba(255,255,255,.90);border-color:var(--glass-v8-line);box-shadow:var(--glass-v8-inset),0 0 0 1px rgba(30,58,138,.06),0 18px 44px -10px rgba(30,58,138,.30)}
+/* 버튼: 진한 버튼은 남색 그라데이션 + 유리 하이라이트, 흐린 버튼은 유리 */
+.g-btn--pri{background:linear-gradient(135deg,#2a4cb3 0%,var(--navy) 60%,#172f72 100%);box-shadow:0 12px 28px -8px rgba(30,58,138,.55),inset 0 1px 0 rgba(255,255,255,.34)}
+.g-btn--pri:hover{background:linear-gradient(135deg,#3357c4 0%,#1f3d91 60%,#193478 100%)}
+.g-btn--ghost{background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.72));border-color:rgba(30,58,138,.26);box-shadow:inset 0 1px 0 #fff,0 10px 24px -10px rgba(30,58,138,.28)}
+.g-fold>summary{background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(255,255,255,.72))}
+/* 입력칸: 유리 위 흰 칸, 포커스에 빛 테두리 */
+.pa-in{background:rgba(255,255,255,.94);border-color:rgba(30,58,138,.14);box-shadow:inset 0 1px 2px rgba(15,23,42,.04)}
+.pa-in:focus{box-shadow:0 0 0 4px rgba(56,130,246,.18)}
+/* 숫자 타일(CRM KPI 느낌): 위쪽 색 악센트 선(타일마다 다른 색), 숫자 색은 그대로 */
+.g-stat::before{content:"";position:absolute;left:20px;top:0;width:46px;height:3px;border-radius:0 0 3px 3px;background:linear-gradient(90deg,#1e3a8a,#38bdf8);z-index:1}
+.g-stat:nth-child(2)::before{background:linear-gradient(90deg,#7c3aed,#ec4899)}
+.g-stat:nth-child(3)::before{background:linear-gradient(90deg,#0d9488,#22d3ee)}
+.g-stat:nth-child(4)::before{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.g-stat b{text-shadow:0 1px 0 rgba(255,255,255,.6)}
+/* 관리자 표·안내는 흰 바탕 유지(가독성) */
+body.g-admin .pa-scroll,.pa-scroll{background:rgba(255,255,255,.94)}
+/* 휴대폰: 흐림 반지름 줄여 가볍게 */
+@media (max-width:720px){:root{--blur:blur(18px) saturate(180%)}.g-bg::before,.g-bg::after{-webkit-backdrop-filter:none;backdrop-filter:none}}
+/* 대체 규칙(위 v8 규칙보다 뒤에 두어 이김): backdrop-filter 미지원·투명도 줄이기 설정이면 불투명 */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.br,.pa-list li,.pa-tool,.pa-steps li,.g-nav .g-bar{background:rgba(255,255,255,.96)}}
+@media (prefers-reduced-transparency:reduce){
+  .g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.br,.pa-list li,.pa-tool,.pa-steps li,.g-nav .g-bar,.g-cta-bar .g-bar,.g-tabbar .g-bar{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .g-card::after,.g-tile::after,.pa-card::after,.br::after,.pa-list li::after,.pa-tool::after,.pa-steps li::after,.g-nav .g-bar::after{display:none}
+  .g-bg{background:#eef1f7}.g-bg::before,.g-bg::after{display:none}}
