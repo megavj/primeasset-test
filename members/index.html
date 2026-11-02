@@ -24,7 +24,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="../assets/glass.css?v=13">
-<link rel="stylesheet" href="../assets/members-ux.css?v=4">
+<link rel="stylesheet" href="../assets/members-ux.css?v=5">
 </head>
 <body class="g-members">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -52,16 +52,18 @@
 <main class="g-sec g-sec--app" id="main">
   <h1 class="sr">설계사 인트라넷</h1><!-- 낭독용 제목(h1): 화면 카드 제목은 h2 -->
   <!-- FUNC-FIX B7: 불러오는 동안 실제 화면 모양의 틀(스켈레톤). 로그인 세션이 이 기기에 있으면 인트라넷 모양, 없으면 로그인 화면 모양.
-       틀은 화면 높이만큼 자리를 잡아 바닥글이 밀려 내려가지 않게(흔들림 CLS) 하고, 1초 안에 끝나면 보이지 않음(깜빡임 없음). 화면이 그려지면 통째로 바뀜 -->
+       틀은 화면 높이만큼 자리를 잡아 바닥글이 밀려 내려가지 않게(흔들림 CLS) 하고, 1초 안에 끝나면 보이지 않음(깜빡임 없음). 화면이 그려지면 통째로 바뀜.
+       로그인 화면 모양의 맨 위 소개 한 줄만은 실제 글 그대로 처음부터 보임(바뀌어도 같은 글·같은 자리) -->
   <div id="pa-app" aria-busy="true">
     <p class="sr" role="status">불러오는 중…</p>
     <div class="pa-sk" aria-hidden="true">
       <div class="pa-sk-out pa-login">
-        <div class="pa-card pa-card--hero"><i class="sk sk-pitch"></i><i class="sk sk-pitch sk-w60"></i></div>
-        <div class="pa-card"><i class="sk sk-h"></i><i class="sk"></i><i class="sk sk-btn"></i><i class="sk sk-w40"></i></div>
-        <div class="pa-card"><i class="sk sk-h"></i><ol class="pa-steps"><li><i class="sk sk-w40"></i><i class="sk"></i></li><li><i class="sk sk-w40"></i><i class="sk"></i></li><li><i class="sk sk-w40"></i><i class="sk"></i></li></ol></div>
+        <!-- 맨 위 한 줄은 로그인 화면(glass-members.js loginView)과 같은 글을 처음부터 보여 줌: 같은 자리·같은 크기로 바뀌어 깜빡임 없음, 가장 큰 글이 첫 그림에 바로 보임(LCP) -->
+        <div class="pa-card pa-card--hero"><p class="pa-pitch">가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.</p></div>
+        <div class="pa-card pa-sk-fade"><i class="sk sk-h"></i><i class="sk"></i><i class="sk sk-btn"></i><i class="sk sk-w40"></i></div>
+        <div class="pa-card pa-sk-fade"><i class="sk sk-h"></i><ol class="pa-steps"><li><i class="sk sk-w40"></i><i class="sk"></i></li><li><i class="sk sk-w40"></i><i class="sk"></i></li><li><i class="sk sk-w40"></i><i class="sk"></i></li></ol></div>
       </div>
-      <div class="pa-sk-in">
+      <div class="pa-sk-in pa-sk-fade">
         <div class="pa-head"><i class="sk sk-who"></i></div>
         <div class="pa-card"><i class="sk sk-h"></i><i class="sk"></i><i class="sk sk-btn sk-w30"></i></div>
         <div class="pa-card pa-search"><i class="sk sk-input"></i></div>
