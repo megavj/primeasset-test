@@ -1,7 +1,7 @@
 /* 프라임에셋 프리미엄 서비스워커(MAIN-V3-04, PWA). 정적 자산(css·js·글꼴·그림·manifest)만 네트워크 우선으로 받아 두고, 네트워크가 안 될 때만 저장본을 준다.
    캐시 금지: HTML 문서(모든 페이지), 다른 출처(Supabase 등 API), /product/ 아래 전부(질문 요청 포함), JSON 자료 파일. GET 이 아닌 요청은 손대지 않는다.
    VERSION 을 바꾸면 activate 때 옛 캐시를 전부 지운다. 추적·식별자 없음. */
-var VERSION = 'pa-static-v1';
+var VERSION = 'pa-static-v2';
 var STATIC = /\.(css|js|mjs|woff2?|ttf|otf|png|jpe?g|webp|gif|svg|ico|webmanifest)$/i;
 
 self.addEventListener('install', function () { self.skipWaiting(); });

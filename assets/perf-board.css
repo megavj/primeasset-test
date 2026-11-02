@@ -241,7 +241,7 @@
   margin: 0 0 -5px -5px;
   border-radius: 50%;
   background: var(--pb-cream);
-  box-shadow: 0 0 0 2px var(--pb-ring);
+  outline: 2px solid var(--pb-ring);  /* 점 둘레 고리(그림자 대신 선: 그림자는 패널 2단계만) */
   transition: bottom 1.05s var(--pb-ease) calc(var(--i, 0) * 70ms), opacity .4s calc(var(--i, 0) * 70ms + .25s), transform .25s;
 }
 .pb-col.is-peak .pb-col__dot {
