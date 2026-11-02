@@ -25,7 +25,8 @@
 <link rel="stylesheet" href="assets/glass.css?v=8">
 <link rel="stylesheet" href="assets/perf-board.css?v=1">
 <link rel="stylesheet" href="assets/home-board.css?v=1">
-<script>if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
+<link rel="stylesheet" href="assets/home-layout.css?v=1">
+<script>document.documentElement.classList.add('js');if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
 </head>
 <body class="g-main">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -50,7 +51,7 @@
 </header>
 
 <main id="main">
-  <!-- 첫 화면: 대표문구(왼쪽) + 3D 로고(오른쪽, 정지 WebP + CSS 움직임) + 합류 문의 + 숫자 4개(라벨 위·숫자 아래) -->
+  <!-- 첫 화면: 대표문구(왼쪽) + 3D 로고(오른쪽, 정지 WebP + CSS 움직임) + 합류 문의(본문에서는 여기와 맨 끝 섹션에만) + 숫자 4개(라벨 위·숫자 아래, 기준은 작은 한 줄) -->
   <section class="g-hero g-hero--logo" id="hero" aria-labelledby="hero-title">
     <div class="g-hero-grid">
       <div class="g-hero-text">
@@ -125,57 +126,33 @@
     </div>
   </section>
 
-  <!-- 왜 우리인가: 제도 3가지(수수료·승격·교육과 도구) 한 번만 -->
+  <!-- 왜 프리미엄사업부인가(MAIN-V3-02): 제도 3가지(수수료·승격·교육과 도구) + 프라임에셋 한 줄. 벤토 그리드(큰 칸·작은 칸, 컨테이너 쿼리), 카드는 제목+한 줄, 나머지는 '더 보기' -->
   <section class="g-sec" id="why">
-    <h2>왜 우리인가</h2>
+    <h2>왜 프리미엄사업부인가</h2>
     <p class="g-lead">경력자에게는 수수료와 제도를, 신입에게는 교육과 도구를 먼저 보여 드립니다.</p>
-    <div class="g-grid g-grid--3">
-      <div class="g-tile">
-        <h3>수수료가 투명합니다</h3>
-        <p>본사가 설계사에게 직접 지급하고, 매달 수수료표·시책·영업규정을 공개합니다.</p>
-        <details class="g-more"><summary>더 보기</summary><p>팜스에서 계약별 수수료를 원 단위로 확인할 수 있습니다. 몸값 선지급 대신 공개된 규정으로 대우합니다.</p></details>
+    <div class="g-cq">
+      <div class="g-bento g-bento--why">
+        <div class="g-tile g-bento-item g-bento-item--lg">
+          <h3>수수료가 투명합니다</h3>
+          <p>본사가 설계사에게 직접 지급하고, 매달 수수료표·시책·영업규정을 공개합니다.</p>
+          <details class="g-more"><summary>더 보기</summary><p>팜스에서 계약별 수수료를 원 단위로 확인할 수 있습니다. 몸값 선지급 대신 공개된 규정으로 대우합니다.</p></details>
+        </div>
+        <div class="g-tile g-bento-item">
+          <h3>규정대로 승격됩니다</h3>
+          <p>설계사 → 팀장 → 지사장 → 본부장.</p>
+          <details class="g-more"><summary>더 보기</summary><p>규정을 채우면 자동 승격되고, 누구나 노력하면 관리자가 될 수 있습니다.</p><p>본사 조직도·담당 연락처가 공개되고 직급별 교육을 지원합니다. 조직에 충성을 요구하지 않고, 설계사의 성공을 조직의 성공으로 봅니다.</p></details>
+        </div>
+        <div class="g-tile g-bento-item">
+          <h3>교육과 도구가 준비돼 있습니다</h3>
+          <p>보상·온라인영업 등 교육을 매뉴얼로 만들어 분야별 전문가가 함께합니다.</p>
+          <details class="g-more"><summary>더 보기</summary><p>회원 전용 영업도구와 보험정보 카페 자료 3,200여 건.</p><p>월 1회 실전 강의, 익명 질문방(늅늅방), 바른 영업을 지향합니다. 출퇴근 자유·아침 조회 없이, 설계·심사 지원을 받아 스스로 성과를 만듭니다.</p></details>
+        </div>
+        <div class="g-tile g-bento-item g-bento-item--wide">
+          <h3>프라임에셋은 어떤 곳인가요</h3>
+          <p>프라임에셋은 설계사 1만여 명이 근무하는 초대형 GA 독립 법인이며 영업규정집을 공개합니다.</p>
+          <details class="g-more"><summary>더 보기</summary><p>자세한 자료는 로그인 후 인트라넷 '프리미엄 안내 자료'에 있습니다.</p></details>
+        </div>
       </div>
-      <div class="g-tile">
-        <h3>규정대로 승격됩니다</h3>
-        <p>설계사 → 팀장 → 지사장 → 본부장. 규정을 채우면 자동 승격되고, 누구나 노력하면 관리자가 될 수 있습니다.</p>
-        <details class="g-more"><summary>더 보기</summary><p>본사 조직도·담당 연락처가 공개되고 직급별 교육을 지원합니다. 조직에 충성을 요구하지 않고, 설계사의 성공을 조직의 성공으로 봅니다.</p></details>
-      </div>
-      <div class="g-tile">
-        <h3>교육과 도구가 준비돼 있습니다</h3>
-        <p>보상·온라인영업 등 교육을 매뉴얼로 만들어 분야별 전문가가 함께합니다. 회원 전용 영업도구와 보험정보 카페 자료 3,200여 건.</p>
-        <details class="g-more"><summary>더 보기</summary><p>월 1회 실전 강의, 익명 질문방(늅늅방), 바른 영업을 지향합니다. 출퇴근 자유·아침 조회 없이, 설계·심사 지원을 받아 스스로 성과를 만듭니다.</p></details>
-      </div>
-    </div>
-    <div class="g-tile g-cta-row">
-      <p>경력·신입 모두 환영.<small>입사·이직 미팅: 프라임에셋 이사 김상현</small></p>
-      <a class="g-btn g-btn--pri" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
-      <a class="g-btn g-btn--ghost" href="tel:010-8714-9262">전화 010-8714-9262</a>
-    </div>
-    <p class="g-note g-note--sec">프라임에셋은 설계사 1만여 명이 근무하는 초대형 GA 독립 법인이며 영업규정집을 공개합니다. 자세한 자료는 로그인 후 인트라넷 '프리미엄 안내 자료'에 있습니다.</p>
-  </section>
-
-  <!-- 성장 스토리(이사 소개 + 대표 연혁 5): 참고 사이트처럼 도구보다 앞에 -->
-  <section class="g-sec" id="ceo">
-    <h2>김상현 이사</h2>
-    <p class="g-lead">프라임에셋 이사, 프리미엄사업부 대표.</p>
-    <div class="g-card g-ceo">
-      <div class="g-ceo-bio">
-        <p class="g-quote">말보다 데이터와 시스템으로 일하는 보험영업가</p>
-        <p>프라임에셋 188본부 본부장 · 프리미엄사업부. 2017년 188본부를 시작으로 19개 본부 연합으로 키웠습니다. 2021·2022년 MVP 2년 연속, 2021년 명예이사.</p>
-        <details class="g-more"><summary>더 보기</summary><p>2009년 현장에서 보험 영업을 시작했습니다. 보험 소비자가 아니라 보험설계사를 돕는 일을 합니다. 우수한 인재를 발굴하고, 설계사가 실제로 성과를 올릴 수 있는 영업 환경을 만드는 것이 제 일입니다.</p></details>
-      </div>
-      <ol class="g-tl" aria-label="대표 연혁 5">
-        <li><b>2017.03</b>188본부 승격(김상현 본부장)</li>
-        <li><b>2019.10</b>프리미엄 재직인원 100명 돌파</li>
-        <li><b>2021.07</b>프리미엄 재직인원 500명 돌파</li>
-        <li><b>2025.12</b>총인원 1,000명 · 총 월납 50억 원 달성</li>
-        <li><b>2026.03</b>CY'25 프리미엄 연도대상 (서울 그랜드힐 컨벤션)</li>
-      </ol>
-    </div>
-    <div class="g-links">
-      <a class="g-link" href="story/">이사 소개 전체 · 연혁 26개 보기</a>
-      <a class="g-link" href="story/#branches">함께하는 본부 19개 보기</a>
-      <a class="g-link" href="story/#goals">방향과 목표 10개</a>
     </div>
   </section>
 
@@ -217,6 +194,33 @@
     </details>
   </section>
 
+  <!-- 김상현 이사: 한 줄 소개 + '더 보기'(소개 전문·대표 연혁 5) -->
+  <section class="g-sec" id="ceo">
+    <h2>김상현 이사</h2>
+    <p class="g-lead">프라임에셋 이사, 프리미엄사업부 대표.</p>
+    <div class="g-card g-ceo g-ceo--v3">
+      <div class="g-ceo-bio">
+        <p class="g-quote">말보다 데이터와 시스템으로 일하는 보험영업가</p>
+        <p>프라임에셋 188본부 본부장 · 프리미엄사업부. 2017년 188본부를 시작으로 19개 본부 연합으로 키웠습니다.</p>
+        <details class="g-more"><summary>더 보기</summary><p>2021·2022년 MVP 2년 연속, 2021년 명예이사.</p><p>2009년 현장에서 보험 영업을 시작했습니다. 보험 소비자가 아니라 보험설계사를 돕는 일을 합니다. 우수한 인재를 발굴하고, 설계사가 실제로 성과를 올릴 수 있는 영업 환경을 만드는 것이 제 일입니다.</p></details>
+      </div>
+      <details class="g-more g-ceo-tl"><summary>대표 연혁 5</summary>
+      <ol class="g-tl" aria-label="대표 연혁 5">
+        <li><b>2017.03</b>188본부 승격(김상현 본부장)</li>
+        <li><b>2019.10</b>프리미엄 재직인원 100명 돌파</li>
+        <li><b>2021.07</b>프리미엄 재직인원 500명 돌파</li>
+        <li><b>2025.12</b>총인원 1,000명 · 총 월납 50억 원 달성</li>
+        <li><b>2026.03</b>CY'25 프리미엄 연도대상 (서울 그랜드힐 컨벤션)</li>
+      </ol>
+      </details>
+    </div>
+    <div class="g-links">
+      <a class="g-link" href="story/">이사 소개 전체 · 연혁 26개 보기</a>
+      <a class="g-link" href="story/#branches">함께하는 본부 19개 보기</a>
+      <a class="g-link" href="story/#goals">방향과 목표 10개</a>
+    </div>
+  </section>
+
   <!-- 설계사 후기: assets/testimonials.json 에 내용이 있을 때만 보임(assets/glass-main.js) -->
   <section class="g-sec" id="reviews" hidden>
     <h2>설계사 후기</h2>
@@ -230,14 +234,19 @@
     <div class="g-photos" id="photo-list"></div>
   </section>
 
-  <!-- 자주 묻는 질문 5개 (나머지는 /story/ 아래) -->
+  <!-- 자주 묻는 질문: 3개 노출 + 나머지 2개 접기 (전체는 /story/#faq) -->
   <section class="g-sec" id="faq">
     <h2>자주 묻는 질문</h2>
     <details class="g-faq"><summary>Q. 원수사나 대리점이나 똑같지 않나요?</summary><p>A. 다릅니다. 대리점마다, 프라임에셋 안에서도 모두 다릅니다.</p></details>
     <details class="g-faq"><summary>Q. 정착지원금 주시나요?</summary><p>A. 몸값 선지급 대신 공개된 규정과 환경으로 대우합니다.</p></details>
     <details class="g-faq"><summary>Q. 디비 지급해 주나요?</summary><p>A. 디비를 받는 대신 수당이 낮아지는 구조를 권하지 않습니다. 온라인·디비·지인·개척 등 가망고객 확보는 함께 진행합니다.</p></details>
-    <details class="g-faq"><summary>Q. 보험영업을 제대로 배우고 싶습니다.</summary><p>A. 영업방식·공부자료·보상교육, 필요한 건 말씀만 주세요.</p></details>
-    <details class="g-faq"><summary>Q. 함께 일하려면 무엇이 필요한가요?</summary><p>A. 의지와 노력. 그 외에는 저희가 준비합니다. — 프라임에셋 이사 김상현</p></details>
+    <details class="g-fold g-fold--faq">
+      <summary>질문 2개 더 보기</summary>
+      <div class="g-fold-body">
+        <details class="g-faq"><summary>Q. 보험영업을 제대로 배우고 싶습니다.</summary><p>A. 영업방식·공부자료·보상교육, 필요한 건 말씀만 주세요.</p></details>
+        <details class="g-faq"><summary>Q. 함께 일하려면 무엇이 필요한가요?</summary><p>A. 의지와 노력. 그 외에는 저희가 준비합니다. — 프라임에셋 이사 김상현</p></details>
+      </div>
+    </details>
     <p class="g-note g-note--sec"><a class="g-link" href="story/#faq">질문 더 보기</a></p>
   </section>
 
@@ -360,6 +369,8 @@
 <script src="assets/perf-board.js?v=1" defer></script>
 <!-- 후기·사진 데이터 파일을 읽어 그림(비어 있으면 섹션 숨김 유지). 본부 목록은 /story/ 로 옮겨 그곳에서 branches.js 를 부름. -->
 <script src="assets/glass-main.js?v=1" defer></script>
+<!-- 휴대폰 아래 고정 합류 문의 막대: 첫 화면(숫자 타일 포함)이 지나간 뒤에만 보임 -->
+<script src="assets/home-layout.js?v=1" defer></script>
 <!-- 첫 화면 3D 로고(회전 가감속 + 반짝이는 파티클 64개): WebGL 되고 움직임 줄이기가 아니면 위 WebP 자리에 실시간 3D를 그림. three.js r187(MIT)은 assets/three/ 안, 외부 요청 없음. 안 되면 WebP 그대로 -->
 <script src="assets/three/logo3d-loader.js?v=2" defer></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(이름·이메일·쿠키·식별자 없음). 설정은 auth-config.js 재사용 -->
