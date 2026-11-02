@@ -1,7 +1,7 @@
 /* 프라임에셋 프리미엄 — 관리자 화면 덧붙임 (assets/admin.js 는 그대로 둠). 서버 함수가 있을 때만 '오늘 요약' 아래에 카드 두 개:
    (1) 승인 요청 목록 list_access_requests()  → 회원이 인트라넷 🔒 도구 옆 '승인 요청'을 누른 것. 승인은 기존 권한 체크표에서.
    (2) 방문 합계 site_hit_summary(p_days)     → 최근 30일 날짜별 방문 수·'합류 문의' 클릭 수 합계(막대, assets/glass-chart.js).
-   함수가 없으면(SQL 적용 전) 아무것도 그리지 않음. admin.js 가 탭을 바꿔 화면을 다시 그려도 카드는 다시 끼워 넣음. */
+   함수가 없으면(SQL 적용 전) 아무것도 그리지 않음. FUNC-FIX A1(S4 SQL): 승인 대기 회원의 '전체 승인 요청'은 메뉴 칸에 '전체 승인 요청(가입 승인)'으로 옴(서버가 채움). admin.js 가 탭을 바꿔 화면을 다시 그려도 카드는 다시 끼워 넣음. */
 (function () {
   const C = window.PA_AUTH || {};
   if (!C.url || !C.anonKey || !window.supabase) return;
@@ -29,7 +29,7 @@
     const card = el("div", { class: "pa-card pa-req-card" });
     const reload = async () => { const r = await sb.rpc("list_access_requests"); if (!r.error && Array.isArray(r.data)) draw(r.data); };
     const draw = (list) => card.replaceChildren(el("h3", {}, `승인 요청 (${list.length})`),
-      el("p", { class: "pa-note" }, "회원이 인트라넷의 🔒 도구 옆 '승인 요청'을 누르면 여기에 쌓입니다. 열어 주려면 '회원·등급 관리 → 권한 체크표'에서 그 등급에 체크하거나 회원 등급을 바꿔 주세요. 권한이 열리면 목록에서 자동으로 빠집니다."),
+      el("p", { class: "pa-note" }, "회원이 인트라넷의 🔒 도구 옆 '승인 요청'을 누르면 여기에 쌓입니다. 열어 주려면 '회원·등급 관리 → 권한 체크표'에서 그 등급에 체크하거나 회원 등급을 바꿔 주세요. 권한이 열리면 목록에서 자동으로 빠집니다. '전체 승인 요청(가입 승인)'은 승인 대기 회원이 보낸 것 — 위 '승인 대기'에서 승인하면 자동으로 빠집니다(S4 SQL 적용 후 생김)."),
       list.length ? table(["요청일", "이름", "소속", "등급", "요청한 메뉴", ""], list.map(a => el("tr", {},
         el("td", {}, when(a.created_at)), el("td", {}, a.member_name || ""), el("td", {}, a.member_branch || ""), el("td", {}, a.grade || ""),
         el("td", {}, el("small", {}, a.resource_category || ""), " ", a.resource_name || ""),

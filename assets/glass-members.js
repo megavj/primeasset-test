@@ -1,6 +1,8 @@
 /* 프라임에셋 프리미엄 — 회원 로그인·도구 목록 (Supabase). 유리(Liquid Glass) 디자인용: assets/members.js 사본, 화면 배치·클래스만 다름. 3단계: 검색(초성)·최근 쓴 도구·새 소식 배너·승인 요청·막대그래프(assets/glass-chart.js) 추가. Supabase 호출·권한 판정은 그대로(새 함수 request_access 는 없으면 오픈채팅 안내로 대체).
    4단계(web-design-guidelines): 입력칸 이름(aria-label)·autocomplete·inputmode, 보내는 동안 버튼 잠금, 결과 문구 aria-live, 카드 제목은 h2.pa-h3(h1→h2 순서). 호출·인자는 그대로.
-   도구 주소는 이 파일에 없음: 로그인 후 서버(my_resources)가 권한 있는 것만 내려줌 */
+   도구 주소는 이 파일에 없음: 로그인 후 서버(my_resources)가 권한 있는 것만 내려줌
+   FUNC-FIX-20261102: A1 승인 대기 회원은 메뉴별 버튼 31개 대신 안내 + '승인 요청 보내기' 1개(request_access(null), S4 SQL) + 접힌 메뉴 목록, 거절돼도 오픈채팅 자동 열기 없음.
+     A6 '실적 요약'은 공개 실적보드 자료(/performance/ #perf-data)에서 기간·숫자를 읽음(코드에 기간 없음). 화면 꾸밈은 assets/members-ux.css */
 (function () {
   const C = window.PA_AUTH || {};
   const $ = (s) => document.querySelector(s);
@@ -88,7 +90,21 @@
   const CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
   const choRx = (q) => new RegExp([...q].map(c => { const i = CHO.indexOf(c); if (i < 0) return c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); const a = 0xAC00 + i * 588; return `[${c}${String.fromCharCode(a)}-${String.fromCharCode(a + 587)}]`; }).join(""));
   const requested = new Set(); // 이 화면에서 이미 요청 보낸 도구 id
-  // 잠긴 도구 '승인 요청': 서버 함수 request_access(p_resource_id) 가 있으면 호출. 없거나 오류면 조용히 대체 — 오픈채팅을 새 창으로 열고 안내
+  // FUNC-FIX A1: 서버가 요청을 거절해도 오픈채팅을 저절로 열지 않음 — 한국어 이유 + 오픈채팅 링크(누를 때만). 영어 원문은 console 에만
+  const isNet = (e) => !!e && (e.name === "AuthRetryableFetchError" || /failed to fetch|networkerror|load failed|network request failed|fetch failed/i.test(`${e.message || ""} ${e.details || ""}`) || navigator.onLine === false);
+  const hasKo = (t) => /[가-힣]/.test(String(t || ""));
+  const REQ_WHY = [[/승인된 회원만/, "승인 대기 중인 계정의 요청은 아직 서버가 받지 않도록 설정돼 있어요. 가입 신청은 이미 접수돼 있으니 관리자가 확인하면 열립니다."],
+    [/정지/, "이용이 정지된 계정이라 요청할 수 없어요."], [/로그인이 필요/, "로그인이 풀렸어요. 새로고침한 뒤 다시 로그인해 주세요."]];
+  function reqFail(out, error) {
+    console.debug("[request_access]", error);
+    if (isNet(error)) { out.replaceChildren("인터넷 연결을 확인하고 다시 시도해 주세요."); return true; }
+    const m = String((error && error.message) || "");
+    const hit = REQ_WHY.find(([rx]) => rx.test(m));
+    const why = hit ? hit[1] : hasKo(m) ? `요청을 보내지 못했어요: ${m}` : "요청을 보내지 못했어요. 잠시 후 다시 시도해 주세요.";
+    out.replaceChildren(why, " 급하면 관리자에게 알려 주세요 — ", el("a", { href: OPENCHAT, target: "_blank", rel: "noopener" }, "카카오 오픈채팅 ↗"));
+    return false;
+  }
+  // 잠긴 도구 '승인 요청'(승인된 회원): 서버 함수 request_access(p_resource_id)
   function reqBtn(r) {
     const out = el("small", { class: "pa-req-msg", role: "status" });
     const btn = el("button", { class: "g-btn g-btn--ghost g-btn--sm pa-req", type: "button", onclick: async () => {
@@ -100,11 +116,32 @@
         out.textContent = data === "already" ? "이미 요청한 도구입니다. 관리자 확인 중." : data === "unlocked" ? "이미 열린 도구입니다. 새로고침해 주세요." : "요청을 보냈습니다. 관리자가 확인한 뒤 열립니다.";
         return;
       }
-      btn.disabled = false; btn.textContent = "승인 요청";
-      window.open(OPENCHAT, "_blank", "noopener");
-      out.replaceChildren("관리자에게 오픈채팅으로 알려 주세요 — ", el("a", { href: OPENCHAT, target: "_blank", rel: "noopener" }, "카카오 오픈채팅 ↗"), ` (도구: ${r.name})`);
+      btn.disabled = false; btn.textContent = reqFail(out, error) ? "다시 시도" : "승인 요청";
     } }, "승인 요청");
     return el("div", { class: "pa-req-row" }, btn, out);
+  }
+  // 승인 대기 회원: 메뉴별 버튼 31개 대신 안내 + '전체 승인 요청' 버튼 1개 + 접힌 메뉴 목록.
+  // 요청은 request_access(null) 1건(S4 SQL: resource_id 빈칸 = 전체 승인 요청). S4 적용 전에는 서버가 거절 → 이유 안내, 적용 후 '요청 접수됨'
+  function pendingCard(data) {
+    const out = el("p", { class: "pa-note pa-wait-msg", role: "status" });
+    const btn = el("button", { class: "g-btn g-btn--pri pa-wait-req", type: "button", onclick: async () => {
+      btn.disabled = true; btn.textContent = "보내는 중…"; out.textContent = "";
+      const { data: res, error } = await sb.rpc("request_access", { p_resource_id: null });
+      if (!error) {
+        btn.textContent = "요청 접수됨"; // 접수 뒤에는 잠금(다시 눌러도 서버는 1건만 둠)
+        out.textContent = res === "already" ? "이미 승인 요청이 접수돼 있어요. 관리자가 확인 중입니다." : "승인 요청이 접수됐어요. 관리자가 확인한 뒤 열립니다.";
+        return;
+      }
+      btn.disabled = false; btn.textContent = reqFail(out, error) ? "다시 시도" : "승인 요청 보내기";
+    } }, "승인 요청 보내기");
+    const groups = {};
+    for (const r of data) (groups[r.category] = groups[r.category] || []).push(r);
+    const list = el("details", { class: "pa-wait-list" }, el("summary", {}, `승인 후 열리는 메뉴 ${data.length}개 보기`),
+      ...Object.entries(groups).map(([cat, rs]) => el("div", { class: "pa-wait-cat" }, el("h3", {}, cat, el("small", {}, ` ${rs.length}개`)),
+        el("ul", { class: "pa-list" }, ...rs.map(r => el("li", { class: "pa-locked" }, el("span", {}, "🔒 " + r.name), r.description ? el("small", {}, r.description) : null))))));
+    return el("div", { class: "pa-card pa-banner pa-wait" }, el("h2", { class: "pa-h3" }, "승인 대기 중 — 관리자 확인 후 열립니다"),
+      el("p", {}, "인트라넷을 둘러보실 수 있지만 🔒 표시 메뉴는 관리자 승인 후 열립니다. 빨리 확인받으려면 승인 요청을 보내 주세요."),
+      el("div", { class: "pa-row" }, btn), out, list);
   }
 
   // 인트라넷: 전체 메뉴 이름은 보이고, 권한 없는 항목은 🔒 잠금(주소는 서버가 아예 안 내려줌)
@@ -112,6 +149,8 @@
     const { data, error } = await sb.rpc("my_menu");
     if (error) { show(msg("목록을 불러오지 못했습니다", error.message), logoutBtn()); return; }
     mode(true);
+    const pending = p.status === "pending";
+    if (pending) banner = pendingCard(data);
     const groups = {};
     for (const r of data) (groups[r.category] = groups[r.category] || []).push(r);
     const open = data.filter(r => r.unlocked).length;
@@ -130,7 +169,7 @@
       if (r.unlocked && r.url) return el("a", { class: "pa-tool", href: r.url, target: "_blank", rel: "noopener noreferrer", onclick: () => { pushRecent(r); drawRecent(); } },
         no != null ? el("span", { class: "pa-no" }, no) : el("span", { class: "pa-cat-tag" }, r.category || ""), el("b", {}, r.name), r.description ? el("small", {}, r.description) : null, el("span", { class: "pa-go", "aria-hidden": "true" }, "열기 ↗"));
       return el("div", { class: "pa-tool pa-tool--locked" }, el("span", { class: "pa-cat-tag" }, r.category || ""), el("b", {}, (r.unlocked ? "" : "🔒 ") + r.name), r.description ? el("small", {}, r.description) : null,
-        r.unlocked ? el("small", {}, "준비 중") : reqBtn(r));
+        r.unlocked ? el("small", {}, "준비 중") : pending ? el("small", {}, "승인 후 열림") : reqBtn(r));
     };
     const row = (r) => el("li", { class: r.unlocked ? "" : "pa-locked" },
       r.unlocked ? (r.url ? el("a", { href: r.url, target: "_blank", rel: "noopener noreferrer", onclick: () => { pushRecent(r); drawRecent(); } }, r.name) : el("span", {}, r.name + " (준비 중)"))
@@ -149,7 +188,7 @@
       const found = data.filter(r => { const t = `${r.name} ${r.description || ""} ${r.category || ""}`.toLowerCase(); return terms.every(rx => rx.test(t)); });
       hits.replaceChildren(...found.slice(0, 12).map(r => tile(r)));
       hits.hidden = !found.length; hitNote.hidden = false;
-      hitNote.textContent = found.length ? `${found.length}개 찾음${found.length > 12 ? " · 앞 12개만 표시" : ""}${found.some(r => !r.unlocked) ? " · 🔒는 권한이 필요한 도구(승인 요청 가능)" : ""}` : "찾는 도구가 없습니다.";
+      hitNote.textContent = found.length ? `${found.length}개 찾음${found.length > 12 ? " · 앞 12개만 표시" : ""}${found.some(r => !r.unlocked) ? (pending ? " · 🔒는 승인 후 열리는 도구" : " · 🔒는 권한이 필요한 도구(승인 요청 가능)") : ""}` : "찾는 도구가 없습니다.";
     });
     const search = el("div", { class: "pa-card pa-search" }, el("label", { class: "sr", for: "pa-q" }, "도구 검색"), q, hitNote, hits);
     // 2. 최근 쓴 도구 — 이 기기(localStorage)에만 이름·ID 저장. 권한 목록에서 다시 찾아 그리므로 권한이 바뀌면 자동 반영(잠기면 안 보임). 없으면 줄 숨김
@@ -169,7 +208,8 @@
       D("섹션 설명: 자주 쓰는 AI 도구 6개(상품통합분석기·수당계산기·상품분석기·전산답변기·보상답변기·자료검색기 순). 권한 있는 도구만 보입니다."),
       favs.length ? null : el("p", { class: "pa-note" }, "🔒 승인 후 열립니다."),
       el("div", { class: "pa-tools" }, ...favs.map((r, i) => tile(r, i + 1)), statsTile));
-    const allHead = el("div", { class: "pa-card" }, el("h3", {}, "전체 도구 메뉴"), N("등급 권한이 있으면 열리고, 없으면 🔒 잠금 — 옆의 '승인 요청'으로 관리자에게 알릴 수 있습니다."), ...cards);
+    // 승인 대기: 메뉴 31개 카드·버튼 대신 맨 위 안내 카드(pendingCard) 안의 접힌 목록만
+    const allHead = pending ? null : el("div", { class: "pa-card" }, el("h3", {}, "전체 도구 메뉴"), N("등급 권한이 있으면 열리고, 없으면 🔒 잠금 — 옆의 '승인 요청'으로 관리자에게 알릴 수 있습니다."), ...cards);
     // 4. 새 소식 배너 — site_notice 가 있으면 맨 위 유리 배너. 닫으면 같은 내용은 이 기기에서 다시 안 뜸. 없으면 아무것도 없음
     const noticeBox = el("div", { class: "pa-notice-box" });
     if (banner) banner.classList.add("pa-banner");
@@ -227,16 +267,25 @@
     return window.PA_CHART.bars({ labels: rows.map(row => String(row[c.x])), series, orient: c.orient, fmt: window.PA_CHART.won, title, short: c.short,
       note: `막대 단위 억·만 원(표의 ${c.mult === 1000 ? "천원" : "원"} 값 환산). 막대에 올리면 값이 보입니다` });
   }
+  // FUNC-FIX A6: '실적 요약' 숫자·기간은 공개 실적보드와 같은 자료(/performance/ 의 #perf-data JSON)에서 읽음 — 코드에 기간·숫자를 적지 않음.
+  //   월별 total(천원)·count_total 합 = 누적 월보험료·계약 건수, period·basis 그대로. 못 읽으면 요약 줄만 생략(아래 표는 그대로)
+  let perfP = null;
+  const perfSummary = () => perfP = perfP || fetch("../performance/", { credentials: "same-origin" }).then(r => r.ok ? r.text() : Promise.reject(r.status)).then(html => {
+    const j = JSON.parse(new DOMParser().parseFromString(html, "text/html").getElementById("perf-data").textContent);
+    const sum = (a) => (a || []).reduce((x, y) => x + (Number(y) || 0), 0);
+    const totalK = sum(j.total), count = sum(j.count_total);
+    return totalK > 0 ? { period: String(j.period || ""), basis: String(j.basis || ""), totalK, count, eok: (totalK / 100000).toFixed(2) } : null;
+  }).catch(e => { console.debug("[perf-data]", e); return null; });
   async function statsCard() {
     const { data, error } = await sb.rpc("members_stats");
     const card = el("div", { class: "pa-card" }, el("h3", {}, "실적 요약 · 실적 표"),
       N("승인된 회원만 표가 열립니다. 설계사 개인 이름 없음."));
     if (error || !data) { card.append(el("p", { class: "pa-note", role: "status" }, "자료를 불러오지 못했습니다. 새로고침해 주세요.")); return card; }
     const dm = data.find(r => r.unlocked && r.key === "division_monthly");
-    const tot = dm && dm.rows.find(x => String(x[0]).includes("합계"));
-    if (tot) card.append(el("div", { class: "pa-card" }, el("h3", {}, "실적 요약"),
-      el("p", { class: "pa-stat-sum" }, "사업부 2026년 1~9월 합계: 월보험료 ", el("b", {}, `${fmt(tot[1])}천원`), ` · 계약 ${fmt(tot[2])}건 (생명 ${fmt(tot[3])} · 손해 ${fmt(tot[4])}천원)`),
-      el("p", { class: "pa-note" }, "표는 펼쳐져 있습니다. 2026-10은 미마감.")));
+    const pb = dm ? await perfSummary() : null; // 승인 회원(사업부 표가 열린 회원)에게만, 전처럼
+    if (pb) card.append(el("div", { class: "pa-card" }, el("h3", {}, "실적 요약"),
+      el("p", { class: "pa-stat-sum" }, `사업부 ${pb.period} 누적: 월보험료 `, el("b", {}, `${pb.eok}억`), ` (${fmt(String(pb.totalK))}천원) · 계약 ${fmt(String(pb.count))}건`),
+      el("p", { class: "pa-note" }, `기준: ${pb.basis} — 공개 `, el("a", { href: "../performance/" }, "실적보드"), "와 같은 숫자입니다. 표는 펼쳐져 있습니다. 아래 표의 기간은 각 표 제목을 따릅니다.")));
     for (const r of data) {
       if (!r.unlocked) { card.append(el("div", { class: "pa-card pa-locked" }, el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.title))); continue; }
       const t = el("table", { class: "pa-table" }, el("thead", {}, el("tr", {}, ...r.cols.map(c => el("th", {}, c)))),
@@ -266,7 +315,7 @@
     if (error || !p) return show(msg("회원 정보를 확인하지 못했습니다", error ? error.message : "잠시 후 다시 시도해 주세요."), logoutBtn());
     if (!p.profile_done) return profileView(p);
     if (p.status === "suspended") return show(msg("이용이 정지된 계정입니다", "문의는 관리자에게 해 주세요."), logoutBtn());
-    if (p.status === "pending") return intranetView(p, msg("승인 대기 중입니다", "인트라넷을 둘러보실 수 있지만 🔒 표시 메뉴는 관리자 승인 후 열립니다."));
+    if (p.status === "pending") return intranetView(p, null); // 안내·요청 버튼은 intranetView 가 메뉴 목록과 함께 그림(pendingCard)
     return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("Guest 등급입니다", "🔒 표시 메뉴는 등급이 정해지면 열립니다.") : null);
   }
   sb.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" || ev === "SIGNED_OUT") boot(); });

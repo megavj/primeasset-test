@@ -1,0 +1,15 @@
+/* 설계사 인트라넷(/members/) 사용 편의 보완 — FUNC-FIX-20261102. glass.css 토큰·면·버튼을 그대로 쓰고 새 색·그림자는 만들지 않음.
+   ① A1 승인 대기 안내 카드(.pa-wait): 요청 버튼 1개 + '승인 후 열리는 메뉴 N개 보기' 접기 */
+
+/* ① 승인 대기 */
+.pa-wait .pa-row{margin:14px 0 4px}
+.pa-wait-msg{margin:8px 0 0;color:var(--text-2)}
+.pa-wait-msg:empty{display:none}
+.pa-wait-list{margin:16px 0 0;border-top:1px solid var(--line);padding-top:6px}
+.pa-wait-list>summary{cursor:pointer;list-style:none;font-weight:var(--fw-label);color:var(--text);min-height:48px;display:flex;align-items:center;gap:8px}
+.pa-wait-list>summary::-webkit-details-marker{display:none}
+.pa-wait-list>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid var(--text-2);border-bottom:1.5px solid var(--text-2);transform:rotate(45deg) translateY(-2px);margin-left:2px}
+.pa-wait-list[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
+.pa-wait-list>summary:hover{color:var(--gold-hi)}
+.pa-wait-cat h3{font-size:17px;font-weight:600;margin:16px 0 8px}
+.pa-wait-cat h3 small{font-size:15px;font-weight:400;color:var(--text-3)}
