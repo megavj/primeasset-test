@@ -6,6 +6,8 @@
      · 글씨 5단계(CSS 변수): 표시용(첫 화면 제목, 굵게) / 섹션 제목 / 카드 제목 / 본문 / 캡션 + 큰 숫자는 크고 가늘게(300)·표 숫자. 글꼴은 기존 Pretendard(자체 호스팅)만, 화면 글씨 14px 이상
      · 여백 8의 배수(--s1~--s7), 섹션 간격 --sec-y, 섹션 구분은 여백과 얇은 선
      · 글자 대비: 모든 글 4.5:1 이상(--text-3 도 가장 밝은 면 위 5:1 이상)
+   v=11(DESIGN-DARK-20261102 ②컴포넌트·버튼): 면 3종(강조 패널 .g-panel / 일반 카드 .g-card / 작은 타일 .g-tile)마다 모서리·여백·테두리·그림자 하나로 고정,
+     버튼 3단계(주 행동 금색 .g-btn--pri / 보조 테두리형 .g-btn--ghost / 그 밖은 글자 링크 .g-link), 누르는 카드·버튼만 마우스 올림 미세 반응
    v=9(MAIN-V3-20261102 ④): 페이지 넘김(cross-document View Transitions) — 파일 끝, 그대로 */
 
 :root{
@@ -75,22 +77,28 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:radial-gradient(70% 55% at 72% -8%,rgba(58,86,150,.30) 0,rgba(58,86,150,0) 72%),var(--bg-0)}
 
-/* 면(카드·타일): 어두운 단색 면 + 얇은 선. 그림자·빛 반사 없음 */
-.g-card,.g-tile,.pa-card,details.g-faq,.br{background:var(--bg-1);border:1px solid var(--line)}
-.g-tile,.br,.pa-card .pa-card,.pa-list li,.pa-tool{background:rgba(255,255,255,.03)}
-.g-card,.pa-card{border-radius:var(--r-card);padding:var(--pad-card)}
-.g-tile,.pa-card .pa-card{border-radius:var(--r-tile);padding:20px 24px}
-.g-card,.g-tile,.pa-card,.br,.pa-list li,.pa-tool,.pa-steps li{position:relative}
+/* 컴포넌트 3종 — 종류마다 모서리·안쪽 여백·테두리·그림자를 하나로 고정
+   ① 강조 패널 .g-panel : 유리(반투명 + 밝은 얇은 테두리 + 약한 흐림), 모서리 24 · 여백 48(휴대폰 24) · 그림자 2단계. 맨 끝 합류 문의(실적보드 패널 .pb-home__board 도 같은 값)
+   ② 일반 카드 .g-card : 어두운 면 + 얇은 선, 모서리 16 · 여백 32(휴대폰 24) · 그림자 없음. 왜 프리미엄사업부인가·이사 소개·대표 도구·인트라넷·소개 페이지 카드
+   ③ 작은 타일 .g-tile : 아주 옅은 면 + 얇은 선, 모서리 12 · 여백 16 · 그림자 없음. 도구 목록·인트라넷 도구·소개 페이지 숫자 칸(본부 배지만 좁은 칸이라 가로 여백 4)
+   누르는 카드·타일만 마우스 올림 때 선이 밝아지고 2px 떠오름(그림자 1단계). 그 밖의 면은 움직이지 않음 */
+.g-panel{position:relative;background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-panel);padding:var(--pad-panel);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);box-shadow:var(--shadow-2)}
+.g-card,.pa-card{position:relative;background:var(--bg-1);border:1px solid var(--line);border-radius:var(--r-card);padding:var(--pad-card)}
+.g-tile,.pa-card .pa-card,.pa-list li,.pa-tool,.pa-steps li,.br{position:relative;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--r-tile);padding:var(--pad-tile)}
+a.g-card,a.g-tile,a.pa-tool,a.br{transition:border-color .25s ease,background-color .25s ease,transform .25s ease,box-shadow .25s ease}
+a.g-card:hover,a.g-tile:hover,a.pa-tool:hover,a.br:hover{border-color:var(--line-2);background-color:rgba(255,255,255,.05);transform:translateY(-2px);box-shadow:var(--shadow-1)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.g-panel{background:var(--bg-2)}}
 /* 유리 막대(메뉴·고정 막대): 반투명 + 흐림, 미지원이면 불투명 */
 .g-bar{background:var(--glass-bar);border:1px solid var(--glass-line);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.g-bar{background:rgba(9,12,20,.97)}}
-@media (prefers-reduced-transparency:reduce){.g-bar,.g-cta-bar .g-bar,.g-tabbar .g-bar{background:var(--bg-2);-webkit-backdrop-filter:none;backdrop-filter:none}.g-bg{background:var(--bg-0)}}
+@media (prefers-reduced-transparency:reduce){.g-bar,.g-cta-bar .g-bar,.g-tabbar .g-bar,.g-panel{background:var(--bg-2);-webkit-backdrop-filter:none;backdrop-filter:none}.g-bg{background:var(--bg-0)}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
 /* 시안 표시 띠: 금색 옅은 면 위 금색 글자(10:1) */
 .g-strip{text-align:center;font-size:var(--fs-cap);line-height:1.4;padding:5px 12px;color:var(--gold-hi);background:#1d1b17;border-bottom:1px solid rgba(214,185,126,.22);position:relative;z-index:1}
 
-/* 버튼: 주 행동(합류 문의) = 금색 한 가지, 보조(회원가입·전화) = 테두리형 */
+/* 버튼 3단계: ① 주 행동 .g-btn--pri = 금색 한 가지(메인에서는 '합류 문의'만 — 메뉴·첫 화면·맨 끝·휴대폰 고정 막대 모두 같은 모양)
+   ② 보조 .g-btn--ghost = 테두리형(회원가입·전화) ③ 그 밖의 이동·펼치기 = 글자 링크(.g-link·'더 보기') */
 .g-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:11px 22px;border-radius:999px;border:1px solid transparent;font:inherit;font-size:16px;font-weight:600;line-height:1.2;text-decoration:none;cursor:pointer;color:var(--text);white-space:nowrap;transition:background-color .2s ease,border-color .2s ease,color .2s ease,transform .2s ease}
 .g-btn--pri{background:var(--gold);color:var(--on-gold)}
 .g-btn--pri:hover{background:var(--gold-hi)}
@@ -139,6 +147,9 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-link::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-top:1.5px solid currentColor;transform:rotate(45deg);margin-left:4px;flex:none;transition:transform .2s ease}
 .g-link:hover{color:var(--gold-hi)}
 .g-link:hover::after{transform:translateX(2px) rotate(45deg)}
+.g-link--arrow::after{content:none} /* 글 안에 화살표(→)가 있는 링크: 그 화살표만 움직임 */
+.g-link--arrow .g-btn__arrow{display:inline-block;transition:transform .2s ease}
+.g-link--arrow:hover .g-btn__arrow{transform:translateX(3px)}
 .g-links{display:flex;flex-wrap:wrap;gap:4px 32px;margin:var(--s3) 0 0}
 .g-note--sec{margin:var(--s3) 0 0;max-width:46em}
 .g-note--sec .g-link{margin:-10px 0} /* 터치 영역 44px는 유지하고 줄 간격만 원래대로 */
@@ -153,7 +164,7 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-hero .g-tag span{white-space:nowrap}
 .g-hero .g-actions{justify-content:center;margin:0}
 .g-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s2);max-width:var(--wrap);margin:var(--s5) auto 0;text-align:left}
-.g-stat{padding:20px 20px 18px}
+.g-stat{padding:0}
 .g-stat b{display:block;font-size:var(--fs-num);font-weight:var(--fw-num);line-height:var(--lh-num);letter-spacing:-.02em;color:var(--text);font-variant-numeric:tabular-nums}
 .g-stat small{display:block;font-size:var(--fs-cap);color:var(--text-3);line-height:var(--lh-cap);margin-top:7px}
 
@@ -168,8 +179,8 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-fold-h{font-size:16px;color:var(--text-2);margin:20px 0 10px;display:flex;align-items:baseline;gap:8px}
 .g-fold-h small{font-size:var(--fs-cap);font-weight:400;color:var(--text-3)}
 .g-fold{margin:16px 0 0}
-.g-fold>summary{cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 20px;border-radius:999px;font-weight:600;color:var(--text);background:transparent;border:1px solid var(--line-2);list-style:none}
-.g-fold>summary:hover{background:rgba(255,255,255,.06)}
+.g-fold>summary{cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0;font-size:var(--fs-cap);font-weight:var(--fw-label);color:var(--text-2);list-style:none;transition:color .2s ease}
+.g-fold>summary:hover{color:var(--text);text-decoration:underline}
 .g-fold>summary::-webkit-details-marker{display:none}
 .g-fold>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px)}
 .g-fold[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
@@ -201,7 +212,7 @@ img,svg{display:inline-block;vertical-align:middle}
 
 /* 함께하는 본부 */
 .g-branches,.branches{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:var(--s1)}
-.br{display:block;text-align:center;padding:12px 6px 10px;border-radius:var(--r-tile);text-decoration:none;color:var(--text);font-size:var(--fs-cap);line-height:1.3}
+.br{display:block;text-align:center;padding:12px 4px;text-decoration:none;color:var(--text);font-size:var(--fs-cap);line-height:1.3}
 .br b{display:block;font-size:22px;font-weight:300;letter-spacing:-.02em;color:var(--text);font-variant-numeric:tabular-nums}
 .br small{display:block;font-size:var(--fs-cap);color:var(--text-3);margin-top:3px}
 .br.off{color:var(--text-3);background:transparent}
@@ -211,13 +222,15 @@ a.br{border-color:rgba(214,185,126,.4)}
 .g-188 b{color:var(--text)}
 
 /* FAQ */
-details.g-faq{border-radius:var(--r-tile);padding:0;margin:0 0 10px;overflow:hidden}
-details.g-faq summary{cursor:pointer;list-style:none;padding:16px 50px 16px 22px;font-weight:600;font-size:18px;position:relative;min-height:56px;display:flex;align-items:center}
-details.g-faq summary:hover{background:rgba(255,255,255,.03)}
+/* FAQ: 카드 대신 얇은 선으로 나눈 줄(질문 = 카드 제목 단계) */
+details.g-faq{border:0;border-top:1px solid var(--line);border-radius:0;background:none;padding:0;margin:0}
+details.g-faq summary{cursor:pointer;list-style:none;padding:var(--s3) 48px var(--s3) 0;font-weight:var(--fw-h3);font-size:var(--fs-h3);line-height:var(--lh-h3);position:relative;min-height:56px;display:flex;align-items:center;transition:color .2s ease}
+details.g-faq summary:hover{color:var(--gold-hi)}
 details.g-faq summary::-webkit-details-marker{display:none}
-details.g-faq summary::after{content:"";position:absolute;right:24px;top:50%;width:8px;height:8px;border-right:1.5px solid var(--text-2);border-bottom:1.5px solid var(--text-2);transform:translateY(-70%) rotate(45deg)}
+details.g-faq summary::after{content:"";position:absolute;right:8px;top:50%;width:8px;height:8px;border-right:1.5px solid var(--text-2);border-bottom:1.5px solid var(--text-2);transform:translateY(-70%) rotate(45deg);transition:transform .2s ease}
 details.g-faq[open] summary::after{transform:translateY(-30%) rotate(-135deg)}
-details.g-faq p{margin:0;padding:0 22px 18px;color:var(--text-2);font-size:var(--fs-body)}
+details.g-faq p{margin:0;padding:0 48px var(--s3) 0;color:var(--text-2);font-size:var(--fs-body)}
+.g-fold--faq{border-top:1px solid var(--line);padding-top:var(--s1)}
 
 /* 합류 문의 */
 .g-contact{text-align:center}
@@ -266,25 +279,23 @@ p.pa-note{margin:4px 0 10px}
 .pa-consent{display:flex;align-items:flex-start;gap:8px;min-height:44px;margin:8px 0 16px;font-size:16px;cursor:pointer} /* 라벨 전체가 44px 터치 영역 */
 .pa-consent input{width:20px;height:20px;flex:none;margin:3px 0 0;accent-color:var(--gold)}
 .pa-steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;counter-reset:s}
-.pa-steps li{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--r-tile);padding:16px 18px;font-size:16px;color:var(--text-2)}
+.pa-steps li{font-size:16px;color:var(--text-2)}
 .pa-steps li::before{counter-increment:s;content:counter(s);display:inline-flex;width:30px;height:30px;border-radius:50%;border:1px solid rgba(214,185,126,.5);color:var(--gold);font-weight:500;align-items:center;justify-content:center;margin:0 0 8px;font-size:15px}
 .pa-steps b{display:block;color:var(--text);font-size:18px}
 .pa-login{max-width:720px;margin:0 auto}
 .pa-login .pa-pitch{font-size:clamp(26px,3.4vw,38px);font-weight:600;letter-spacing:-.03em;line-height:1.2;margin:0;text-align:center}
-.pa-login .pa-card--hero{padding:34px 28px}
 .pa-login details summary{cursor:pointer;font-weight:var(--fw-label);color:var(--text);min-height:44px;display:flex;align-items:center}
 .pa-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 14px;padding:0 6px}
 .pa-who{font-size:17px;color:var(--text-3);min-width:0}
 .pa-who b{font-size:22px;color:var(--text);letter-spacing:-.01em;margin-right:2px}
 .pa-who .pa-grade{color:var(--gold);font-weight:500}
 .pa-head-btns{display:flex;gap:8px;flex-wrap:wrap}
-.pa-news{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;padding:18px 24px}
+.pa-news{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
 .pa-news>p{margin:0;flex:1 1 100%;font-size:17px}
 .pa-news .pa-card{flex:1 1 100%;margin:4px 0 0;background:var(--gold-soft);border-color:rgba(214,185,126,.3)}
 .pa-news .pa-card h3{font-size:18px}
 .pa-tools{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 0 6px}
-.pa-tool{display:flex;flex-direction:column;gap:6px;min-height:138px;padding:18px 18px 16px;border-radius:var(--r-tile);border:1px solid var(--line);text-decoration:none;color:var(--text);position:relative;transition:border-color .2s ease,background-color .2s ease}
-.pa-tool:hover{border-color:var(--line-2);background:rgba(255,255,255,.05)}
+.pa-tool{display:flex;flex-direction:column;gap:6px;min-height:138px;text-decoration:none;color:var(--text)}
 .pa-tool .pa-no{width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,.06);color:var(--gold);font-weight:500;font-size:15px;display:flex;align-items:center;justify-content:center}
 .pa-tool b{font-size:18px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
 .pa-tool small{font-size:15px;color:var(--text-3);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -295,7 +306,7 @@ p.pa-note{margin:4px 0 10px}
 .pa-tool--stats .pa-go{color:var(--gold)}
 .pa-tool--stats small{color:var(--text-2)}
 .pa-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
-.pa-list li{border:1px solid var(--line);border-radius:var(--r-tile);padding:14px 16px;font-size:17px;line-height:1.45}
+.pa-list li{font-size:17px;line-height:1.45}
 .pa-list a{font-weight:600;text-decoration:none;color:var(--text);padding:12px 0} /* 인라인 패딩: 줄 배치 그대로, 터치 영역 44px */
 .pa-list a:hover{color:var(--gold-hi);text-decoration:underline}
 .pa-list small{display:block;color:var(--text-3);font-size:var(--fs-cap);margin-top:2px}
@@ -368,8 +379,6 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
   .g-stat{padding:14px 14px 12px}
   .g-stat small{margin-top:4px;line-height:1.35}
   .g-sec{padding:var(--sec-y) 16px;scroll-margin-top:100px} /* 휴대폰 고정 메뉴는 두 줄(아래 110px) */
-  .g-card,.pa-card{padding:var(--pad-card)}
-  .g-tile,.pa-card .pa-card{padding:16px}
   .g-lead{margin-bottom:var(--s4)}
   .g-grid,.g-grid--2,.g-grid--3,.g-grid--4{grid-template-columns:1fr}
   .g-photos{grid-template-columns:repeat(2,1fr);gap:10px}
@@ -383,9 +392,9 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
   .g-fold-h{margin:16px 0 8px}
   .g-tl li{font-size:15px}
   .g-branches,.branches{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:7px}
-  .br{padding:10px 4px 8px;font-size:var(--fs-cap)}.br b{font-size:19px}.br small{font-size:var(--fs-cap)}
-  details.g-faq summary{font-size:16px;padding:14px 44px 14px 16px}
-  details.g-faq p{padding:0 16px 16px;font-size:var(--fs-body)}
+  .br{font-size:var(--fs-cap)}.br b{font-size:19px}.br small{font-size:var(--fs-cap)}
+  details.g-faq summary{padding:var(--s2) 40px var(--s2) 0}
+  details.g-faq p{padding:0 0 var(--s2)}
   .g-contact-lines{font-size:var(--fs-cap)}
   .g-cta-bar{display:block;position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:60}
   .g-cta-bar .g-bar{display:flex;gap:8px;padding:8px;border-radius:999px}
@@ -406,14 +415,13 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
   .pa-sec-title{flex-wrap:wrap;gap:2px 10px}
   .pa-sec-title small{flex-basis:100%}
   .pa-tools{grid-template-columns:repeat(2,1fr);gap:10px}
-  .pa-tool{min-height:126px;padding:14px 14px 12px}
+  .pa-tool{min-height:126px}
   .pa-tool b{font-size:17px}
   .pa-tool small{font-size:var(--fs-cap)}
   .pa-tool--stats{grid-column:1 / -1;min-height:88px;flex-direction:row;align-items:center;flex-wrap:wrap}
   .pa-tool--stats .pa-go{margin-top:0;margin-left:auto}
   .pa-list{grid-template-columns:1fr}
   .pa-steps{grid-template-columns:1fr}
-  .pa-login .pa-card--hero{padding:26px 20px}
   .pa-sec{scroll-margin-top:110px}
   .pa-me dl{grid-template-columns:1fr;gap:2px}
   .pa-me dt{font-size:var(--fs-cap)}
@@ -430,7 +438,7 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
 }
 
 /* 승인 대기·Guest 안내 배너 (이름 줄 바로 아래) */
-.pa-card.pa-banner{background:var(--gold-soft);border-color:rgba(214,185,126,.3);padding:18px 24px}
+.pa-card.pa-banner{background:var(--gold-soft);border-color:rgba(214,185,126,.3)}
 .pa-banner h3,.pa-banner .pa-h3{font-size:19px}
 .pa-banner p{margin:4px 0 0}
 
@@ -452,7 +460,7 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
 .g-pull{font-size:var(--fs-h3);font-weight:500;letter-spacing:-.015em;line-height:1.5;color:var(--text);border-left:2px solid var(--gold);padding:6px 0 6px 20px;margin:28px 0!important}
 /* 숫자 카드: 문장은 그대로, 숫자(b)만 크게(가늘게) */
 .g-nums{list-style:none;padding:0;margin:4px 0 0;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.g-nums li{font-size:16px;color:var(--text-2);line-height:1.6;padding:18px 20px 16px}
+.g-nums li{font-size:16px;color:var(--text-2);line-height:1.6}
 .g-nums b{display:inline-block;font-size:26px;font-weight:300;color:var(--text);letter-spacing:-.02em;line-height:1.1;margin:0 2px;vertical-align:-1px;font-variant-numeric:tabular-nums}
 /* 체크 목록 */
 .g-checks{list-style:none;padding:0;margin:0}
@@ -472,7 +480,7 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
 .g-prose .g-timeline{margin:0 0 10px}
 /* 일하는 방식 4칸 */
 .g-ways{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.g-ways li{font-size:16px;color:var(--text-2);line-height:1.6;padding:18px 20px}
+.g-ways li{font-size:16px;color:var(--text-2);line-height:1.6}
 .g-ways li b{display:block;font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.01em;margin:0 0 6px}
 /* 만드는 시스템 5줄 */
 .g-sys{list-style:none;padding:0;margin:0}
@@ -481,15 +489,14 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
 .g-sys li b{flex:none;min-width:56px;color:var(--text);font-weight:600;font-size:16px}
 /* 방향과 목표 10개 */
 .g-goals{list-style:none;padding:0;margin:0;counter-reset:g;display:grid;gap:12px}
-.g-goals li{counter-increment:g;position:relative;padding:18px 22px 18px 70px;font-size:17px;color:var(--text-2);line-height:1.6}
-.g-goals li::before{content:counter(g,decimal-leading-zero);position:absolute;left:22px;top:17px;font-size:22px;font-weight:300;color:var(--gold);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.g-goals li{counter-increment:g;position:relative;padding-left:64px;font-size:17px;color:var(--text-2);line-height:1.6} /* 왼쪽만 번호 자리 */
+.g-goals li::before{content:counter(g,decimal-leading-zero);position:absolute;left:var(--pad-tile);top:15px;font-size:22px;font-weight:300;color:var(--gold);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .g-goals li b{color:var(--text);font-size:18px}
 /* 합류 문의(소개 페이지) */
 .g-story .g-contact .g-h2{font-size:var(--fs-h2);margin-bottom:6px}
 .g-story .g-contact .g-actions{margin-top:18px}
 .g-story .g-contact-lines{margin-top:18px}
 /* 개인정보처리방침 본문 카드 */
-.g-policy .g-card{padding:var(--s5) var(--s5)}
 .g-policy h2,.g-policy h3{font-size:var(--fs-h3);font-weight:var(--fw-h3);letter-spacing:-.01em;margin:30px 0 10px} /* 조항 제목은 h2(h1 바로 아래) */
 .g-policy h2:first-of-type,.g-policy h3:first-of-type{margin-top:18px}
 .g-policy p,.g-policy li{font-size:var(--fs-body);color:var(--text-2);line-height:1.8}
@@ -504,13 +511,11 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
   .g-quote-line b{font-size:21px}
   .g-pull{font-size:18px;padding-left:16px}
   .g-nums,.g-ways{grid-template-columns:1fr;gap:10px}
-  .g-nums li{padding:14px 16px 12px}.g-nums b{font-size:24px}
-  .g-ways li{padding:14px 16px}
+  .g-nums b{font-size:24px}
   .g-timeline li{padding:0 0 16px 32px;font-size:16px}
-  .g-goals li{padding:14px 16px 14px 56px;font-size:16px}
-  .g-goals li::before{left:16px;top:14px;font-size:19px}
+  .g-goals li{padding-left:56px;font-size:16px}
+  .g-goals li::before{top:14px;font-size:19px}
   .g-sys li{flex-direction:column;gap:2px}
-  .g-policy .g-card{padding:22px 18px}
   .g-policy p,.g-policy li{font-size:16px}
 }
 
@@ -521,15 +526,15 @@ body.g-admin td input.pa-in.pa-sm{width:150px}
 body.g-admin .g-admin-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:6px 0 16px;padding:0 6px}
 body.g-admin .g-admin-head h1{font-size:clamp(26px,3vw,34px);font-weight:600;letter-spacing:-.025em;margin:0}
 body.g-admin .g-admin-head .pa-note{margin:0;flex:1 1 100%;font-size:15px}
-body.g-admin .pa-card{margin:0 0 16px;padding:26px 28px}
-body.g-admin .pa-card .pa-card{margin:12px 0 0;padding:18px 20px}
+body.g-admin .pa-card{margin:0 0 16px}
+body.g-admin .pa-card .pa-card{margin:12px 0 0}
 body.g-admin .pa-card h3,body.g-admin .pa-card .pa-h3{font-size:var(--fs-h3);letter-spacing:-.01em;margin:0 0 8px}
 body.g-admin .pa-card .pa-card h3{font-size:18px}
 body.g-admin .pa-card p{margin:4px 0 10px}
 body.g-admin .wf-desc{display:none} /* admin.js가 넣는 개발용 "섹션 설명:" 문구는 화면에 보이지 않게 (스크립트는 그대로) */
 body.g-admin .pa-note{font-size:15px;color:var(--text-3)}
 body.g-admin .wf-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-body.g-admin .wf-item{display:block;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--r-tile);padding:14px 16px 12px;text-decoration:none;color:var(--text)}
+body.g-admin .wf-item{display:block;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:var(--r-tile);padding:var(--pad-tile);text-decoration:none;color:var(--text)}
 body.g-admin .wf-item b{display:block;font-size:28px;font-weight:300;color:var(--text);letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
 body.g-admin .wf-item small{display:block;font-size:var(--fs-cap);color:var(--text-3);margin-top:4px}
 body.g-admin .pa-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
@@ -567,8 +572,6 @@ body.g-admin .pa-mini:hover{background:rgba(255,255,255,.08)}
 body.g-admin .pa-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--bg-2);color:var(--text);border:1px solid var(--line-2);padding:12px 20px;border-radius:999px;z-index:99;font-size:15px;font-weight:500;box-shadow:var(--shadow-2);max-width:calc(100% - 32px)}
 body.g-admin .pa-toast.bad{background:#5c1a14;border-color:rgba(255,160,150,.4)}
 @media (max-width:720px){
-  body.g-admin .pa-card{padding:18px 16px}
-  body.g-admin .pa-card .pa-card{padding:14px 14px}
   body.g-admin .wf-grid{grid-template-columns:repeat(2,1fr);gap:8px}
   body.g-admin .wf-item b{font-size:24px}
   body.g-admin .pa-tab{min-height:44px;padding:7px 13px;font-size:var(--fs-cap)}
@@ -580,13 +583,12 @@ body.g-admin .pa-toast.bad{background:#5c1a14;border-color:rgba(255,160,150,.4)}
 
 /* 인트라넷 3단계: 새 소식 배너·도구 검색(맨 위)·최근 쓴 도구·잠긴 도구 '승인 요청'·막대그래프 ---------------- */
 .pa-notice-box:empty{display:none}
-.pa-card.pa-notice{display:flex;align-items:flex-start;gap:12px;padding:16px 16px 16px 20px;margin:0 0 14px;background:var(--gold-soft);border-color:rgba(214,185,126,.3)}
+.pa-card.pa-notice{display:flex;align-items:flex-start;gap:12px;margin:0 0 14px;background:var(--gold-soft);border-color:rgba(214,185,126,.3)}
 .pa-notice-ico{font-size:22px;line-height:1.3;flex:0 0 auto;padding-top:2px}
 .pa-notice p{margin:0;flex:1 1 auto;min-width:0;font-size:17px;color:var(--text);line-height:1.5;padding-top:3px}
 .pa-notice p b{color:var(--gold);margin-right:2px}
 .pa-notice-x{flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid var(--line-2);background:transparent;font:inherit;font-size:24px;line-height:1;cursor:pointer;color:var(--text-2);margin:-4px -4px -4px 0}
 .pa-notice-x:hover{background:rgba(255,255,255,.08);color:var(--text)}
-.pa-search{padding:20px 22px}
 .pa-search .pa-in{margin:0;font-size:18px;padding:14px 18px 14px 48px;background:var(--bg-2) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aab4c4' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-3.5-3.5'/></svg>") no-repeat 17px center/20px 20px}
 .pa-search .pa-hit-note{margin:10px 0 0}
 .pa-hits{margin-top:12px}
@@ -620,10 +622,8 @@ body.g-admin .pa-toast.bad{background:#5c1a14;border-color:rgba(255,160,150,.4)}
 .pa-legend i[style*="2a5bd7"]{background:var(--sky)!important}
 .pa-legend i[style*="d97706"]{background:var(--gold)!important}
 @media (max-width:720px){
-  .pa-notice{padding:14px 12px 14px 16px}
   .pa-notice p{font-size:16px}
   .pa-notice-x{width:48px;height:48px}
-  .pa-search{padding:16px 14px}
   .pa-search .pa-in{font-size:17px;padding:13px 14px 13px 44px;background-position:14px center}
   .pa-req{min-height:48px;padding:8px 16px;font-size:15px} /* 휴대폰 터치 영역 48px */
 }

@@ -8,7 +8,7 @@
 .g-hero--dark .g-hero-logo canvas.g-hero-3d{filter:none}
 /* 숫자 줄: 4칸(라벨 줄 수가 달라도 숫자 첫 줄이 같은 높이에 오도록 subgrid 두 줄), 칸 사이 얇은 선. 숫자 크기는 --fs-num(PC 30px 이하라 한 줄에 들어감) */
 .g-hero--dark .g-stats{grid-template-columns:1fr 1fr 1.2fr 1.2fr;grid-template-rows:auto auto;gap:0;margin:var(--s6) 0 0;border-top:1px solid var(--line)}
-.g-hero--dark .g-stat{display:grid;grid-row:span 2;grid-template-rows:subgrid;align-content:start;background:none;border:0;border-left:1px solid var(--line);border-radius:0;padding:var(--s3) var(--s3) 0}
+.g-hero--dark .g-stat{display:grid;grid-row:span 2;grid-template-rows:subgrid;align-content:start;border-left:1px solid var(--line);padding:var(--s3) var(--s3) 0}
 .g-hero--dark .g-stat:first-child{border-left:0;padding-left:0}
 .g-hero--dark .g-stat small{margin:0 0 var(--s2)}
 @media (max-width:860px){
