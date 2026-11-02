@@ -1,0 +1,11 @@
+/* PAGES-V1 1: 로그인 회원 메인 전용. 기존 디자인·문구는 유지하고 합류 CTA만 접는다.
+   영업 도구는 home-member.js 가 첫 화면 바로 뒤로 옮기며,
+   기존 마케팅 섹션은 도구·실적 다음에 원래 순서로 남는다. */
+body.g-main--member .g-nav-btns,
+body.g-main--member .g-menu-login,
+body.g-main--member #hero .g-actions,
+body.g-main--member #contact,
+body.g-main--member .g-cta-bar{display:none}
+@media (max-width:720px){
+  body.g-main--member{padding-bottom:0}
+}

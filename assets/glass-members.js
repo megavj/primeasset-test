@@ -1,4 +1,6 @@
-/* 프라임에셋 프리미엄 — 회원 로그인·도구 목록 (Supabase). 유리(Liquid Glass) 디자인용: assets/members.js 사본, 화면 배치·클래스만 다름. 3단계: 검색(초성)·최근 쓴 도구·새 소식 배너·승인 요청·막대그래프(assets/glass-chart.js) 추가. Supabase 호출·권한 판정은 그대로(새 함수 request_access 는 없으면 오픈채팅 안내로 대체).
+/* PAGE-1 20261103: 영업지원 홈, 31개 서버 메뉴·안내·사이트 통합검색, 별 고정, 계정별 최근 사용,
+   업무별 분류, 소식 재확인, 실적 접기·오류 재시도. 서버 권한/RPC/자료 원문은 유지.
+   프라임에셋 프리미엄 — 회원 로그인·도구 목록 (Supabase). 기존 유리 디자인 기반: assets/members.js 사본, 화면 배치·클래스만 다름. 3단계: 검색(초성)·최근 쓴 도구·새 소식 배너·승인 요청·막대그래프(assets/glass-chart.js) 추가. Supabase 호출·권한 판정은 그대로(새 함수 request_access 는 없으면 오픈채팅 안내로 대체).
    4단계(web-design-guidelines): 입력칸 이름(aria-label)·autocomplete·inputmode, 보내는 동안 버튼 잠금, 결과 문구 aria-live, 카드 제목은 h2.pa-h3(h1→h2 순서). 호출·인자는 그대로.
    도구 주소는 이 파일에 없음: 로그인 후 서버(my_resources)가 권한 있는 것만 내려줌
    FUNC-FIX-20261102: A1 승인 대기 회원은 메뉴별 버튼 31개 대신 안내 + '승인 요청 보내기' 1개(request_access(null), S4 SQL) + 접힌 메뉴 목록, 거절돼도 오픈채팅 자동 열기 없음.
@@ -35,11 +37,12 @@
   if (linkErr) { console.debug("[auth redirect error]", linkErr); history.replaceState(null, "", location.pathname); }
   // FUNC-FIX A4: 주소의 칸(#stats·#info·#me·#home)을 지우기 전에 기억 → 화면을 그린 뒤 그 칸으로 이동(첫 1번만, 탭 전환 때 다시 그려도 끌려가지 않음).
   //   로그인 전이면 이 기기에 잠시(30분) 저장했다가 로그인 후 이동. 메인 도구 허브의 자물쇠 카드도 같은 키(pa_goto)에 저장(tool-hub.js). 돌아오는 주소는 그대로 /members/
-  const SECTIONS = ["home", "stats", "info", "me"];
+  const SECTIONS = ["home", "stats", "info", "me", "directory", "news"];
+  const knownSection = s => SECTIONS.includes(s) || /^info-([0-9]|1[01])$/.test(s);
   const GOTO_KEY = "pa_goto", GOTO_TTL = 30 * 60 * 1000;
-  let goto = SECTIONS.includes(location.hash.slice(1)) ? location.hash.slice(1) : null;
+  let goto = knownSection(location.hash.slice(1)) ? location.hash.slice(1) : null;
   const saveGoto = (s) => { try { localStorage.setItem(GOTO_KEY, JSON.stringify({ s, t: Date.now() })); } catch {} };
-  const takeGoto = () => { try { const v = JSON.parse(localStorage.getItem(GOTO_KEY) || "null"); localStorage.removeItem(GOTO_KEY); return v && SECTIONS.includes(v.s) && Date.now() - v.t < GOTO_TTL ? v.s : null; } catch { return null; } };
+  const takeGoto = () => { try { const v = JSON.parse(localStorage.getItem(GOTO_KEY) || "null"); localStorage.removeItem(GOTO_KEY); return v && knownSection(v.s) && Date.now() - v.t < GOTO_TTL ? v.s : null; } catch { return null; } };
   const sb = window.supabase.createClient(C.url, C.anonKey, { auth: { persistSession: true, detectSessionInUrl: true } });
   window.PA_SB = sb;
   const here = location.origin + location.pathname;
@@ -158,8 +161,7 @@
   const OPENCHAT = "https://open.kakao.com/o/sFMF26y";
   const RECENT_KEY = "pa_recent_tools";   // [{id,name}] 최대 6개 — 주소는 저장하지 않음(권한 목록 my_menu 에서 다시 찾음)
   const NOTICE_KEY = "pa_notice_closed";  // 닫은 새 소식 본문(같은 내용이면 이 기기에서 다시 안 뜸)
-  const store = { get: (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
-  const pushRecent = (r) => store.set(RECENT_KEY, [{ id: r.id, name: r.name }, ...store.get(RECENT_KEY, []).filter(x => x && x.id !== r.id)].slice(0, 6));
+  const store = { get: (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } } };
   // 한글 초성 검색: 'ㅅㅍ' → 상품… (초성 글자는 그 초성으로 시작하는 모든 음절과 맞음, 나머지 글자는 그대로)
   const CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
   const choRx = (q) => new RegExp([...q].map(c => { const i = CHO.indexOf(c); if (i < 0) return c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); const a = 0xAC00 + i * 588; return `[${c}${String.fromCharCode(a)}-${String.fromCharCode(a + 587)}]`; }).join(""));
@@ -216,102 +218,186 @@
       el("div", { class: "pa-row" }, btn), out, list);
   }
 
-  // 인트라넷: 전체 메뉴 이름은 보이고, 권한 없는 항목은 🔒 잠금(주소는 서버가 아예 안 내려줌)
-  async function intranetView(p, banner) {
-    const { data, error } = await sb.rpc("my_menu");
-    if (error) return failView("메뉴 목록을 불러오지 못했습니다", error, true);
+  // 영업지원 홈: 서버 메뉴를 권한 그대로 유지하고 자료·사이트를 한 검색 목록에 모음.
+  const SITE_LINKS = [
+    ["보험위키", "보장·용어·청구 가이드", "http://wiki.primeasset.info/"],
+    ["188 영업지원시스템", "188본부 영업지원 사이트", "https://188.primeasset.info/"],
+    ["보험노트", "보험노트 공식 홈페이지", "https://bohumnote.com/"],
+    ["프라임에셋 본사", "본사 홈페이지", "http://primeasset.kr/"],
+    ["김상현 이사 페이스북", "이사 페이스북 페이지", "https://www.facebook.com/ksh1629"],
+    ["기존 프리미엄 사이트", "프리미엄사업부 기존 홈페이지", "https://www.primeasset.info/"]
+  ];
+  const WORK = ["영업 준비", "상담·보상", "청약·계약", "실적·수수료", "교육·자료", "업무·사이트"];
+  const workFor = (r) => {
+    const n = r.name || "";
+    if (/수당|수수료|시책|성과|실적|승격/.test(n)) return WORK[3];
+    if (/전산|고지|규정|계약|청약/.test(n)) return WORK[2];
+    if (/상담|화법|보상|질병|수술|실손|영업비서/.test(n)) return WORK[1];
+    if (/교육|캠퍼스|자료|공유|질문|카페|브로슈어/.test(n)) return WORK[4];
+    if (/상품|소식지|뉴스|진단|리크루팅/.test(n)) return WORK[0];
+    return WORK[5]; // 새 서버 메뉴도 빠짐없이 포함
+  };
+  const INFO_ALIASES = { 1: "보험정보 공유방(단톡방)", 2: "보험정보 공유 카페(자료 3,200여 건)", 3: "익명질문&답변방(늅늅방)", 4: "고급정보 무한공유(전설의 고무공)", 5: "스탠다드 캠퍼스(월 1회 실전 교육)" };
+  let renderEpoch = 0;
+  const storedList = (key) => { const v = store.get(key, []); return Array.isArray(v) ? v : []; };
+  async function intranetView(p, banner, epoch, storageOwner) {
+    const { data: raw, error } = await sb.rpc("my_menu");
+    if (epoch !== renderEpoch) return;
+    if (error || !Array.isArray(raw)) return failView("메뉴 목록을 불러오지 못했습니다", error, true);
+    const data = raw;
+    myRes = Promise.resolve({ data });
     mode(true);
     const pending = p.status === "pending";
-    if (pending) banner = pendingCard(data);
-    const groups = {};
-    for (const r of data) (groups[r.category] = groups[r.category] || []).push(r);
     const open = data.filter(r => r.unlocked).length;
-    const head = el("div", { class: "pa-head" },
-      el("div", { class: "pa-who" }, el("b", {}, `${p.name || p.email}`), el("span", { class: "pa-grade" }, ` · ${p.grade || ""}${p.is_admin ? " · 관리자" : ""}`), ` · 열린 메뉴 ${open}/${data.length}`),
-      el("div", { class: "pa-head-btns" }, p.is_admin ? el("a", { class: "g-btn g-btn--ghost g-btn--sm", href: "admin/" }, "관리자 화면") : null, logoutBtn()));
-    const links = el("div", { class: "pa-card" }, el("h3", {}, "바로가기"), D("섹션 설명: 보험위키·188 영업지원시스템·보험노트·프라임에셋 본사·이사님 페이스북·기존 사이트 (메인 '자주 쓰는 링크'에서 옮김)."), el("ul", { class: "pa-list" },
-      el("li", {}, el("a", { href: "http://wiki.primeasset.info/", target: "_blank", rel: "noopener" }, "보험위키"), el("small", {}, "보장·용어·청구 가이드")),
-      el("li", {}, el("a", { href: "https://188.primeasset.info/", target: "_blank", rel: "noopener" }, "188 영업지원시스템")),
-      el("li", {}, el("a", { href: "https://bohumnote.com/", target: "_blank", rel: "noopener" }, "보험노트")),
-      el("li", {}, el("a", { href: "http://primeasset.kr/", target: "_blank", rel: "noopener" }, "프라임에셋 본사")),
-      el("li", {}, el("a", { href: "https://www.facebook.com/ksh1629", target: "_blank", rel: "noopener" }, "김상현 이사 페이스북")),
-      el("li", {}, el("a", { href: "https://www.primeasset.info/", target: "_blank", rel: "noopener" }, "기존 프리미엄 사이트"))));
-    // 도구 타일(자주 쓰는 도구·검색 결과·최근 공용). '열기'를 누르면 최근 목록에 기억. 잠긴 것은 🔒 + 승인 요청
-    const tile = (r, no) => {
-      if (r.unlocked && r.url) return el("a", { class: "pa-tool", href: r.url, target: "_blank", rel: "noopener noreferrer", onclick: () => { pushRecent(r); drawRecent(); } },
-        no != null ? el("span", { class: "pa-no" }, no) : el("span", { class: "pa-cat-tag" }, r.category || ""), el("b", {}, r.name), r.description ? el("small", {}, r.description) : null, el("span", { class: "pa-go", "aria-hidden": "true" }, "열기 ↗"));
-      return el("div", { class: "pa-tool pa-tool--locked" }, el("span", { class: "pa-cat-tag" }, r.category || ""), el("b", {}, (r.unlocked ? "" : "🔒 ") + r.name), r.description ? el("small", {}, r.description) : null,
-        r.unlocked ? el("small", {}, "준비 중") : pending ? el("small", {}, "승인 후 열림") : reqBtn(r));
+    const status = pending ? "승인 대기" : "승인 완료";
+    const favKey = "pa_pinned_tools_v1:" + storageOwner, recentKey = RECENT_KEY + ":" + storageOwner;
+    const productSource = data.find(r => r.name === "상품통합분석기");
+    const catalog = [
+      ...data.map(r => ({ ...r, key: "menu:" + r.id, kind: "회원 도구", work: workFor(r), aliases: /AI.*영업비서/.test(r.name) ? "AI 영업비서" : /최신보험뉴스/.test(r.name) ? "프리미엄 최신보험뉴스" : "" })),
+      ...INFO.map(([name, ps, links], i) => ({ key: "info:" + i, name, description: ps[0], url: "#info-" + i, unlocked: true, kind: "안내 자료", work: workFor({ name }), aliases: "프리미엄 안내 자료 교육 채널 제도 " + (INFO_ALIASES[i] || ""), searchText: ps.join(" ") + " " + links.map(l => l[1]).join(" "), detail: true })),
+      ...SITE_LINKS.map(([name, description, url], i) => ({ key: "site:" + i, name, description, url, unlocked: true, kind: "사이트", work: WORK[5] })),
+      { key: "page:product", id: productSource && productSource.id, name: "상품분석기 · 질문 작업실", description: "질문 입력부터 답변 확인까지 · 상품통합분석기 권한으로 이용", url: productSource && productSource.unlocked && productSource.url ? "../product/" : null, unlocked: !!(productSource && productSource.unlocked), kind: "사이트 내 도구", work: WORK[0], internal: true },
+      { key: "page:performance", name: "실적보드", description: "사업부 실적 현황 · 공개 자료", url: "../performance/", unlocked: true, kind: "실적", work: WORK[3], internal: true },
+      { key: "page:stats", name: "실적표", description: "실적 요약 · 등급별 실적 표", url: "#stats", unlocked: true, kind: "실적", work: WORK[3], detail: true },
+      { key: "page:info", name: "프리미엄 안내 자료", description: "교육·정보 채널·제도·사이트 안내", url: "#info", unlocked: true, kind: "안내 자료", work: WORK[4], detail: true }
+    ];
+    const available = r => r.unlocked && r.url;
+    const defaults = ["상품통합분석기", "프라임 수당계산기", "AI영업비서(화법·상담연습)"].map(n => catalog.find(r => r.name === n && available(r))).filter(Boolean);
+    const productTile = catalog.find(r => r.key === "page:product" && available(r));
+    if (productTile) defaults.push(productTile);
+    const savedPins = store.get(favKey, null);
+    let pins = Array.isArray(savedPins) ? savedPins.filter(k => typeof k === "string") : defaults.map(r => r.key);
+    let activeWork = "전체";
+    const announce = el("p", { class: "sr", role: "status", "aria-live": "polite" });
+    const favoriteGrid = el("div", { class: "pa-work-grid pa-favorite-grid" });
+    const recentGrid = el("div", { class: "pa-recent-list" });
+    const directory = el("div", { id: "pa-directory" });
+    const hitNote = el("p", { class: "pa-note pa-hit-note", role: "status", "aria-live": "polite" });
+    const hits = el("div", { class: "pa-work-grid", id: "pa-search-results" });
+    const resultBox = el("section", { class: "pa-search-results", hidden: "", "aria-label": "검색 결과" }, hitNote, hits);
+    const q = el("input", { class: "pa-in", id: "pa-q", type: "search", placeholder: "도구·자료 검색 (초성도 가능)", "aria-label": "도구·자료 통합 검색", "aria-keyshortcuts": "/", "aria-controls": "pa-search-results", autocomplete: "off", enterkeyhint: "search" });
+    const pinButton = r => el("button", { class: "pa-pin", type: "button", "data-pin-key": r.key, "aria-pressed": String(pins.includes(r.key)), "aria-label": r.name + (pins.includes(r.key) ? " 고정 해제" : " 고정"), onclick: () => {
+      const was = pins.includes(r.key);
+      pins = was ? pins.filter(k => k !== r.key) : [...pins, r.key];
+      const persisted = store.set(favKey, pins);
+      document.querySelectorAll("[data-pin-key]").forEach(b => {
+        const item = catalog.find(x => x.key === b.dataset.pinKey), on = pins.includes(b.dataset.pinKey);
+        b.setAttribute("aria-pressed", String(on)); b.setAttribute("aria-label", item.name + (on ? " 고정 해제" : " 고정")); b.textContent = on ? "★" : "☆";
+      });
+      drawFavorites();
+      announce.textContent = r.name + (was ? " 고정을 해제했습니다." : " 자주 쓰는 도구에 고정했습니다.") + (persisted ? "" : " 저장 공간을 사용할 수 없어 이번 화면에서만 유지됩니다.");
+      // 고정 목록에서 지운 버튼은 다시 그려지므로 같은 버튼 또는 편집 링크로 포커스를 복원.
+      if (!document.activeElement || document.activeElement === document.body) {
+        const buttons = [...document.querySelectorAll("[data-pin-key]")];
+        (buttons.find(b => b.dataset.pinKey === r.key && b.getClientRects().length) || document.getElementById("pa-edit-pins")).focus({ preventScroll: true });
+      }
+    } }, pins.includes(r.key) ? "★" : "☆");
+    const remember = r => {
+      const keys = storedList(recentKey).filter(k => typeof k === "string" && k !== r.key);
+      store.set(recentKey, [r.key, ...keys].slice(0, 6)); drawRecent();
     };
-    const row = (r) => el("li", { class: r.unlocked ? "" : "pa-locked" },
-      r.unlocked ? (r.url ? el("a", { href: r.url, target: "_blank", rel: "noopener noreferrer", onclick: () => { pushRecent(r); drawRecent(); } }, r.name) : el("span", {}, r.name + " (준비 중)"))
-                 : el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.name),
-      r.description ? el("small", {}, r.description) : null, r.unlocked ? null : reqBtn(r));
-    const cards = Object.entries(groups).map(([cat, rs]) => el("details", { class: "pa-cat", open: "" }, el("summary", {}, cat, el("small", {}, `${rs.filter(r => r.unlocked).length}/${rs.length} 열림`)), D("섹션 설명: 이 분류의 도구·링크. 등급 권한이 있으면 열리고, 없으면 🔒 잠금(주소는 내려오지 않음)."),
-      el("ul", { class: "pa-list" }, ...rs.map(row))));
-    // 1. 도구 검색 — 맨 위(이름 줄 바로 아래). 입력 즉시 큰 타일로. 이름·설명·분류, 초성 지원, 띄어쓰기로 여러 낱말(모두 포함)
-    const q = el("input", { class: "pa-in", id: "pa-q", type: "search", placeholder: "도구 찾기 (예: 상품, 수당, ㅅㅍ)", "aria-label": "도구 검색", autocomplete: "off", enterkeyhint: "search" });
-    const hits = el("div", { class: "pa-tools pa-hits", hidden: "" });
-    const hitNote = el("p", { class: "pa-note pa-hit-note", hidden: "", "aria-live": "polite" });
-    q.addEventListener("input", () => {
+    const toolLink = (r, className) => el("a", { class: className, href: r.url, ...(r.detail || r.internal ? {} : { target: "_blank", rel: "noopener noreferrer" }), onclick: e => {
+      remember(r);
+      if (r.detail) { e.preventDefault(); jump(r.url.slice(1), true); }
+    } }, el("b", {}, r.name), el("span", { class: "pa-open-label" }, r.detail ? "이 페이지에서 보기 ↓" : r.internal ? "열기 →" : "새 창에서 열기 ↗"));
+    const tile = r => el("article", { class: "pa-work-card" + (!r.unlocked ? " is-locked" : ""), "data-resource-key": r.key },
+      el("div", { class: "pa-work-meta" }, el("span", {}, r.kind + " · " + r.work), pinButton(r)),
+      available(r) ? toolLink(r, "pa-work-link") : el("b", { class: "pa-locked-name" }, r.name),
+      r.description ? el("p", { class: "pa-work-desc" }, r.description) : null,
+      !r.unlocked ? el("div", { class: "pa-lock-state" }, el("span", {}, "승인 후 열림"), pending ? null : r.id != null ? reqBtn(r) : N("관리자에게 메뉴 등록을 문의해 주세요.")) : !r.url ? N("주소 준비 중입니다.") : null);
+    function drawFavorites() {
+      const items = pins.map(k => catalog.find(r => r.key === k)).filter(Boolean);
+      favoriteGrid.replaceChildren(...(items.length ? items.map(tile) : [el("div", { class: "pa-empty" }, "아래 도구의 ☆를 누르면 여기에 고정됩니다.")]));
+    }
+    function drawRecent() {
+      const items = storedList(recentKey).map(k => catalog.find(r => r.key === k)).filter(r => r && available(r));
+      recentGrid.replaceChildren(...(items.length ? items.map(r => toolLink(r, "pa-recent-link")) : [el("p", { class: "pa-note" }, "도구를 열면 이곳에서 바로 다시 찾을 수 있습니다.")]));
+    }
+    const filterBar = el("div", { class: "pa-filters", role: "group", "aria-label": "업무별 도구 분류" });
+    function drawDirectory() {
+      directory.replaceChildren(...WORK.filter(w => activeWork === "전체" || activeWork === w).map((w, i) => {
+        const items = catalog.filter(r => r.work === w);
+        return el("details", { class: "pa-work-group", ...(activeWork !== "전체" || i === 0 ? { open: "" } : {}) },
+          el("summary", {}, el("span", {}, w), el("small", {}, `${items.length}개`)), el("div", { class: "pa-work-grid" }, ...items.map(tile)));
+      }));
+    }
+    ["전체", ...WORK].forEach(w => filterBar.append(el("button", { class: "pa-filter", type: "button", "aria-pressed": String(w === activeWork), onclick: () => {
+      activeWork = w;
+      [...filterBar.children].forEach(b => b.setAttribute("aria-pressed", String(b.textContent === w)));
+      drawDirectory();
+    } }, w)));
+    function searchTools() {
       const k = q.value.trim().toLowerCase();
-      if (!k) { hits.hidden = hitNote.hidden = true; hits.replaceChildren(); return; }
+      resultBox.hidden = !k;
+      if (!k) { hits.replaceChildren(); return; }
       const terms = k.split(/\s+/).map(choRx);
-      const found = data.filter(r => { const t = `${r.name} ${r.description || ""} ${r.category || ""}`.toLowerCase(); return terms.every(rx => rx.test(t)); });
-      hits.replaceChildren(...found.slice(0, 12).map(r => tile(r)));
-      hits.hidden = !found.length; hitNote.hidden = false;
-      hitNote.textContent = found.length ? `${found.length}개 찾음${found.length > 12 ? " · 앞 12개만 표시" : ""}${found.some(r => !r.unlocked) ? (pending ? " · 🔒는 승인 후 열리는 도구" : " · 🔒는 권한이 필요한 도구(승인 요청 가능)") : ""}` : "찾는 도구가 없습니다.";
-    });
-    const search = el("div", { class: "pa-card pa-search" }, el("label", { class: "sr", for: "pa-q" }, "도구 검색"), q, hitNote, hits);
-    // 2. 최근 쓴 도구 — 이 기기(localStorage)에만 이름·ID 저장. 권한 목록에서 다시 찾아 그리므로 권한이 바뀌면 자동 반영(잠기면 안 보임). 없으면 줄 숨김
-    const recentGrid = el("div", { class: "pa-tools" });
-    const recent = el("div", { class: "pa-recent", hidden: "" }, el("h2", { class: "pa-sec-title" }, "최근 쓴 도구", el("small", {}, "이 기기에서 연 순서 · 서버에 저장하지 않음")), recentGrid);
-    const drawRecent = () => {
-      const items = store.get(RECENT_KEY, []).map(it => it && (data.find(x => x.id === it.id) || data.find(x => x.name === it.name))).filter((r, i, a) => r && r.unlocked && r.url && a.indexOf(r) === i);
-      recentGrid.replaceChildren(...items.map(r => tile(r))); recent.hidden = !items.length;
+      const found = catalog.filter(r => {
+        const text = `${r.name} ${r.description || ""} ${r.category || ""} ${r.work} ${r.aliases || ""} ${r.searchText || ""}`.toLowerCase();
+        return terms.every(rx => rx.test(text) || rx.test(text.replace(/\s/g, "")));
+      });
+      hitNote.textContent = `${found.length}개 찾음 · 전체 도구·자료에서 검색`;
+      hits.replaceChildren(...(found.length ? found.map(tile) : [el("div", { class: "pa-empty" }, el("b", {}, "검색 결과가 없습니다"), el("p", {}, "다른 이름이나 초성으로 찾아보세요. 예: 수당, ㅅㅍ, 카페"), el("button", { class: "g-btn g-btn--ghost", type: "button", onclick: () => { q.value = ""; searchTools(); q.focus(); } }, "검색어 지우기"))]));
+    }
+    q.addEventListener("input", searchTools);
+    q.addEventListener("search", searchTools);
+    q.addEventListener("keydown", e => { if (e.key === "Escape") { q.value = ""; searchTools(); } });
+    const clearSearch = el("button", { class: "pa-search-clear", type: "button", "aria-label": "검색어 지우기", onclick: () => { q.value = ""; searchTools(); q.focus(); } }, "지우기");
+    const search = el("div", { class: "pa-home-search" }, el("label", { for: "pa-q" }, "필요한 업무를 바로 찾으세요"),
+      el("div", { class: "pa-search-field" }, q, clearSearch, el("kbd", { "aria-hidden": "true" }, "/")),
+      el("p", { class: "pa-search-help" }, "이름·설명·초성 검색", el("span", {}, " / 검색으로 이동 · Esc 지우기")));
+    const noticeBody = el("div", { class: "pa-notice-body" }, N("새 소식을 불러오는 중…"));
+    const noticeBox = el("section", { class: "pa-home-notice", id: "news", "aria-labelledby": "pa-news-title" }, el("p", { class: "pa-eyebrow" }, "NOTICE"), el("h2", { id: "pa-news-title" }, "새 소식"), noticeBody);
+    const loadNotice = async () => {
+      noticeBody.replaceChildren(N("새 소식을 불러오는 중…"));
+      try {
+        const { data: n, error: err } = await sb.from("site_notice").select("text").eq("id", 1).maybeSingle();
+        if (err) throw err;
+        const t = n && n.text ? String(n.text).trim() : "";
+        const render = () => {
+          const closed = t && store.get(NOTICE_KEY, "") === t;
+          noticeBody.replaceChildren(el("p", {}, closed ? "새 소식을 접어 두었습니다." : t || "등록된 새 소식이 없습니다."), t ? el("button", { class: "pa-text-button", type: "button", onclick: () => { store.set(NOTICE_KEY, closed ? "" : t); render(); } }, closed ? "새 소식 다시 보기" : "접어 두기") : "");
+        };
+        render();
+      } catch (e) {
+        noticeBody.replaceChildren(N("새 소식을 불러오지 못했습니다."), el("button", { class: "pa-text-button", type: "button", onclick: loadNotice }, "다시 시도"));
+      }
     };
-    drawRecent();
-    const FAV = /상품통합|보장분석|약관|설계|청약|AI/;
-    const PRI = [/상품\s*통합/, /수당/, /상품\s*분석/, /전산\s*답변/, /보상/, /자료\s*검색/];
-    const ok = data.filter(r => r.unlocked && r.url);
-    const favs = [...new Set([...PRI.map(rx => ok.find(r => rx.test(r.name))).filter(Boolean), ...ok.filter(r => FAV.test(r.name) || FAV.test(r.category || "")), ...ok])].slice(0, 6);
-    const statsTile = el("a", { class: "pa-tool pa-tool--stats", href: "#stats" }, el("span", { class: "pa-no" }, "표"), el("b", {}, "실적표 바로가기"), el("small", {}, "실적 요약 · 실적 표"), el("span", { class: "pa-go", "aria-hidden": "true" }, "아래로 이동 ↓"));
-    const fav = el("div", {}, el("h2", { class: "pa-sec-title" }, "자주 쓰는 도구", el("small", {}, "한 번 누르면 새 창에서 열립니다")),
-      D("섹션 설명: 자주 쓰는 도구 6개(상품통합분석기·수당계산기·상품분석기·전산답변기·보상답변기·자료검색기 순). 권한 있는 도구만 보입니다."),
-      favs.length ? null : el("p", { class: "pa-note" }, "🔒 승인 후 열립니다."),
-      el("div", { class: "pa-tools" }, ...favs.map((r, i) => tile(r, i + 1)), statsTile));
-    // 승인 대기: 메뉴 31개 카드·버튼 대신 맨 위 안내 카드(pendingCard) 안의 접힌 목록만
-    const allHead = pending ? null : el("div", { class: "pa-card" }, el("h3", {}, "전체 도구 메뉴"), N("등급 권한이 있으면 열리고, 없으면 🔒 잠금 — 옆의 '승인 요청'으로 관리자에게 알릴 수 있습니다."), ...cards);
-    // 4. 새 소식 배너 — site_notice 가 있으면 맨 위 유리 배너. 닫으면 같은 내용은 이 기기에서 다시 안 뜸. 없으면 아무것도 없음
-    const noticeBox = el("div", { class: "pa-notice-box" });
-    if (banner) banner.classList.add("pa-banner");
-    // FUNC-FIX A4: 새 소식은 화면을 그리기 전에 받아 둠(나중에 끼어들어 아래가 밀리면 이동한 칸이 어긋남·흔들림)
-    const noticeP = sb.from("site_notice").select("text").eq("id", 1).maybeSingle().then(({ data: n }) => {
-      const t = n && n.text ? String(n.text).trim() : "";
-      if (!t || store.get(NOTICE_KEY, "") === t) return;
-      noticeBox.replaceChildren(el("div", { class: "pa-card pa-notice", role: "status" },
-        el("span", { class: "pa-notice-ico", "aria-hidden": "true" }, "📣"),
-        el("p", {}, el("b", {}, "새 소식"), " ", t),
-        el("button", { class: "pa-notice-x", type: "button", "aria-label": "새 소식 닫기", onclick: () => { store.set(NOTICE_KEY, t); noticeBox.replaceChildren(); } }, "×")));
-    }, (e) => console.debug("[site_notice]", e));
-    const [stats] = await Promise.all([statsCard(), noticeP]);
+    // 소식과 실적은 동시에 준비. 원래 칸으로 이동할 때 높이가 바뀌지 않도록 함께 완성.
+    const [stats] = await Promise.all([statsCard(), loadNotice()]);
+    if (epoch !== renderEpoch) return;
     const me = el("section", { class: "pa-sec", id: "me" }, el("h2", { class: "pa-sec-title" }, "내 정보"),
-      el("div", { class: "pa-card pa-me" }, el("dl", {}, el("dt", {}, "이름"), el("dd", {}, p.name || "-"), el("dt", {}, "등급"), el("dd", {}, `${p.grade || ""}${p.is_admin ? " · 관리자" : ""}`), el("dt", {}, "계정"), el("dd", {}, p.email || "-"), el("dt", {}, "열린 메뉴"), el("dd", {}, `${open}/${data.length}`)),
-        el("div", { class: "pa-head-btns" }, p.is_admin ? el("a", { class: "g-btn g-btn--ghost g-btn--sm", href: "admin/" }, "관리자 화면") : null, logoutBtn())));
-    show(head, noticeBox, ...(banner ? [banner] : []),
-      el("section", { class: "pa-sec", id: "home" }, search, recent, fav, allHead),
+      el("div", { class: "pa-card pa-me" }, el("dl", {}, el("dt", {}, "이름"), el("dd", {}, p.name || "-"), el("dt", {}, "등급"), el("dd", {}, `${p.grade || "미지정"}${p.is_admin ? " · 관리자" : ""}`), el("dt", {}, "승인 상태"), el("dd", {}, status), el("dt", {}, "소속 본부"), el("dd", {}, p.branch || "-"), el("dt", {}, "계정"), el("dd", {}, p.email || "-"), el("dt", {}, "열린 회원 메뉴"), el("dd", {}, `${open} / ${data.length}`)),
+        N("고정 도구와 최근 사용은 이 브라우저에 저장됩니다. 다른 기기에는 동기화되지 않습니다."),
+        el("div", { class: "pa-head-btns" }, p.is_admin ? el("a", { class: "g-btn g-btn--ghost", href: "admin/" }, "관리자 화면") : null, logoutBtn())));
+    const links = el("div", { class: "pa-card" }, el("h3", {}, "자주 찾는 사이트"), el("div", { class: "pa-site-list" }, ...catalog.filter(r => r.kind === "사이트").map(r => toolLink(r, "pa-site-link"))));
+    const head = el("header", { class: "pa-home-head" }, el("div", {}, el("p", { class: "pa-eyebrow" }, "PREMIUM · WORKSPACE"), el("h2", { class: "pa-home-title" }, "영업지원 홈"), el("p", { class: "pa-home-sub" }, "찾는 도구부터, 필요한 자료까지.")),
+      el("a", { class: "pa-account", href: "#me" }, el("span", { class: "pa-account-status" }, status), el("b", {}, p.name || "내 계정"), el("small", {}, `${p.grade || "등급 미지정"} · 내 정보 →`)));
+    const fav = el("section", { id: "pa-favorites", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, "자주 쓰는 도구"), el("a", { href: "#directory", id: "pa-edit-pins" }, "도구 찾아 고정하기 →")), N("★로 고정 · 이 기기에서 빠르게 열기"), favoriteGrid);
+    const recent = el("section", { id: "pa-recent", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, "최근 사용"), el("button", { class: "pa-text-button", type: "button", onclick: () => { store.set(recentKey, []); drawRecent(); announce.textContent = "최근 사용 기록을 지웠습니다."; } }, "기록 지우기")), recentGrid);
+    const browse = el("section", { id: "directory", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, "업무별 도구·자료"), el("a", { href: "#stats" }, "실적 요약·표 ↓")), N(`회원 메뉴 ${data.length}개와 안내 자료·사이트를 함께 모았습니다. 잠긴 메뉴는 승인 후 열립니다.`),
+      data.length ? null : N("등록된 회원 메뉴가 없습니다. 안내 자료와 사이트는 아래에서 이용할 수 있습니다."), filterBar, directory);
+    drawFavorites(); drawRecent(); drawDirectory();
+    show(announce, el("section", { class: "pa-sec", id: "home" }, head,
+      pending ? pendingCard(data) : banner,
+      el("div", { class: "pa-home-top" }, search, noticeBox), resultBox, fav, recent, browse),
       el("section", { class: "pa-sec", id: "stats" }, el("h2", { class: "pa-sec-title" }, "실적"), stats),
-      el("section", { class: "pa-sec", id: "info" }, el("h2", { class: "pa-sec-title" }, "자료"), links, ...infoCards()), me);
+      el("section", { class: "pa-sec", id: "info" }, el("h2", { class: "pa-sec-title" }, "자료·채널·사이트"), links, ...infoCards()), me);
     markTab();
-    if (goto) { jump(goto); goto = null; } // 첫 화면에서 한 번만
+    if (goto) { jump(goto); goto = null; }
   }
   // FUNC-FIX A4: 그린 뒤 그 칸으로(고정 메뉴 높이는 .pa-sec scroll-margin-top). 글꼴이 늦게 와 높이가 바뀌면 사용자가 안 움직였을 때만 한 번 더 맞춤
-  function jump(id) {
+  function jump(id, moveFocus = false) {
     const t = document.getElementById(id);
     if (!t) return;
     if (location.hash !== "#" + id) history.replaceState(null, "", location.pathname + "#" + id);
     markTab();
-    if (id === "home") return; // 홈은 맨 위 그대로(이름 줄·새 소식이 보이게)
+    if (t.tagName === "DETAILS") t.open = true;
+    if (moveFocus) {
+      const focus = t.querySelector("summary, h2, h3") || t;
+      if (focus.tagName !== "SUMMARY") focus.setAttribute("tabindex", "-1");
+      focus.focus({ preventScroll: true });
+    }
+    if (id === "home") { window.scrollTo({ top: 0, behavior: "instant" }); return; } // 홈은 맨 위 그대로(이름 줄·새 소식이 보이게)
     const go = () => t.scrollIntoView({ block: "start", behavior: "instant" });
     go();
     const y = Math.round(scrollY);
@@ -334,7 +420,7 @@
   function infoCards() {
     return [el("div", { class: "pa-card" }, el("h3", {}, "프리미엄 안내 자료"),
       N("기존 사이트(www.primeasset.info)의 교육·정보 채널·프라임에셋 제도 안내. 제목을 누르면 펼쳐지고, 파일은 원문 페이지에서 받습니다."),
-      ...INFO.map(([t, ps, ls]) => el("details", { class: "pa-card pa-fold" }, el("summary", {}, t), ...ps.map(x => el("p", {}, x)),
+      ...INFO.map(([t, ps, ls], i) => el("details", { class: "pa-card pa-fold", id: "info-" + i }, el("summary", {}, t), ...ps.map(x => el("p", {}, x)),
         el("p", {}, ...ls.flatMap(([u, n], i) => [i ? " · " : "", toolOr(u, n)])))))];
   }
   // 3. 실적 막대그래프(순수 SVG, assets/glass-chart.js). 표 key별 설정: x=이름 열, s=값 열, mult=원 환산 배수, limit=표의 앞 N줄만, skip=합계 줄 제외, short=가로축 글자 수
@@ -366,50 +452,67 @@
     const { data, error } = await sb.rpc("members_stats");
     const card = el("div", { class: "pa-card" }, el("h3", {}, "실적 요약 · 실적 표"),
       N("승인된 회원만 표가 열립니다. 설계사 개인 이름 없음."));
-    if (error || !data) { card.append(el("p", { class: "pa-note", role: "status" }, "자료를 불러오지 못했습니다. 새로고침해 주세요.")); return card; }
+    if (error || !Array.isArray(data)) {
+      const again = el("button", { class: "g-btn g-btn--ghost", type: "button", onclick: async () => { again.disabled = true; again.textContent = "불러오는 중…"; card.replaceWith(await statsCard()); } }, "실적 다시 불러오기");
+      card.append(el("p", { class: "pa-note", role: "status" }, "실적 자료를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요."), again); return card;
+    }
+    if (!data.length) card.append(N("등록된 실적 표가 없습니다."));
     const dm = data.find(r => r.unlocked && r.key === "division_monthly");
     const pb = dm ? await perfSummary() : null; // 승인 회원(사업부 표가 열린 회원)에게만, 전처럼
     if (pb) card.append(el("div", { class: "pa-card" }, el("h3", {}, "실적 요약"),
       el("p", { class: "pa-stat-sum" }, `사업부 ${pb.period} 누적: 월보험료 `, el("b", {}, `${pb.eok}억`), ` (${fmt(String(pb.totalK))}천원) · 계약 ${fmt(String(pb.count))}건`),
-      el("p", { class: "pa-note" }, `기준: ${pb.basis} — 공개 `, el("a", { href: "../performance/" }, "실적보드"), "와 같은 숫자입니다. 표는 펼쳐져 있습니다. 아래 표의 기간은 각 표 제목을 따릅니다.")));
+      el("p", { class: "pa-note" }, `기준: ${pb.basis} — 공개 `, el("a", { href: "../performance/" }, "실적보드"), "와 같은 숫자입니다. 표 제목을 누르면 펼쳐집니다. 각 표의 기간은 표 제목을 따릅니다.")));
     for (const r of data) {
-      if (!r.unlocked) { card.append(el("div", { class: "pa-card pa-locked" }, el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.title))); continue; }
-      const t = el("table", { class: "pa-table" }, el("thead", {}, el("tr", {}, ...r.cols.map(c => el("th", {}, c)))),
+      if (!r.unlocked) { card.append(el("div", { class: "pa-card pa-locked" }, el("span", { title: "승인·권한이 필요합니다" }, "🔒 " + r.title + " · 승인 후 열림"))); continue; }
+      const t = el("table", { class: "pa-table" }, el("thead", {}, el("tr", {}, ...r.cols.map(c => el("th", { scope: "col" }, c)))),
         el("tbody", {}, ...r.rows.map(row => el("tr", {}, ...row.map(v => el("td", {}, fmt(v)))))));
-      card.append(el("details", { class: "pa-card", open: "" }, el("summary", {}, r.title + ` (${r.rows.length}줄)`), r.note ? el("p", { class: "pa-note" }, r.note) : null, chartFor(r), el("p", { class: "pa-note pa-swipe" }, "← 옆으로 밀어 보기"), el("div", { class: "pa-scroll" }, t)));
+      card.append(el("details", { class: "pa-card" }, el("summary", {}, r.title + ` (${r.rows.length}줄)`), r.note ? el("p", { class: "pa-note" }, r.note) : null, chartFor(r), el("p", { class: "pa-note pa-swipe" }, "← 옆으로 밀어 보기"), el("div", { class: "pa-scroll", tabindex: "0", role: "region", "aria-label": r.title + " 표 · 좌우로 스크롤" }, t)));
     }
     return card;
   }
 
   // 메뉴(홈·실적·자료·내 정보) 현재 위치 표시 — 배치용, 데이터와 무관
   function markTab() {
-    const cur = (location.hash || "#home").slice(1);
+    const raw = (location.hash || "#home").slice(1);
+    const cur = /^info-/.test(raw) ? "info" : ["directory", "news"].includes(raw) ? "home" : raw;
     if (cur === "main") return; // 건너뛰기 링크(#main)는 탭 표시를 바꾸지 않음
-    document.querySelectorAll("[data-tab]").forEach(a => a.classList.toggle("on", a.getAttribute("data-tab") === cur));
+    document.querySelectorAll("[data-tab]").forEach(a => {
+      const on = a.getAttribute("data-tab") === cur; a.classList.toggle("on", on);
+      if (on) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current");
+    });
   }
-  window.addEventListener("hashchange", markTab);
+  window.addEventListener("hashchange", () => { markTab(); if (document.body.classList.contains("pa-logged") && knownSection(location.hash.slice(1))) jump(location.hash.slice(1), true); });
+  document.addEventListener("keydown", e => {
+    if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey || e.isComposing || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.target.isContentEditable) return;
+    const input = document.getElementById("pa-q");
+    if (input) { e.preventDefault(); input.focus(); input.scrollIntoView({ block: "center", behavior: "instant" }); }
+  });
 
   if (!document.getElementById("pa-swipe-css")) document.head.append(el("style", { id: "pa-swipe-css" }, "@media (min-width: 700px) { .pa-swipe { display: none } }"));
   let logged = false;
   async function boot() {
+    const epoch = ++renderEpoch;
     const { data: { session }, error: sErr } = await sb.auth.getSession();
+    if (epoch !== renderEpoch) return;
     if (!session) {
       if (sErr && isNet(sErr)) return failView("로그인 상태를 확인하지 못했습니다", sErr, false);
       if (goto) { saveGoto(goto); goto = null; } // 로그인 뒤 이 칸으로(이 기기에 30분)
       return loginView(location.hash === "#signup" ? "처음 오셨나요? 구글 계정이나 이메일로 로그인하면 바로 가입 신청이 됩니다." : "");
     }
+    const storageOwner = session.user.id || "local";
     retryOnline = null;
     if (!goto) goto = takeGoto(); // 로그인 전에 가려던 칸(메인 허브 자물쇠 카드·/members/#stats 등)
     if (!logged) { logged = true; sb.rpc("record_login", { p_method: (session.user.app_metadata || {}).provider || "", p_agent: navigator.userAgent }); }
-    if (location.hash && !SECTIONS.includes(location.hash.slice(1))) history.replaceState(null, "", location.pathname); // 토큰·#signup 은 지우고 칸 주소(#stats 등)는 둠
+    if (location.hash && !knownSection(location.hash.slice(1))) history.replaceState(null, "", location.pathname); // 토큰·#signup 은 지우고 칸 주소(#stats 등)는 둠
     const { data, error } = await sb.rpc("my_profile");
+    if (epoch !== renderEpoch) return;
     const p = data && data[0];
     if (error) return failView("회원 정보를 확인하지 못했습니다", error, true);
     if (!p) return show(msg("회원 정보를 확인하지 못했습니다", "잠시 후 다시 시도해 주세요."), logoutBtn());
     if (!p.profile_done) return profileView(p);
     if (p.status === "suspended") return show(msg("이용이 정지된 계정입니다", "문의는 관리자에게 해 주세요."), logoutBtn());
-    if (p.status === "pending") return intranetView(p, null); // 안내·요청 버튼은 intranetView 가 메뉴 목록과 함께 그림(pendingCard)
-    return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("Guest 등급입니다", "🔒 표시 메뉴는 등급이 정해지면 열립니다.") : null);
+    if (p.status === "pending") return intranetView(p, null, epoch, storageOwner); // 안내·요청 버튼은 intranetView 가 메뉴 목록과 함께 그림(pendingCard)
+    return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("Guest 등급입니다", "🔒 표시 메뉴는 등급이 정해지면 열립니다.") : null, epoch, storageOwner);
   }
   sb.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" || ev === "SIGNED_OUT") boot(); });
   boot();
