@@ -1,10 +1,9 @@
-/* 메인(index.html) 실적보드 섹션 — MAIN-V3-20261102 ①(실적보드 이식)
-   188 홈 '프리미엄사업부 실적보드' 블록(.pb.pb-home, 마크업·숫자 188 그대로)을 메인 숫자 타일 바로 아래에 둔다.
-   컴포넌트 규칙은 assets/perf-board.css(188 규칙 + 유리 톤)를 그대로 쓰고, 여기는 메인 페이지 배치만 적는다. */
-.g-board{padding-top:34px}
-.g-board-eyebrow{margin:0 0 8px}
-.g-board>h2{margin-bottom:8px}
-.g-board .g-lead{margin-bottom:22px}
+/* 메인(index.html) 실적보드 섹션 — MAIN-V3-20261102 ①(실적보드 이식), DESIGN-DARK-20261102 ①(어두운 톤: 섹션 간격·제목 간격은 공통 토큰)
+   188 홈 '프리미엄사업부 실적보드' 블록(.pb.pb-home, 마크업·숫자 188 그대로)을 메인 숫자 줄 바로 아래에 둔다.
+   컴포넌트 규칙은 assets/perf-board.css(188 규칙 + 어두운 톤)를 그대로 쓰고, 여기는 메인 페이지 배치만 적는다. */
+.g-board-eyebrow{margin:0 0 var(--s2)}
+.g-board>h2{margin-bottom:var(--s2)}
+.g-board .g-lead{margin-bottom:var(--s5)}
 .g-board .pb-home{--pb-combo-h:380px}
 .g-board .pb-home__board{margin:0}
 .g-board .pb-home__more{margin:18px 0 0;min-height:52px}
@@ -14,7 +13,6 @@
 /* 막대 손가락·마우스 영역: 터치 44px 확보 */
 .g-board .pb-col__hit{min-width:28px}
 @media (max-width:800px){
-  .g-board{padding-top:26px}
   .g-board .pb-home{--pb-combo-h:300px}
   .g-board .pb-home__more{width:100%}
 }
