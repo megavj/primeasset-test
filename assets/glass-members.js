@@ -63,7 +63,7 @@
     show(el("div", { class: "pa-login" }, el("div", { class: "pa-card" },
       el("h3", {}, "가입 정보 입력"), N("처음 로그인한 분만 보입니다. 이름·소속 본부·휴대폰 번호와 [필수] 개인정보 수집 동의."), el("p", {}, `로그인 계정: ${p.email || ""}`), n, b, ph,
       el("label", { class: "pa-consent", for: "pa-consent" }, ok, " [필수] 개인정보 수집·이용에 동의합니다. ",
-        el("a", { href: "../../privacy/", target: "_blank" }, "개인정보처리방침 보기")),
+        el("a", { href: "../privacy/", target: "_blank" }, "개인정보처리방침 보기")),
       el("div", { class: "pa-head-btns" }, el("button", { class: "g-btn g-btn--pri g-btn--lg", onclick: async () => {
         const { error } = await sb.rpc("complete_profile", { p_name: n.value, p_branch: b.value, p_phone: ph.value, p_consent: ok.checked });
         if (error) out.textContent = error.message; else boot();
@@ -82,7 +82,7 @@
     const open = data.filter(r => r.unlocked).length;
     const head = el("div", { class: "pa-head" },
       el("div", { class: "pa-who" }, el("b", {}, `${p.name || p.email}`), el("span", { class: "pa-grade" }, ` · ${p.grade || ""}${p.is_admin ? " · 관리자" : ""}`), ` · 열린 메뉴 ${open}/${data.length}`),
-      el("div", { class: "pa-head-btns" }, p.is_admin ? el("a", { class: "g-btn g-btn--ghost g-btn--sm", href: "../../members/admin/" }, "관리자 화면") : null, logoutBtn()));
+      el("div", { class: "pa-head-btns" }, p.is_admin ? el("a", { class: "g-btn g-btn--ghost g-btn--sm", href: "admin/" }, "관리자 화면") : null, logoutBtn()));
     const links = el("div", { class: "pa-card" }, el("h3", {}, "바로가기"), D("섹션 설명: 보험위키·188 영업지원시스템·보험노트·프라임에셋 본사·이사님 페이스북·기존 사이트 (메인 '자주 쓰는 링크'에서 옮김)."), el("ul", { class: "pa-list" },
       el("li", {}, el("a", { href: "http://wiki.primeasset.info/", target: "_blank", rel: "noopener" }, "보험위키"), el("small", {}, "보장·용어·청구 가이드")),
       el("li", {}, el("a", { href: "https://188.primeasset.info/", target: "_blank", rel: "noopener" }, "188 영업지원시스템")),
@@ -123,7 +123,7 @@
     const stats = await statsCard();
     const me = el("section", { class: "pa-sec", id: "me" }, el("h2", { class: "pa-sec-title" }, "내 정보"),
       el("div", { class: "pa-card pa-me" }, el("dl", {}, el("dt", {}, "이름"), el("dd", {}, p.name || "-"), el("dt", {}, "등급"), el("dd", {}, `${p.grade || ""}${p.is_admin ? " · 관리자" : ""}`), el("dt", {}, "계정"), el("dd", {}, p.email || "-"), el("dt", {}, "열린 메뉴"), el("dd", {}, `${open}/${data.length}`)),
-        el("div", { class: "pa-head-btns" }, p.is_admin ? el("a", { class: "g-btn g-btn--ghost g-btn--sm", href: "../../members/admin/" }, "관리자 화면") : null, logoutBtn())));
+        el("div", { class: "pa-head-btns" }, p.is_admin ? el("a", { class: "g-btn g-btn--ghost g-btn--sm", href: "admin/" }, "관리자 화면") : null, logoutBtn())));
     show(head, ...(banner ? [banner] : []), fav, news, el("section", { class: "pa-sec" }, search, allHead),
       el("section", { class: "pa-sec", id: "stats" }, el("h2", { class: "pa-sec-title" }, "실적"), stats),
       el("section", { class: "pa-sec", id: "info" }, el("h2", { class: "pa-sec-title" }, "자료"), links, ...infoCards()), me);
