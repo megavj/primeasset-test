@@ -3,7 +3,8 @@
    도구 주소는 이 파일에 없음: 로그인 후 서버(my_resources)가 권한 있는 것만 내려줌
    FUNC-FIX-20261102: A1 승인 대기 회원은 메뉴별 버튼 31개 대신 안내 + '승인 요청 보내기' 1개(request_access(null), S4 SQL) + 접힌 메뉴 목록, 거절돼도 오픈채팅 자동 열기 없음.
      A6 '실적 요약'은 공개 실적보드 자료(/performance/ #perf-data)에서 기간·숫자를 읽음(코드에 기간 없음). 화면 꾸밈은 assets/members-ux.css
-     A3 오류 안내 한국어(재요청 제한 남은 초·만료 링크·연결 끊김 다시 시도, 영어 원문은 console.debug), A4 주소의 칸 기억 → 그린 뒤 이동·로그인 전 칸은 이 기기에 잠시 저장 */
+     A3 오류 안내 한국어(재요청 제한 남은 초·만료 링크·연결 끊김 다시 시도, 영어 원문은 console.debug), A4 주소의 칸 기억 → 그린 뒤 이동·로그인 전 칸은 이 기기에 잠시 저장
+     A5 카카오톡 안 브라우저면 구글 버튼 위 안내 + 이메일 로그인 먼저 펼침 */
 (function () {
   const C = window.PA_AUTH || {};
   const $ = (s) => document.querySelector(s);
@@ -47,6 +48,7 @@
   const isRate = (e) => !!e && (e.status === 429 || /rate_limit|rate limit|only request this after/i.test(`${e.code || ""} ${e.message || ""}`));
   const hasKo = (t) => /[가-힣]/.test(String(t || ""));
   const NET_MSG = "인터넷 연결을 확인하고 다시 시도해 주세요.";
+  const KAKAO = /KAKAOTALK/i.test(navigator.userAgent); // FUNC-FIX A5: 카카오톡 안 브라우저(안드로이드·아이폰 공통 표시)
   let retryOnline = null; // 연결 오류 화면이 떠 있으면 연결이 돌아올 때 자동으로 다시 시도
   window.addEventListener("online", () => { if (retryOnline) retryOnline(); });
   function failView(title, error, withLogout) {
@@ -91,6 +93,17 @@
       tick();
     });
     const mailBox = el("details", { style: "margin-top:14px" }, el("summary", {}, "구글 계정이 없으면: 이메일로 로그인"), el("div", { class: "pa-row" }, email, sendBtn));
+    // FUNC-FIX A5: 카카오톡 안 브라우저는 구글이 로그인을 막을 수 있음(403 disallowed_useragent) → 구글 버튼 위 안내 + 이메일 로그인 먼저 펼침.
+    //   '다른 브라우저로 열기' 버튼(kakaotalk://web/openExternal, 비공식)은 보조 — 누를 때만, 안 되더라도 안내문은 그대로 남음
+    let kakao = null;
+    if (KAKAO) {
+      const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      kakao = el("div", { class: "pa-kakao", role: "note" },
+        el("p", {}, el("b", {}, "카카오톡 안에서는 구글 로그인이 막힐 수 있어요"), ` → 오른쪽 아래 ⋮ → 다른 브라우저로 열기${ios ? "(아이폰은 'Safari로 열기')" : ""}`),
+        el("p", { class: "pa-note" }, "다른 브라우저로 옮기기 어려우면 아래 '이메일로 로그인'을 쓰세요."),
+        el("a", { class: "g-btn g-btn--ghost g-btn--sm", href: "kakaotalk://web/openExternal?url=" + encodeURIComponent(location.href) }, "다른 브라우저로 열기"));
+      mailBox.open = true;
+    }
     // FUNC-FIX A3: 만료·이미 쓴 메일 링크로 돌아온 경우(주소는 위에서 정리함)
     let errCard = null;
     if (linkErr) {
@@ -106,6 +119,7 @@
       el("div", { class: "pa-card pa-card--hero" }, el("p", { class: "pa-pitch" }, "가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.")),
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, su ? "회원가입 · 로그인" : "로그인"),
         N("구글 계정 버튼 하나로 로그인. 처음이면 로그인하는 순간 가입 신청이 됩니다."),
+        kakao,
         el("button", { class: "g-btn g-btn--pri g-btn--lg g-wide", type: "button", onclick: () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: here } }) }, "구글 계정으로 로그인"),
         mailBox,
         out),

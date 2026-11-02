@@ -1,6 +1,7 @@
 /* 설계사 인트라넷(/members/) 사용 편의 보완 — FUNC-FIX-20261102. glass.css 토큰·면·버튼을 그대로 쓰고 새 색·그림자는 만들지 않음.
    ① A1 승인 대기 안내 카드(.pa-wait): 요청 버튼 1개 + '승인 후 열리는 메뉴 N개 보기' 접기
-   ② A3 오류 안내: 만료 링크 카드(.pa-linkerr)·연결 오류 카드(.pa-fail) */
+   ② A3 오류 안내: 만료 링크 카드(.pa-linkerr)·연결 오류 카드(.pa-fail)
+   ③ A5 카카오톡 안 브라우저 안내(.pa-kakao, 구글 버튼 위) */
 
 /* ① 승인 대기 */
 .pa-wait .pa-row{margin:14px 0 4px}
@@ -18,3 +19,9 @@
 /* ② 오류 안내 */
 .pa-linkerr .pa-row,.pa-fail .pa-head-btns{margin:14px 0 0}
 .pa-send[disabled]{opacity:.75;cursor:default;font-variant-numeric:tabular-nums}
+
+/* ③ 카카오톡 안 브라우저 */
+.pa-kakao{margin:6px 0 14px;padding:14px 16px;border-radius:var(--r-tile);background:var(--gold-soft);border:1px solid rgba(214,185,126,.3)}
+.pa-card .pa-kakao p{margin:0 0 6px;color:var(--text);font-size:16px;line-height:1.55}
+.pa-card .pa-kakao p.pa-note{color:var(--text-2);font-size:15px;margin:0 0 10px}
+.pa-kakao b{color:var(--gold)}
