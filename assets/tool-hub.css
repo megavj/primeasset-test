@@ -1,0 +1,80 @@
+/* 도구 허브(index.html #tools) — MAIN-V3-20261102 ③(도구 허브·검색)
+   · 벤토: 바깥 격자 4칸(컨테이너 쿼리 .g-cq 기준). 소개 타일(작은 칸) + 검색 타일(넓은 칸) + 묶음 4개(큰 칸·작은 칸). 묶음 안 카드는 subgrid 로 바깥 칸에 맞춰 전부 같은 크기
+   · 카드: 아이콘·이름·한 줄 설명, 회원 전용은 자물쇠(비로그인) → members/#signup. 세션이 있으면(.is-member) 자물쇠 없이 인트라넷으로
+   · 검색 중(.is-q): 묶음 전부 한 줄 폭으로, 안 맞는 카드·빈 묶음 숨김 */
+.g-hub-bento{display:grid;gap:14px;grid-template-columns:1fr;grid-auto-flow:dense}
+.g-hub-intro{display:flex;flex-direction:column;gap:8px;justify-content:center;padding:22px 22px}
+.g-hub-intro__n{margin:0;display:flex;align-items:baseline;gap:6px;color:var(--navy)}
+.g-hub-intro__n b{font-size:44px;line-height:1;letter-spacing:-.04em}
+.g-hub-intro__n span{font-size:15px;font-weight:600;color:var(--ink-2)}
+.g-hub-intro>p:not(.g-hub-intro__n){margin:0;font-size:15px;color:var(--mute)}
+.g-hub-intro .g-btn{align-self:flex-start;margin-top:4px}
+.g-hub-search{display:flex;flex-direction:column;justify-content:center;gap:8px;padding:18px 20px}
+.g-hub-q{width:100%;min-height:52px;padding:12px 16px 12px 48px;border:1px solid rgba(30,58,138,.16);border-radius:var(--r-in);font:inherit;font-size:17px;color:var(--ink);background:rgba(255,255,255,.95) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-3.5-3.5'/></svg>") no-repeat 16px center/20px 20px;box-shadow:inset 0 1px 2px rgba(15,23,42,.04)}
+.g-hub-q:focus{border-color:var(--navy);box-shadow:0 0 0 4px rgba(56,130,246,.18);outline:none}
+.g-hub-q::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:18px;height:18px;cursor:pointer;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round'><path d='M6 6l12 12M18 6 6 18'/></svg>") no-repeat center/18px}
+.g-hub-count{margin:0;font-size:14px;color:var(--mute)}
+.g-hub-group{min-width:0}
+.g-hub-group>h3{font-size:17px;letter-spacing:-.01em;margin:4px 0 10px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.g-hub-group>h3 small{font-size:14px;font-weight:500;color:var(--mute)}
+.g-hub-grid{display:grid;gap:10px;grid-template-columns:1fr}
+.g-hub-card{display:flex;align-items:center;gap:12px;min-height:84px;padding:14px 14px 14px 16px;text-decoration:none;color:var(--ink);transition:transform .12s ease,box-shadow .12s ease}
+.g-hub-card:hover{transform:translateY(-2px)}
+.g-hub-ico{flex:none;width:42px;height:42px;border-radius:13px;background:var(--navy-soft);color:var(--navy);display:flex;align-items:center;justify-content:center}
+.g-hub-ico svg{width:22px;height:22px}
+.g-hub-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.g-hub-body b{font-size:16px;line-height:1.3;letter-spacing:-.01em}
+.g-hub-body small{font-size:14px;color:var(--mute);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.g-hub-lock,.g-hub-go{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--mute);background:rgba(15,23,42,.05)}
+.g-hub-lock svg,.g-hub-go svg{width:15px;height:15px}
+.g-hub-go{color:var(--navy);background:var(--navy-soft);font-weight:700;font-size:15px}
+.g-hub-card--open .g-hub-ico{background:linear-gradient(135deg,rgba(232,201,106,.35),rgba(180,137,31,.18));color:#6f5717}
+.g-hub.is-member .g-hub-lock{display:none}
+.g-hub.is-member .g-hub-card[data-member]::after{content:"";position:absolute;right:16px;top:50%;width:8px;height:8px;margin-top:-6px;border-right:2px solid var(--navy);border-top:2px solid var(--navy);transform:rotate(45deg)}
+.g-hub-none{margin:14px 0 0;color:var(--mute)}
+/* 검색 중 */
+.g-hub.is-q .g-hub-bento{grid-template-areas:none}
+.g-hub.is-q .g-hub-group,.g-hub.is-q .g-hub-intro,.g-hub.is-q .g-hub-search{grid-area:auto;grid-column:1 / -1!important}
+.g-hub.is-q .g-hub-intro{display:none}
+.g-hub.is-q .g-hub-card[hidden],.g-hub.is-q .g-hub-group[hidden]{display:none!important}
+/* 벤토 배치: 2칸(560px~) / 4칸(860px~) — 바깥 칸에 카드를 맞추는 subgrid */
+@container (min-width:560px){
+  .g-hub-bento{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g-hub-search{grid-column:span 2}
+  .g-hub-intro{grid-column:span 2;flex-direction:row;align-items:center;flex-wrap:wrap}
+  .g-hub-intro .g-btn{margin-left:auto}
+  .g-hub-group{grid-column:span 2}
+  .g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g-hub-group{display:grid;grid-template-columns:subgrid}
+  .g-hub-group>h3,.g-hub-group>.g-hub-grid{grid-column:1 / -1}
+}
+@container (min-width:860px){
+  .g-hub-bento{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"intro search search search" "intro a a a" "b b c c" "d d d d"}
+  .g-hub-intro{grid-area:intro;flex-direction:column;align-items:flex-start}
+  .g-hub-intro .g-btn{margin-left:0}
+  .g-hub-search{grid-area:search}
+  .g-hub-group--a{grid-area:a}.g-hub-group--b{grid-area:b}.g-hub-group--c{grid-area:c}.g-hub-group--d{grid-area:d}
+  .g-hub-group--a .g-hub-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .g-hub-group--b .g-hub-grid,.g-hub-group--c .g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g-hub-group--d .g-hub-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .g-hub-intro__n b{font-size:56px}
+  .g-hub.is-q .g-hub-group .g-hub-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+/* subgrid 지원: 카드 폭을 바깥 4칸에 정확히 맞춤(모든 카드 같은 폭) */
+@supports (grid-template-columns:subgrid){
+  @container (min-width:860px){
+    .g-hub-group{display:grid;grid-template-columns:subgrid}
+    .g-hub-group>h3,.g-hub-group>.g-hub-grid{grid-column:1 / -1}
+    .g-hub-group>.g-hub-grid{display:grid;grid-template-columns:subgrid}
+  }
+}
+/* 컨테이너 쿼리 미지원: 화면 폭 기준 2칸 */
+@supports not (container-type:inline-size){
+  @media (min-width:600px){.g-hub-bento{grid-template-columns:repeat(2,minmax(0,1fr))}.g-hub-search,.g-hub-intro,.g-hub-group{grid-column:span 2}.g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+}
+@media (max-width:720px){
+  .g-hub-card{min-height:76px;padding:12px 12px 12px 14px}
+  .g-hub-ico{width:38px;height:38px}
+  .g-hub-q{font-size:16px;min-height:48px}
+}
+@media (prefers-reduced-motion:reduce){.g-hub-card{transition:none}}

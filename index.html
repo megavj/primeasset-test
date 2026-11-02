@@ -26,6 +26,7 @@
 <link rel="stylesheet" href="assets/perf-board.css?v=1">
 <link rel="stylesheet" href="assets/home-board.css?v=1">
 <link rel="stylesheet" href="assets/home-layout.css?v=1">
+<link rel="stylesheet" href="assets/tool-hub.css?v=1">
 <script>document.documentElement.classList.add('js');if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
 </head>
 <body class="g-main">
@@ -156,42 +157,101 @@
     </div>
   </section>
 
-  <!-- 도구 -->
-  <section class="g-sec" id="tools">
-    <h2>회원 전용 도구</h2>
-    <p class="g-lead">가입하면 도구 24개와 실적 자료를 쓸 수 있습니다. 대표 도구 4개를 먼저 소개합니다. 누르면 회원가입으로 이동합니다.</p>
+  <!-- 도구 허브(MAIN-V3-03): 188 업무도구허브(assets/hub-menu.js 의 제목·한 줄 설명·주소 구성) 방식. test 에 있는 회원 도구·채널·사이트 24개를 같은 크기 카드(아이콘·이름·한 줄 설명)로 묶음별 한눈에.
+       비로그인: 회원 전용 카드는 자물쇠 + 누르면 회원가입(members/#signup). 로그인 회원(이 기기에 세션이 있으면): 자물쇠 없이 인트라넷(members/)으로 — 도구 주소·권한은 인트라넷(서버 my_menu)이 그대로 판정(여기에 주소 없음).
+       공개 페이지(실적보드·보험위키)는 바로 열림. 검색은 assets/tool-hub.js(입력 즉시, 초성 가능). 벤토 배치는 assets/tool-hub.css -->
+  <section class="g-sec g-hub" id="tools" aria-labelledby="tools-title">
+    <h2 id="tools-title">도구 허브</h2>
+    <p class="g-lead">가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.</p>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
       <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 5 9-5"/></symbol>
       <symbol id="i-calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7h7M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15v2.5"/></symbol>
       <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/><path d="M8 11.5 10 9l2 2 2-3"/></symbol>
       <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5v-8Z"/><path d="M8.5 8h7M8.5 11.5h4.5"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 7.9 7.5 9.5 4.4-1.6 7.5-5.1 7.5-9.5V6L12 3Z"/><path d="m9 12 2 2 4-4.5"/></symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="m18.5 15 .7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2Z"/></symbol>
+      <symbol id="i-news" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h11A1.5 1.5 0 0 1 18 5.5V18a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2V5.5Z"/><path d="M18 9h2.5v9a2 2 0 0 1-2 2"/><path d="M7.5 8h7M7.5 11.5h7M7.5 15h4"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-8"/><path d="M22 20H2"/></symbol>
+      <symbol id="i-table" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 10v10"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Z"/><path d="M4 19a2 2 0 0 0 2 2h13"/><path d="M8 7h7"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5a5 5 0 0 1 6 5"/></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></symbol>
+      <symbol id="i-question" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><path d="M12 17h.01"/></symbol>
+      <symbol id="i-infinity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c-2-3-3.5-4.5-5.5-4.5a4.5 4.5 0 0 0 0 9c2 0 3.5-1.5 5.5-4.5s3.5-4.5 5.5-4.5a4.5 4.5 0 0 1 0 9c-2 0-3.5-1.5-5.5-4.5Z"/></symbol>
+      <symbol id="i-school" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2.5 9 9.5-4.5L21.5 9 12 13.5 2.5 9Z"/><path d="M6.5 11v4.5c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3V11"/><path d="M21.5 9v5"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 3.9 5.5 3.9 9s-1.3 6.5-3.9 9c-2.6-2.5-3.9-5.5-3.9-9S9.4 5.5 12 3Z"/></symbol>
+      <symbol id="i-wiki" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5h6a3 3 0 0 1 3 3V20a2 2 0 0 0-2-2H3V5.5Z"/><path d="M21 5.5h-6a3 3 0 0 0-3 3V20a2 2 0 0 1 2-2h7V5.5Z"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></symbol>
+      <symbol id="i-note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6V3Z"/><path d="M15 3v4h4M9 12h6M9 16h6"/></symbol>
+      <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/><path d="M16 9h2a2 2 0 0 1 2 2v10"/><path d="M8 7h4M8 11h4M8 15h4M2 21h20"/></symbol>
+      <symbol id="i-fb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 21v-7h2.5l.5-3h-3V9.2c0-.9.3-1.5 1.6-1.5H18V5.1c-.3 0-1.3-.1-2.4-.1-2.4 0-4.1 1.5-4.1 4.2V11H9v3h2.5v7"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9.5" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+      <symbol id="i-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6"/></symbol>
     </svg>
-    <div class="g-grid g-grid--4 g-grid--tools">
-      <a class="g-tile g-tool" href="members/#signup" data-tool><span class="g-ico"><svg><use href="#i-layers"/></svg></span><b>상품통합분석기</b></a>
-      <a class="g-tile g-tool" href="members/#signup" data-tool><span class="g-ico"><svg><use href="#i-calc"/></svg></span><b>수당계산기</b></a>
-      <a class="g-tile g-tool" href="members/#signup" data-tool><span class="g-ico"><svg><use href="#i-scan"/></svg></span><b>상품분석기</b></a>
-      <a class="g-tile g-tool" href="members/#signup" data-tool><span class="g-ico"><svg><use href="#i-chat"/></svg></span><b>전산답변기</b></a>
+    <div class="g-cq">
+      <div class="g-hub-bento">
+        <div class="g-tile g-hub-intro">
+          <p class="g-hub-intro__n"><b>24</b><span>개 도구·채널·사이트</span></p>
+          <p>누르면 회원가입으로 이동합니다.</p>
+          <a class="g-btn g-btn--ghost" href="members/#signup">회원가입</a>
+        </div>
+        <div class="g-tile g-hub-search" role="search">
+          <label class="sr" for="hub-q">도구 검색</label>
+          <input class="g-hub-q" id="hub-q" type="search" placeholder="도구 찾기 (예: 상품, 수당, ㅅㄷ)" autocomplete="off" enterkeyhint="search" spellcheck="false">
+          <p class="g-hub-count" id="hub-count" aria-live="polite">도구 24개 · 묶음 4개</p>
+        </div>
+
+        <div class="g-hub-group g-hub-group--a" data-group="분석·답변">
+          <h3>분석·답변 <small>AI 도구 · 회원 전용</small></h3>
+          <div class="g-hub-grid">
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-layers"/></svg></span><span class="g-hub-body"><b>상품통합분석기</b><small>상품·비교자료 통합 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-scan"/></svg></span><span class="g-hub-body"><b>상품분석기</b><small>보험상품 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-chat"/></svg></span><span class="g-hub-body"><b>전산답변기</b><small>전산·IT 질문 답변</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-shield"/></svg></span><span class="g-hub-body"><b>보상답변기</b><small>보험금 청구·보상 답변</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-spark"/></svg></span><span class="g-hub-body"><b>AI 영업비서</b><small>화법·상담·DB영업 도움</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>소식지 분석기</b><small>소식지 내용 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+          </div>
+        </div>
+
+        <div class="g-hub-group g-hub-group--b" data-group="계산·자료">
+          <h3>계산·자료 <small>회원 전용 (실적보드는 공개)</small></h3>
+          <div class="g-hub-grid">
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-calc"/></svg></span><span class="g-hub-body"><b>수당계산기</b><small>예상 수수료·수당 계산</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-search"/></svg></span><span class="g-hub-body"><b>자료검색기</b><small>자료·문서 통합 검색</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>최신보험뉴스</b><small>보험뉴스·최신 이슈 확인</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card g-hub-card--open" href="performance/"><span class="g-hub-ico"><svg><use href="#i-chart"/></svg></span><span class="g-hub-body"><b>실적보드</b><small>사업부 2026년 실적 현황</small></span><span class="g-hub-go" aria-hidden="true">→</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#stats" data-tool><span class="g-hub-ico"><svg><use href="#i-table"/></svg></span><span class="g-hub-body"><b>실적표</b><small>실적 요약 · 실적 표</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info" data-tool><span class="g-hub-ico"><svg><use href="#i-book"/></svg></span><span class="g-hub-body"><b>프리미엄 안내 자료</b><small>교육·채널·제도 안내 자료</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+          </div>
+        </div>
+
+        <div class="g-hub-group g-hub-group--c" data-group="정보·교육 채널">
+          <h3>정보·교육 채널 <small>회원가입 후 안내</small></h3>
+          <div class="g-hub-grid">
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-users"/></svg></span><span class="g-hub-body"><b>보험정보 공유방(단톡방)</b><small>프리미엄 정보공유 단톡방</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-folder"/></svg></span><span class="g-hub-body"><b>보험정보 공유 카페(자료 3,200여 건)</b><small>오래 보관할 보험자료</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-question"/></svg></span><span class="g-hub-body"><b>익명질문&amp;답변방(늅늅방)</b><small>익명 질문·답변방</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-infinity"/></svg></span><span class="g-hub-body"><b>고급정보 무한공유(전설의 고무공)</b><small>리크루팅 영업지원 시스템</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-school"/></svg></span><span class="g-hub-body"><b>스탠다드 캠퍼스(월 1회 실전 교육)</b><small>교육→자료→실행 교육 시스템</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>프리미엄 최신보험뉴스</b><small>최신 보험뉴스·마케팅 팁</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+          </div>
+        </div>
+
+        <div class="g-hub-group g-hub-group--d" data-group="홈페이지·사이트">
+          <h3>홈페이지·사이트 <small>바로가기 (보험위키는 공개)</small></h3>
+          <div class="g-hub-grid">
+            <a class="g-tile g-hub-card g-hub-card--open" href="http://wiki.primeasset.info/" target="_blank" rel="noopener"><span class="g-hub-ico"><svg><use href="#i-wiki"/></svg></span><span class="g-hub-body"><b>보험위키</b><small>보장·용어·청구 가이드</small></span><span class="g-hub-go" aria-hidden="true"><svg><use href="#i-out"/></svg></span><span class="sr">새 창</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-globe"/></svg></span><span class="g-hub-body"><b>188 영업지원시스템</b><small>188본부 메인페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-note"/></svg></span><span class="g-hub-body"><b>보험노트</b><small>보험노트 공식 홈페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-building"/></svg></span><span class="g-hub-body"><b>프라임에셋 본사</b><small>프라임에셋 본사 사이트</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-fb"/></svg></span><span class="g-hub-body"><b>김상현 이사 페이스북</b><small>이사 페이스북 페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-home"/></svg></span><span class="g-hub-body"><b>기존 프리미엄 사이트</b><small>프리미엄사업부 공식 홈페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+          </div>
+        </div>
+      </div>
     </div>
-    <details class="g-fold">
-      <summary>더 보기 (AI 도구 9개 · 교육·정보 채널 6개)</summary>
-      <h3 class="g-fold-h">AI 도구 <small>회원 전용</small></h3>
-      <div class="g-grid g-grid--4 g-grid--tools">
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup" data-tool><b>자료검색기</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup" data-tool><b>보상답변기</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup" data-tool><b>소식지 분석기</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup" data-tool><b>최신보험뉴스</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup" data-tool><b>AI 영업비서</b></a>
-      </div>
-      <h3 class="g-fold-h">교육·정보 채널 <small>회원가입 후 안내</small></h3>
-      <div class="g-grid g-grid--4 g-grid--tools">
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup"><b>보험정보 공유방(단톡방)</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup"><b>보험정보 공유 카페(자료 3,200여 건)</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup"><b>익명질문&amp;답변방(늅늅방)</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup"><b>고급정보 무한공유(전설의 고무공)</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup"><b>스탠다드 캠퍼스(월 1회 실전 교육)</b></a>
-        <a class="g-tile g-tool g-tool--sm" href="members/#signup"><b>프리미엄 최신보험뉴스</b></a>
-      </div>
-    </details>
+    <p class="g-hub-none" id="hub-none" hidden>찾는 도구가 없습니다.</p>
   </section>
 
   <!-- 김상현 이사: 한 줄 소개 + '더 보기'(소개 전문·대표 연혁 5) -->
@@ -371,6 +431,8 @@
 <script src="assets/glass-main.js?v=1" defer></script>
 <!-- 휴대폰 아래 고정 합류 문의 막대: 첫 화면(숫자 타일 포함)이 지나간 뒤에만 보임 -->
 <script src="assets/home-layout.js?v=1" defer></script>
+<!-- 도구 허브 검색(입력 즉시 필터·초성) + 로그인 세션이 있으면 자물쇠 대신 인트라넷으로(권한 판정은 인트라넷 그대로) -->
+<script src="assets/tool-hub.js?v=1" defer></script>
 <!-- 첫 화면 3D 로고(회전 가감속 + 반짝이는 파티클 64개): WebGL 되고 움직임 줄이기가 아니면 위 WebP 자리에 실시간 3D를 그림. three.js r187(MIT)은 assets/three/ 안, 외부 요청 없음. 안 되면 WebP 그대로 -->
 <script src="assets/three/logo3d-loader.js?v=2" defer></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(이름·이메일·쿠키·식별자 없음). 설정은 auth-config.js 재사용 -->
