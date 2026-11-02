@@ -11,7 +11,7 @@
 .g-hub-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--s2) var(--s3)}
 .g-hub-intro__n{grid-column:1 / -1;margin:0;display:flex;align-items:baseline;gap:8px;color:var(--text)}
 .g-hub-intro__n b{font-size:48px;font-weight:300;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.g-hub-intro__n span{font-size:15px;font-weight:var(--fw-label);color:var(--text-2)}
+.g-hub-intro__n span{font-size:var(--fs-cap);font-weight:var(--fw-label);color:var(--text-2)}
 .g-hub-intro>p:not(.g-hub-intro__n){margin:0;font-size:var(--fs-cap);color:var(--text-3)}
 .g-hub-intro .g-btn{justify-self:start}
 .g-hub-search{display:flex;flex-direction:column;gap:var(--s1)}
@@ -19,15 +19,15 @@
 .g-hub-q:hover{border-color:rgba(255,255,255,.26)}
 .g-hub-q:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(214,185,126,.22);outline:none}
 .g-hub-q::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:18px;height:18px;cursor:pointer;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aab4c4' stroke-width='2' stroke-linecap='round'><path d='M6 6l12 12M18 6 6 18'/></svg>") no-repeat center/18px}
-.g-hub-count{margin:0;font-size:var(--fs-cap);color:var(--text-3)}
+.g-hub-count{margin:0;font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3)}
 
 /* 카드 공통 내용: 아이콘 · 이름+한 줄 설명 · 자물쇠/화살표 */
 .g-hub-card{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);min-width:0}
 .g-hub-ico{flex:none;width:40px;height:40px;border-radius:var(--r-tile);background:rgba(255,255,255,.05);color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:color .25s ease}
 .g-hub-ico svg{width:20px;height:20px}
 .g-hub-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
-.g-hub-body b{font-size:16px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
-.g-hub-body small{font-size:var(--fs-cap);color:var(--text-3);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.g-hub-body b{font-size:var(--fs-body);font-weight:600;line-height:1.4;letter-spacing:-.01em}
+.g-hub-body small{font-size:var(--fs-cap);color:var(--text-3);line-height:var(--lh-cap);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .g-hub-lock,.g-hub-go{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-3);background:rgba(255,255,255,.05)}
 .g-hub-lock svg,.g-hub-go svg{width:14px;height:14px}
 .g-hub-go{color:var(--text);background:rgba(255,255,255,.08);font-weight:500;font-size:15px}
@@ -41,8 +41,8 @@
 
 /* 대표 도구 6개: 휴대폰은 가로형 카드 1열, 560px~ 2열, 860px~ 4열 벤토(넓은 칸 2) */
 .g-hub-key{display:grid;gap:var(--s2);grid-template-columns:1fr}
-.g-hub-card--key .g-hub-body b{font-size:var(--fs-h3);font-weight:var(--fw-h3);line-height:1.35}
-.g-hub-card--key .g-hub-body small{font-size:15px;color:var(--text-2);-webkit-line-clamp:3}
+.g-hub-card--key .g-hub-body b{font-size:var(--fs-h3);font-weight:var(--fw-h3);line-height:var(--lh-h3)}
+.g-hub-card--key .g-hub-body small{color:var(--text-2);-webkit-line-clamp:3}
 
 /* 전체 도구 보기: 얇은 선 아래 글자 링크로 펼침 → 묶음 4개 · 작은 타일 */
 .g-hub-all{margin:var(--s4) 0 0;border-top:1px solid var(--line)}
@@ -53,7 +53,7 @@
 .g-hub-all>summary:hover{color:var(--gold-hi)}
 .g-hub-groups{display:grid;gap:var(--s4);grid-template-columns:1fr;padding:var(--s2) 0 var(--s1)}
 .g-hub-group{min-width:0}
-.g-hub-group>h3{font-size:15px;font-weight:600;letter-spacing:0;color:var(--text-2);margin:0 0 var(--s2);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.g-hub-group>h3{font-size:var(--fs-cap);font-weight:var(--fw-label);line-height:var(--lh-cap);letter-spacing:.02em;color:var(--text-2);margin:0 0 var(--s2);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .g-hub-group>h3 small{font-size:var(--fs-cap);font-weight:400;color:var(--text-3)}
 .g-hub-grid{display:grid;gap:var(--s1);grid-template-columns:1fr}
 .g-hub-grid .g-hub-card{min-height:68px}

@@ -8,6 +8,7 @@
      · 글자 대비: 모든 글 4.5:1 이상(--text-3 도 가장 밝은 면 위 5:1 이상)
    v=11(DESIGN-DARK-20261102 ②컴포넌트·버튼): 면 3종(강조 패널 .g-panel / 일반 카드 .g-card / 작은 타일 .g-tile)마다 모서리·여백·테두리·그림자 하나로 고정,
      버튼 3단계(주 행동 금색 .g-btn--pri / 보조 테두리형 .g-btn--ghost / 그 밖은 글자 링크 .g-link), 누르는 카드·버튼만 마우스 올림 미세 반응
+   v=13(DESIGN-DARK-20261102 ④b): 글씨를 5단계 역할에 맞춤(연혁·편지 = 본문, 연락처·기준 줄·바닥글 = 캡션 크기·줄간격)
    v=12(DESIGN-DARK-20261102 ④하위 페이지 정합): 메뉴 막대 흐림 복구(view-transition-name 을 .g-nav → .g-nav .g-bar), 금색은 주 행동·머리말·실적 핵심 숫자에만(연혁 점·목표 번호·체크·인트라넷 번호는 회청)
    v=9(MAIN-V3-20261102 ④): 페이지 넘김(cross-document View Transitions) — 파일 끝, 그대로 */
 
@@ -129,7 +130,7 @@ a.g-card:hover,a.g-tile:hover,a.pa-tool:hover,a.br:hover{border-color:var(--line
 .g-sec+.g-sec::before{content:"";position:absolute;top:0;left:16px;right:16px;height:1px;background:var(--line)} /* 섹션 구분: 여백 + 얇은 선 */
 .g-sec>h2,.g-h2{font-size:var(--fs-h2);font-weight:var(--fw-h2);letter-spacing:-.02em;line-height:var(--lh-h2);margin:0 0 var(--s2)}
 .g-lead{font-size:var(--fs-body);line-height:var(--lh-body);color:var(--text-2);margin:0 0 var(--s5);max-width:40em}
-.g-kicker{display:inline-block;font-size:var(--fs-cap);font-weight:var(--fw-label);color:var(--gold);letter-spacing:.08em;margin:0 0 var(--s2)}
+.g-kicker{display:inline-block;font-size:var(--fs-cap);font-weight:var(--fw-label);line-height:var(--lh-cap);color:var(--gold);letter-spacing:.08em;margin:0 0 var(--s2)}
 .g-grid{display:grid;gap:var(--s2);grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
 .g-grid--2{grid-template-columns:repeat(2,1fr)}
 .g-grid--3{grid-template-columns:repeat(3,1fr)}
@@ -160,7 +161,7 @@ a.g-card:hover,a.g-tile:hover,a.pa-tool:hover,a.br:hover{border-color:var(--line
 .g-hero{max-width:var(--wrap);margin:0 auto;padding:56px 16px 24px;text-align:center}
 .g-hero h1{font-size:var(--fs-display);font-weight:var(--fw-display);line-height:var(--lh-display);letter-spacing:-.035em;margin:0 auto var(--s3);max-width:17em;word-break:keep-all;overflow-wrap:normal;text-wrap:balance}
 .g-nowrap{white-space:nowrap}
-.g-hero .g-basis{font-size:var(--fs-cap);color:var(--text-3);margin:0 0 var(--s1)}
+.g-hero .g-basis{font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3);margin:0 0 var(--s1)}
 .g-hero .g-tag{font-size:var(--fs-body);font-weight:var(--fw-body);color:var(--text-2);margin:0 0 var(--s4);letter-spacing:0}
 .g-hero .g-tag span{white-space:nowrap}
 .g-hero .g-actions{justify-content:center;margin:0}
@@ -193,10 +194,10 @@ a.g-card:hover,a.g-tile:hover,a.pa-tool:hover,a.br:hover{border-color:var(--line
 .g-ceo p{margin:0 0 10px;color:var(--text-2)}
 .g-tl{list-style:none;padding:4px 0 0 22px;margin:0;position:relative}
 .g-tl::before{content:"";position:absolute;left:5px;top:12px;bottom:10px;width:1px;background:var(--line-2)}
-.g-tl li{position:relative;padding:0 0 12px;font-size:16px;color:var(--text-2);line-height:1.5}
+.g-tl li{position:relative;padding:0 0 12px;font-size:var(--fs-body);color:var(--text-2);line-height:1.5}
 .g-tl li:last-child{padding-bottom:0}
 .g-tl li::before{content:"";position:absolute;left:-21px;top:7px;width:9px;height:9px;border-radius:50%;background:var(--bg-1);border:1.5px solid var(--text-3)}
-.g-tl b{display:inline-block;color:var(--text);font-size:16px;font-weight:600;margin:0 8px 0 0;font-variant-numeric:tabular-nums}
+.g-tl b{display:inline-block;color:var(--text);font-size:var(--fs-body);font-weight:600;margin:0 8px 0 0;font-variant-numeric:tabular-nums}
 
 /* 설계사 후기(데이터 파일에 내용이 있을 때만) */
 .g-review{margin:0;display:flex;flex-direction:column;gap:12px}
@@ -238,18 +239,18 @@ details.g-faq p{margin:0;padding:0 48px var(--s3) 0;color:var(--text-2);font-siz
 .g-contact .g-h2{font-size:var(--fs-h2)}
 .g-contact .g-lead{margin-left:auto;margin-right:auto}
 .g-contact .g-actions{justify-content:center}
-.g-contact-lines{margin:var(--s4) 0 0;font-size:15px;color:var(--text-3);line-height:1.8}
+.g-contact-lines{margin:var(--s4) 0 0;font-size:var(--fs-cap);color:var(--text-3);line-height:1.8} /* 캡션 크기, 줄 사이는 링크 터치 영역 때문에 조금 넓게 */
 .g-contact-lines a{color:var(--text-2);text-decoration:none;font-weight:var(--fw-label)}
 .g-contact-lines a:hover{color:var(--text);text-decoration:underline}
 /* 문장 속 링크: 글 배치는 그대로 두고(인라인 패딩은 줄 높이에 영향 없음) 누르는 영역만 위아래로 넓힘 */
 .g-contact-lines a,.g-foot a,.g-prose a,.g-lead a,.g-policy a,.pa-card p a,.pa-note a{padding:6px 0}
 .g-letter{text-align:left;margin:22px auto 0;max-width:46em}
 .g-letter summary{justify-content:center;width:100%;text-align:center}
-.g-letter p{margin:12px 0 0;font-size:16px;color:var(--text-2)}
+.g-letter p{margin:12px 0 0;font-size:var(--fs-body);color:var(--text-2)}
 .g-letter .g-sign{text-align:right;font-weight:600;color:var(--text)}
 
 /* 바닥글 */
-.g-foot{max-width:var(--wrap);margin:0 auto;padding:20px 16px 48px;text-align:center;font-size:var(--fs-cap);color:var(--text-3)}
+.g-foot{max-width:var(--wrap);margin:0 auto;padding:20px 16px 48px;text-align:center;font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3)}
 .g-foot a{color:var(--text-2)}
 .g-foot a:hover{color:var(--text)}
 
@@ -378,7 +379,6 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
   .g-hero .g-btn--lg{min-height:54px;font-size:17px;padding:12px 24px;width:100%}
   .g-stats{grid-template-columns:repeat(2,1fr);gap:10px;margin-top:var(--s4)}
   .g-stat{padding:14px 14px 12px}
-  .g-stat small{margin-top:4px;line-height:1.35}
   .g-sec{padding:var(--sec-y) 16px;scroll-margin-top:100px} /* 휴대폰 고정 메뉴는 두 줄(아래 110px) */
   .g-lead{margin-bottom:var(--s4)}
   .g-grid,.g-grid--2,.g-grid--3,.g-grid--4{grid-template-columns:1fr}
@@ -391,12 +391,10 @@ details.pa-fold p a{padding:13px 0} /* '원문 보기' 링크 터치 영역 44px
   .g-tool--sm{padding:12px 14px}
   .g-tool--sm b{font-size:15px}
   .g-fold-h{margin:16px 0 8px}
-  .g-tl li{font-size:15px}
   .g-branches,.branches{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:7px}
   .br{font-size:var(--fs-cap)}.br b{font-size:19px}.br small{font-size:var(--fs-cap)}
   details.g-faq summary{padding:var(--s2) 40px var(--s2) 0}
   details.g-faq p{padding:0 0 var(--s2)}
-  .g-contact-lines{font-size:var(--fs-cap)}
   .g-cta-bar{display:block;position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:60}
   .g-cta-bar .g-bar{display:flex;gap:8px;padding:8px;border-radius:999px}
   .g-cta-bar .g-btn{flex:1;min-height:52px;font-size:17px}
@@ -661,7 +659,7 @@ body.g-admin details.pa-fold>summary{cursor:pointer;font-weight:600;min-height:4
 .g-cta-row p small{display:block;font-weight:400;color:var(--text-3);font-size:var(--fs-cap);margin-top:2px}
 
 /* 바닥글: 로고 + 회사 정보 + 링크 */
-.g-foot--full{padding-top:var(--s4);border-top:1px solid var(--line);line-height:1.7}
+.g-foot--full{padding-top:var(--s4);border-top:1px solid var(--line)}
 .g-foot--full .g-foot-brand{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--text);font-size:16px;margin:0 0 6px}
 .g-foot--full .g-foot-brand img{width:22px;height:24px}
 .g-foot--full p{margin:0}
