@@ -3,7 +3,8 @@
    · DESIGN-DARK-03: 대표 도구 6개(.g-hub-key, 원래 묶음 이름은 data-group)와 '전체 도구 보기'(details.g-hub-all) 안 18개를 함께 찾는다.
      검색하는 동안은 접힌 목록을 펼쳐 두고, 검색어를 지우면 검색 전 접힘 상태로 되돌린다.
    · 회원: 이 기기에 인트라넷 로그인 세션(supabase-js 가 localStorage 에 두는 sb-*-auth-token)이 있으면 자물쇠를 떼고 카드 주소를 인트라넷(members/#…)으로 바꾼다.
-     도구 주소·권한은 인트라넷이 서버(my_menu)에서 그대로 판정한다 — 여기서는 Supabase 를 부르지도, 권한을 판단하지도 않는다. 세션이 없으면 그대로 회원가입(members/#signup). */
+     도구 주소·권한은 인트라넷이 서버(my_menu)에서 그대로 판정한다 — 여기서는 Supabase 를 부르지도, 권한을 판단하지도 않는다. 세션이 없으면 그대로 회원가입(members/#signup).
+   · FUNC-FIX A4: 세션이 없을 때 자물쇠 카드를 누르면 가려던 칸을 localStorage 'pa_goto' 에 잠시 저장(로그인 후 인트라넷이 그 칸으로). */
 (function () {
   var hub = document.querySelector('.g-hub');
   if (!hub) return;
@@ -78,6 +79,14 @@
       if (v && v.access_token && (!v.expires_at || v.expires_at * 1000 > Date.now() - 86400000)) { member = true; break; }
     }
   } catch (e) { member = false; }
+  // FUNC-FIX A4: 로그인 전 자물쇠 카드를 누르면 가려던 인트라넷 칸(data-in 의 #stats·#info…)을 이 기기에 잠시 저장 → 로그인 후 인트라넷이 그 칸으로 이동(30분 지나면 무시)
+  if (!member) {
+    cards.forEach(function (c) {
+      var to = (c.getAttribute('data-in') || '').split('#')[1];
+      if (!c.hasAttribute('data-member') || !to) return;
+      c.addEventListener('click', function () { try { localStorage.setItem('pa_goto', JSON.stringify({ s: to, t: Date.now() })); } catch (e) {} });
+    });
+  }
   if (member) {
     hub.classList.add('is-member');
     cards.forEach(function (c) {
