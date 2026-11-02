@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,123명 설계사, 월 보험료 50억 2,332만 원">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-<link rel="stylesheet" href="assets/glass.css?v=6">
+<link rel="stylesheet" href="assets/glass.css?v=7">
 </head>
 <body class="g-main">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -31,7 +31,7 @@
 
 <header class="g-nav">
   <div class="g-bar">
-    <a class="g-logo" href="./"><svg class="g-mark" viewBox="0 0 28 28" aria-hidden="true"><rect x="7" y="7" width="14" height="4" rx="2" fill="#fff"/><rect x="7" y="13" width="9" height="4" rx="2" fill="#fff" opacity=".85"/><rect x="7" y="19" width="5" height="4" rx="2" fill="#fff" opacity=".7"/></svg><span>프라임에셋 프리미엄</span></a>
+    <a class="g-logo" href="./"><img class="g-mark g-mark--shield" src="assets/logo.svg" alt="" width="30" height="33"><span>프라임에셋 프리미엄</span></a>
     <nav class="g-menu" aria-label="주요 메뉴">
       <a href="./" class="on" aria-current="page">홈</a>
       <a href="http://wiki.primeasset.info/">보험위키</a>
@@ -46,13 +46,21 @@
 </header>
 
 <main id="main">
-  <!-- 첫 화면: 한 문장 + 혜택 3가지 + 합류 문의 + 숫자 4개 -->
-  <section class="g-hero" id="hero" aria-labelledby="hero-title">
-    <h1 id="hero-title">19개 본부, 1,123명 설계사가 <span class="g-nowrap">함께 성장하는 곳</span></h1>
-    <p class="g-basis">기준: 본부 수 2026년 10월 · 설계사 수 2025년(CY'25) 실가동</p>
-    <p class="g-tag"><span>수수료 공개</span> · <span>규정대로 승격</span> · <span>도구 24개</span></p>
-    <div class="g-actions">
-      <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
+  <!-- 첫 화면: 대표문구(왼쪽) + 3D 로고(오른쪽, 정지 WebP + CSS 움직임) + 합류 문의 + 숫자 4개(라벨 위·숫자 아래) -->
+  <section class="g-hero g-hero--logo" id="hero" aria-labelledby="hero-title">
+    <div class="g-hero-grid">
+      <div class="g-hero-text">
+        <p class="g-kicker">프라임에셋 프리미엄사업부</p>
+        <h1 id="hero-title">19개 본부, 1,123명 설계사가 <span class="g-nowrap">함께 성장하는 곳</span></h1>
+        <p class="g-basis">기준: 본부 수 2026년 10월 · 설계사 수 2025년(CY'25) 실가동</p>
+        <p class="g-tag"><span>수수료 공개</span> · <span>규정대로 승격</span> · <span>도구 24개</span></p>
+        <div class="g-actions">
+          <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
+        </div>
+      </div>
+      <div class="g-hero-logo">
+        <img src="assets/logo3d-hero.webp" srcset="assets/logo3d-hero-480.webp 480w, assets/logo3d-hero.webp 960w" sizes="(max-width:720px) 150px, 400px" width="960" height="960" alt="프라임에셋 프리미엄 로고(방패 안 R 모노그램)" fetchpriority="high" decoding="async">
+      </div>
     </div>
     <div class="g-stats" id="numbers">
       <div class="g-tile g-stat"><b>19개 본부</b><small>함께하는 본부 (2026년 10월)</small></div>
@@ -83,7 +91,37 @@
         <details class="g-more"><summary>더 보기</summary><p>월 1회 실전 강의, 익명 질문방(늅늅방), 바른 영업을 지향합니다. 출퇴근 자유·아침 조회 없이, 설계·심사 지원을 받아 스스로 성과를 만듭니다.</p></details>
       </div>
     </div>
+    <div class="g-tile g-cta-row">
+      <p>경력·신입 모두 환영.<small>입사·이직 미팅: 프라임에셋 이사 김상현</small></p>
+      <a class="g-btn g-btn--pri" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
+      <a class="g-btn g-btn--ghost" href="tel:010-8714-9262">전화 010-8714-9262</a>
+    </div>
     <p class="g-note g-note--sec">프라임에셋은 설계사 1만여 명이 근무하는 초대형 GA 독립 법인이며 영업규정집을 공개합니다. 자세한 자료는 로그인 후 인트라넷 '프리미엄 안내 자료'에 있습니다.</p>
+  </section>
+
+  <!-- 성장 스토리(이사 소개 + 대표 연혁 5): 참고 사이트처럼 도구보다 앞에 -->
+  <section class="g-sec" id="ceo">
+    <h2>김상현 이사</h2>
+    <p class="g-lead">프라임에셋 이사, 프리미엄사업부 대표.</p>
+    <div class="g-card g-ceo">
+      <div class="g-ceo-bio">
+        <p class="g-quote">말보다 데이터와 시스템으로 일하는 보험영업가</p>
+        <p>프라임에셋 188본부 본부장 · 프리미엄사업부. 2017년 188본부를 시작으로 19개 본부 연합으로 키웠습니다. 2021·2022년 MVP 2년 연속, 2021년 명예이사.</p>
+        <details class="g-more"><summary>더 보기</summary><p>2009년 현장에서 보험 영업을 시작했습니다. 보험 소비자가 아니라 보험설계사를 돕는 일을 합니다. 우수한 인재를 발굴하고, 설계사가 실제로 성과를 올릴 수 있는 영업 환경을 만드는 것이 제 일입니다.</p></details>
+      </div>
+      <ol class="g-tl" aria-label="대표 연혁 5">
+        <li><b>2017.03</b>188본부 승격(김상현 본부장)</li>
+        <li><b>2019.10</b>프리미엄 재직인원 100명 돌파</li>
+        <li><b>2021.07</b>프리미엄 재직인원 500명 돌파</li>
+        <li><b>2025.12</b>총인원 1,000명 · 총 월납 50억 원 달성</li>
+        <li><b>2026.03</b>CY'25 프리미엄 연도대상 (서울 그랜드힐 컨벤션)</li>
+      </ol>
+    </div>
+    <div class="g-links">
+      <a class="g-link" href="story/">이사 소개 전체 · 연혁 26개 보기</a>
+      <a class="g-link" href="story/#branches">함께하는 본부 19개 보기</a>
+      <a class="g-link" href="story/#goals">방향과 목표 10개</a>
+    </div>
   </section>
 
   <!-- 도구 -->
@@ -122,31 +160,6 @@
         <a class="g-tile g-tool g-tool--sm" href="members/#signup"><b>프리미엄 최신보험뉴스</b></a>
       </div>
     </details>
-  </section>
-
-  <!-- 이사 소개: 카드 하나(소개 + 대표 연혁 5) -->
-  <section class="g-sec" id="ceo">
-    <h2>김상현 이사</h2>
-    <p class="g-lead">프라임에셋 이사, 프리미엄사업부 대표.</p>
-    <div class="g-card g-ceo">
-      <div class="g-ceo-bio">
-        <p class="g-quote">말보다 데이터와 시스템으로 일하는 보험영업가</p>
-        <p>프라임에셋 188본부 본부장 · 프리미엄사업부. 2017년 188본부를 시작으로 19개 본부 연합으로 키웠습니다. 2021·2022년 MVP 2년 연속, 2021년 명예이사.</p>
-        <details class="g-more"><summary>더 보기</summary><p>2009년 현장에서 보험 영업을 시작했습니다. 보험 소비자가 아니라 보험설계사를 돕는 일을 합니다. 우수한 인재를 발굴하고, 설계사가 실제로 성과를 올릴 수 있는 영업 환경을 만드는 것이 제 일입니다.</p></details>
-      </div>
-      <ol class="g-tl" aria-label="대표 연혁 5">
-        <li><b>2017.03</b>188본부 승격(김상현 본부장)</li>
-        <li><b>2019.10</b>프리미엄 재직인원 100명 돌파</li>
-        <li><b>2021.07</b>프리미엄 재직인원 500명 돌파</li>
-        <li><b>2025.12</b>총인원 1,000명 · 총 월납 50억 원 달성</li>
-        <li><b>2026.03</b>CY'25 프리미엄 연도대상 (서울 그랜드힐 컨벤션)</li>
-      </ol>
-    </div>
-    <div class="g-links">
-      <a class="g-link" href="story/">이사 소개 전체 · 연혁 26개 보기</a>
-      <a class="g-link" href="story/#branches">함께하는 본부 19개 보기</a>
-      <a class="g-link" href="story/#goals">방향과 목표 10개</a>
-    </div>
   </section>
 
   <!-- 설계사 후기: assets/testimonials.json 에 내용이 있을 때만 보임(assets/glass-main.js) -->
@@ -199,15 +212,18 @@
       <p class="g-contact-lines">
         입사·이직 미팅: 프라임에셋 이사 김상현 · 전화 <a href="tel:010-8714-9262">010-8714-9262</a><br>
         카카오 오픈채팅: <a href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener" data-track="join">https://open.kakao.com/o/sFMF26y</a><br>
-        이직 및 기타 문의: <a href="mailto:megavj@naver.com">megavj@naver.com</a><br>
-        주소: 서울 광진구 광나루로56길 85 테크노마트 33층 188본부<br>
-        사업자등록번호 837-94-00319 (김상현 보험설계소)
+        이직 및 기타 문의: <a href="mailto:megavj@naver.com">megavj@naver.com</a>
       </p>
     </div>
   </section>
 </main>
 
-<footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="privacy/">개인정보처리방침</a></footer>
+<!-- 바닥글: 로고 + 회사 정보(합류 카드에서 옮김) + 링크 (참고 3사이트 공통 배치) -->
+<footer class="g-foot g-foot--full">
+  <p class="g-foot-brand"><img src="assets/logo.svg" alt="" width="22" height="24">프라임에셋 프리미엄사업부</p>
+  <p>주소: 서울 광진구 광나루로56길 85 테크노마트 33층 188본부 · 사업자등록번호 837-94-00319 (김상현 보험설계소)</p>
+  <p><a href="privacy/">개인정보처리방침</a> · <a href="members/">설계사 인트라넷</a> · <a href="http://wiki.primeasset.info/">보험위키</a></p>
+</footer>
 
 <!-- 휴대폰: 아래 고정 합류 문의 막대 -->
 <div class="g-cta-bar" role="region" aria-label="합류 문의">
