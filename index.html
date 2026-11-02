@@ -24,7 +24,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="assets/glass.css?v=13">
-<link rel="stylesheet" href="assets/perf-board.css?v=5">
+<link rel="stylesheet" href="assets/perf-board.css?v=6">
 <link rel="stylesheet" href="assets/home-board.css?v=4">
 <link rel="stylesheet" href="assets/home-layout.css?v=3">
 <link rel="stylesheet" href="assets/tool-hub.css?v=4">
@@ -83,9 +83,9 @@
   </section>
 
   <!-- 프리미엄사업부 실적보드(MAIN-V3-01): 188 홈(188.primeasset.info/#performance)의 '프리미엄사업부 실적보드'를 마크업 그대로 이식.
-       숫자·차트는 188 perf188/perf_sync.py 가 만든 정적 값이며 /performance/ 와 같은 자료(perf-data JSON 은 아래). 연출은 assets/perf-board.js(188 원본). 디자인만 test 유리 톤(assets/home-board.css) -->
+       숫자·차트는 188 perf188/perf_sync.py 가 만든 정적 값이며 /performance/ 와 같은 자료(perf-data JSON 은 아래). PERF-OCT-20261102: 10월 사업부 합계(팜스 본부별 마감, 2026-11-02 조회)를 더해 1~10월 — 10월은 생보·손보 구분 없음(회청 단색 막대·범례·툴팁), 본부별 자료는 넣지 않음. 연출은 assets/perf-board.js(188 원본 + PERF-OCT 두 줄). 디자인만 test 유리 톤(assets/home-board.css) -->
   <section class="g-sec g-board pb" id="performance" aria-labelledby="board-title">
-    <p class="pb-eyebrow g-board-eyebrow">2026 · <span data-pb-stat="period_en">JAN—SEP</span></p>
+    <p class="pb-eyebrow g-board-eyebrow">2026 · <span data-pb-stat="period_en">JAN—OCT</span></p>
     <h2 id="board-title">프리미엄사업부 실적보드</h2>
     <p class="g-lead">규모는 주장하지 않고 숫자로 증명합니다.</p>
     <div class="pb pb-home">
@@ -93,10 +93,11 @@
         <header class="pb-home__head" data-pb-play>
           <div class="pb-home__caption">
             <p class="pb-eyebrow">VERIFIED PERFORMANCE</p>
-            <p class="pb-home__label" id="pb-home-title">2026년 <span data-pb-stat="period">1~9월</span> 누적 월보험료</p>
-            <small><span data-pb-stat="total_k">3,196,291</span>천원 · <span data-pb-stat="months_n">9</span>개월 합계</small>
+            <p class="pb-home__label" id="pb-home-title">2026년 <span data-pb-stat="period">1~10월</span> 누적 월보험료</p>
+            <small><span data-pb-stat="total_k">3,539,174</span>천원 · <span data-pb-stat="months_n">10</span>개월 합계</small>
+            <p class="pb-basis">기준: 2026년 <span data-pb-stat="period">1~10월</span> · 팜스 본부별 마감<span class="g-nowrap">(10월분 2026-11-02 조회)</span> · 월납보험료</p>
           </div>
-          <p class="pb-home__total"><b class="pb-goldtext" data-pb-stat="total_eok1" data-pb-count="2200">32.0</b><span>억</span></p>
+          <p class="pb-home__total"><b class="pb-goldtext" data-pb-stat="total_eok1" data-pb-count="2200">35.4</b><span>억</span></p>
         </header>
         <figure class="pb-combo" data-pb-combo data-pb-play>
           <!-- pb:combo -->
@@ -104,29 +105,31 @@
             <div class="pb-combo__axis" aria-hidden="true"><span style="--y:0%">0</span><span style="--y:20%">1억</span><span style="--y:40%">2억</span><span style="--y:60%">3억</span><span style="--y:80%">4억</span><span style="--y:100%">5억</span></div>
             <div class="pb-combo__area">
               <div class="pb-combo__grid" aria-hidden="true"><i style="--y:0%"></i><i style="--y:20%"></i><i style="--y:40%"></i><i style="--y:60%"></i><i style="--y:80%"></i><i style="--y:100%"></i></div>
-              <svg class="pb-combo__curve" viewBox="0 0 900 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs><linearGradient id="pbComboWash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8c96a" stop-opacity=".2"/><stop offset="1" stop-color="#e8c96a" stop-opacity="0"/></linearGradient></defs><path class="pb-curve-area" fill="url(#pbComboWash)" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,331.2 850.0,333.0L850.0,1000L50.0,1000Z"/><path class="pb-curve-glow" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,331.2 850.0,333.0"/><path class="pb-curve" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,331.2 850.0,333.0"/></svg>
-              <ol class="pb-combo__cols" style="--n:9">
-                <li class="pb-col" style="--h:68.35%;--i:0"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">1월</span><button class="pb-col__hit" type="button" aria-label="1월 월보험료 3.42억(341,763천원), 누적 3.42억, 계약 5,817건, 생보 1.46억, 손보 1.96억" data-m="1월" data-v="3.42억" data-k="341,763천원" data-cum="3.42억" data-cnt="5,817건" data-life="1.46억" data-non="1.96억"></button></li>
-                <li class="pb-col" style="--h:63.08%;--i:1"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">2월</span><button class="pb-col__hit" type="button" aria-label="2월 월보험료 3.15억(315,389천원), 누적 6.57억, 계약 5,292건, 생보 1.32억, 손보 1.84억" data-m="2월" data-v="3.15억" data-k="315,389천원" data-cum="6.57억" data-cnt="5,292건" data-life="1.32억" data-non="1.84억"></button></li>
-                <li class="pb-col is-peak" style="--h:90.53%;--i:2"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">3월</span><button class="pb-col__hit" type="button" aria-label="3월 월보험료 4.53억(452,629천원), 누적 11.10억, 계약 7,475건, 생보 1.59억, 손보 2.94억" data-m="3월" data-v="4.53억" data-k="452,629천원" data-cum="11.10억" data-cnt="7,475건" data-life="1.59억" data-non="2.94억"></button></li>
-                <li class="pb-col" style="--h:79.07%;--i:3"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">4월</span><button class="pb-col__hit" type="button" aria-label="4월 월보험료 3.95억(395,328천원), 누적 15.05억, 계약 6,409건, 생보 1.51억, 손보 2.44억" data-m="4월" data-v="3.95억" data-k="395,328천원" data-cum="15.05억" data-cnt="6,409건" data-life="1.51억" data-non="2.44억"></button></li>
-                <li class="pb-col" style="--h:66.64%;--i:4"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">5월</span><button class="pb-col__hit" type="button" aria-label="5월 월보험료 3.33억(333,210천원), 누적 18.38억, 계약 4,796건, 생보 1.53억, 손보 1.80억" data-m="5월" data-v="3.33억" data-k="333,210천원" data-cum="18.38억" data-cnt="4,796건" data-life="1.53억" data-non="1.80억"></button></li>
-                <li class="pb-col" style="--h:76.55%;--i:5"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">6월</span><button class="pb-col__hit" type="button" aria-label="6월 월보험료 3.83억(382,752천원), 누적 22.21억, 계약 6,122건, 생보 1.48억, 손보 2.35억" data-m="6월" data-v="3.83억" data-k="382,752천원" data-cum="22.21억" data-cnt="6,122건" data-life="1.48억" data-non="2.35억"></button></li>
-                <li class="pb-col" style="--h:61.11%;--i:6"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">7월</span><button class="pb-col__hit" type="button" aria-label="7월 월보험료 3.06억(305,569천원), 누적 25.27억, 계약 4,996건, 생보 1.12억, 손보 1.93억" data-m="7월" data-v="3.06억" data-k="305,569천원" data-cum="25.27억" data-cnt="4,996건" data-life="1.12억" data-non="1.93억"></button></li>
-                <li class="pb-col" style="--h:67.23%;--i:7"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">8월</span><button class="pb-col__hit" type="button" aria-label="8월 월보험료 3.36억(336,162천원), 누적 28.63억, 계약 5,372건, 생보 1.18억, 손보 2.18억" data-m="8월" data-v="3.36억" data-k="336,162천원" data-cum="28.63억" data-cnt="5,372건" data-life="1.18억" data-non="2.18억"></button></li>
-                <li class="pb-col" style="--h:66.70%;--i:8"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">9월</span><button class="pb-col__hit" type="button" aria-label="9월 월보험료 3.33억(333,489천원), 누적 31.96억, 계약 5,260건, 생보 1.30억, 손보 2.04억" data-m="9월" data-v="3.33억" data-k="333,489천원" data-cum="31.96억" data-cnt="5,260건" data-life="1.30억" data-non="2.04억"></button></li>
+              <svg class="pb-combo__curve" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs><linearGradient id="pbComboWash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8c96a" stop-opacity=".2"/><stop offset="1" stop-color="#e8c96a" stop-opacity="0"/></linearGradient></defs><path class="pb-curve-area" fill="url(#pbComboWash)" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,333.0 850.0,333.0C883.3,333.0 916.7,320.5 950.0,314.2L950.0,1000L50.0,1000Z"/><path class="pb-curve-glow" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,333.0 850.0,333.0C883.3,333.0 916.7,320.5 950.0,314.2"/><path class="pb-curve" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,333.0 850.0,333.0C883.3,333.0 916.7,320.5 950.0,314.2"/></svg>
+              <ol class="pb-combo__cols" style="--n:10">
+                <li class="pb-col" style="--h:68.35%;--i:0"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">1<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="1월 월보험료 3.42억(341,763천원), 누적 3.42억, 계약 5,817건, 생보 1.46억, 손보 1.96억" data-m="1월" data-v="3.42억" data-k="341,763천원" data-cum="3.42억" data-cnt="5,817건" data-life="1.46억" data-non="1.96억"></button></li>
+                <li class="pb-col" style="--h:63.08%;--i:1"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">2<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="2월 월보험료 3.15억(315,389천원), 누적 6.57억, 계약 5,292건, 생보 1.32억, 손보 1.84억" data-m="2월" data-v="3.15억" data-k="315,389천원" data-cum="6.57억" data-cnt="5,292건" data-life="1.32억" data-non="1.84억"></button></li>
+                <li class="pb-col is-peak" style="--h:90.53%;--i:2"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">3<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="3월 월보험료 4.53억(452,629천원), 누적 11.10억, 계약 7,475건, 생보 1.59억, 손보 2.94억" data-m="3월" data-v="4.53억" data-k="452,629천원" data-cum="11.10억" data-cnt="7,475건" data-life="1.59억" data-non="2.94억"></button></li>
+                <li class="pb-col" style="--h:79.07%;--i:3"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">4<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="4월 월보험료 3.95억(395,328천원), 누적 15.05억, 계약 6,409건, 생보 1.51억, 손보 2.44억" data-m="4월" data-v="3.95억" data-k="395,328천원" data-cum="15.05억" data-cnt="6,409건" data-life="1.51억" data-non="2.44억"></button></li>
+                <li class="pb-col" style="--h:66.64%;--i:4"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">5<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="5월 월보험료 3.33억(333,210천원), 누적 18.38억, 계약 4,796건, 생보 1.53억, 손보 1.80억" data-m="5월" data-v="3.33억" data-k="333,210천원" data-cum="18.38억" data-cnt="4,796건" data-life="1.53억" data-non="1.80억"></button></li>
+                <li class="pb-col" style="--h:76.55%;--i:5"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">6<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="6월 월보험료 3.83억(382,752천원), 누적 22.21억, 계약 6,122건, 생보 1.48억, 손보 2.35억" data-m="6월" data-v="3.83억" data-k="382,752천원" data-cum="22.21억" data-cnt="6,122건" data-life="1.48억" data-non="2.35억"></button></li>
+                <li class="pb-col" style="--h:61.11%;--i:6"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">7<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="7월 월보험료 3.06억(305,569천원), 누적 25.27억, 계약 4,996건, 생보 1.12억, 손보 1.93억" data-m="7월" data-v="3.06억" data-k="305,569천원" data-cum="25.27억" data-cnt="4,996건" data-life="1.12억" data-non="1.93억"></button></li>
+                <li class="pb-col" style="--h:67.23%;--i:7"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">8<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="8월 월보험료 3.36억(336,162천원), 누적 28.63억, 계약 5,372건, 생보 1.18억, 손보 2.18억" data-m="8월" data-v="3.36억" data-k="336,162천원" data-cum="28.63억" data-cnt="5,372건" data-life="1.18억" data-non="2.18억"></button></li>
+                <li class="pb-col" style="--h:66.70%;--i:8"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">9<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="9월 월보험료 3.33억(333,489천원), 누적 31.96억, 계약 5,260건, 생보 1.30억, 손보 2.04억" data-m="9월" data-v="3.33억" data-k="333,489천원" data-cum="31.96억" data-cnt="5,260건" data-life="1.30억" data-non="2.04억"></button></li>
+                <li class="pb-col is-nosplit" style="--h:68.58%;--i:9"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">10<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="10월 월보험료 3.43억(342,883천원), 누적 35.39억, 계약 5,348건, 10월은 생보·손보 구분 자료 없음" data-m="10월" data-v="3.43억" data-k="342,883천원" data-cum="35.39억" data-cnt="5,348건" data-note="10월은 생보·손보 구분 자료 없음"></button></li>
               </ol>
-              <p class="pb-combo__peak" style="--x:27.78%;--h:90.53%" aria-hidden="true"><span>최고</span> <b>4.53억</b></p>
+              <p class="pb-combo__peak" style="--x:25.00%;--h:90.53%" aria-hidden="true"><span>최고</span> <b>4.53억</b></p>
             </div>
           </div>
           <!-- /pb:combo -->
-          <figcaption class="pb-sr">2026년 <span data-pb-stat="period">1~9월</span> 월별 월보험료 막대·곡선 차트. 막대마다 버튼으로 월별 수치를 읽을 수 있습니다.</figcaption>
+          <p class="pb-combo__legend"><i aria-hidden="true"></i>10월은 생보·손보 구분 자료 없음</p>
+          <figcaption class="pb-sr">2026년 <span data-pb-stat="period">1~10월</span> 월별 월보험료 막대·곡선 차트. 막대마다 버튼으로 월별 수치를 읽을 수 있습니다.</figcaption>
         </figure>
         <ul class="pb-kpis" data-pb-play>
-          <li class="pb-kpi"><span class="pb-kpi__label">총 계약건수</span><p class="pb-kpi__value"><b data-pb-stat="count" data-pb-count>51,539</b><small>건</small></p><span class="pb-kpi__sub">월평균 <span data-pb-stat="avg_count">5,727</span>건</span></li>
+          <li class="pb-kpi"><span class="pb-kpi__label">총 계약건수</span><p class="pb-kpi__value"><b data-pb-stat="count" data-pb-count>56,887</b><small>건</small></p><span class="pb-kpi__sub">월평균 <span data-pb-stat="avg_count">5,689</span>건</span></li>
           <li class="pb-kpi"><span class="pb-kpi__label">본부</span><p class="pb-kpi__value"><b data-pb-stat="branches" data-pb-count>19</b><small>개</small></p><span class="pb-kpi__sub">사업부 본부 네트워크</span></li>
-          <li class="pb-kpi"><span class="pb-kpi__label">제휴 보험사</span><p class="pb-kpi__value"><b data-pb-stat="carriers" data-pb-count>30</b><small>곳</small></p><span class="pb-kpi__sub">생보 <span data-pb-stat="carriers_life">19</span> · 손보 <span data-pb-stat="carriers_nonlife">11</span></span></li>
-          <li class="pb-kpi"><span class="pb-kpi__label">월평균 월보험료</span><p class="pb-kpi__value"><b data-pb-stat="avg_eok2" data-pb-count>3.55</b><small>억</small></p><span class="pb-kpi__sub"><span data-pb-stat="months_n">9</span>개월 평균</span></li>
+          <li class="pb-kpi"><span class="pb-kpi__label">제휴 보험사(<span data-pb-stat="detail_period">1~9월</span>)</span><p class="pb-kpi__value"><b data-pb-stat="carriers" data-pb-count>30</b><small>곳</small></p><span class="pb-kpi__sub">생보 <span data-pb-stat="carriers_life">19</span> · 손보 <span data-pb-stat="carriers_nonlife">11</span></span></li>
+          <li class="pb-kpi"><span class="pb-kpi__label">월평균 월보험료</span><p class="pb-kpi__value"><b data-pb-stat="avg_eok2" data-pb-count>3.54</b><small>억</small></p><span class="pb-kpi__sub"><span data-pb-stat="months_n">10</span>개월 평균</span></li>
         </ul>
       </article>
       <a class="g-link g-link--arrow pb-home__more" href="performance/">실적보드 전체 보기 <span class="g-btn__arrow" aria-hidden="true">→</span></a>
@@ -367,17 +370,21 @@
   </div>
 </div>
 
-<!-- 실적보드 자료(/performance/ 와 동일한 perf-data JSON, 188 과 동일 확인) + 연출 스크립트(188 원본 그대로) -->
+<!-- 실적보드 자료(/performance/ 와 동일한 perf-data JSON. 1~9월은 188 과 동일, 10월은 사업부 합계만 — 본부·보험사 자료는 1~9월 detail_months) + 연출 스크립트(188 원본 + PERF-OCT 두 줄) -->
 <script type="application/json" id="perf-data">
 {
   "unit":"천원",
-  "period":"2026년 1~9월",
+  "period":"2026년 1~10월",
+  "basis":"2026년 1~10월 · 팜스 본부별 마감(10월분 2026-11-02 조회) · 월납보험료",
   "highlight":"188본부",
-  "months":["1월","2월","3월","4월","5월","6월","7월","8월","9월"],
-  "total":[341763,315389,452629,395328,333210,382752,305569,336162,333489],
-  "count_total":[5817,5292,7475,6409,4796,6122,4996,5372,5260],
-  "life":[146230,131721,158511,151372,153181,147619,112155,118454,129860],
-  "nonlife":[195533,183668,294119,243956,180029,235133,193414,217708,203629],
+  "months":["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월"],
+  "total":[341763,315389,452629,395328,333210,382752,305569,336162,333489,342883],
+  "count_total":[5817,5292,7475,6409,4796,6122,4996,5372,5260,5348],
+  "life":[146230,131721,158511,151372,153181,147619,112155,118454,129860,null],
+  "nonlife":[195533,183668,294119,243956,180029,235133,193414,217708,203629,null],
+  "split_note":"10월은 생보·손보 구분 자료 없음",
+  "detail_period":"2026년 1~9월",
+  "detail_months":["1월","2월","3월","4월","5월","6월","7월","8월","9월"],
   "branches":{
     "188본부":[34814,33799,51379,41969,33322,35262,29861,29315,37258],
     "227본부":[29343,31694,41842,20777,16224,20423,21690,17087,15619],
@@ -436,7 +443,7 @@
   }
 }
 </script>
-<script src="assets/perf-board.js?v=1" defer></script>
+<script src="assets/perf-board.js?v=2" defer></script>
 <!-- 후기·사진 데이터 파일을 읽어 그림(비어 있으면 섹션 숨김 유지). 본부 목록은 /story/ 로 옮겨 그곳에서 branches.js 를 부름. -->
 <script src="assets/glass-main.js?v=1" defer></script>
 <!-- 휴대폰 아래 고정 합류 문의 막대: 첫 화면(숫자 타일 포함)이 지나간 뒤에만 보임 -->

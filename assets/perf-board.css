@@ -8,6 +8,7 @@
    · v=2(MAIN-V3-20261102 ④): 월별 막대 툴팁(.pb-tip) 글자색을 어두운 바탕에 맞게 밝은 색으로(이전엔 바탕과 같은 어두운 색). 메인·/performance/ 공통.
    · v=3(DESIGN-DARK-20261102): 페이지 전체 어두운 고급톤 — 색은 glass.css 토큰(바탕·글자·금색 하나·하늘 하나). 그래프는 금(곡선·점·최고월 막대)과 은은한 하늘(막대) 두 색.
      빛 번짐·빛 반사·금빛 반짝임·먼지·광선·격자 장식 없앰(효과 예산: 배경 처리 1가지·그림자 2단). 큰 숫자는 크고 가늘게(300 이하). 실적보드 패널만 유리(강조 패널).
+   · v=6(PERF-OCT-20261102): 10월 사업부 합계 추가 — 생보·손보 구분이 없는 10월 막대만 중립 회청 단색 + 범례 한 줄 + 툴팁 한 줄, '기준' 한 줄(.pb-basis), 휴대폰 400px 이하 막대 라벨 '월' 숨김. 맨 끝 4부.
    ===================================================================== */
 
 .pb {
@@ -1041,3 +1042,16 @@
   .pb { --pb-row: 32px; }
 }
 .pb-kpi__value small, .pb-chip__val small, .pb-donut__center small, .pb-hl__rank-num small { font-size: max(.42em, 14px); }
+
+/* ===================== 4부: PERF-OCT-20261102 — 10월 사업부 합계(생보·손보 구분 자료 없음) ===================== */
+/* 10월 막대: 하늘(막대)·금(최고월)과 다른 중립 회청 단색 = 구분 없음. 같은 색 칸을 범례에 두고, 툴팁에는 설명 한 줄 */
+.pb { --pb-nosplit: rgba(170, 180, 196, .42); }
+.pb-col.is-nosplit .pb-col__bar { background: var(--pb-nosplit); }
+.pb-combo__legend { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin: 8px 0 0; color: var(--pb-muted); font-size: 14px; line-height: 1.5; }
+.pb-combo__legend i { flex: none; width: 10px; height: 10px; border-radius: 2px; background: var(--pb-nosplit); }
+.pb-tip__note { margin: 9px 0 0; color: var(--text-2); }
+/* 기준 한 줄(보드 머리·/performance/ 첫 화면): 캡션 단계(14px·줄간격 1.5) */
+.pb-basis { margin: 6px 0 0; color: var(--pb-muted); font-size: 14px; line-height: 1.5; }
+/* 휴대폰(폭 400px 이하): 막대 10개 라벨이 14px 그대로 겹치지 않게 '월'만 숨김(1 … 10). 툴팁·읽기 프로그램(aria-label)은 'N월' 그대로 */
+@media (max-width: 400px) { .pb-col__unit { display: none; } }
+@media (forced-colors: active) { .pb-combo__legend i { forced-color-adjust: none; } }

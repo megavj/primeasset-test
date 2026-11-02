@@ -1,4 +1,6 @@
-/*! 프리미엄사업부 실적보드 — /performance/ 연출 (외부 라이브러리 없음). 188 영업지원시스템 assets/perf-board.js(v=20261001) 를 그대로 가져옴(HOME-PLUS-20261102, 수정 없음)
+/*! 프리미엄사업부 실적보드 — /performance/ 연출 (외부 라이브러리 없음). 188 영업지원시스템 assets/perf-board.js(v=20261001) 를 그대로 가져옴(HOME-PLUS-20261102)
+ *  PERF-OCT-20261102 에서 두 군데만 더함: 툴팁 data-note 한 줄(10월 = 생보·손보 구분 자료 없음),
+ *  본부 순위 레이스는 #perf-data 의 detail_months(본부별 자료가 있는 달, 1~9월)만 돈다(10월은 사업부 합계만 있음).
  *
  * 숫자와 차트 마크업은 HTML에 정적으로 들어 있다(perf188/perf_sync.py 가 data_raw.json 으로 생성).
  * 이 스크립트는 연출만 맡는다.
@@ -160,6 +162,7 @@
         addRow(list, '생보', hit.getAttribute('data-life'), 'life');
         addRow(list, '손보', hit.getAttribute('data-non'), 'nonlife');
         tip.appendChild(list);
+        if (hit.getAttribute('data-note')) addLine('pb-tip__note', hit.getAttribute('data-note'));
       }
       var width = area.clientWidth;
       var half = tip.offsetWidth / 2;
@@ -236,7 +239,7 @@
     var list = block.querySelector('[data-pb-race-list]');
     var data = readData();
     if (!canAnimate || !list || !data || !data.branches || !data.months) return;
-    var months = data.months;
+    var months = data.detail_months || data.months;
     var n = months.length;
     var rows = list.querySelectorAll('li[data-name]');
     if (n < 2 || !rows.length) return;
