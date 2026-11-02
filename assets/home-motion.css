@@ -30,3 +30,7 @@ html.io .g-reveal.is-in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
   .g-reveal,.g-hero-text>*,.g-stat{animation:none!important;transition:none!important;opacity:1!important;transform:none!important}
 }
+/* v=2: 인쇄·스크롤 없는 매체에서는 등장 연출 없이 전부 보이게(scroll-driven 진행이 멈춘 채 숨어 있지 않도록) */
+@media print{
+  .g-reveal,.g-hero-text>*,.g-stat,html.io .g-reveal{animation:none!important;transition:none!important;opacity:1!important;transform:none!important}
+}
