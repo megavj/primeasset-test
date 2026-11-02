@@ -24,7 +24,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="../assets/glass.css?v=13">
-<link rel="stylesheet" href="../assets/members-ux.css?v=3">
+<link rel="stylesheet" href="../assets/members-ux.css?v=4">
 </head>
 <body class="g-members">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -51,7 +51,42 @@
 
 <main class="g-sec g-sec--app" id="main">
   <h1 class="sr">설계사 인트라넷</h1><!-- 낭독용 제목(h1): 화면 카드 제목은 h2 -->
-  <div id="pa-app"><div class="pa-card"><h2 class="pa-h3">불러오는 중…</h2></div></div>
+  <!-- FUNC-FIX B7: 불러오는 동안 실제 화면 모양의 틀(스켈레톤). 로그인 세션이 이 기기에 있으면 인트라넷 모양, 없으면 로그인 화면 모양.
+       틀은 화면 높이만큼 자리를 잡아 바닥글이 밀려 내려가지 않게(흔들림 CLS) 하고, 1초 안에 끝나면 보이지 않음(깜빡임 없음). 화면이 그려지면 통째로 바뀜 -->
+  <div id="pa-app" aria-busy="true">
+    <p class="sr" role="status">불러오는 중…</p>
+    <div class="pa-sk" aria-hidden="true">
+      <div class="pa-sk-out pa-login">
+        <div class="pa-card pa-card--hero"><i class="sk sk-pitch"></i><i class="sk sk-pitch sk-w60"></i></div>
+        <div class="pa-card"><i class="sk sk-h"></i><i class="sk"></i><i class="sk sk-btn"></i><i class="sk sk-w40"></i></div>
+        <div class="pa-card"><i class="sk sk-h"></i><ol class="pa-steps"><li><i class="sk sk-w40"></i><i class="sk"></i></li><li><i class="sk sk-w40"></i><i class="sk"></i></li><li><i class="sk sk-w40"></i><i class="sk"></i></li></ol></div>
+      </div>
+      <div class="pa-sk-in">
+        <div class="pa-head"><i class="sk sk-who"></i></div>
+        <div class="pa-card"><i class="sk sk-h"></i><i class="sk"></i><i class="sk sk-btn sk-w30"></i></div>
+        <div class="pa-card pa-search"><i class="sk sk-input"></i></div>
+        <i class="sk sk-title"></i>
+        <div class="pa-tools"><div class="pa-tool"><i class="sk sk-no"></i><i class="sk sk-w60"></i><i class="sk"></i></div><div class="pa-tool"><i class="sk sk-no"></i><i class="sk sk-w60"></i><i class="sk"></i></div><div class="pa-tool"><i class="sk sk-no"></i><i class="sk sk-w60"></i><i class="sk"></i></div><div class="pa-tool"><i class="sk sk-no"></i><i class="sk sk-w60"></i><i class="sk"></i></div></div>
+      </div>
+    </div>
+  </div>
+  <script>
+  /* B7: 틀 모양 고르기(로그인 세션 = tool-hub.js 와 같은 판정, 메일 링크로 막 돌아온 주소 포함) + 1초 뒤에만 보이기. 로그인 상태면 메뉴 막대도 처음부터 인트라넷 모양(pa-logged)이라 그려질 때 안 흔들림 */
+  (function () {
+    var app = document.getElementById('pa-app'), inside = /access_token=/.test(location.hash);
+    try {
+      for (var i = 0; i < localStorage.length && !inside; i += 1) {
+        var k = localStorage.key(i);
+        if (!/^sb-[a-z0-9]+-auth-token$/.test(k)) continue;
+        var v = JSON.parse(localStorage.getItem(k) || 'null');
+        inside = !!(v && v.access_token && v.refresh_token);
+      }
+    } catch (e) { inside = false; }
+    app.setAttribute('data-sk', inside ? 'in' : 'out');
+    if (inside) document.body.classList.add('pa-logged');
+    setTimeout(function () { app.classList.add('pa-sk-show'); }, 1000);
+  })();
+  </script>
   <noscript>자바스크립트를 켜야 로그인할 수 있습니다.</noscript>
 </main>
 
@@ -70,7 +105,7 @@
 <script src="../assets/vendor/supabase-2.118.0.js"></script>
 <script src="../assets/auth-config.js?v=2"></script>
 <script src="../assets/glass-chart.js?v=2"></script>
-<script src="../assets/glass-members.js?v=7"></script>
+<script src="../assets/glass-members.js?v=8"></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(로그인 전/후 모두, 이름·이메일·식별자 없음) -->
 <script src="../assets/stats-beacon.js?v=1" data-page="/members/"></script>
 <!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) -->

@@ -4,7 +4,7 @@
    FUNC-FIX-20261102: A1 승인 대기 회원은 메뉴별 버튼 31개 대신 안내 + '승인 요청 보내기' 1개(request_access(null), S4 SQL) + 접힌 메뉴 목록, 거절돼도 오픈채팅 자동 열기 없음.
      A6 '실적 요약'은 공개 실적보드 자료(/performance/ #perf-data)에서 기간·숫자를 읽음(코드에 기간 없음). 화면 꾸밈은 assets/members-ux.css
      A3 오류 안내 한국어(재요청 제한 남은 초·만료 링크·연결 끊김 다시 시도, 영어 원문은 console.debug), A4 주소의 칸 기억 → 그린 뒤 이동·로그인 전 칸은 이 기기에 잠시 저장
-     A5 카카오톡 안 브라우저면 구글 버튼 위 안내 + 이메일 로그인 먼저 펼침 */
+     A5 카카오톡 안 브라우저면 구글 버튼 위 안내 + 이메일 로그인 먼저 펼침, B7 불러오는 틀은 members/index.html(첫 show() 때 사라짐) */
 (function () {
   const C = window.PA_AUTH || {};
   const $ = (s) => document.querySelector(s);
@@ -17,7 +17,7 @@
     return e;
   };
   const box = $("#pa-app");
-  const show = (...nodes) => { box.replaceChildren(...nodes); };
+  const show = (...nodes) => { box.removeAttribute("aria-busy"); box.replaceChildren(...nodes); }; // FUNC-FIX B7: 불러오는 틀(members/index.html)은 여기서 통째로 바뀜
   const D = () => null; // 개발용 '섹션 설명' 문구는 유리 시안 화면에서 뺌
   const N = (t) => el("p", { class: "pa-note" }, t); // 아주 짧은 안내만
   const msg = (t, sub) => el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, t), sub ? el("p", {}, sub) : null);

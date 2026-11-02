@@ -1,7 +1,8 @@
 /* 설계사 인트라넷(/members/) 사용 편의 보완 — FUNC-FIX-20261102. glass.css 토큰·면·버튼을 그대로 쓰고 새 색·그림자는 만들지 않음.
    ① A1 승인 대기 안내 카드(.pa-wait): 요청 버튼 1개 + '승인 후 열리는 메뉴 N개 보기' 접기
    ② A3 오류 안내: 만료 링크 카드(.pa-linkerr)·연결 오류 카드(.pa-fail)
-   ③ A5 카카오톡 안 브라우저 안내(.pa-kakao, 구글 버튼 위) */
+   ③ A5 카카오톡 안 브라우저 안내(.pa-kakao, 구글 버튼 위)
+   ④ B7 불러오는 동안 틀(.pa-sk): members/index.html 의 #pa-app 안. 화면 높이만큼 자리 차지·1초 뒤 표시·움직임 줄이기면 반짝임 없음 */
 
 /* ① 승인 대기 */
 .pa-wait .pa-row{margin:14px 0 4px}
@@ -25,3 +26,23 @@
 .pa-card .pa-kakao p{margin:0 0 6px;color:var(--text);font-size:16px;line-height:1.55}
 .pa-card .pa-kakao p.pa-note{color:var(--text-2);font-size:15px;margin:0 0 10px}
 .pa-kakao b{color:var(--gold)}
+
+/* ④ 불러오는 동안 틀 — 자리는 처음부터(바닥글이 화면 밖에 머묾), 모양은 1초 뒤에만(.pa-sk-show, 인라인 스크립트). 그려지면 통째로 사라짐 */
+.pa-sk{min-height:calc(100vh - 120px);opacity:0}
+#pa-app.pa-sk-show .pa-sk{opacity:1;transition:opacity .25s ease}
+#pa-app[data-sk="in"] .pa-sk-out,#pa-app:not([data-sk="in"]) .pa-sk-in{display:none}
+.pa-sk .sk{display:block;height:16px;border-radius:8px;background:rgba(255,255,255,.06);margin:0 0 12px}
+.pa-sk .sk-pitch{height:34px;width:84%;margin:6px auto 10px}
+.pa-sk .sk-h{height:22px;width:38%;margin-bottom:16px}
+.pa-sk .sk-btn{height:56px;border-radius:999px;margin:18px 0}
+.pa-sk .sk-who{height:26px;width:280px;max-width:70%;margin:6px 0}
+.pa-sk .sk-input{height:52px;border-radius:var(--r-in);margin:0}
+.pa-sk .sk-title{height:30px;width:220px;margin:26px 0 14px}
+.pa-sk .sk-no{width:30px;height:30px;border-radius:10px}
+.pa-sk .sk-w30{width:30%}.pa-sk .sk-w40{width:40%}.pa-sk .sk-w60{width:60%}
+.pa-sk .pa-steps li::before{color:transparent}
+.pa-sk .pa-card--hero{padding-top:24px;padding-bottom:24px}
+@media (prefers-reduced-motion:no-preference){
+  .pa-sk .sk{background:linear-gradient(90deg,rgba(255,255,255,.05) 0,rgba(255,255,255,.1) 50%,rgba(255,255,255,.05) 100%) 0 0/200% 100%;animation:pa-sk-shine 1.6s ease-in-out infinite}
+}
+@keyframes pa-sk-shine{from{background-position:150% 0}to{background-position:-50% 0}}
