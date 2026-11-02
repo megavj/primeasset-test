@@ -1,0 +1,39 @@
+/* 메인 첫 화면 어둡게 — MAIN-V3-20261102 ⑤(어두운 첫 화면)
+   첫 화면(.g-hero--dark)만 깊은 남색/검정 바탕 + 금색 포인트로 3D 로고(금속 글린트)가 돋보이게. 아래 본문은 밝은 유리 톤 그대로.
+   전환: 숫자 타일 4개가 어두운 바탕과 밝은 본문의 경계에 반쯤 걸쳐(겹침 56px) 자연스럽게 이어짐. 글자 대비: 흰 글 #fff·연한 글 #c7d2e4·금색 #e8c96a 모두 어두운 바탕에서 4.5:1 이상(측정값은 RESULT.md).
+   메뉴 막대(밝은 유리)와 시안 띠는 그대로 위에 떠 있음. 3D 로고 기존 동작(글린트·움직임 줄이기 시 정지 WebP) 그대로, 그림자만 금빛 광채로. */
+.g-hero--dark{position:relative;isolation:isolate;max-width:none;margin:calc(-1 * (var(--nav-h) + 20px)) 0 0;padding:calc(var(--nav-h) + 20px + 46px) 0 0;color:#f5f2ea;
+  background:
+    radial-gradient(42% 46% at 76% 42%,rgba(232,201,106,.26) 0,rgba(232,201,106,0) 70%),
+    radial-gradient(36% 40% at 12% 96%,rgba(56,97,214,.42) 0,rgba(56,97,214,0) 70%),
+    radial-gradient(60% 30% at 50% 100%,rgba(30,58,138,.35) 0,rgba(30,58,138,0) 70%),
+    linear-gradient(180deg,#0b1220 0%,#0a1020 58%,#070b16 100%)}
+/* 아주 옅은 금빛 격자·광선(188 보드 느낌을 절제해서) */
+.g-hero--dark::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px;background-position:center top;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 40%,#000 10%,transparent 72%);mask-image:radial-gradient(ellipse 70% 70% at 50% 40%,#000 10%,transparent 72%)}
+.g-hero--dark .g-hero-in{max-width:var(--wrap);margin:0 auto;padding:0 16px}
+.g-hero--dark .g-kicker{color:#e8c96a;letter-spacing:.06em}
+.g-hero--dark h1{color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.g-hero--dark .g-basis{color:#c7d2e4}
+.g-hero--dark .g-tag{color:#e2e8f0}
+.g-hero--dark .g-tag span{color:#f5f2ea}
+/* 첫 화면 합류 문의 버튼: 어두운 바탕 위 금색(글자 진한 갈색, 대비 9:1 이상) */
+.g-hero--dark .g-btn--pri{background:linear-gradient(135deg,#f6e2a0 0%,#e8c96a 45%,#c9a23a 100%);color:#1a1405;border-color:rgba(255,255,255,.25);box-shadow:0 14px 36px -10px rgba(232,201,106,.55),inset 0 1px 0 rgba(255,255,255,.55)}
+.g-hero--dark .g-btn--pri:hover{background:linear-gradient(135deg,#fbeab4 0%,#f0d47a 45%,#d4ad45 100%)}
+/* 3D 로고·정지 그림: 그림자 대신 금빛 광채 */
+.g-hero--dark .g-hero-logo img{filter:drop-shadow(0 0 46px rgba(232,201,106,.30)) drop-shadow(0 18px 30px rgba(0,0,0,.45))}
+.g-hero--dark .g-hero-logo canvas.g-hero-3d{filter:drop-shadow(0 0 46px rgba(232,201,106,.30))}
+/* 숫자 타일: 어두운 바탕과 밝은 본문 경계에 걸침(겹침 56px). 타일은 더 불투명하게 해 두 바탕 위에서 같은 색 */
+.g-hero--dark .g-stats{margin:38px auto -56px;max-width:var(--wrap);padding:0 16px;position:relative;z-index:2}
+.g-hero--dark .g-stat{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(255,255,255,.92));box-shadow:var(--glass-v8-inset),0 0 0 1px rgba(30,58,138,.06),0 30px 60px -20px rgba(0,0,0,.45)}
+.g-board{padding-top:calc(56px + 40px)}
+@media (max-width:720px){
+  .g-hero--dark{margin-top:calc(-1 * (56px + 16px));padding-top:calc(56px + 16px + 34px)}
+  .g-hero--dark .g-hero-in{padding:0 12px}
+  .g-hero--dark .g-stats{margin:22px auto -48px;padding:0 12px}
+  .g-board{padding-top:calc(48px + 30px)}
+  .g-hero--dark .g-hero-logo img{filter:drop-shadow(0 0 28px rgba(232,201,106,.32)) drop-shadow(0 10px 18px rgba(0,0,0,.4))}
+}
+@media (prefers-reduced-transparency:reduce){.g-hero--dark .g-stat{background:#fff}}
+@media (forced-colors:active){.g-hero--dark{background:Canvas;color:CanvasText}}

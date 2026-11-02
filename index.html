@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#eceff5">
+<meta name="theme-color" content="#0b1220">
 <meta name="robots" content="noindex,nofollow">
 <title>프라임에셋 프리미엄 | 프라임에셋 프리미엄 (테스트)</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="assets/home-layout.css?v=1">
 <link rel="stylesheet" href="assets/tool-hub.css?v=1">
 <link rel="stylesheet" href="assets/home-motion.css?v=1">
+<link rel="stylesheet" href="assets/home-dark.css?v=1">
 <script>document.documentElement.classList.add('js');if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
 </head>
 <body class="g-main">
@@ -55,8 +56,9 @@
 </header>
 
 <main id="main">
-  <!-- 첫 화면: 대표문구(왼쪽) + 3D 로고(오른쪽, 정지 WebP + CSS 움직임) + 합류 문의(본문에서는 여기와 맨 끝 섹션에만) + 숫자 4개(라벨 위·숫자 아래, 기준은 작은 한 줄) -->
-  <section class="g-hero g-hero--logo" id="hero" aria-labelledby="hero-title">
+  <!-- 첫 화면(어두운 남색/검정 + 금색, assets/home-dark.css): 대표문구(왼쪽) + 3D 로고(오른쪽, 정지 WebP + CSS 움직임) + 합류 문의(본문에서는 여기와 맨 끝 섹션에만) + 숫자 4개(라벨 위·숫자 아래, 기준은 작은 한 줄, 어두운 바탕과 밝은 본문 경계에 걸침) -->
+  <section class="g-hero g-hero--logo g-hero--dark" id="hero" aria-labelledby="hero-title">
+    <div class="g-hero-in">
     <div class="g-hero-grid">
       <div class="g-hero-text">
         <p class="g-kicker">프라임에셋 프리미엄사업부</p>
@@ -76,6 +78,7 @@
       <div class="g-tile g-stat"><b data-count>1,123명</b><small>CY'25 실가동 설계사 · 전국 사무실 62개</small></div>
       <div class="g-tile g-stat"><b data-count>50억 2,332만 원</b><small>CY'25 장기 인보장성 월 보험료 · 계약 77,000건</small></div>
       <div class="g-tile g-stat"><b>프리미엄사업부 1위</b><small>2021년부터 · 사업부(188계열 본부 연합) 합계 기준, 프라임에셋 본부 단위 비교 (팜스)</small></div>
+    </div>
     </div>
   </section>
 
