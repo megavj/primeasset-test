@@ -27,6 +27,9 @@ h1,h2,h3{margin:0;line-height:1.2}
 button,input[type=checkbox]{font:inherit} /* 체크박스도 글자 계산값 14px 이상(브라우저 기본 13.33px) */
 img,svg{display:inline-block;vertical-align:middle}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none!important}
+.g-skip{position:absolute;left:12px;top:-80px;z-index:100;padding:12px 18px;border-radius:999px;background:var(--navy);color:#fff;font-weight:700;text-decoration:none}
+.g-skip:focus{top:12px}
 
 /* 배경: 은은한 빛 덩어리(블러된 원형 그라디언트) — 고정, 움직이지 않음 */
 .g-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
@@ -43,18 +46,18 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-bg::after{width:760px;height:760px;right:-220px;top:34vh;border-width:70px;border-color:rgba(255,255,255,.55)}
 
 /* 유리 재질 */
-.g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.g-tl li,.br{
+.g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.br{
   background:var(--glass);
   -webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);
   border:1px solid var(--glass-line);
   box-shadow:var(--inset),0 0 0 1px var(--ring),var(--shadow)}
-.g-tile,.g-tl li,.br,.pa-card .pa-card,.pa-list li,.pa-tool{background:var(--glass-2);box-shadow:var(--inset),0 0 0 1px var(--ring),var(--shadow-sm)}
+.g-tile,.br,.pa-card .pa-card,.pa-list li,.pa-tool{background:var(--glass-2);box-shadow:var(--inset),0 0 0 1px var(--ring),var(--shadow-sm)}
 .g-card,.pa-card{border-radius:var(--r-card);padding:30px 32px}
-.g-tile,.g-tl li,.pa-card .pa-card{border-radius:var(--r-tile);padding:20px 22px}
+.g-tile,.pa-card .pa-card{border-radius:var(--r-tile);padding:20px 22px}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  .g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.g-tl li,.br,.pa-list li,.pa-tool{background:rgba(255,255,255,.96)}}
+  .g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.br,.pa-list li,.pa-tool{background:rgba(255,255,255,.96)}}
 @media (prefers-reduced-transparency:reduce){
-  .g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.g-tl li,.br,.pa-list li,.pa-tool,.g-cta-bar .g-bar,.g-tabbar .g-bar{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .g-bar,.g-card,.g-tile,.pa-card,details.g-faq,.br,.pa-list li,.pa-tool,.g-cta-bar .g-bar,.g-tabbar .g-bar{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}
   .g-bg{background:#eef1f7}.g-bg::before,.g-bg::after{display:none}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 
@@ -83,6 +86,7 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-menu a.on{background:var(--navy-soft);color:var(--navy)}
 .g-nav-btns{display:flex;gap:6px;margin-left:6px}
 .g-nav-btns .g-btn{min-height:42px;padding:8px 16px;font-size:15px}
+.g-menu .g-menu-login{color:var(--navy)}
 
 /* 공통 섹션 */
 .g-sec{max-width:var(--wrap);margin:0 auto;padding:44px 16px}
@@ -91,18 +95,23 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-kicker{display:inline-block;font-size:14px;font-weight:700;color:var(--navy);letter-spacing:.02em;margin:0 0 6px}
 .g-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
 .g-grid--2{grid-template-columns:repeat(2,1fr)}
+.g-grid--3{grid-template-columns:repeat(3,1fr)}
 .g-grid--4{grid-template-columns:repeat(4,1fr)}
 .g-tile h3{font-size:20px;letter-spacing:-.01em;margin:0 0 8px}
 .g-tile p{margin:0;color:var(--ink-2);font-size:17px}
 .g-more{margin:12px 0 0}
-.g-more summary{cursor:pointer;color:var(--navy);font-weight:600;font-size:15px;list-style:none;display:inline-flex;align-items:center;gap:6px}
+.g-more summary{cursor:pointer;color:var(--navy);font-weight:600;font-size:15px;list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:-10px 0} /* 글 높이는 그대로, 터치 영역만 44px */
 .g-more summary::-webkit-details-marker{display:none}
 .g-more summary::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .15s}
 .g-more[open] summary::after{transform:rotate(-135deg) translateY(-2px)}
 .g-more p{margin:10px 0 0;font-size:16px;color:var(--ink-2)}
 .g-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:26px 0 0}
 .g-link{font-weight:700;text-decoration:none;color:var(--navy);display:inline-flex;align-items:center;gap:4px;min-height:44px}
+.g-link::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-top:2px solid currentColor;transform:rotate(45deg);margin-left:3px;flex:none}
 .g-link:hover{text-decoration:underline}
+.g-links{display:flex;flex-wrap:wrap;gap:4px 26px;margin:16px 0 0}
+.g-note--sec{margin:18px 0 0;max-width:46em}
+.g-note--sec .g-link{min-height:auto}
 .g-small{font-size:14px;color:var(--mute)}
 
 /* 첫 화면 */
@@ -110,7 +119,8 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-hero h1{font-size:clamp(33px,4.6vw,62px);line-height:1.12;letter-spacing:-.035em;margin:0 auto 16px;max-width:17em;word-break:keep-all;overflow-wrap:normal;text-wrap:balance}
 .g-nowrap{white-space:nowrap}
 .g-hero .g-basis{font-size:14px;color:var(--mute);margin:0 0 10px}
-.g-hero .g-tag{font-size:19px;color:var(--ink-2);margin:0 0 26px}
+.g-hero .g-tag{font-size:19px;font-weight:600;color:var(--ink-2);margin:0 0 26px;letter-spacing:-.01em}
+.g-hero .g-tag span{white-space:nowrap}
 .g-hero .g-actions{justify-content:center;margin:0}
 .g-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:var(--wrap);margin:34px auto 0;text-align:left}
 .g-stat{padding:20px 20px 18px}
@@ -122,10 +132,12 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-tool:hover{transform:translateY(-2px);box-shadow:var(--inset),0 0 0 1px var(--ring),var(--shadow)}
 .g-tool .g-ico{width:44px;height:44px;border-radius:14px;background:var(--navy-soft);color:var(--navy);display:flex;align-items:center;justify-content:center;margin:0 0 14px}
 .g-tool .g-ico svg{width:24px;height:24px}
-.g-tool b{display:block;font-size:19px;letter-spacing:-.01em;margin:0 0 4px}
+.g-tool b{display:block;font-size:19px;letter-spacing:-.01em;margin:0}
 .g-tool small{display:block;font-size:14px;color:var(--mute)}
-.g-tool--sm{padding:16px 18px}
-.g-tool--sm b{font-size:17px}
+.g-tool--sm{padding:14px 18px}
+.g-tool--sm b{font-size:16px}
+.g-fold-h{font-size:16px;color:var(--ink-2);margin:20px 0 10px;display:flex;align-items:baseline;gap:8px}
+.g-fold-h small{font-size:14px;font-weight:400;color:var(--mute)}
 .g-fold{margin:16px 0 0}
 .g-fold>summary{cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 20px;border-radius:999px;font-weight:700;color:var(--navy);background:rgba(255,255,255,.78);border:1px solid rgba(30,58,138,.28);list-style:none;box-shadow:var(--inset)}
 .g-fold>summary::-webkit-details-marker{display:none}
@@ -133,19 +145,29 @@ img,svg{display:inline-block;vertical-align:middle}
 .g-fold[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
 .g-fold>.g-grid{margin-top:14px}
 
-/* 제도 요약 3줄 */
-.g-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;list-style:none;padding:0;margin:0}
-.g-rules li{font-size:16px;color:var(--ink-2)}
-.g-rules li b{display:block;font-size:30px;color:var(--navy);line-height:1;margin:0 0 10px;letter-spacing:-.02em}
-
-/* 이사 소개·타임라인 */
-.g-ceo{display:grid;grid-template-columns:1fr;gap:22px;align-items:start}
-.g-ceo .g-quote{font-size:22px;font-weight:700;letter-spacing:-.015em;line-height:1.35;margin:0 0 12px}
+/* 이사 소개: 카드 하나에 소개(왼쪽)와 대표 연혁 5줄(오른쪽) */
+.g-ceo{display:grid;grid-template-columns:1.15fr 1fr;gap:16px 40px;align-items:start}
+.g-ceo .g-quote{font-size:22px;font-weight:700;letter-spacing:-.015em;line-height:1.35;margin:0 0 12px;color:var(--ink)}
 .g-ceo p{margin:0 0 10px;color:var(--ink-2)}
-.g-tl{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;list-style:none;padding:0;margin:0}
-.g-tl li{padding:16px 18px 14px;font-size:16px;color:var(--ink-2);line-height:1.45;position:relative}
-.g-tl li::before{content:"";display:block;width:10px;height:10px;border-radius:50%;background:var(--navy);margin:0 0 10px;box-shadow:0 0 0 4px rgba(30,58,138,.15)}
-.g-tl b{display:block;color:var(--navy);font-size:18px;margin:0 0 4px}
+.g-tl{list-style:none;padding:4px 0 0 22px;margin:0;position:relative}
+.g-tl::before{content:"";position:absolute;left:5px;top:12px;bottom:10px;width:2px;background:linear-gradient(180deg,rgba(30,58,138,.35),rgba(30,58,138,.12))}
+.g-tl li{position:relative;padding:0 0 12px;font-size:16px;color:var(--ink-2);line-height:1.45}
+.g-tl li:last-child{padding-bottom:0}
+.g-tl li::before{content:"";position:absolute;left:-22px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--navy);box-shadow:0 0 0 4px rgba(30,58,138,.15),0 0 0 7px rgba(255,255,255,.9)}
+.g-tl b{display:inline-block;color:var(--navy);font-size:16px;margin:0 8px 0 0;font-variant-numeric:tabular-nums}
+
+/* 설계사 후기(데이터 파일에 내용이 있을 때만) */
+.g-review{margin:0;display:flex;flex-direction:column;gap:12px}
+.g-review blockquote{margin:0;flex:1}
+.g-review blockquote p{margin:0;font-size:17px;line-height:1.6;color:var(--ink)}
+.g-review figcaption{font-size:14px;color:var(--mute)}
+.g-review figcaption b{color:var(--ink);font-size:15px;margin-right:8px}
+
+/* 현장 사진(데이터 파일에 내용이 있을 때만) */
+.g-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g-photo{margin:0;border-radius:var(--r-tile);overflow:hidden;background:var(--glass-2);border:1px solid var(--glass-line);box-shadow:var(--inset),0 0 0 1px var(--ring),var(--shadow-sm)}
+.g-photo img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.g-photo figcaption{padding:10px 14px 12px;font-size:14px;color:var(--mute);line-height:1.45}
 
 /* 함께하는 본부 */
 .g-branches,.branches{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:9px}
@@ -277,9 +299,12 @@ details.pa-fold p{font-size:16px}
   .g-grid--4{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:860px){
-  .g-tl{grid-template-columns:repeat(2,1fr)}
-  .g-rules{grid-template-columns:1fr}
-  .g-rules li b{font-size:24px;display:inline;margin-right:8px}
+  .g-grid--3{grid-template-columns:1fr}
+  .g-ceo{grid-template-columns:1fr;gap:18px}
+  .g-ceo .g-tl{padding-top:6px;border-top:1px solid var(--line);margin-top:4px}
+  .g-ceo .g-tl::before{top:18px}
+  .g-ceo .g-tl li::before{top:12px}
+  .g-ceo .g-tl li{padding-top:6px}
 }
 @media (max-width:720px){
   body{font-size:16px}
@@ -288,9 +313,11 @@ details.pa-fold p{font-size:16px}
   .g-logo{font-size:16px}
   .g-nav-btns{margin-left:auto;order:2}
   .g-menu{order:3}
-  .g-nav-btns .g-btn{min-height:38px;padding:6px 12px;font-size:14px}
+  .g-nav-btns{gap:5px}
+  .g-nav-btns .g-btn{min-height:38px;padding:6px 11px;font-size:14px}
   .g-menu{flex-basis:100%;margin-left:0;gap:2px;overflow-x:auto}
-  .g-menu a{font-size:14px;padding:7px 11px;min-height:40px;white-space:nowrap}
+  .g-menu a{font-size:14px;padding:7px 10px;min-height:40px;white-space:nowrap}
+  .g-menu .g-menu-login{margin-left:auto}
   body.pa-logged .g-menu--in{display:none}
   .g-hero{padding:22px 12px 8px}
   .g-hero h1{margin-bottom:10px}
@@ -305,15 +332,18 @@ details.pa-fold p{font-size:16px}
   .g-card,.pa-card{padding:20px 18px;border-radius:22px}
   .g-tile,.pa-card .pa-card{padding:16px 16px}
   .g-lead{font-size:16px;margin-bottom:18px}
-  .g-grid,.g-grid--2,.g-grid--4{grid-template-columns:1fr}
+  .g-grid,.g-grid--2,.g-grid--3,.g-grid--4{grid-template-columns:1fr}
+  .g-photos{grid-template-columns:repeat(2,1fr);gap:10px}
+  .g-photo figcaption{padding:8px 10px 10px}
+  .g-links{gap:2px 20px}
   .g-grid--tools{grid-template-columns:repeat(2,1fr);gap:10px}
   .g-tool{padding:14px 14px}
   .g-tool .g-ico{width:38px;height:38px;margin-bottom:10px}
   .g-tool b{font-size:17px}
-  .g-tool small{font-size:14px}
-  .g-tl{grid-template-columns:1fr;gap:8px}
-  .g-tl li{padding:12px 14px 12px 36px}
-  .g-tl li::before{position:absolute;left:14px;top:17px;margin:0}
+  .g-tool--sm{padding:12px 14px}
+  .g-tool--sm b{font-size:15px}
+  .g-fold-h{margin:16px 0 8px}
+  .g-tl li{font-size:15px}
   .g-branches,.branches{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:7px}
   .br{padding:10px 4px 8px;font-size:14px}.br b{font-size:19px}.br small{font-size:14px}
   details.g-faq summary{font-size:16px;padding:14px 44px 14px 16px}
@@ -351,6 +381,7 @@ details.pa-fold p{font-size:16px}
 }
 @media (max-width:380px){
   .g-logo{font-size:15px}
+  .g-logo span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)} /* 360 폭: 로고는 마크만(이름은 낭독용으로 유지) */
   .g-nav-btns .g-btn{padding:6px 10px;font-size:14px}
   .g-menu a{font-size:14px;padding:7px 9px}
   .g-hero h1{font-size:30px}
