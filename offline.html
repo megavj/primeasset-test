@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>인터넷 연결이 끊겼어요 | 프라임에셋 프리미엄 (테스트)</title>
+<!-- 오프라인 안내(FUNC-FIX B1): 서비스워커(sw.js)가 설치 때 이 파일 하나만 저장해 두었다가, 페이지 이동·새로고침이 네트워크 오류일 때만 보여 줌.
+     연결이 없어도 그려지도록 글꼴·CSS·로고를 밖에서 받지 않음(색·모서리는 glass.css 토큰 값 그대로). 다른 HTML 은 저장하지 않음. -->
+<style>
+:root{color-scheme:dark;--bg-0:#070a12;--bg-1:#0c111c;--text:#f2eee6;--text-2:#aab4c4;--text-3:#8a96a9;--gold:#d6b97e;--gold-hi:#e3c994;--on-gold:#15110a;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.16)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg-0);color:var(--text)}
+body{min-height:100vh;display:flex;flex-direction:column;font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:17px;line-height:1.7;word-break:keep-all;-webkit-font-smoothing:antialiased}
+.strip{text-align:center;font-size:14px;line-height:1.4;padding:5px 12px;color:var(--gold-hi);background:#1d1b17;border-bottom:1px solid rgba(214,185,126,.22)}
+.brand{display:flex;align-items:center;gap:10px;max-width:640px;width:100%;margin:28px auto 0;padding:0 16px;font-weight:600;font-size:17px;letter-spacing:-.01em}
+.brand svg{width:28px;height:31px;flex:none}
+main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px 48px}
+.card{max-width:640px;width:100%;background:var(--bg-1);border:1px solid var(--line);border-radius:16px;padding:32px}
+h1{font-size:clamp(24px,4vw,30px);font-weight:600;letter-spacing:-.02em;line-height:1.3;margin:0 0 10px}
+p{margin:0 0 12px;color:var(--text-2)}
+.note{font-size:15px;color:var(--text-3);margin:18px 0 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:11px 26px;margin-top:10px;border-radius:999px;border:1px solid transparent;background:var(--gold);color:var(--on-gold);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--gold-hi)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+@view-transition{navigation:auto} /* 다른 페이지(glass.css)와 같은 페이지 넘김 — 한쪽만 켜져 있으면 넘김이 중단되며 콘솔 오류가 남 */
+@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="strip" role="note">테스트 페이지 — 정식 오픈 전 확인용</div>
+  <div class="brand"><svg viewBox="0 0 212.5 235.73" aria-hidden="true" focusable="false"><defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9bc82"/><stop offset=".22" stop-color="#b8935a"/><stop offset=".48" stop-color="#8a6a3a"/><stop offset=".62" stop-color="#c6a46c"/><stop offset=".8" stop-color="#f0dcb0"/><stop offset="1" stop-color="#b48f55"/></linearGradient></defs><path fill="url(#gold)" fill-rule="evenodd" d="M0 0 L212.5 0 L212.5 174 L106.25 235.73 L65.7 212.17 L65.7 185.67 L106.25 209.23 L157.26 179.77 L121.72 136.6 L55.2 136.6 L55.2 206.07 L0 174 Z M22.2 21.5 L22.2 160.4 L32.5 166.38 L32.5 114.5 L103.53 114.5 L34.31 30.4 L123.4 30.4 A52.9 52.9 0 0 1 146.37 130.95 L177.08 168.26 L190.6 160.4 L190.6 21.5 Z M81.8 52.5 L131.59 112.99 A30.8 30.8 0 0 0 123.4 52.5 Z"/></svg>프라임에셋 프리미엄</div>
+</header>
+<main>
+  <div class="card" role="alert">
+    <h1>인터넷 연결이 끊겼어요</h1>
+    <p>와이파이나 모바일 데이터를 확인한 뒤 '다시 시도'를 눌러 주세요. 연결이 돌아오면 이 화면은 저절로 다시 불러옵니다.</p>
+    <button class="btn" type="button" id="retry">다시 시도</button>
+    <p class="note">회원 정보·실적 자료는 연결된 뒤에 보입니다.</p>
+  </div>
+</main>
+<script>
+(function () {
+  function again() { location.reload(); }
+  document.getElementById('retry').addEventListener('click', again);
+  window.addEventListener('online', again);
+})();
+</script>
+</body>
+</html>
