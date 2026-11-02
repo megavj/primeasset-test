@@ -11,18 +11,18 @@
 <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
 <link rel="stylesheet" href="../../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="../../assets/glass.css?v=13">
+<link rel="stylesheet" href="../../assets/admin-workspace.css?v=1">
 </head>
 <body class="g-admin">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
 <div class="g-bg" aria-hidden="true"></div>
-<div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
+<div class="g-strip" role="note" aria-label="테스트 안내">테스트 페이지 — 정식 오픈 전 확인용</div>
 
 <header class="g-nav">
   <div class="g-bar">
     <a class="g-logo" href="../../"><img class="g-mark g-mark--shield" src="../../assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
     <nav class="g-menu" aria-label="주요 메뉴">
       <a href="../../">홈</a>
-      <a href="http://wiki.primeasset.info/">보험위키</a>
       <a href="../">설계사 인트라넷</a>
     </nav>
   </div>
@@ -30,18 +30,19 @@
 
 <main class="g-sec g-sec--app" id="main">
   <div class="g-admin-head">
-    <h1>관리자 화면</h1>
+    <div><p class="adm-eyebrow">프리미엄사업부 · 운영 관리</p><h1>관리자 업무 공간</h1></div>
+    <span id="admin-updated" class="adm-note"></span>
   </div>
-  <div id="pa-app"><div class="pa-card"><h3>불러오는 중…</h3></div></div>
+  <div id="admin-feedback" aria-live="polite" aria-atomic="true"></div>
+  <div id="pa-app" aria-busy="true"><div class="adm-loading" role="status">관리 권한과 업무 목록을 확인하는 중…<div class="adm-skeleton" aria-hidden="true"></div></div></div>
+  <noscript><p class="adm-callout">관리자 기능을 사용하려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
 </main>
 
 <footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="../../privacy/">개인정보처리방침</a></footer>
 
 <script src="../../assets/vendor/supabase-2.118.0.js"></script>
 <script src="../../assets/auth-config.js?v=2"></script>
-<script src="../../assets/admin.js?v=11"></script>
-<!-- 3단계: 승인 요청 목록·방문 합계 카드. 서버 함수가 있을 때만 그림(admin.js 는 그대로) -->
-<script src="../../assets/glass-chart.js?v=2"></script>
-<script src="../../assets/admin-requests.js?v=3"></script>
+<script src="../../assets/admin-settings.js?v=1"></script>
+<script src="../../assets/admin.js?v=12"></script>
 </body>
 </html>

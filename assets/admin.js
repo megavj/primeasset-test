@@ -1,223 +1,340 @@
-/* 프라임에셋 프리미엄 — 관리자 화면. 모든 권한 확인은 서버(RLS·트리거)가 함. 이 화면은 관리자가 아니면 빈 결과만 받음 */
+/* 관리자 업무 공간. 권한은 기존 my_profile + 서버 RLS/트리거로 판정한다.
+   승인·권한 변경은 기존 테이블/API, 요청 완료는 기존 RPC를 사용한다. */
 (function () {
-  const C = window.PA_AUTH || {};
-  const $ = (s) => document.querySelector(s);
+  'use strict';
+  const C = window.PA_AUTH || {}, box = document.getElementById('pa-app');
+  const originals = new WeakMap(), edited = new Set();
+  let actionScope = null, savesDraft = false;
+  const controlValue = e => e.type === 'checkbox' ? e.checked : e.value;
   const el = (tag, attrs, ...kids) => {
     const e = document.createElement(tag);
-    for (const [k, v] of Object.entries(attrs || {})) {
-      if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
-      else if (k === "checked" || k === "selected" || k === "value") e[k] = v; else e.setAttribute(k, v);
-    }
-    for (const k of kids) if (k != null) e.append(k.nodeType ? k : document.createTextNode(String(k)));
+    Object.entries(attrs || {}).forEach(([k, v]) => {
+      if (v == null) return;
+      if (k === 'class') e.className = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else if (['checked', 'selected', 'value', 'disabled', 'indeterminate'].includes(k)) e[k] = v;
+      else e.setAttribute(k, v);
+    });
+    kids.flat().forEach(k => { if (k != null) e.append(k.nodeType ? k : document.createTextNode(String(k))); });
+    if (e.matches('input,select,textarea')) originals.set(e, controlValue(e));
     return e;
   };
-  const box = $("#pa-app");
-  const show = (...n) => box.replaceChildren(...n);
-  if (!C.url || !C.anonKey || !window.supabase) { show(el("div", { class: "pa-card" }, el("h3", {}, "로그인 서버 설정 전입니다"))); return; }
+  const button = (text, onclick, variant = 'secondary', attrs = {}) => el('button', {type:'button', class:'adm-button adm-button--' + variant, onclick, ...attrs}, text);
+  const input = (label, value = '', attrs = {}) => el('input', {class:'adm-input', 'aria-label':label, 'data-draft':'true', value, ...attrs});
+  const select = (label, options, value) => el('select', {class:'adm-input', 'aria-label':label, 'data-draft':'true'}, ...options.map(([v, t]) => el('option', {value:String(v), selected:String(v) === String(value)}, t)));
+  const filter = e => { e.classList.add('adm-filter'); e.removeAttribute('data-draft'); return e; };
+  const field = (label, control, help) => el('label', {class:'adm-field'}, el('span', {}, label), control, help ? el('small', {class:'adm-note'}, help) : null);
+  const empty = (title, desc) => el('div', {class:'adm-empty'}, el('h3', {}, title), desc ? el('p', {}, desc) : null);
+  const fmt = t => t && !Number.isNaN(Date.parse(t)) ? new Date(t).toLocaleString('ko-KR', {dateStyle:'short',timeStyle:'short'}) : '—';
+  const num = n => Number(n || 0).toLocaleString('ko-KR');
+  const table = (heads, rows, caption = '관리 목록') => {
+    rows.forEach(row => [...row.children].forEach((cell,i) => cell.setAttribute('data-label', typeof heads[i] === 'string' ? heads[i] : '')));
+    return el('div', {class:'adm-table-scroll', tabindex:'0', role:'region', 'aria-label':caption + ' · 표는 좌우로 스크롤할 수 있습니다'},
+      el('table', {class:'adm-table'}, el('caption', {class:'sr'}, caption), el('thead', {}, el('tr', {}, ...heads.map(h => el('th', {scope:'col'}, h)))), el('tbody', {}, ...rows)));
+  };
+  const toast = (text, bad = false) => {
+    const region = document.getElementById('admin-feedback');
+    region.replaceChildren(el('div', {class:'adm-feedback' + (bad ? ' adm-feedback--error' : '')}, text));
+  };
+  const errorText = e => {
+    const m = String(e?.message || e || '');
+    if (/fetch|network|timeout|abort|Failed/i.test(m)) return '연결을 확인하고 다시 시도해 주세요.';
+    if (/JWT|token|session|401/i.test(m)) return '로그인이 만료되었습니다. 인트라넷에서 다시 로그인해 주세요.';
+    if (/permission|denied|42501|관리자|권한/i.test(m)) return '관리자 권한을 확인하지 못했습니다. 다시 로그인한 뒤 시도해 주세요.';
+    if (/duplicate|unique|23505/i.test(m)) return '이미 등록된 내용입니다. 목록을 새로고침해 확인해 주세요.';
+    if (/마지막|기본 등급|회원이|pending|대기/i.test(m)) return '현재 상태에서는 처리할 수 없습니다. 마지막 관리자·기본 등급·소속 회원 여부를 확인해 주세요.';
+    if (/23503|foreign key/i.test(m)) return '다른 자료에서 사용 중입니다. 연결된 회원과 권한을 먼저 확인해 주세요.';
+    return '처리하지 못했습니다. 입력 내용과 연결 상태를 확인하고 다시 시도해 주세요.';
+  };
+  if (!C.url || !C.anonKey || !window.supabase) { box.replaceChildren(empty('로그인 서버를 연결하지 못했습니다', '잠시 후 새로고침해 주세요.')); return; }
   const sb = window.supabase.createClient(C.url, C.anonKey);
-  const S = { grades: [], members: [], resources: [], perms: new Set() };
-  const toast = (t, bad) => { const n = el("div", { class: "pa-toast" + (bad ? " bad" : "") }, t); document.body.append(n); setTimeout(() => n.remove(), 3500); };
-  const run = async (p, okText) => { const { error } = await p; if (error) { toast(error.message, true); return false; } if (okText) toast(okText); await load(); return true; };
-  const gname = (id) => (S.grades.find(g => g.id === id) || {}).name || "-";
-  const gradeSelect = (cur) => el("select", { class: "pa-in pa-sm" }, ...S.grades.map(g => el("option", { value: String(g.id), selected: g.id === cur }, g.name)));
-  const fmt = (t) => t ? new Date(t).toLocaleString("ko-KR") : "";
-
-  async function load() {
-    const [g, m, r, p, b] = await Promise.all([
-      sb.from("grades").select("*").order("sort"),
-      sb.from("members").select("*").order("created_at", { ascending: false }),
-      sb.from("resources").select("*").order("kind").order("category").order("sort"),
-      sb.from("grade_permissions").select("*"), sb.from("branches").select("*").order("sort")]);
-    S.branches = (b && b.data) || []; S.grades = g.data || []; S.members = m.data || []; S.resources = r.data || [];
-    S.perms = new Set((p.data || []).map(x => x.grade_id + ":" + x.resource_id));
-    render();
+  const S = {grades:[],members:[],resources:[],branches:[],perms:new Set(),profile:null,requests:[],requestError:null,loadedAt:null};
+  const gname = id => S.grades.find(g => g.id === id)?.name || '등급 없음';
+  let tab = 'tasks', busy = false, dirty = false, ready = false, loadVersion = 0;
+  const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''}};
+  const TABS = {tasks:['처리할 일','승인 대기와 메뉴 요청부터 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['승인 요청','가입 승인 요청과 메뉴 이용 요청을 확인합니다.'],members:['회원 관리','회원 검색부터 등급 변경·정지·메모까지 한곳에서 관리합니다.'],matrix:['메뉴 권한','등급별로 열어 줄 페이지와 도구를 선택합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','페이지 방문과 합류 문의 클릭의 날짜별 합계를 확인합니다.'],resources:['페이지·도구','인트라넷 메뉴의 이름·주소·표시 여부를 관리합니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
+  const groups = [['우선 처리',['tasks','pending','requests']],['회원과 접근 권한',['members','matrix','grades','admins']],['운영',['notice','hits','resources','branches']],['기록',['audit','backup']]];
+  const confirmAction = message => window.confirm(message);
+  const discard = () => !dirty || confirmAction('저장하지 않은 변경이 있습니다. 변경을 버리고 이동할까요?');
+  function go(next, values = {}) {
+    if (busy || !TABS[next] || !discard()) return;
+    dirty = false; edited.clear(); tab = next;
+    if (filters[next]) {
+      if (values.q !== undefined && next === 'members') Object.assign(filters[next],{grade:'',status:''});
+      if (values.q !== undefined && next === 'pending') filters[next].complete = '';
+      Object.assign(filters[next], {page:1}, values);
+    }
+    history.replaceState(null, '', '#' + tab); render(true);
   }
-
-  const TABS = [["notice", "새 소식"], ["pending", "대기 회원"], ["members", "회원 목록"], ["admins", "관리자"], ["grades", "등급 관리"],
-                ["branches", "본부"], ["matrix", "권한 체크표"], ["resources", "페이지·도구"], ["audit", "변경 기록"], ["backup", "백업"]];
-  const TAB_DESC = { notice: "인트라넷 맨 위 '새 소식' 한 줄. 관리자만 고칠 수 있고, 고치면 변경 기록에 남습니다.", pending: "가입 신청 후 승인 대기 중인 회원. 승인·등급 지정·거절.", members: "전체 회원 목록. 등급 변경·정지·해제.",
-    admins: "관리자 추가·해제(관리자 권한은 등급과 따로).", grades: "등급 이름·순서 관리.", branches: "메인 '함께하는 본부'의 번호·주소·순서·숨김.",
-    matrix: "등급별로 어떤 페이지·도구를 열지 체크.", resources: "인트라넷 메뉴(페이지·도구) 이름·분류·주소 관리.", audit: "누가 무엇을 바꿨는지 기록.", backup: "회원 정보 백업 받기(30일 보관)." };
-  // HOME-22: 승인 대기(승인 버튼) 맨 위 → 오늘 요약 숫자 → 회원·등급 관리 → 변경 기록 → 설정
-  const GROUPS = [["회원·등급 관리", ["members", "grades", "matrix", "admins"]], ["변경 기록", ["audit"]], ["설정", ["notice", "resources", "branches", "backup"]]];
-  let tab = "members";
-  function summary() {
-    const c = (f) => S.members.filter(f).length;
-    return el("div", { class: "pa-card" }, el("h3", {}, "오늘 요약"),
-      el("div", { class: "wf-grid" }, ...[["승인 대기", c(m => m.status === "pending")], ["전체 회원", S.members.length], ["승인 회원", c(m => m.status === "active")],
-        ["관리자", c(m => m.is_admin)], ["도구·메뉴", S.resources.length]].map(([k, v]) => el("div", { class: "wf-item" }, el("b", {}, String(v)), el("small", {}, k)))));
+  function setBusy(value) {
+    busy = value; box.setAttribute('aria-busy', String(value));
+    const lock = document.getElementById('admin-lock'); if (lock) lock.disabled = value;
   }
-  function render() {
-    const g = GROUPS.find(x => x[1].includes(tab)) || GROUPS[0];
-    const pend = el("div", { class: "pa-card" }, el("h3", {}, `승인 대기 (${S.members.filter(m => m.status === "pending").length})`),
-      el("p", { class: "wf-desc" }, "섹션 설명: " + TAB_DESC.pending), VIEWS.pending());
-    const gnav = el("div", { class: "pa-tabs" }, ...GROUPS.map(([gn, ks]) => el("button", { class: "pa-tab" + (g[0] === gn ? " on" : ""), onclick: () => { tab = ks[0]; render(); } }, gn)));
-    const sub = g[1].length > 1 ? el("div", { class: "pa-tabs" }, ...g[1].map(k => el("button", { class: "pa-tab" + (k === tab ? " on" : ""), onclick: () => { tab = k; render(); } },
-      (TABS.find(x => x[0] === k) || [, k])[1]))) : null;
-    const name = (TABS.find(x => x[0] === tab) || [, ""])[1];
-    show(pend, summary(), gnav, el("div", { class: "pa-card" }, el("h3", {}, g[0]), sub,
-      el("div", { class: "pa-card" }, el("h3", {}, name), el("p", { class: "wf-desc" }, "섹션 설명: " + (TAB_DESC[tab] || "")), VIEWS[tab]())));
+  async function mutate(action, success, options = {}) {
+    if (busy) return false;
+    if (dirty && [...edited].some(e => !savesDraft || !actionScope?.contains(e)) && !confirmAction('다른 항목에 저장하지 않은 입력이 있습니다. 이 작업을 진행하면 다른 입력은 저장되지 않습니다. 계속할까요?')) return false;
+    setBusy(true);
+    let saved = false;
+    try {
+      const result = await action();
+      if (result?.error) throw result.error;
+      saved = true; dirty = false; edited.clear();
+      if (options.reload !== false) await load();
+      document.getElementById('admin-view-title')?.focus({preventScroll:true});
+      if (success) toast(success);
+      return true;
+    } catch(e) {
+      if (saved) { gate('저장은 완료됐지만 목록을 다시 확인하지 못했습니다','새로 불러온 뒤 결과를 확인해 주세요. 같은 작업을 다시 저장하지 않아도 됩니다.',true); }
+      else toast(errorText(e), true);
+      return saved;
+    }
+    finally { setBusy(false); }
   }
-  const table = (heads, rows) => el("div", { class: "pa-scroll" }, el("table", { class: "pa-table" },
-    el("thead", {}, el("tr", {}, ...heads.map(h => el("th", {}, h)))), el("tbody", {}, ...rows)));
-
-  const VIEWS = {
-    notice() {
-      const inp = el("input", { class: "pa-in", maxlength: "200", placeholder: "인트라넷 맨 위에 보일 한 줄 (200자 이내)" });
-      const info = el("p", { class: "pa-note" }, "불러오는 중…");
-      sb.from("site_notice").select("*").eq("id", 1).maybeSingle().then(({ data, error }) => {
-        if (error) { info.textContent = "불러오지 못했습니다: " + error.message; return; }
-        inp.value = (data && data.text) || ""; info.textContent = data ? `마지막 수정: ${fmt(data.updated_at)}${data.updated_by ? " · " + data.updated_by : ""}` : "";
-      });
-      return el("div", {}, el("div", { class: "pa-row" }, inp, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: async () => {
-        const t = inp.value.trim(); if (!t) { toast("내용을 입력해 주세요.", true); return; }
-        const me = (await sb.auth.getUser()).data.user;
-        if (await run(sb.from("site_notice").update({ text: t, updated_at: new Date().toISOString(), updated_by: me ? me.email : null }).eq("id", 1), "새 소식을 저장했습니다")) { tab = "notice"; render(); }
-      } }, "저장")), info);
-    },
-    branches() {
-      const no = el("input", { class: "pa-in pa-sm", placeholder: "본부 번호 (예: 227)" }), url = el("input", { class: "pa-in", placeholder: "본부 페이지 주소 (https://…, 비우면 '연결 준비 중')" });
-      const add = el("div", { class: "pa-row" }, no, url, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: () =>
-        run(sb.from("branches").upsert({ no: no.value.trim(), url: url.value.trim() || null, sort: (S.branches.length + 1) * 10 }), "저장했습니다") }, "추가·저장"));
-      return el("div", {}, el("p", { class: "pa-note" }, "메인 '함께하는 본부'에 번호만 보입니다. 주소를 넣으면 누를 때 그 페이지로 이동합니다. 이름·전화는 넣지 않습니다."), add,
-        table(["번호", "주소", "순서", "메인 표시", ""], S.branches.map(x => {
-          const u = el("input", { class: "pa-in pa-sm", value: x.url || "", placeholder: "연결 준비 중" });
-          u.addEventListener("change", () => run(sb.from("branches").update({ url: u.value.trim() || null, updated_at: new Date().toISOString() }).eq("no", x.no), "주소 저장"));
-          const o = el("input", { class: "pa-in pa-xs", value: String(x.sort) });
-          o.addEventListener("change", () => run(sb.from("branches").update({ sort: +o.value || 0 }).eq("no", x.no), "순서 저장"));
-          const v = el("input", { type: "checkbox", checked: x.visible });
-          v.addEventListener("change", () => run(sb.from("branches").update({ visible: v.checked }).eq("no", x.no), "표시 변경"));
-          return el("tr", {}, el("td", {}, x.no + "본부"), el("td", {}, u), el("td", {}, o), el("td", { class: "c" }, v),
-            el("td", {}, el("button", { class: "pa-mini", onclick: () => confirm(x.no + "본부를 목록에서 지울까요?") && run(sb.from("branches").delete().eq("no", x.no), "삭제했습니다") }, "삭제")));
-        })));
+  async function checkedUpdate(id, values, pending = false) {
+    let query = sb.from('members').update(values).eq('id', id);
+    if (pending) query = query.eq('status', 'pending');
+    const r = await query.select('id');
+    if (!r.error && !r.data?.length) return {error:{message:'상태 변경: 대기 회원을 새로 확인해 주세요'}};
+    return r;
+  }
+  async function readAll(name, orders = []) {
+    const rows = [];
+    for (let start = 0; ; start += 1000) {
+      let q = sb.from(name).select('*');
+      orders.forEach(([key, opt]) => { q = q.order(key, opt); });
+      const r = await q.range(start, start + 999);
+      if (r.error) throw r.error;
+      rows.push(...(r.data || []));
+      if ((r.data || []).length < 1000) return rows;
+    }
+  }
+  async function requestData() {
+    try {
+      const r = await sb.rpc('list_access_requests');
+      if (r.error) throw r.error;
+      if (!Array.isArray(r.data)) throw new Error('invalid response');
+      S.requests = r.data; S.requestError = null;
+    } catch (e) { S.requests = []; S.requestError = e; }
+  }
+  async function load(recheck = true) {
+    const version = ++loadVersion;
+    if (recheck) {
+      const p = await sb.rpc('my_profile');
+      if (version !== loadVersion) return;
+      if (p.error) throw p.error;
+      if (!p.data?.[0]?.is_admin || p.data[0].status !== 'active') { gate('관리자만 볼 수 있습니다','현재 계정은 이 화면에 접근할 수 없습니다.'); return; }
+      S.profile = p.data[0];
+    }
+    const [grades,members,resources,perms,branches] = await Promise.all([
+      readAll('grades',[['sort'],['id']]),readAll('members',[['created_at',{ascending:false}],['id']]),
+      readAll('resources',[['kind'],['category'],['sort'],['id']]),readAll('grade_permissions',[['grade_id'],['resource_id']]),readAll('branches',[['sort'],['no']])]);
+    if (version !== loadVersion) return;
+    Object.assign(S,{grades,members,resources,branches,perms:new Set(perms.map(p => p.grade_id + ':' + p.resource_id))});
+    await requestData();
+    if (version !== loadVersion) return;
+    S.loadedAt = new Date(); ready = true; render();
+  }
+  function gate(title, description, retry = false) {
+    loadVersion++; ready = false; dirty = false; edited.clear(); S.profile = null;
+    box.replaceChildren(el('section',{class:'adm-gate'},empty(title,description),el('div',{class:'adm-actions'},el('a',{class:'adm-button',href:'../'},'인트라넷으로'),retry ? button('다시 시도',boot,'primary') : null)));
+  }
+  async function boot() {
+    if (busy) return;
+    const attempt = ++loadVersion;
+    setBusy(true);
+    try {
+      const session = await sb.auth.getSession();
+      if (attempt !== loadVersion) return;
+      if (session.error) throw session.error;
+      if (!session.data?.session) { gate('로그인이 필요합니다','인트라넷에서 로그인한 뒤 관리자 화면을 열어 주세요.'); return; }
+      const p = await sb.rpc('my_profile');
+      if (attempt !== loadVersion) return;
+      if (p.error) throw p.error;
+      if (!p.data || !p.data[0] || !p.data[0].is_admin || p.data[0].status !== 'active') { gate('관리자만 볼 수 있습니다','현재 계정은 이 화면에 접근할 수 없습니다.'); return; }
+      S.profile = p.data[0];
+      const hash = location.hash.slice(1); if (TABS[hash]) tab = hash;
+      await load(false);
+    } catch(e) { gate('관리 화면을 불러오지 못했습니다',errorText(e),true); }
+    finally { setBusy(false); }
+  }
+  const badge = text => el('span',{class:'adm-badge'},text);
+  function render(focus = false) {
+    const pending = S.members.filter(m => m.status === 'pending').length;
+    const count = key => key === 'pending' ? pending : key === 'requests' ? (S.requestError ? '—' : S.requests.length) : null;
+    const nav = el('nav',{class:'adm-sidebar','aria-label':'관리 업무'},...groups.map(([label,keys]) => el('div',{class:'adm-nav-group'},el('p',{class:'adm-nav-label'},label),...keys.map(key => button(el('span',{class:'adm-nav-text'},TABS[key][0],count(key) !== null ? badge(typeof count(key) === 'number' ? num(count(key)) : count(key)) : null),() => go(key),'nav',{'aria-current':key === tab ? 'page' : null,'data-tab':key})))));
+    const view = (views[tab] || settings[tab])();
+    const main = el('section',{class:'adm-content','aria-labelledby':'admin-view-title'},
+      el('div',{class:'adm-section-head'},el('div',{},el('p',{class:'adm-eyebrow'},tab === 'tasks' ? 'WORKSPACE' : 'ADMINISTRATION'),el('h2',{id:'admin-view-title',tabindex:'-1'},TABS[tab][0]),el('p',{class:'adm-note'},TABS[tab][1])),button('새로고침',() => { if (discard()) { dirty = false; edited.clear(); boot(); } },'secondary',{'aria-label':'관리 자료 새로고침'})),view);
+    box.replaceChildren(el('fieldset',{id:'admin-lock',class:'adm-lock',disabled:busy},el('legend',{class:'sr'},'관리자 업무'),el('div',{class:'adm-layout'},nav,main)));
+    if (focus) document.getElementById('admin-view-title').focus({preventScroll:false});
+    document.getElementById('admin-updated').textContent = S.loadedAt ? '마지막 확인 ' + S.loadedAt.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}) : '';
+  }
+  const matches = (q, ...values) => values.join(' ').toLocaleLowerCase().replace(/\s/g,'').includes(q.toLocaleLowerCase().replace(/\s/g,''));
+  function pager(list, f, draw) {
+    const pages = Math.max(1,Math.ceil(list.length / 20)); f.page = Math.min(f.page,pages);
+    const move = step => {if(!discard())return;dirty=false;edited.clear();f.page+=step;draw();};
+    return el('div',{class:'adm-pagination'},el('span',{class:'adm-note','role':'status'},`${num(list.length)}건 · ${f.page} / ${pages}페이지`),button('이전',() => move(-1),'secondary',{disabled:f.page <= 1}),button('다음',() => move(1),'secondary',{disabled:f.page >= pages}));
+  }
+  const pageRows = (rows,f) => rows.slice((f.page - 1) * 20,f.page * 20);
+  function person(m) { return el('div',{class:'adm-person'},el('strong',{},m.name || '이름 미입력'),el('span',{},m.branch || '소속 미입력'),el('small',{},m.email || '이메일 없음')); }
+  function check(label, checked, onchange) { return el('label',{class:'adm-check'},el('input',{type:'checkbox',checked,'aria-label':label,onchange}),el('span',{class:'sr'},label)); }
+  const defaultGrade = () => S.grades.find(g => g.name === '설계사')?.id || S.grades[0]?.id || '';
+  function gradeSelect(label, value) { return select(label,S.grades.map(g => [g.id,g.name]),value); }
+  async function bulk(items, action, label, after) {
+    if (!items.length || busy || !confirmAction(`${items.length}건을 ${label}할까요?\n${items.map(x => x.name || x.member_name || x.email || '회원').slice(0,8).join(', ')}${items.length > 8 ? ' 외' : ''}`)) return;
+    setBusy(true); let done = 0; const failed = [];
+    toast(`${label} 처리 중… 화면을 닫지 말고 기다려 주세요.`);
+    for (const item of items) {
+      try { const r = await action(item); if (r?.error) throw r.error; done++; }
+      catch(e) { failed.push(item); }
+    }
+    dirty = false;
+    try { await load(); document.getElementById('admin-view-title')?.focus({preventScroll:true}); if (after) after(failed); }
+    catch(e) { gate('처리 후 목록을 확인하지 못했습니다','일부 처리가 반영되었을 수 있습니다. 새로 불러온 뒤 확인해 주세요.',true); }
+    finally { setBusy(false); }
+    toast(`${label}: 성공 ${done}건${failed.length ? ` · 실패 ${failed.length}건. 목록에서 상태를 확인하고 실패한 항목만 다시 처리해 주세요.` : ''}`,!!failed.length);
+  }
+  const views = {
+    tasks() {
+      const pending = S.members.filter(m => m.status === 'pending').sort((a,b) => String(a.created_at).localeCompare(String(b.created_at)));
+      const stat = (label,value,next,detail) => button(el('span',{class:'adm-stat-inner'},el('span',{},label),el('strong',{},value),el('small',{},detail)),() => go(next),'stat');
+      const featured = el('div',{class:'adm-task-panel'},el('div',{class:'adm-panel-heading'},el('div',{},el('p',{class:'adm-eyebrow'},'먼저 확인하세요'),el('h3',{},pending.length ? '가입을 기다리는 회원이 있습니다' : '가입 승인 대기를 모두 확인했습니다')),button('가입 승인 열기',() => go('pending'),'primary')),
+        pending.length ? el('div',{class:'adm-task-list'},...pending.slice(0,3).map(m => el('div',{class:'adm-task-row'},person(m),el('div',{class:'adm-task-meta'},badge(m.consent_at ? '정보 입력 완료' : '정보 미입력'),el('span',{class:'adm-note'},fmt(m.created_at)),button('검토',() => go('pending',{q:m.email || m.name})))))) : el('p',{class:'adm-note'},'새 가입 신청이 도착하면 이곳에서 확인할 수 있습니다.'));
+      return el('div',{class:'adm-stack'},el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보 확인 → 승인'),stat('확인된 승인 요청',S.requestError ? '—' : num(S.requests.length),'requests',S.requestError ? '목록 연결 확인 필요' : '최근 조회 · 최대 300건'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`)),featured,
+        el('div',{class:'adm-two-col'},el('section',{class:'adm-panel'},el('div',{class:'adm-panel-heading'},el('h3',{},'승인 요청'),button('모두 보기',() => go('requests'))),S.requestError ? empty('요청 목록을 확인할 수 없습니다','승인 요청 화면에서 다시 불러올 수 있습니다.') : S.requests.length ? el('div',{class:'adm-task-list'},...S.requests.slice(0,3).map(r => el('div',{class:'adm-request-preview'},el('strong',{},r.member_name || '회원'),el('span',{},r.resource_name || '승인 요청'),el('small',{class:'adm-note'},r.resource_category || '가입')))) : empty('열린 요청이 없습니다','요청이 접수되면 여기에 표시됩니다.')),
+        el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
     },
     pending() {
-      const list = S.members.filter(m => m.status === "pending");
-      if (!list.length) return el("p", { class: "pa-note" }, "대기 중인 회원이 없습니다.");
-      return table(["가입일", "이름", "소속", "연락처", "이메일", "정보입력", "등급", ""], list.map(m => {
-        const s = gradeSelect(S.grades.find(g => g.name === "설계사")?.id);
-        return el("tr", {}, el("td", {}, fmt(m.created_at)), el("td", {}, m.name || ""), el("td", {}, m.branch || ""), el("td", {}, m.phone || ""),
-          el("td", {}, m.email || ""), el("td", {}, m.consent_at ? "완료" : "미입력"), el("td", {}, s),
-          el("td", {}, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: () =>
-              run(sb.from("members").update({ status: "active", grade_id: +s.value }).eq("id", m.id), "승인했습니다") }, "승인"), " ",
-            el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm", onclick: () =>
-              confirm(`${m.email} 가입을 거절하고 계정을 지울까요?`) && run(sb.rpc("reject_member", { p_id: m.id }), "거절했습니다") }, "거절")));
-      }));
+      const f = filters.pending, selected = new Set(), rowGrades = new Map();
+      const q = filter(input('대기 회원 검색',f.q,{type:'search',placeholder:'이름 · 소속 · 이메일'}));
+      const complete = filter(select('가입 정보 입력 여부',[['','정보 입력 전체'],['yes','정보 입력 완료'],['no','정보 미입력']],f.complete));
+      const grade = filter(gradeSelect('일괄 승인 등급',defaultGrade()));
+      const body = el('div'), summary = el('span',{class:'adm-note','role':'status'});
+      const approve = button('선택 회원 승인',() => {
+        const chosen = S.members.filter(m => selected.has(m.id) && m.status === 'pending');
+        if (!grade.value) return toast('승인 등급을 먼저 선택해 주세요.',true);
+        bulk(chosen,m => checkedUpdate(m.id,{status:'active',grade_id:+grade.value},true),`${gname(+grade.value)} 등급으로 승인`);
+      },'primary',{disabled:true});
+      const sync = () => { summary.textContent = `${selected.size}명 선택`; approve.disabled = !selected.size || !grade.value; };
+      const draw = () => {
+        const list = S.members.filter(m => m.status === 'pending' && matches(f.q,m.name,m.branch,m.email) && (!f.complete || (f.complete === 'yes') === !!m.consent_at)).sort((a,b) => String(a.created_at).localeCompare(String(b.created_at)));
+        const paging = pager(list,f,() => {selected.clear();draw();});
+        const slice = pageRows(list,f);
+        const all = check('현재 페이지 대기 회원 모두 선택',slice.length > 0 && slice.every(m => selected.has(m.id)),e => { slice.forEach(m => e.target.checked ? selected.add(m.id) : selected.delete(m.id)); draw(); });
+        body.replaceChildren(list.length ? el('div',{class:'adm-select-page'},all,el('span',{},'현재 페이지 모두 선택')) : el('span'),list.length ? table(['선택','가입 정보','신청일·정보 입력','승인 등급','처리'],slice.map(m => {
+          const gs = filter(gradeSelect(`${m.name || m.email} 승인 등급`,rowGrades.get(m.id) ?? defaultGrade()));
+          gs.addEventListener('change',()=>rowGrades.set(m.id,gs.value));
+          return el('tr',{},el('td',{},check(`${m.name || m.email} 선택`,selected.has(m.id),e => {e.target.checked ? selected.add(m.id) : selected.delete(m.id);sync();all.querySelector('input').checked = slice.every(x => selected.has(x.id));})),el('td',{},person(m),el('small',{class:'adm-note'},m.phone || '연락처 미입력')),el('td',{},el('span',{},fmt(m.created_at)),el('br'),badge(m.consent_at ? '정보 입력 완료' : '정보 미입력')),el('td',{},gs),el('td',{},el('div',{class:'adm-actions'},button('승인',() => mutate(() => checkedUpdate(m.id,{status:'active',grade_id:+gs.value},true),'가입을 승인했습니다.'),'primary',{disabled:!S.grades.length}),button('거절',() => { if (confirmAction(`${m.name || m.email} 님의 가입을 거절하고 계정을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) mutate(() => sb.rpc('reject_member',{p_id:m.id}),'가입을 거절했습니다.'); },'danger'))));
+        }),'가입 승인 대기') : empty('조건에 맞는 대기 회원이 없습니다','검색어나 정보 입력 필터를 확인해 주세요.'),paging);
+        sync();
+      };
+      q.addEventListener('input',() => { f.q = q.value; f.page = 1; selected.clear(); draw(); }); complete.addEventListener('change',() => {f.complete = complete.value;f.page = 1;selected.clear();draw();});
+      draw();
+      return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('대기 회원 검색',q),field('가입 정보',complete)),el('p',{class:'adm-note'},'먼저 신청한 회원부터 표시합니다. 정보가 미입력된 경우 승인 전에 확인해 주세요.'),el('div',{class:'adm-bulk'},summary,field('선택 회원에게 부여할 등급',grade),approve),body);
     },
     members() {
-      const q = el("input", { class: "pa-in", placeholder: "이름·소속·이메일 검색" });
-      const f = el("select", { class: "pa-in pa-sm" }, el("option", { value: "" }, "전체 등급"), ...S.grades.map(g => el("option", { value: String(g.id) }, g.name)));
-      const st = el("select", { class: "pa-in pa-sm" }, ...[["", "전체 상태"], ["active", "사용 중"], ["suspended", "정지"], ["pending", "대기"]].map(([v, t]) => el("option", { value: v }, t)));
-      const body = el("div");
+      const f = filters.members;
+      const q = filter(input('회원 검색',f.q,{type:'search',placeholder:'이름 · 소속 · 이메일 · 연락처'}));
+      const g = filter(select('회원 등급 필터',[['','전체 등급'],...S.grades.map(x => [x.id,x.name])],f.grade));
+      const st = filter(select('회원 상태 필터',[['','전체 상태'],['active','사용 중'],['pending','승인 대기'],['suspended','정지']],f.status));
+      const body = el('div');
       const draw = () => {
-        const k = q.value.trim();
-        const list = S.members.filter(m => (!k || [m.name, m.branch, m.email].join(" ").includes(k)) && (!f.value || m.grade_id === +f.value) && (!st.value || m.status === st.value));
-        body.replaceChildren(table(["이름", "소속", "이메일", "등급", "상태", "메모", ""], list.map(m => {
-          const s = gradeSelect(m.grade_id);
-          s.addEventListener("change", () => run(sb.from("members").update({ grade_id: +s.value }).eq("id", m.id), "등급을 바꿨습니다"));
-          const memo = el("input", { class: "pa-in pa-sm", value: m.memo || "" });
-          memo.addEventListener("change", () => run(sb.from("members").update({ memo: memo.value }).eq("id", m.id), "메모 저장"));
-          const act = m.status === "suspended"
-            ? el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm", onclick: () => run(sb.from("members").update({ status: "active" }).eq("id", m.id), "정지를 풀었습니다") }, "정지 해제")
-            : el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm", onclick: () => { const why = prompt("정지 사유 (예: 퇴사)", "퇴사"); if (why !== null) run(sb.from("members").update({ status: "suspended", suspend_reason: why }).eq("id", m.id), "정지했습니다"); } }, "정지");
-          return el("tr", { class: m.status }, el("td", {}, m.name || ""), el("td", {}, m.branch || ""), el("td", {}, m.email || ""), el("td", {}, s),
-            el("td", {}, { active: "사용 중", suspended: "정지 " + (m.suspend_reason || "") + " " + fmt(m.suspended_at), pending: "대기" }[m.status]),
-            el("td", {}, memo), el("td", {}, act));
-        })));
+        const list = S.members.filter(m => matches(f.q,m.name,m.email,m.branch,m.phone) && (!f.grade || m.grade_id === +f.grade) && (!f.status || m.status === f.status));
+        const paging = pager(list,f,draw);
+        body.replaceChildren(list.length ? table(['회원','등급·관리자','상태','회원 관리'],pageRows(list,f).map(m => {
+          const gs = gradeSelect(`${m.name || m.email} 회원 등급`,m.grade_id), memo = input(`${m.name || m.email} 관리 메모`,m.memo || '',{maxlength:'1000'}), initialGrade=gs.value;
+          const saveMember = () => {
+            const patch={};
+            if(gs.value!==initialGrade)patch.grade_id=+gs.value;
+            if(memo.value!==(m.memo||''))patch.memo=memo.value;
+            if(!Object.keys(patch).length)return toast('변경한 내용이 없습니다.');
+            mutate(()=>checkedUpdate(m.id,patch),'회원 정보를 저장했습니다.');
+          };
+          const edit = el('details',{class:'adm-edit'},el('summary',{},'관리 열기'),el('div',{class:'adm-stack'},field('회원 등급',gs),field('관리 메모',memo),el('div',{class:'adm-actions'},button('변경 저장',saveMember,'primary'),m.status === 'pending' ? button('가입 승인으로',() => go('pending',{q:m.email || m.name})) : null,m.status === 'suspended' ? button('정지 해제',() => mutate(() => checkedUpdate(m.id,{status:'active'}),'회원 정지를 해제했습니다.')) : button('회원 정지',() => {const why = window.prompt(`${m.name || m.email} 님의 정지 사유를 입력해 주세요.`,'퇴사'); if (why !== null) mutate(() => checkedUpdate(m.id,{status:'suspended',suspend_reason:why}),'회원을 정지했습니다.');},'danger'))));
+          return el('tr',{},el('td',{},person(m)),el('td',{},gname(m.grade_id),m.is_admin ? badge('관리자') : null),el('td',{},badge({active:'사용 중',pending:'승인 대기',suspended:'정지'}[m.status] || m.status),m.status === 'suspended' ? el('small',{class:'adm-note'},m.suspend_reason || '', ' ',fmt(m.suspended_at)) : null),el('td',{},edit));
+        }),'회원 목록') : empty('검색 결과가 없습니다','다른 검색어나 필터로 찾아보세요.'),paging);
       };
-      [q, f, st].forEach(x => x.addEventListener("input", draw)); draw();
-      return el("div", {}, el("div", { class: "pa-row" }, q, f, st, el("span", { class: "pa-note" }, `총 ${S.members.length}명`)), body);
+      [[q,'q'],[g,'grade'],[st,'status']].forEach(([control,key]) => control.addEventListener(key === 'q' ? 'input' : 'change',() => {if (dirty && !discard()) {control.value=f[key];return;} dirty=false;edited.clear();f[key]=control.value;f.page=1;draw();}));draw();
+      return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('회원 검색',q),field('등급',g),field('상태',st)),body);
     },
-    admins() {
-      const admins = S.members.filter(m => m.is_admin);
-      const pick = el("select", { class: "pa-in" }, ...S.members.filter(m => !m.is_admin && m.status === "active").map(m => el("option", { value: m.id }, `${m.name || ""} ${m.email}`)));
-      return el("div", {},
-        el("p", { class: "pa-note" }, "관리자는 인원 제한이 없습니다. 등급과 별개라 등급을 바꿔도 관리자 권한은 유지됩니다. 마지막 1명은 해제할 수 없습니다."),
-        table(["이름", "이메일", "등급", ""], admins.map(m => el("tr", {}, el("td", {}, m.name || ""), el("td", {}, m.email), el("td", {}, gname(m.grade_id)),
-          el("td", {}, el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm", onclick: () => confirm(`${m.email} 관리자 권한을 해제할까요?`) && run(sb.from("members").update({ is_admin: false }).eq("id", m.id), "해제했습니다") }, "관리자 해제"))))),
-        el("div", { class: "pa-row" }, pick, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: () => pick.value && run(sb.from("members").update({ is_admin: true }).eq("id", pick.value), "관리자로 지정했습니다") }, "관리자 추가")));
-    },
-    grades() {
-      const name = el("input", { class: "pa-in", placeholder: "새 등급 이름" });
-      return el("div", {},
-        el("p", { class: "pa-note" }, "★ 표시 등급이 가입 직후 자동으로 받는 등급입니다. 회원이 있는 등급은 삭제되지 않습니다(다른 등급으로 옮긴 뒤 삭제)."),
-        table(["순서", "이름", "회원 수", "가입 기본", ""], S.grades.map(g => {
-          const n = el("input", { class: "pa-in pa-sm", value: g.name }); n.addEventListener("change", () => run(sb.from("grades").update({ name: n.value.trim() }).eq("id", g.id), "이름을 바꿨습니다"));
-          const s = el("input", { class: "pa-in pa-xs", type: "number", value: String(g.sort) }); s.addEventListener("change", () => run(sb.from("grades").update({ sort: +s.value }).eq("id", g.id)));
-          return el("tr", {}, el("td", {}, s), el("td", {}, n), el("td", {}, S.members.filter(m => m.grade_id === g.id).length),
-            el("td", {}, g.is_default ? "★" : el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm", onclick: () => run(sb.from("grades").update({ is_default: true }).eq("id", g.id), "기본 등급을 바꿨습니다") }, "기본으로")),
-            el("td", {}, el("button", { class: "lux-btn lux-btn--ghost lux-btn--sm", onclick: () => confirm(`'${g.name}' 등급을 삭제할까요?`) && run(sb.from("grades").delete().eq("id", g.id), "삭제했습니다") }, "삭제")));
-        })),
-        el("div", { class: "pa-row" }, name, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: () => name.value.trim() && run(sb.from("grades").insert({ name: name.value.trim(), sort: S.grades.length + 1 }), "추가했습니다") }, "등급 추가")));
+    requests() {
+      if (S.requestError) return el('div',{class:'adm-panel'},empty('승인 요청을 불러오지 못했습니다','연결 상태 또는 승인 요청 기능의 서버 설정을 확인해 주세요. 다른 관리 기능은 계속 사용할 수 있습니다.'),button('요청 다시 불러오기',() => mutate(async () => {await requestData();if(S.requestError)throw S.requestError;render();return {};},'요청 목록을 확인했습니다.',{reload:false})));
+      const f = filters.requests, chosen = new Set();
+      const q = filter(input('승인 요청 검색',f.q,{type:'search',placeholder:'회원 · 소속 · 등급 · 요청 메뉴'}));
+      const body = el('div'), note = el('span',{class:'adm-note','role':'status'},'0건 선택');
+      const done = button('선택 요청 완료 표시',() => bulk(S.requests.filter(r => chosen.has(r.id)),r => sb.rpc('resolve_access_request',{p_id:r.id}),'완료 표시 (메뉴 권한은 변경되지 않음)'),'primary',{disabled:true});
+      const sync = () => {done.disabled = !chosen.size;note.textContent = `${chosen.size}건 선택`;};
+      const draw = () => {
+        const list = S.requests.filter(r => matches(f.q,r.member_name,r.member_email,r.member_branch,r.grade,r.resource_name,r.resource_category)).sort((a,b) => String(a.created_at).localeCompare(String(b.created_at)));
+        const paging = pager(list,f,() => {chosen.clear();draw();});
+        const slice = pageRows(list,f), all = check('현재 페이지 요청 모두 선택',slice.length > 0 && slice.every(r => chosen.has(r.id)),e => {slice.forEach(r => e.target.checked ? chosen.add(r.id) : chosen.delete(r.id));draw();});
+        body.replaceChildren(list.length ? el('div',{class:'adm-select-page'},all,el('span',{},'현재 페이지 모두 선택')) : el('span'),list.length ? table(['선택','요청 회원','요청 내용','접수일','처리'],slice.map(r => {
+          const member = S.members.find(m => m.email && m.email === r.member_email);
+          return el('tr',{},el('td',{},check(`${r.member_name || '회원'} ${r.resource_name || '가입'} 요청 선택`,chosen.has(r.id),e => {e.target.checked ? chosen.add(r.id) : chosen.delete(r.id);sync();all.querySelector('input').checked=slice.every(a=>chosen.has(a.id));})),el('td',{},person({name:r.member_name,branch:r.member_branch,email:r.member_email}),badge(r.grade || '등급 미지정')),el('td',{},el('strong',{},r.resource_name || '가입 승인 요청'),el('small',{class:'adm-note'},r.resource_category || '가입')),el('td',{},fmt(r.created_at)),el('td',{},el('div',{class:'adm-actions'},button(member?.status === 'pending' ? '가입 검토' : '권한 검토',() => member?.status === 'pending' ? go('pending',{q:r.member_email}) : go('matrix',{q:r.resource_name || '',grade:member?.grade_id || ''})),button('회원 보기',() => go('members',{q:r.member_email || r.member_name})),button('완료 표시',() => {if(confirmAction('이 요청을 완료로 표시할까요? 메뉴 권한은 바뀌지 않습니다.'))mutate(() => sb.rpc('resolve_access_request',{p_id:r.id}),'요청을 완료로 표시했습니다.');}))));
+        }),'열린 승인 요청') : empty('열린 요청이 없습니다','권한이 열린 요청은 서버에서 자동으로 정리됩니다.'),paging);sync();
+      };
+      q.addEventListener('input',() => {f.q=q.value;f.page=1;chosen.clear();draw();});draw();
+      return el('div',{class:'adm-stack'},el('p',{class:'adm-callout'},'가입 요청은 가입 승인에서, 메뉴 요청은 등급·메뉴 권한에서 처리하세요. 완료 표시는 요청만 정리하며 권한을 부여하지 않습니다.'),field('승인 요청 검색',q),el('div',{class:'adm-bulk'},note,done),body,el('p',{class:'adm-note'},'서버에서 반환한 열린 요청을 최대 300건 표시합니다. 처리한 뒤 새로고침하면 다음 요청을 확인할 수 있습니다.'));
     },
     matrix() {
-      const want = new Set(S.perms);
-      const rows = S.resources.map(r => el("tr", { class: r.active ? "" : "off" },
-        el("td", {}, el("small", {}, r.category)), el("td", {}, r.name + (r.active ? "" : " (숨김)")),
-        ...S.grades.map(g => { const k = g.id + ":" + r.id; const c = el("input", { type: "checkbox", checked: want.has(k) });
-          c.addEventListener("change", () => c.checked ? want.add(k) : want.delete(k)); return el("td", { class: "c" }, c); })));
-      const allCol = S.grades.map(g => el("th", { class: "c" }, g.name, el("br"),
-        el("button", { class: "pa-mini", onclick: () => { box.querySelectorAll(`td:nth-child(${3 + S.grades.indexOf(g)}) input`).forEach(c => { c.checked = true; c.dispatchEvent(new Event("change")); }); } }, "전체"),
-        el("button", { class: "pa-mini", onclick: () => { box.querySelectorAll(`td:nth-child(${3 + S.grades.indexOf(g)}) input`).forEach(c => { c.checked = false; c.dispatchEvent(new Event("change")); }); } }, "해제")));
-      const save = async () => {
-        const add = [...want].filter(k => !S.perms.has(k)).map(k => { const [g, r] = k.split(":"); return { grade_id: +g, resource_id: +r }; });
-        const del = [...S.perms].filter(k => !want.has(k));
-        for (const k of del) { const [g, r] = k.split(":"); const { error } = await sb.from("grade_permissions").delete().eq("grade_id", +g).eq("resource_id", +r); if (error) return toast(error.message, true); }
-        if (add.length) { const { error } = await sb.from("grade_permissions").insert(add); if (error) return toast(error.message, true); }
-        toast(`저장했습니다 (추가 ${add.length}, 해제 ${del.length})`); load();
+      const want = new Set(S.perms), f = filters.matrix;
+      const q = filter(input('권한 메뉴 검색',f.q,{type:'search',placeholder:'메뉴 이름 · 분류'}));
+      const grade = filter(select('권한표 등급 필터',[['','모든 등급'],...S.grades.map(g => [g.id,g.name])],f.grade));
+      const body = el('div'), changeNote = el('span',{class:'adm-note','role':'status'});
+      const diff = () => ({add:[...want].filter(k=>!S.perms.has(k)),del:[...S.perms].filter(k=>!want.has(k))});
+      const sync = () => {const d=diff();dirty=!!(d.add.length+d.del.length);changeNote.textContent=`저장 전 변경 ${d.add.length+d.del.length}건 · 추가 ${d.add.length} / 해제 ${d.del.length}`;save.disabled=!dirty;};
+      const save = button('권한 변경 저장',async () => {
+        const d=diff(); if (!confirmAction(`권한 추가 ${d.add.length}건, 해제 ${d.del.length}건을 저장할까요? 해당 등급의 모든 회원에게 적용됩니다.`))return;
+        // 기존 API에는 트랜잭션 RPC가 없어 각 변경을 순서대로 저장한다.
+        let done=0;
+        await mutate(async()=>{
+          try {
+            for(const k of d.del){const [g,r]=k.split(':');const result=await sb.from('grade_permissions').delete().eq('grade_id',+g).eq('resource_id',+r);if(result.error)throw result.error;S.perms.delete(k);done++;}
+            if(d.add.length){const rows=d.add.map(k=>{const [g,r]=k.split(':');return{grade_id:+g,resource_id:+r};});const result=await sb.from('grade_permissions').insert(rows);if(result.error)throw result.error;d.add.forEach(k=>S.perms.add(k));done+=d.add.length;}
+            return {};
+          } catch(e){sync();throw {message:done ? '부분 저장됨' : e.message};}
+        },'메뉴 권한을 저장했습니다.');
+        if(dirty){sync();toast(`${done}건 반영 · 남은 변경은 저장되지 않았습니다. 현재 체크를 유지했으니 다시 확인해 주세요.`,true);}
+      },'primary',{disabled:true});
+      const draw = () => {
+        const rows=S.resources.filter(r=>matches(f.q,r.name,r.category));const grades=S.grades.filter(g=>!f.grade||g.id===+f.grade);
+        const heads=['페이지·도구',...grades.map(g=>el('div',{class:'adm-matrix-heading'},el('strong',{},g.name),el('small',{},`${S.members.filter(m=>m.grade_id===g.id).length}명`),el('div',{class:'adm-actions'},button('선택',()=>{rows.forEach(r=>want.add(g.id+':'+r.id));draw();sync();},'secondary',{'aria-label':`${g.name} 검색 결과 모두 선택`}),button('해제',()=>{rows.forEach(r=>want.delete(g.id+':'+r.id));draw();sync();},'secondary',{'aria-label':`${g.name} 검색 결과 모두 해제`}))))];
+        const t = table(heads,rows.map(r=>el('tr',{},el('th',{scope:'row'},el('span',{},r.name),el('small',{class:'adm-note'},r.category || '기타',r.active ? '' : ' · 숨김')), ...grades.map(g=>el('td',{},check(`${g.name} · ${r.name} 이용 허용`,want.has(g.id+':'+r.id),e=>{const k=g.id+':'+r.id;e.target.checked?want.add(k):want.delete(k);sync();}))))),'등급별 메뉴 권한표');t.classList.add('adm-matrix');
+        body.replaceChildren(rows.length && grades.length ? t : empty('표시할 메뉴·등급이 없습니다','검색 조건을 바꾸거나 메뉴와 등급을 먼저 등록하세요.'));sync();
       };
-      return el("div", {}, el("p", { class: "pa-note" }, "칸을 체크한 뒤 [저장]을 눌러야 반영됩니다. 관리자는 체크와 관계없이 모두 보입니다."),
-        el("button", { class: "lux-btn lux-btn--gold", onclick: save }, "저장"),
-        el("div", { class: "pa-scroll" }, el("table", { class: "pa-table pa-matrix" }, el("thead", {}, el("tr", {}, el("th", {}, "분류"), el("th", {}, "페이지·도구"), ...allCol)), el("tbody", {}, ...rows))),
-        el("button", { class: "lux-btn lux-btn--gold", onclick: save }, "저장"));
+      q.addEventListener('input',()=>{f.q=q.value;draw();});grade.addEventListener('change',()=>{f.grade=grade.value;draw();});draw();
+      return el('div',{class:'adm-stack'},el('p',{class:'adm-callout'},'체크한 메뉴는 해당 등급 전체에 열립니다. 관리자는 이 체크와 관계없이 모든 메뉴를 볼 수 있습니다. 변경 후 저장을 눌러 주세요.'),el('div',{class:'adm-toolbar'},field('메뉴 검색',q),field('등급',grade)),el('div',{class:'adm-bulk'},changeNote,save,button('변경 취소',()=>{if(discard()){dirty=false;render();}})),el('p',{class:'adm-note'},'표는 좌우로 스크롤할 수 있습니다. 선택·해제는 현재 검색 결과에만 적용됩니다.'),body);
     },
-    resources() {
-      const f = { kind: el("select", { class: "pa-in pa-sm" }, el("option", { value: "tool" }, "도구"), el("option", { value: "page" }, "페이지")),
-        category: el("input", { class: "pa-in pa-sm", placeholder: "분류" }), name: el("input", { class: "pa-in pa-sm", placeholder: "이름" }),
-        url: el("input", { class: "pa-in", placeholder: "주소 (https://…)" }) };
-      return el("div", {},
-        el("p", { class: "pa-note" }, "도구 주소는 여기에만 저장되고, 권한 있는 회원에게만 내려갑니다. 주소가 바뀌면 이 칸만 고치면 됩니다."),
-        table(["종류", "분류", "이름", "주소", "설명", "사용"], S.resources.map(r => {
-          const inp = (k, cls) => { const i = el("input", { class: "pa-in " + (cls || "pa-sm"), value: r[k] || "" }); i.addEventListener("change", () => run(sb.from("resources").update({ [k]: i.value.trim() || null }).eq("id", r.id), "저장했습니다")); return i; };
-          const a = el("input", { type: "checkbox", checked: r.active }); a.addEventListener("change", () => run(sb.from("resources").update({ active: a.checked }).eq("id", r.id), a.checked ? "다시 보이게 했습니다" : "숨겼습니다"));
-          return el("tr", {}, el("td", {}, r.kind === "tool" ? "도구" : "페이지"), el("td", {}, inp("category")), el("td", {}, inp("name")), el("td", {}, inp("url", "")), el("td", {}, inp("description")), el("td", { class: "c" }, a));
-        })),
-        el("div", { class: "pa-row" }, f.kind, f.category, f.name, f.url, el("button", { class: "lux-btn lux-btn--gold lux-btn--sm", onclick: () => f.name.value.trim() &&
-          run(sb.from("resources").insert({ kind: f.kind.value, category: f.category.value.trim() || "기타", name: f.name.value.trim(), url: f.url.value.trim() || null, sort: S.resources.length + 1 }), "추가했습니다 — 권한 체크표에서 등급을 체크해 주세요") }, "추가")));
-    },
-    audit() {
-      const body = el("div", {}, el("p", { class: "pa-note" }, "불러오는 중…"));
-      sb.from("audit_log").select("*").order("id", { ascending: false }).limit(300).then(({ data, error }) => {
-        if (error) return body.replaceChildren(el("p", {}, error.message));
-        const W = { members: "회원", grades: "등급", grade_permissions: "권한", resources: "페이지·도구" };
-        body.replaceChildren(table(["시각", "누가", "대상", "작업", "내용"], data.map(a => {
-          const d = a.detail || {}; const b = d.before || {}, n = d.after || {};
-          const ch = Object.keys(n).filter(k => !["updated_at", "approved_at", "approved_by"].includes(k) && JSON.stringify(n[k]) !== JSON.stringify(b[k])).map(k => `${k}: ${b[k] ?? ""}→${n[k] ?? ""}`).join(", ");
-          return el("tr", {}, el("td", {}, fmt(a.at)), el("td", {}, a.actor_email || "시스템"), el("td", {}, (W[a.target_table] || a.target_table) + " " + (n.email || n.name || b.email || b.name || a.target_id || "")),
-            el("td", {}, { insert: "추가", update: "변경", delete: "삭제", reject: "가입 거절" }[a.action] || a.action), el("td", {}, el("small", {}, ch.slice(0, 200))));
-        })));
-      });
-      return body;
-    },
-    backup() {
-      const csv = (rows, cols) => "\ufeff" + [cols.join(","), ...rows.map(r => cols.map(c => `"${String(r[c] ?? "").replace(/"/g, '""')}"`).join(","))].join("\r\n");
-      const dl = (name, text) => { const a = el("a", { href: URL.createObjectURL(new Blob([text], { type: "text/csv" })), download: name }); a.click(); };
-      const day = new Date().toISOString().slice(0, 10);
-      return el("div", { class: "pa-card" }, el("h3", {}, "회원 백업"),
-        el("p", {}, "자동 백업: Mac mini가 매일 새벽 회원·등급·권한 전체를 NAS 접근제한 폴더에 암호 파일로 저장합니다(30일치)."),
-        el("p", {}, "수동 백업: 아래 버튼으로 엑셀에서 열리는 파일(CSV)을 받습니다. 개인정보가 들어 있으니 공유 폴더에 두지 마세요."),
-        el("button", { class: "lux-btn lux-btn--gold", onclick: () => dl(`회원_${day}.csv`, csv(S.members.map(m => ({ ...m, grade: gname(m.grade_id) })),
-          ["name", "branch", "phone", "email", "grade", "status", "is_admin", "suspend_reason", "suspended_at", "approved_at", "created_at", "memo"])) }, "회원 엑셀 내려받기"), " ",
-        el("button", { class: "lux-btn lux-btn--ghost", onclick: () => dl(`권한표_${day}.csv`, csv(S.resources.map(r => Object.fromEntries([["category", r.category], ["name", r.name], ...S.grades.map(g => [g.name, S.perms.has(g.id + ":" + r.id) ? "O" : ""])])),
-          ["category", "name", ...S.grades.map(g => g.name)])) }, "권한표 내려받기"));
-    },
+    hits() {
+      const body=el('div'),days=filter(select('방문 집계 기간',[[7,'최근 7일'],[30,'최근 30일'],[90,'최근 90일']],30));let sequence=0;
+      const draw=async()=>{
+        const seq=++sequence,period=+days.value;body.replaceChildren(el('div',{class:'adm-loading',role:'status'},'방문 합계를 불러오는 중…'));
+        try{
+          const r=await sb.rpc('site_hit_summary',{p_days:period});if(r.error)throw r.error;if(seq!==sequence)return;
+          if(!Array.isArray(r.data))throw new Error('invalid response');
+          const rows=r.data; if(!rows.length){body.replaceChildren(empty('집계 자료가 없습니다','기록이 쌓이면 이곳에서 확인할 수 있습니다.'));return;}
+          const views=rows.reduce((a,x)=>a+(+x.views||0),0),joins=rows.reduce((a,x)=>a+(+x.join_clicks||0),0);
+          const chart=(key,label,total)=>{
+            const max=Math.max(1,...rows.map(x=>+x[key]||0));
+            return el('div',{class:'adm-hit-chart',role:'img','aria-label':`최근 ${period}일 날짜별 ${label}. 합계 ${num(total)}회. 아래 날짜별 표에서 모든 값을 확인할 수 있습니다.`},...rows.map(r=>el('span',{class:'adm-hit-bar',style:`--bar:${Math.max(0,+r[key]||0)/max*100}%`,title:`${r.day} · ${label} ${num(r[key])}`})));
+          };
+          body.replaceChildren(el('div',{class:'adm-stack'},
+            el('div',{class:'adm-hit-summary'},el('div',{class:'adm-panel'},el('span',{},'방문 합계'),el('strong',{},num(views))),el('div',{class:'adm-panel'},el('span',{},'합류 문의 클릭'),el('strong',{},num(joins)))),
+            ...[['views','방문',views],['join_clicks','합류 문의 클릭',joins]].map(([key,label,total])=>el('section',{class:'adm-panel'},el('h3',{},`날짜별 ${label} · 최근 ${period}일`),chart(key,label,total),el('div',{class:'adm-chart-range'},el('span',{},rows[0].day),el('span',{},rows.at(-1).day)))),
+            el('details',{class:'adm-panel adm-edit'},el('summary',{},'날짜별 방문·문의 클릭 표'),table(['날짜','방문','합류 문의 클릭'],rows.map(r=>el('tr',{},el('td',{},r.day),el('td',{},num(r.views)),el('td',{},num(r.join_clicks)))),'날짜별 방문 합계'))));
+        }catch(e){if(seq!==sequence)return;body.replaceChildren(empty('방문 합계를 불러오지 못했습니다','연결 상태 또는 방문 집계 기능의 서버 설정을 확인해 주세요.'),button('다시 불러오기',draw));}
+      };days.addEventListener('change',draw);draw();
+      return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('집계 기간',days)),el('p',{class:'adm-note'},'메인·성장 스토리·인트라넷·개인정보처리방침의 페이지 방문 횟수입니다. 방문자 수와 다르며, IP·쿠키·기기 식별값은 저장하지 않습니다.'),body);
+    }
   };
-
-  (async () => {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) { location.href = "../"; return; }
-    const { data } = await sb.rpc("my_profile");
-    if (!data || !data[0] || !data[0].is_admin || data[0].status !== "active") { show(el("div", { class: "pa-card" }, el("h3", {}, "관리자만 볼 수 있습니다"), el("a", { href: "../" }, "← 인트라넷으로"))); return; }
-    load();
-  })();
+  const remember = control => {originals.set(control,controlValue(control));edited.delete(control);dirty=edited.size>0;};
+  const settings = window.PA_ADMIN_SETTINGS ? window.PA_ADMIN_SETTINGS({sb,S,el,button,field,input,select,table,empty,toast,mutate,go,fmt,gname,confirmAction,errorText,remember}) : {};
+  box.addEventListener('click',e=>{const b=e.target.closest('button');if(b){actionScope=b.closest('tr,details,.adm-panel') || b.closest('.adm-content');savesDraft=/저장|추가/.test(b.textContent);}},true);
+  const trackDraft = e => {if(e.target.matches('[data-draft="true"]:not(.adm-filter)')){controlValue(e.target)===originals.get(e.target)?edited.delete(e.target):edited.add(e.target);dirty=edited.size>0;}};
+  box.addEventListener('input',trackDraft);
+  box.addEventListener('change',trackDraft);
+  window.addEventListener('beforeunload',e=>{if(dirty || busy){e.preventDefault();e.returnValue='';}});
+  document.addEventListener('keydown',e=>{if(e.key==='/' && ready && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input,textarea,select,[contenteditable]')){const q=box.querySelector('input[type="search"]');if(q){e.preventDefault();q.focus();}}});
+  sb.auth.onAuthStateChange?.((event)=>{if(event==='SIGNED_OUT'){loadVersion++;setBusy(false);gate('로그아웃되었습니다','인트라넷에서 다시 로그인해 주세요.');}});
+  boot();
 })();
