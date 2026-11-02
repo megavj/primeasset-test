@@ -1,80 +1,90 @@
-/* 도구 허브(index.html #tools) — MAIN-V3-20261102 ③(도구 허브·검색)
-   · 벤토: 바깥 격자 4칸(컨테이너 쿼리 .g-cq 기준). 소개 타일(작은 칸) + 검색 타일(넓은 칸) + 묶음 4개(큰 칸·작은 칸). 묶음 안 카드는 subgrid 로 바깥 칸에 맞춰 전부 같은 크기
-   · 카드: 아이콘·이름·한 줄 설명, 회원 전용은 자물쇠(비로그인) → members/#signup. 세션이 있으면(.is-member) 자물쇠 없이 인트라넷으로
-   · 검색 중(.is-q): 묶음 전부 한 줄 폭으로, 안 맞는 카드·빈 묶음 숨김 */
-.g-hub-bento{display:grid;gap:var(--s2);grid-template-columns:1fr;grid-auto-flow:dense}
-.g-hub-intro{display:flex;flex-direction:column;gap:8px;justify-content:center;padding:22px 22px}
-.g-hub-intro__n{margin:0;display:flex;align-items:baseline;gap:6px;color:var(--text)}
-.g-hub-intro__n b{font-size:44px;font-weight:300;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+/* 도구 허브(index.html #tools) — MAIN-V3-20261102 ③(도구 허브·검색) → DESIGN-DARK-20261102 ③(도구 허브 정리)
+   · 24개가 같은 무게로 페이지 가운데를 차지하던 배치를 → 대표 도구 6개만 크게(벤토: 일반 카드 .g-card, 넓은 칸 2 + 보통 칸 4),
+     나머지 18개는 '전체 도구 보기'(details) 안 묶음 4개 · 작은 타일(.g-tile) 목록으로 접음. 카드 수 24 그대로
+   · 맨 위 한 줄: 왼쪽 '24개 도구·채널·사이트' + 회원가입(보조 버튼), 오른쪽 검색창
+   · 검색 중(.is-q, assets/tool-hub.js): 접힌 목록도 펼쳐 24개 전부에서 찾고, 안 맞는 카드·빈 묶음·빈 대표 칸은 숨김. 지우면 원래 접힘 상태로
+   · 자물쇠(비로그인 → 회원가입) · 세션이 있으면(.is-member) 자물쇠 없이 인트라넷 주소 — 이전 그대로
+   · 배치는 컨테이너 쿼리(.g-cq 폭): 휴대폰 1열 → 560px 2열 → 860px 4열 벤토 */
+
+/* 맨 위 한 줄: 소개 + 검색 */
+.g-hub-top{display:grid;gap:var(--s3);grid-template-columns:1fr;align-items:end;margin:0 0 var(--s4)}
+.g-hub-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--s2) var(--s3)}
+.g-hub-intro__n{grid-column:1 / -1;margin:0;display:flex;align-items:baseline;gap:8px;color:var(--text)}
+.g-hub-intro__n b{font-size:48px;font-weight:300;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .g-hub-intro__n span{font-size:15px;font-weight:var(--fw-label);color:var(--text-2)}
-.g-hub-intro>p:not(.g-hub-intro__n){margin:0;font-size:15px;color:var(--text-3)}
-.g-hub-intro .g-btn{align-self:flex-start;margin-top:4px}
-.g-hub-search{display:flex;flex-direction:column;justify-content:center;gap:8px;padding:18px 20px}
-.g-hub-q{width:100%;min-height:52px;padding:12px 16px 12px 48px;border:1px solid var(--line-2);border-radius:var(--r-in);font:inherit;font-size:17px;color:var(--text);background:var(--bg-2) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aab4c4' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-3.5-3.5'/></svg>") no-repeat 16px center/20px 20px}
+.g-hub-intro>p:not(.g-hub-intro__n){margin:0;font-size:var(--fs-cap);color:var(--text-3)}
+.g-hub-intro .g-btn{justify-self:start}
+.g-hub-search{display:flex;flex-direction:column;gap:var(--s1)}
+.g-hub-q{width:100%;min-height:52px;padding:12px 16px 12px 48px;border:1px solid var(--line-2);border-radius:var(--r-in);font:inherit;font-size:17px;color:var(--text);background:var(--bg-2) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aab4c4' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-3.5-3.5'/></svg>") no-repeat 16px center/20px 20px;transition:border-color .2s ease,box-shadow .2s ease}
+.g-hub-q:hover{border-color:rgba(255,255,255,.26)}
 .g-hub-q:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(214,185,126,.22);outline:none}
 .g-hub-q::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:18px;height:18px;cursor:pointer;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aab4c4' stroke-width='2' stroke-linecap='round'><path d='M6 6l12 12M18 6 6 18'/></svg>") no-repeat center/18px}
 .g-hub-count{margin:0;font-size:var(--fs-cap);color:var(--text-3)}
-.g-hub-group{min-width:0}
-.g-hub-group>h3{font-size:17px;font-weight:600;letter-spacing:-.01em;margin:4px 0 10px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.g-hub-group>h3 small{font-size:var(--fs-cap);font-weight:400;color:var(--text-3)}
-.g-hub-grid{display:grid;gap:10px;grid-template-columns:1fr}
-.g-hub-card{display:flex;align-items:center;gap:12px;min-height:84px;padding:14px 14px 14px 16px;text-decoration:none;color:var(--text);transition:transform .2s ease,border-color .2s ease}
-.g-hub-card:hover{transform:translateY(-2px)}
-.g-hub-ico{flex:none;width:42px;height:42px;border-radius:var(--r-tile);background:rgba(255,255,255,.05);color:var(--text-2);display:flex;align-items:center;justify-content:center}
-.g-hub-ico svg{width:22px;height:22px}
+
+/* 카드 공통 내용: 아이콘 · 이름+한 줄 설명 · 자물쇠/화살표 */
+.g-hub-card{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);min-width:0}
+.g-hub-ico{flex:none;width:40px;height:40px;border-radius:var(--r-tile);background:rgba(255,255,255,.05);color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:color .25s ease}
+.g-hub-ico svg{width:20px;height:20px}
 .g-hub-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
-.g-hub-body b{font-size:16px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
-.g-hub-body small{font-size:var(--fs-cap);color:var(--text-3);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.g-hub-body b{font-size:16px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.g-hub-body small{font-size:var(--fs-cap);color:var(--text-3);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .g-hub-lock,.g-hub-go{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-3);background:rgba(255,255,255,.05)}
-.g-hub-lock svg,.g-hub-go svg{width:15px;height:15px}
+.g-hub-lock svg,.g-hub-go svg{width:14px;height:14px}
 .g-hub-go{color:var(--text);background:rgba(255,255,255,.08);font-weight:500;font-size:15px}
-.g-hub-card--open .g-hub-ico{background:var(--gold-soft);color:var(--gold)}
+.g-hub-card--open .g-hub-ico{background:var(--gold-soft);color:var(--gold)} /* 바로 열리는 공개 도구(실적보드·보험위키)만 아이콘 금색 */
+.g-hub-card:hover .g-hub-ico{color:var(--text)}
+.g-hub-card--open:hover .g-hub-ico{color:var(--gold-hi)}
 .g-hub.is-member .g-hub-lock{display:none}
-.g-hub.is-member .g-hub-card[data-member]::after{content:"";position:absolute;right:16px;top:50%;width:7px;height:7px;margin-top:-5px;border-right:1.5px solid var(--text-2);border-top:1.5px solid var(--text-2);transform:rotate(45deg)}
-.g-hub-none{margin:14px 0 0;color:var(--text-3)}
-/* 검색 중 */
-.g-hub.is-q .g-hub-bento{grid-template-areas:none}
-.g-hub.is-q .g-hub-group,.g-hub.is-q .g-hub-intro,.g-hub.is-q .g-hub-search{grid-area:auto;grid-column:1 / -1!important}
-.g-hub.is-q .g-hub-intro{display:none}
-.g-hub.is-q .g-hub-card[hidden],.g-hub.is-q .g-hub-group[hidden]{display:none!important}
-/* 벤토 배치: 2칸(560px~) / 4칸(860px~) — 바깥 칸에 카드를 맞추는 subgrid */
+.g-hub.is-member .g-hub-card[data-member]::after{content:"";position:absolute;right:20px;top:50%;width:7px;height:7px;margin-top:-5px;border-right:1.5px solid var(--text-2);border-top:1.5px solid var(--text-2);transform:rotate(45deg)}
+.g-hub.is-member .g-hub-card[data-member] .g-hub-body{padding-right:24px} /* 화살표 자리 */
+.g-hub-none{margin:var(--s2) 0 0;color:var(--text-3)}
+
+/* 대표 도구 6개: 휴대폰은 가로형 카드 1열, 560px~ 2열, 860px~ 4열 벤토(넓은 칸 2) */
+.g-hub-key{display:grid;gap:var(--s2);grid-template-columns:1fr}
+.g-hub-card--key .g-hub-body b{font-size:var(--fs-h3);font-weight:var(--fw-h3);line-height:1.35}
+.g-hub-card--key .g-hub-body small{font-size:15px;color:var(--text-2);-webkit-line-clamp:3}
+
+/* 전체 도구 보기: 얇은 선 아래 글자 링크로 펼침 → 묶음 4개 · 작은 타일 */
+.g-hub-all{margin:var(--s4) 0 0;border-top:1px solid var(--line)}
+.g-hub-all>summary{display:inline-flex;align-items:center;gap:8px;min-height:56px;cursor:pointer;list-style:none;font-size:var(--fs-body);font-weight:var(--fw-label);color:var(--text);transition:color .2s ease}
+.g-hub-all>summary::-webkit-details-marker{display:none}
+.g-hub-all>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s ease}
+.g-hub-all[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
+.g-hub-all>summary:hover{color:var(--gold-hi)}
+.g-hub-groups{display:grid;gap:var(--s4);grid-template-columns:1fr;padding:var(--s2) 0 var(--s1)}
+.g-hub-group{min-width:0}
+.g-hub-group>h3{font-size:15px;font-weight:600;letter-spacing:0;color:var(--text-2);margin:0 0 var(--s2);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.g-hub-group>h3 small{font-size:var(--fs-cap);font-weight:400;color:var(--text-3)}
+.g-hub-grid{display:grid;gap:var(--s1);grid-template-columns:1fr}
+.g-hub-grid .g-hub-card{min-height:68px}
+.g-hub-grid .g-hub-ico{width:32px;height:32px;border-radius:8px}
+.g-hub-grid .g-hub-ico svg{width:17px;height:17px}
+
+/* 검색 중: 숨긴 것은 공통 [hidden] 규칙으로 사라짐 */
+.g-hub.is-q .g-hub-all>summary{color:var(--text-2)}
+
 @container (min-width:560px){
-  .g-hub-bento{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .g-hub-search{grid-column:span 2}
-  .g-hub-intro{grid-column:span 2;flex-direction:row;align-items:center;flex-wrap:wrap}
-  .g-hub-intro .g-btn{margin-left:auto}
-  .g-hub-group{grid-column:span 2}
+  .g-hub-key{grid-template-columns:repeat(2,minmax(0,1fr))}
   .g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .g-hub-group{display:grid;grid-template-columns:subgrid}
-  .g-hub-group>h3,.g-hub-group>.g-hub-grid{grid-column:1 / -1}
+  .g-hub-intro{grid-template-columns:auto auto;justify-content:start}
 }
 @container (min-width:860px){
-  .g-hub-bento{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"intro search search search" "intro a a a" "b b c c" "d d d d"}
-  .g-hub-intro{grid-area:intro;flex-direction:column;align-items:flex-start}
-  .g-hub-intro .g-btn{margin-left:0}
-  .g-hub-search{grid-area:search}
-  .g-hub-group--a{grid-area:a}.g-hub-group--b{grid-area:b}.g-hub-group--c{grid-area:c}.g-hub-group--d{grid-area:d}
-  .g-hub-group--a .g-hub-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .g-hub-group--b .g-hub-grid,.g-hub-group--c .g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .g-hub-group--d .g-hub-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .g-hub-intro__n b{font-size:56px}
-  .g-hub.is-q .g-hub-group .g-hub-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .g-hub-top{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:var(--s5)}
+  .g-hub-key{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .g-hub-card--key{flex-direction:column;align-items:flex-start;gap:var(--s2);min-height:200px} /* 여백은 일반 카드 고정값(32) */
+  .g-hub-card--key .g-hub-lock,.g-hub-card--key .g-hub-go{position:absolute;top:var(--pad-card);right:var(--pad-card)}
+  .g-hub-card--wide{grid-column:span 2}
+  .g-hub-card--key .g-hub-body{flex:0 1 auto;padding-right:var(--s1)}
+  .g-hub.is-member .g-hub-card--key[data-member]::after{top:calc(var(--pad-card) + 14px);right:calc(var(--pad-card) + 10px)}
+  .g-hub-groups{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4) var(--s5)}
+  .g-hub-grid{grid-template-columns:1fr} /* 묶음 2열 · 묶음 안은 한 줄 목록 */
 }
-/* subgrid 지원: 카드 폭을 바깥 4칸에 정확히 맞춤(모든 카드 같은 폭) */
-@supports (grid-template-columns:subgrid){
-  @container (min-width:860px){
-    .g-hub-group{display:grid;grid-template-columns:subgrid}
-    .g-hub-group>h3,.g-hub-group>.g-hub-grid{grid-column:1 / -1}
-    .g-hub-group>.g-hub-grid{display:grid;grid-template-columns:subgrid}
-  }
-}
-/* 컨테이너 쿼리 미지원: 화면 폭 기준 2칸 */
+/* 컨테이너 쿼리 미지원: 화면 폭 기준 2열 */
 @supports not (container-type:inline-size){
-  @media (min-width:600px){.g-hub-bento{grid-template-columns:repeat(2,minmax(0,1fr))}.g-hub-search,.g-hub-intro,.g-hub-group{grid-column:span 2}.g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (min-width:600px){.g-hub-key,.g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 }
 @media (max-width:720px){
-  .g-hub-card{min-height:76px;padding:12px 12px 12px 14px}
-  .g-hub-ico{width:38px;height:38px}
+  .g-hub-intro__n b{font-size:40px}
   .g-hub-q{font-size:16px;min-height:48px}
 }
-@media (prefers-reduced-motion:reduce){.g-hub-card{transition:none}}
+@media (prefers-reduced-motion:reduce){.g-hub-ico,.g-hub-all>summary,.g-hub-q{transition:none}}
