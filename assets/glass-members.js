@@ -17,11 +17,11 @@
     return e;
   };
   const box = $("#pa-app");
-  const show = (...nodes) => { box.removeAttribute("aria-busy"); box.replaceChildren(...nodes); }; // FUNC-FIX B7: 불러오는 틀(members/index.html)은 여기서 통째로 바뀜
+  const show = (...nodes) => { box.removeAttribute("aria-busy"); document.body.classList.add("pa-hero-off"); box.replaceChildren(...nodes); }; // FUNC-FIX B7: 불러오는 틀은 여기서 통째로 바뀜, 고정 소개 글은 로그인 화면만(아래 loginView)
   const D = () => null; // 개발용 '섹션 설명' 문구는 유리 시안 화면에서 뺌
   const N = (t) => el("p", { class: "pa-note" }, t); // 아주 짧은 안내만
   const msg = (t, sub) => el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, t), sub ? el("p", {}, sub) : null);
-  const mode = (inside) => document.body.classList.toggle("pa-logged", !!inside); // 로그인 후: 4개 메뉴·휴대폰 탭바 표시
+  const mode = (inside) => { document.body.classList.toggle("pa-logged", !!inside); document.documentElement.classList.remove("pa-in"); }; // 로그인 후: 4개 메뉴·휴대폰 탭바 표시(html.pa-in 은 첫 화면 전 임시 표시, B7)
 
   if (!C.url || !C.anonKey || !window.supabase) {
     show(msg("로그인 준비 중입니다", "관리자가 로그인 서버 설정을 마치면 이 화면에서 구글 계정 또는 이메일로 로그인할 수 있습니다."));
@@ -115,8 +115,8 @@
       if (expired) mailBox.open = true;
       linkErr = null; // 한 번만 안내
     }
+    // FUNC-FIX B7: 맨 위 소개 한 줄('가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.')은 members/index.html 의 고정 글(.pa-hero-static)을 보여 줌 — 다시 그리지 않음
     show(el("div", { class: "pa-login" }, errCard,
-      el("div", { class: "pa-card pa-card--hero" }, el("p", { class: "pa-pitch" }, "가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.")),
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, su ? "회원가입 · 로그인" : "로그인"),
         N("구글 계정 버튼 하나로 로그인. 처음이면 로그인하는 순간 가입 신청이 됩니다."),
         kakao,
@@ -130,6 +130,7 @@
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "연락처"), N("가입·승인 문의."),
         el("p", {}, "프라임에셋 이사 김상현 · 전화 ", el("a", { href: "tel:010-8714-9262" }, "010-8714-9262"), " · ",
           el("a", { href: "https://open.kakao.com/o/sFMF26y", target: "_blank", rel: "noopener" }, "카카오 오픈채팅")))));
+    document.body.classList.remove("pa-hero-off");
   }
 
   function profileView(p) {

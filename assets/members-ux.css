@@ -27,11 +27,12 @@
 .pa-card .pa-kakao p.pa-note{color:var(--text-2);font-size:15px;margin:0 0 10px}
 .pa-kakao b{color:var(--gold)}
 
-/* ④ 불러오는 동안 틀 — 자리는 처음부터(바닥글이 화면 밖에 머묾), 모양은 1초 뒤에만(.pa-sk-show, 인라인 스크립트). 그려지면 통째로 사라짐 */
+/* ④ 불러오는 동안 틀 — 자리는 처음부터(바닥글이 화면 밖에 머묾), 회색 막대는 1초 뒤에만(html.pa-sk-show). 그려지면 통째로 사라짐 */
 .pa-sk{min-height:calc(100vh - 120px)}
+html.pa-in .pa-hero-static,body.pa-logged .pa-hero-static,body.pa-hero-off .pa-hero-static{display:none} /* 맨 위 소개 한 줄(고정 글)은 로그인 화면에서만 */
 .pa-sk-fade{opacity:0}
-#pa-app.pa-sk-show .pa-sk-fade{opacity:1;transition:opacity .25s ease}
-#pa-app[data-sk="in"] .pa-sk-out,#pa-app:not([data-sk="in"]) .pa-sk-in{display:none}
+html.pa-sk-show .pa-sk-fade{opacity:1;transition:opacity .25s ease}
+html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르기: members/index.html <head> 스크립트 */
 .pa-sk .sk{display:block;height:16px;border-radius:8px;background:rgba(255,255,255,.06);margin:0 0 12px}
 .pa-sk .sk-h{height:22px;width:38%;margin-bottom:16px}
 .pa-sk .sk-btn{height:56px;border-radius:999px;margin:18px 0}
