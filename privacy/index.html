@@ -24,6 +24,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="../assets/glass.css?v=13">
+<link rel="stylesheet" href="../assets/privacy.css?v=1">
+<script src="../assets/privacy.js?v=1"></script>
 </head>
 <body class="g-privacy">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -38,41 +40,72 @@
       <a href="../performance/">실적보드</a>
       <a href="http://wiki.primeasset.info/">보험위키</a>
       <a href="../members/">설계사 인트라넷</a>
-      <a href="../members/#login" class="g-menu-login">로그인</a>
+      <a href="../members/#login" class="g-menu-login" data-privacy-guest>로그인</a>
     </nav>
     <div class="g-nav-btns">
-      <a class="g-btn g-btn--ghost" href="../members/#signup">회원가입</a>
-      <a class="g-btn g-btn--pri" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의</a>
+      <a class="g-btn g-btn--ghost" href="../members/#signup" data-privacy-guest>회원가입</a>
+      <a class="g-btn g-btn--pri" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener" data-privacy-guest>합류 문의<span class="sr"> (새 창)</span></a>
+      <a class="g-btn g-btn--ghost" href="../members/" data-privacy-member>인트라넷으로</a>
     </div>
   </div>
 </header>
 
-<main id="main">
-  <header class="g-page-head">
-    <span class="g-kicker">프라임에셋 프리미엄</span>
+<main id="main" tabindex="-1" class="privacy-main">
+  <header class="privacy-hero">
+    <p class="g-kicker">설계사 인트라넷 · 개인정보 안내</p>
     <h1>개인정보처리방침</h1>
-    <p class="g-lead">설계사 인트라넷 회원 개인정보 처리 기준입니다.</p>
+    <p class="privacy-lead">설계사 인트라넷 회원 개인정보 처리 기준입니다.</p>
+    <div class="privacy-document-tools"><a href="#policy" class="g-btn g-btn--ghost">방침 전문 읽기 <span aria-hidden="true">↓</span></a><button type="button" class="privacy-text-button" id="privacy-print" hidden>인쇄 / PDF 저장 <span aria-hidden="true">↗</span></button></div>
   </header>
-
-  <section class="g-sec g-sec--narrow g-policy">
-    <div class="g-card">
-<div class="policy">
-<p class="pa-note">시행일: (정식 공개일 기재 예정) · 테스트 단계 초안입니다. 보유기간(4항)은 2026-10-30 확정했습니다. 보호책임자·국외 이전 항목은 정식 공개 전 채웁니다.</p>
-
-<h2>1. 처리 목적</h2>
+  <aside class="privacy-draft" aria-label="시행일 및 초안 안내">
+    <span class="privacy-draft-label">공개 전 확인 중</span>
+    <p class="pa-note">시행일: (정식 공개일 기재 예정) · 테스트 단계 초안입니다. 보유기간(4항)은 2026-10-30 확정했습니다. 보호책임자·국외 이전 항목은 정식 공개 전 채웁니다.</p>
+  </aside>
+  <section class="privacy-overview" aria-labelledby="overview-title">
+    <div class="privacy-overview-head"><h2 id="overview-title">먼저 살펴보기</h2><p>빠르게 찾기 위한 안내입니다. 자세한 기준은 아래 방침 전문을 확인해 주세요.</p></div>
+    <div class="privacy-summary-grid">
+      <a href="#information"><span class="privacy-summary-label">처리 항목</span><h3>어떤 정보를 처리하나요?</h3><p>이름·소속·휴대폰 번호·로그인 이메일 등</p><span class="privacy-summary-link">2항 확인 <span aria-hidden="true">↗</span></span></a>
+      <a href="#retention"><span class="privacy-summary-label">보유기간</span><h3>얼마나 보관하나요?</h3><p>회원 상태와 기록 종류에 따른 보유기간</p><span class="privacy-summary-link">4항 확인 <span aria-hidden="true">↗</span></span></a>
+      <a href="#rights"><span class="privacy-summary-label">회원의 권리</span><h3>내 정보에 관한 권리는?</h3><p>열람·정정·삭제·처리정지 요구</p><span class="privacy-summary-link">7항 확인 <span aria-hidden="true">↗</span></span></a>
+    </div>
+  </section>
+  <div class="privacy-reading-layout">
+    <nav class="privacy-toc" id="contents" aria-label="개인정보처리방침 목차" tabindex="-1">
+      <details open><summary><span>이 문서의 목차</span><span class="privacy-toc-count">9개 항목</span></summary><ol>
+      <li><a href="#purpose"><span class="privacy-toc-number" aria-hidden="true">01</span><span>처리 목적</span></a></li>
+      <li><a href="#information"><span class="privacy-toc-number" aria-hidden="true">02</span><span>처리 항목</span></a></li>
+      <li><a href="#basis"><span class="privacy-toc-number" aria-hidden="true">03</span><span>처리 근거</span></a></li>
+      <li><a href="#retention"><span class="privacy-toc-number" aria-hidden="true">04</span><span>보유 및 이용 기간</span></a></li>
+      <li><a href="#destruction"><span class="privacy-toc-number" aria-hidden="true">05</span><span>파기 절차와 방법</span></a></li>
+      <li><a href="#providers"><span class="privacy-toc-number" aria-hidden="true">06</span><span>처리 위탁 및 국외 이전</span></a></li>
+      <li><a href="#rights"><span class="privacy-toc-number" aria-hidden="true">07</span><span>정보주체의 권리</span></a></li>
+      <li><a href="#security"><span class="privacy-toc-number" aria-hidden="true">08</span><span>안전성 확보 조치</span></a></li>
+      <li><a href="#officer"><span class="privacy-toc-number" aria-hidden="true">09</span><span>개인정보 보호책임자</span></a></li>
+      </ol></details>
+      <p class="privacy-toc-help">항목을 선택하면 해당 내용으로 이동합니다.</p>
+    </nav>
+    <article class="policy privacy-document" id="policy" aria-label="개인정보처리방침 전문" tabindex="-1">
+    <section class="privacy-clause" id="purpose" aria-labelledby="purpose-title" tabindex="-1">
+<h2 id="purpose-title">1. 처리 목적</h2>
 <p>프라임에셋 프리미엄사업부 설계사 인트라넷(이하 '인트라넷')의 회원 가입·본인 확인, 등급별 영업지원 도구·자료 제공, 회원 관리(승인·정지), 부정 이용 방지와 분쟁 대응을 위해 개인정보를 처리합니다.</p>
-
-<h2>2. 처리 항목</h2>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="purpose" aria-label="1. 처리 목적 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <section class="privacy-clause" id="information" aria-labelledby="information-title" tabindex="-1">
+<h2 id="information-title">2. 처리 항목</h2>
 <ul>
 <li>필수: 이름, 소속(본부·지사), 휴대폰 번호, 로그인 이메일(구글 계정 또는 인증 이메일)</li>
 <li>자동 생성: 가입·승인·정지 일시, 등급, 관리자 변경 기록, 로그인 기록(접속 일시·IP 등 로그인 서버 기록)</li>
 </ul>
 <p>사이트 개선을 위해 페이지 방문 수와 '합류 문의' 버튼 클릭 수를 날짜별 합계로만 집계하며, 개인을 알아볼 수 있는 정보(IP, 쿠키, 기기 식별값 등)는 수집·저장하지 않습니다.</p>
-
-<h2>3. 처리 근거</h2>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="information" aria-label="2. 처리 항목 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <section class="privacy-clause" id="basis" aria-labelledby="basis-title" tabindex="-1">
+<h2 id="basis-title">3. 처리 근거</h2>
 <p>정보주체의 동의(개인정보 보호법 제15조 제1항 제1호)에 따라 처리합니다. 가입 화면에서 필수 항목 동의를 받습니다.</p>
-
-<h2>4. 보유 및 이용 기간</h2>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="basis" aria-label="3. 처리 근거 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <section class="privacy-clause" id="retention" aria-labelledby="retention-title" tabindex="-1">
+<h2 id="retention-title">4. 보유 및 이용 기간</h2>
 <ul>
 <li><b>이용 중인 회원:</b> 회원 자격이 유지되는 동안</li>
 <li><b>정지 회원(퇴사 등):</b> 정지일로부터 <b>5년</b> 보관 후 지체 없이 파기합니다. 위촉계약 관계에서 생기는 상사채권의 소멸시효가 5년(상법 제64조)이므로, 수수료·도구 이용 관련 분쟁 확인과 재위촉 시 이력 확인을 위해 이 기간을 보관하며, 가입 시 이 기간에 대한 동의를 받습니다. 보관 중에는 도구·자료 이용이 모두 차단되고 관리자만 열람할 수 있습니다.</li>
@@ -80,30 +113,49 @@
 <li><b>관리자 변경 기록·접속 기록:</b> <b>2년</b> 보관 후 파기합니다(개인정보의 안전성 확보조치 기준 제8조는 개인정보처리시스템 접속기록을 1년 이상 보관하도록 정하고 있으며, 회원 수가 늘어나는 경우에 대비해 2년으로 정합니다).</li>
 <li><b>본인이 삭제·탈퇴를 요구하는 경우:</b> 개인정보 보호법 제36조·제37조에 따라 지체 없이 처리합니다. 다만 다른 법령에서 보존을 정한 정보는 그 기간 동안 분리하여 보관합니다(같은 법 제21조).</li>
 </ul>
-
-<h2>5. 파기 절차와 방법</h2>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="retention" aria-label="4. 보유 및 이용 기간 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <section class="privacy-clause" id="destruction" aria-labelledby="destruction-title" tabindex="-1">
+<h2 id="destruction-title">5. 파기 절차와 방법</h2>
 <p>보유기간이 끝난 정보는 매일 자동 점검으로 확인해 데이터베이스에서 복구할 수 없도록 삭제합니다. 백업 파일은 30일이 지나면 순서대로 삭제되므로, 파기된 정보는 늦어도 30일 안에 백업에서도 사라집니다.</p>
-
-<h2>6. 처리 위탁 및 국외 이전</h2>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="destruction" aria-label="5. 파기 절차와 방법 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <section class="privacy-clause" id="providers" aria-labelledby="providers-title" tabindex="-1">
+<h2 id="providers-title">6. 처리 위탁 및 국외 이전</h2>
 <ul>
 <li><span translate="no">Supabase, Inc.</span> — 회원 데이터 보관과 로그인 처리. 보관 위치: 서버 지역 선택에 따름(서울 지역 선택 예정)</li>
 <li><span translate="no">Google LLC</span> — 구글 계정 로그인(구글 로그인 선택 시)</li>
 <li><span translate="no">GitHub, Inc.</span> — 웹페이지 호스팅(회원 정보는 저장하지 않음)</li>
 </ul>
 <p>국외 이전 항목·국가·시기·방법은 정식 공개 전 확정해 이 항목에 적습니다(개인정보 보호법 제28조의8).</p>
-
-<h2>7. 정보주체의 권리</h2>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="providers" aria-label="6. 처리 위탁 및 국외 이전 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <section class="privacy-clause" id="rights" aria-labelledby="rights-title" tabindex="-1">
+<h2 id="rights-title">7. 정보주체의 권리</h2>
 <p>회원은 언제든지 자신의 개인정보 열람·정정·삭제·처리정지를 요구할 수 있습니다. 요구는 아래 보호책임자에게 하시면 지체 없이 처리합니다.</p>
-
-<h2>8. 안전성 확보 조치</h2>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="rights" aria-label="7. 정보주체의 권리 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <section class="privacy-clause" id="security" aria-labelledby="security-title" tabindex="-1">
+<h2 id="security-title">8. 안전성 확보 조치</h2>
 <p>관리자 권한 최소 부여, 행 단위 접근 통제(본인·관리자 외 열람 불가), 전송 구간 암호화(HTTPS), 관리자 변경 기록 보관, 백업 파일 암호화와 접근 제한 저장소 보관.</p>
-
-<h2>9. 개인정보 보호책임자</h2>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="security" aria-label="8. 안전성 확보 조치 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <section class="privacy-clause" id="officer" aria-labelledby="officer-title" tabindex="-1">
+<h2 id="officer-title">9. 개인정보 보호책임자</h2>
 <p>(정식 공개 전 기재: 성명·직책·연락처)</p>
-</div>
-    </div>
-  </section>
+<div class="privacy-clause-tools"><a href="#contents">목차로</a><button type="button" data-copy-section="officer" aria-label="9. 개인정보 보호책임자 링크 복사" hidden>링크 복사 <span aria-hidden="true">↗</span></button></div>
+</section>
+    <div class="privacy-document-end"><p>개인정보처리방침 끝</p><div><a href="#main">맨 위로 <span aria-hidden="true">↑</span></a><a href="../members/">설계사 인트라넷 <span aria-hidden="true">↗</span></a></div></div>
+    </article>
+  </div>
 </main>
+<div class="privacy-status" id="privacy-status" role="status" aria-live="polite" aria-atomic="true"></div>
+<dialog class="privacy-copy-dialog" id="privacy-copy-dialog" aria-labelledby="copy-title" aria-describedby="copy-description">
+  <h2 id="copy-title">이 항목의 링크</h2>
+  <p id="copy-description">자동 복사를 사용할 수 없습니다. 아래 주소를 선택해 직접 복사해 주세요.</p>
+  <label for="privacy-copy-url">링크 주소</label><input id="privacy-copy-url" type="text" readonly spellcheck="false" autocomplete="off">
+  <form method="dialog"><button class="g-btn g-btn--ghost" type="submit">닫기</button></form>
+</dialog>
 
 <footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="../privacy/">개인정보처리방침</a></footer>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(이름·이메일·쿠키·식별자 없음). 설정은 auth-config.js 재사용 -->

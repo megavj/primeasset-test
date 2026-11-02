@@ -1,0 +1,144 @@
+/* PAGES-V1 6: 개인정보 문서 전용. 공통 토큰만 참조하며 다른 페이지에는 적용하지 않음. */
+.g-privacy [data-privacy-member]{display:none!important}
+html.privacy-member .g-privacy [data-privacy-guest]{display:none!important}
+html.privacy-member .g-privacy [data-privacy-member]{display:inline-flex!important}
+.g-privacy .g-nav{max-width:1200px}
+.g-privacy .g-nav .g-bar{flex-wrap:wrap}
+.g-privacy .g-menu a{min-width:44px}
+.g-privacy .g-nav-btns .g-btn{min-height:44px}
+.g-privacy .privacy-main{max-width:1120px;margin:0 auto;padding:64px 24px 0}
+.g-privacy .privacy-hero{padding:0 0 40px}
+.g-privacy .privacy-hero .g-kicker{margin:0 0 20px}
+.g-privacy .privacy-hero h1{font-size:clamp(32px,4.6vw,56px);font-weight:700;letter-spacing:-.045em;line-height:1.22}
+.g-privacy .privacy-lead{margin:20px 0 0;color:var(--text-2)}
+.g-privacy .privacy-document-tools{display:flex;align-items:center;gap:12px 24px;flex-wrap:wrap;margin-top:28px}
+.g-privacy .privacy-text-button{display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:10px 4px;border:0;background:none;color:var(--text-2);font:inherit;font-size:15px;cursor:pointer}
+.g-privacy .privacy-text-button:hover{color:var(--text)}
+.g-privacy .privacy-draft{display:grid;grid-template-columns:144px minmax(0,1fr);gap:16px;padding:24px;border:1px solid var(--line-2);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;background:var(--bg-1)}
+.g-privacy .privacy-draft-label{font-size:14px;font-weight:600;color:var(--gold);padding-top:2px}
+.g-privacy .privacy-draft .pa-note{margin:0;color:var(--text-2);font-size:14px;line-height:1.8}
+.g-privacy .privacy-overview{padding:40px 0 56px}
+.g-privacy .privacy-overview-head{margin-bottom:20px}
+.g-privacy .privacy-overview h2{font-size:20px;letter-spacing:-.02em}
+.g-privacy .privacy-overview-head p{margin:8px 0 0;font-size:14px;color:var(--text-3)}
+.g-privacy .privacy-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.g-privacy .privacy-summary-grid>a{display:flex;flex-direction:column;padding:24px;background:var(--bg-1);border:1px solid var(--line);border-radius:var(--r-card);text-decoration:none;transition:border-color .2s,background-color .2s}
+.g-privacy .privacy-summary-grid>a:hover{border-color:var(--line-2);background:var(--bg-2)}
+.g-privacy .privacy-summary-label{font-size:14px;color:var(--text-3);margin-bottom:12px}
+.g-privacy .privacy-summary-grid h3{font-size:19px;line-height:1.5;letter-spacing:-.025em;text-wrap:initial}
+.g-privacy .privacy-summary-grid p{font-size:15px;line-height:1.7;color:var(--text-2);margin:12px 0 20px}
+.g-privacy .privacy-summary-link{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;font-size:14px;color:var(--text-2)}
+.g-privacy .privacy-reading-layout{display:grid;grid-template-columns:256px minmax(0,1fr);gap:64px;align-items:start;padding-top:32px;border-top:1px solid var(--line-2)}
+.g-privacy .privacy-toc{position:sticky;top:112px;align-self:start}
+.g-privacy .privacy-toc details{border-bottom:1px solid var(--line)}
+.g-privacy .privacy-toc summary{display:flex;align-items:center;gap:12px;list-style:none;min-height:48px;cursor:pointer;padding:4px 8px;font-size:16px;font-weight:600}
+.g-privacy .privacy-toc summary::-webkit-details-marker{display:none}
+.g-privacy .privacy-toc summary::after{content:'+';margin-left:auto;font-size:20px;color:var(--text-2)}
+.g-privacy .privacy-toc details[open] summary::after{content:'−'}
+.g-privacy .privacy-toc-count{color:var(--text-3);font-size:14px;font-weight:400}
+.g-privacy .privacy-toc ol{list-style:none;padding:12px 0 20px;margin:0;display:grid;gap:4px}
+.g-privacy .privacy-toc li{margin:0;padding:0}
+.g-privacy .privacy-toc a{display:flex;align-items:center;gap:12px;min-height:44px;padding:10px 12px;font-size:14px;line-height:1.5;border-radius:8px;text-decoration:none;color:var(--text-2);border-left:2px solid transparent}
+.g-privacy .privacy-toc-number{font-variant-numeric:tabular-nums;color:var(--text-3);font-size:14px}
+.g-privacy .privacy-toc a:hover{background:var(--bg-1);color:var(--text)}
+.g-privacy .privacy-toc a[aria-current=location]{background:var(--bg-2);color:var(--text);border-left-color:var(--gold);font-weight:600}
+.g-privacy .privacy-toc-help{font-size:14px;color:var(--text-3);margin:16px 8px}
+.g-privacy .privacy-document{min-width:0;color:var(--text);font-size:17px;line-height:1.9}
+.g-privacy .privacy-clause{padding:24px 0 28px;border-bottom:1px solid var(--line)}
+.g-privacy .privacy-clause:first-child{padding-top:8px}
+.g-privacy .privacy-clause h2{font-size:24px;line-height:1.4;margin:0 0 20px;color:var(--text);font-weight:600;letter-spacing:-.025em;text-wrap:initial}
+.g-privacy .privacy-clause p{margin:0 0 16px;color:var(--text-2)}
+.g-privacy .privacy-clause ul{padding:0 0 0 22px;margin:0 0 20px;color:var(--text-2)}
+.g-privacy .privacy-clause li{padding-left:4px;margin-bottom:14px}
+.g-privacy .privacy-clause li:last-child{margin-bottom:0}
+.g-privacy .privacy-clause li::marker{color:var(--text-3)}
+.g-privacy .privacy-clause b{color:var(--text);font-weight:600}
+.g-privacy .privacy-clause-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:16px}
+.g-privacy .privacy-clause-tools a,.g-privacy .privacy-clause-tools button,.g-privacy .privacy-document-end a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 12px;border:0;border-radius:8px;color:var(--text-3);background:transparent;font:inherit;font-size:14px;line-height:1.5;text-decoration:none;cursor:pointer}
+.g-privacy .privacy-clause-tools a:hover,.g-privacy .privacy-clause-tools button:hover,.g-privacy .privacy-document-end a:hover{background:var(--bg-2);color:var(--text)}
+.g-privacy .privacy-document-end{padding:32px 0 16px}
+.g-privacy .privacy-document-end p{color:var(--text-3);font-size:14px;margin:0 0 12px}
+.g-privacy .privacy-document-end>div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+.g-privacy .privacy-document-end a{color:var(--text-2);padding-left:0;padding-right:0}
+.g-privacy #main,.g-privacy #contents,.g-privacy #policy,.g-privacy .privacy-clause{scroll-margin-top:112px;scroll-margin-bottom:24px}
+.g-privacy :focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.g-privacy .g-foot{margin-top:48px;padding-bottom:32px}
+.g-privacy .g-foot a{display:inline-flex;align-items:center;min-height:44px}
+.g-privacy .privacy-status{position:fixed;z-index:80;bottom:24px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);background:var(--bg-2);border:1px solid var(--line-2);padding:12px 20px;border-radius:12px;color:var(--text);font-size:14px;box-shadow:var(--shadow-1);pointer-events:none}
+.g-privacy .privacy-status:empty{display:none}
+.g-privacy .privacy-copy-dialog{width:min(560px,calc(100% - 32px));max-height:calc(100dvh - 32px);padding:32px;border:1px solid var(--line-2);border-radius:16px;background:var(--bg-1);color:var(--text);box-shadow:var(--shadow-2);overflow:auto}
+.g-privacy .privacy-copy-dialog::backdrop{background:rgba(0,0,0,.7)}
+.g-privacy .privacy-copy-dialog h2{font-size:24px}
+.g-privacy .privacy-copy-dialog p{color:var(--text-2);font-size:16px}
+.g-privacy .privacy-copy-dialog label{display:block;font-size:14px;color:var(--text-2);margin-bottom:8px}
+.g-privacy .privacy-copy-dialog input{width:100%;min-height:48px;border:1px solid var(--text-3);border-radius:8px;padding:10px 12px;background:var(--bg-2);color:var(--text);font:inherit;font-size:16px}
+.g-privacy .privacy-copy-dialog form{margin-top:24px;text-align:right}
+@media(max-width:1040px),(max-height:760px){
+  .g-privacy .g-nav{position:relative;top:auto}
+  .g-privacy .privacy-toc{position:static}
+  .g-privacy #main,.g-privacy #contents,.g-privacy #policy,.g-privacy .privacy-clause{scroll-margin-top:24px}
+}
+@media(max-width:1040px){
+  .g-privacy .g-nav .g-bar{border-radius:24px;gap:8px 16px}
+  .g-privacy .g-menu{order:3;flex-basis:100%;flex-wrap:wrap;overflow:visible}
+  .g-privacy .g-nav-btns{margin-left:auto}
+  .g-privacy .privacy-reading-layout{grid-template-columns:220px minmax(0,1fr);gap:32px}
+  .g-privacy .privacy-main{padding-top:48px}
+  .g-privacy .privacy-summary-grid{gap:12px}
+  .g-privacy .privacy-summary-grid>a{padding:20px}
+}
+@media(max-width:800px){
+  .g-privacy .privacy-main{padding:40px 20px 0}
+  .g-privacy .privacy-reading-layout{grid-template-columns:minmax(0,1fr);gap:24px;padding-top:24px}
+  .g-privacy .privacy-toc{padding:12px;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-1)}
+  .g-privacy .privacy-toc details{border:0}
+  .g-privacy .privacy-toc ol{grid-template-columns:repeat(2,minmax(0,1fr));padding-bottom:4px}
+  .g-privacy .privacy-toc-help{margin:8px;font-size:14px}
+  .g-privacy .privacy-summary-grid{grid-template-columns:minmax(0,1fr);gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .g-privacy .privacy-summary-grid>a{border:0;border-radius:0;padding:20px 24px}
+  .g-privacy .privacy-summary-grid>a+a{border-top:1px solid var(--line)}
+  .g-privacy .privacy-summary-grid>a:focus-visible{outline-offset:-4px}
+  .g-privacy .privacy-summary-grid h3{font-size:18px}
+  .g-privacy .privacy-summary-label{margin-bottom:4px}
+  .g-privacy .privacy-summary-grid p{margin:8px 0}
+  .g-privacy .privacy-summary-link{justify-content:flex-end}
+  .g-privacy .privacy-overview{padding:32px 0}
+  .g-privacy .privacy-draft{grid-template-columns:minmax(0,1fr);gap:8px;padding:20px}
+  .g-privacy .privacy-document{font-size:16px;line-height:1.9}
+  .g-privacy .privacy-clause h2{font-size:22px}
+  .g-privacy .privacy-hero{padding-bottom:32px}
+}
+@media(max-width:540px){
+  .g-privacy .g-nav .g-bar{padding:12px;gap:4px;border-radius:16px}
+  .g-privacy .g-logo{width:100%;font-size:16px}
+  .g-privacy .g-menu{order:2;margin:4px 0;gap:2px}
+  .g-privacy .g-menu a{padding:8px 10px;min-height:44px}
+  .g-privacy .g-menu .g-menu-login{margin-left:0}
+  .g-privacy .g-nav-btns{order:3;margin:0;gap:8px}
+  .g-privacy .privacy-toc ol{grid-template-columns:minmax(0,1fr)}
+  .g-privacy .privacy-document-tools{gap:8px 20px}
+  .g-privacy .privacy-copy-dialog{padding:24px}
+}
+@media(prefers-reduced-motion:reduce){
+  .g-privacy *, .g-privacy *::before, .g-privacy *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+@media print{
+  @page{margin:18mm}
+  html:has(.g-privacy){color-scheme:light;background:#fff;scroll-behavior:auto}
+  .g-privacy{background:#fff;color:#111;font-size:11pt}
+  .g-privacy .g-bg,.g-privacy .g-skip,.g-privacy .g-nav,.g-privacy .privacy-document-tools,.g-privacy .privacy-overview,.g-privacy .privacy-toc,.g-privacy .privacy-clause-tools,.g-privacy .privacy-document-end,.g-privacy .g-foot,.g-privacy .privacy-status,.g-privacy .privacy-copy-dialog{display:none!important}
+  .g-privacy .g-strip{position:static;background:#fff;color:#333;border-bottom:1px solid #777;font-size:9pt}
+  .g-privacy .privacy-main{max-width:none;padding:24px 0 0}
+  .g-privacy .privacy-hero{padding:0 0 20px}
+  .g-privacy .privacy-hero h1{font-size:26pt;color:#111}
+  .g-privacy .privacy-hero .g-kicker,.g-privacy .privacy-lead{color:#333;font-size:10pt}
+  .g-privacy .privacy-draft{display:block;background:#fff;border:1px solid #777;border-radius:0;padding:12px;break-inside:avoid}
+  .g-privacy .privacy-draft-label{color:#111;font-size:10pt}
+  .g-privacy .privacy-draft .pa-note{color:#333;font-size:10pt}
+  .g-privacy .privacy-reading-layout{display:block;padding-top:16px;border:0}
+  .g-privacy .privacy-document{font-size:11pt;line-height:1.7;color:#111}
+  .g-privacy .privacy-clause{padding:16px 0 8px;border-bottom:1px solid #ccc}
+  .g-privacy .privacy-clause h2{font-size:14pt;color:#111;margin:0 0 10px;break-after:avoid}
+  .g-privacy .privacy-clause p,.g-privacy .privacy-clause ul,.g-privacy .privacy-clause b,.g-privacy .privacy-clause li::marker{color:#111}
+  .g-privacy .privacy-clause p,.g-privacy .privacy-clause li{orphans:3;widows:3}
+}
