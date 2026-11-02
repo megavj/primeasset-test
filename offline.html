@@ -5,47 +5,247 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070a12">
 <meta name="robots" content="noindex,nofollow">
-<title>인터넷 연결이 끊겼어요 | 프라임에셋 프리미엄 (테스트)</title>
-<!-- 오프라인 안내(FUNC-FIX B1): 서비스워커(sw.js)가 설치 때 이 파일 하나만 저장해 두었다가, 페이지 이동·새로고침이 네트워크 오류일 때만 보여 줌.
-     연결이 없어도 그려지도록 글꼴·CSS·로고를 밖에서 받지 않음(색·모서리는 glass.css 토큰 값 그대로). 다른 HTML 은 저장하지 않음. -->
+<title>연결을 확인해 주세요 | 프라임에셋 프리미엄 (테스트)</title>
+<!-- PAGE 7: 오류에서 다음 행동으로. offline은 CSS·JS·SVG 자체 포함, 404는 깊은 주소에도 안전한 절대 경로. -->
+<link rel="icon" href="data:,">
 <style>
-:root{color-scheme:dark;--bg-0:#070a12;--bg-1:#0c111c;--text:#f2eee6;--text-2:#aab4c4;--text-3:#8a96a9;--gold:#d6b97e;--gold-hi:#e3c994;--on-gold:#15110a;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.16)}
+/* PAGE 7 · 오류 복구 화면 전용. glass.css의 색·간격 토큰을 재사용.
+   offline.html에도 같은 내용을 인라인 포함: 네트워크 없이 완전히 표시해야 한다. */
+:root{color-scheme:dark;--bg-0:#070a12;--bg-1:#0c111c;--bg-2:#131a29;--text:#f2eee6;--text-2:#aab4c4;--text-3:#8a96a9;--gold:#d6b97e;--gold-hi:#e3c994;--on-gold:#15110a;--line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.16);--font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg-0);color:var(--text)}
-body{min-height:100vh;display:flex;flex-direction:column;font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:17px;line-height:1.7;word-break:keep-all;-webkit-font-smoothing:antialiased}
-.strip{text-align:center;font-size:14px;line-height:1.4;padding:5px 12px;color:var(--gold-hi);background:#1d1b17;border-bottom:1px solid rgba(214,185,126,.22)}
-.brand{display:flex;align-items:center;gap:10px;max-width:640px;width:100%;margin:28px auto 0;padding:0 16px;font-weight:600;font-size:17px;letter-spacing:-.01em}
-.brand svg{width:28px;height:31px;flex:none}
-main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px 48px}
-.card{max-width:640px;width:100%;background:var(--bg-1);border:1px solid var(--line);border-radius:16px;padding:32px}
-h1{font-size:clamp(24px,4vw,30px);font-weight:600;letter-spacing:-.02em;line-height:1.3;margin:0 0 10px}
-p{margin:0 0 12px;color:var(--text-2)}
-.note{font-size:15px;color:var(--text-3);margin:18px 0 0}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:11px 26px;margin-top:10px;border-radius:999px;border:1px solid transparent;background:var(--gold);color:var(--on-gold);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
-.btn:hover{background:var(--gold-hi)}
-.btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-@view-transition{navigation:auto} /* 다른 페이지(glass.css)와 같은 페이지 넘김 — 한쪽만 켜져 있으면 넘김이 중단되며 콘솔 오류가 남 */
-@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+html{background:var(--bg-0);-webkit-text-size-adjust:100%}
+body.recovery{margin:0;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;background:var(--bg-0);color:var(--text);font-family:var(--font);font-size:1.0625rem;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased}
+.recovery a{color:inherit;text-underline-offset:4px}
+.recovery button{font:inherit;cursor:pointer}
+.recovery a,.recovery button,.recovery summary{touch-action:manipulation;-webkit-tap-highlight-color:rgba(214,185,126,.16)}
+.recovery :focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:8px}
+.recovery [hidden]{display:none!important}
+.recovery p,.recovery h1,.recovery h2{margin:0}
+.recovery-skip{position:absolute;z-index:5;left:16px;top:-100px;padding:12px 18px;background:var(--gold);color:var(--on-gold)!important;border-radius:8px}
+.recovery-skip:focus{top:12px}
+.recovery-strip{padding:7px 16px;text-align:center;font-size:.875rem;line-height:1.5;color:var(--gold-hi);background:#1d1b17;border-bottom:1px solid rgba(214,185,126,.22)}
+.recovery-header,.recovery-main,.recovery-footer{width:min(1120px,100%);margin-inline:auto;padding-inline:32px}
+.recovery-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:24px}
+.recovery-brand{display:inline-flex;align-items:center;gap:12px;min-height:44px;text-decoration:none;font-size:1.0625rem;font-weight:600;letter-spacing:-.02em}
+.recovery-brand svg{width:28px;height:32px;flex:none;color:var(--gold)}
+.recovery-header-link{display:inline-flex;align-items:center;min-height:44px;padding-inline:8px;font-size:.875rem;color:var(--text-2)!important;text-decoration:none}
+.recovery-header-link:hover{text-decoration:underline}
+.recovery-main{flex:1;padding-block:64px 80px}
+.recovery-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:64px;align-items:start}
+.recovery-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:24px!important;color:var(--text-2);font-size:.875rem;font-weight:500;letter-spacing:.02em}
+.recovery-code{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:2px 10px;border:1px solid var(--line-2);border-radius:6px;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.recovery h1{font-size:clamp(2rem,3.8vw,3.25rem);line-height:1.22;font-weight:600;letter-spacing:-.04em;text-wrap:balance}
+.recovery-intro{max-width:29em;margin-top:24px!important;color:var(--text-2)}
+.recovery-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.recovery-button{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:52px;padding:12px 24px;border:1px solid var(--line-2);border-radius:999px;background:transparent;color:var(--text);font-size:1rem!important;font-weight:600!important;line-height:1.5;text-decoration:none}
+.recovery-button--primary{background:var(--gold);border-color:var(--gold);color:var(--on-gold)!important}
+.recovery-button:hover{background:var(--bg-2);border-color:var(--text-3)}
+.recovery-button--primary:hover{background:var(--gold-hi);border-color:var(--gold-hi)}
+.recovery-button[aria-disabled="true"]{cursor:wait}
+.recovery-hint{margin-top:24px!important;color:var(--text-3);font-size:.875rem;line-height:1.6}
+.recovery-paths{padding:28px;background:var(--bg-1);border:1px solid var(--line);border-radius:16px}
+.recovery h2{font-size:1.125rem;font-weight:600;line-height:1.5;letter-spacing:-.02em}
+.recovery-paths-intro{margin-top:8px!important;color:var(--text-3);font-size:.875rem}
+.recovery-links{list-style:none;padding:0;margin:24px 0 0}
+.recovery-links li+li{border-top:1px solid var(--line)}
+.recovery-destination{display:flex;align-items:center;gap:16px;min-height:92px;padding:20px 8px;text-decoration:none;border-radius:8px}
+.recovery-destination:hover{background:var(--bg-2)}
+.recovery-destination>span:first-child{flex:1;min-width:0}
+.recovery-destination strong{display:block;font-size:1.0625rem;font-weight:600;line-height:1.5}
+.recovery-destination small{display:block;margin-top:5px;font-size:.875rem;line-height:1.6;color:var(--text-2)}
+.recovery-arrow{flex:none;color:var(--text-3);font-size:1.25rem}
+.recovery-extra{margin-top:32px;padding-top:24px;border-top:1px solid var(--line)}
+.recovery-extra summary{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;cursor:pointer;font-size:.9375rem;color:var(--text-2);list-style:none}
+.recovery-extra summary::-webkit-details-marker{display:none}
+.recovery-extra summary::after{content:"+";font-size:1.25rem;flex:none}
+.recovery-extra[open] summary::after{content:"−"}
+.recovery-extra ul{margin:12px 0 0;padding-left:20px;color:var(--text-2);font-size:.9375rem}
+.recovery-extra li+li{margin-top:8px}
+.recovery-status{margin-top:20px!important;min-height:3.2em;color:var(--text-2);font-size:.9375rem;line-height:1.6}
+.recovery-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;padding-block:20px;border-top:1px solid var(--line);color:var(--text-3);font-size:.875rem}
+.recovery-footer nav{display:flex;flex-wrap:wrap;gap:8px 20px}
+.recovery-footer a{display:inline-flex;align-items:center;min-height:44px}
+.recovery-noscript{margin-top:20px!important;font-size:.875rem;color:var(--text-2)}
+@view-transition{navigation:auto}
+@media(max-width:800px){
+  .recovery-layout{grid-template-columns:minmax(0,1fr);gap:32px}
+  .recovery-main{padding-block:32px 48px}
+  .recovery-header,.recovery-main,.recovery-footer{padding-inline:24px}
+  .recovery-header{padding-block:16px}
+  .recovery-header-link{display:none}
+  .recovery-eyebrow{margin-bottom:20px!important}
+  .recovery-intro{margin-top:20px!important}
+  .recovery-actions{margin-top:24px}
+  .recovery-paths{padding:24px}
+  .recovery-status{min-height:0}
+  .recovery-footer{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:380px){.recovery-header,.recovery-main,.recovery-footer{padding-inline:20px}.recovery-brand{font-size:1rem}.recovery-paths{padding:20px}.recovery-actions{flex-direction:column}.recovery-button{width:100%}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}@view-transition{navigation:none}*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
-<body>
-<header>
-  <div class="strip" role="note">테스트 페이지 — 정식 오픈 전 확인용</div>
-  <div class="brand"><svg viewBox="0 0 212.5 235.73" aria-hidden="true" focusable="false"><defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9bc82"/><stop offset=".22" stop-color="#b8935a"/><stop offset=".48" stop-color="#8a6a3a"/><stop offset=".62" stop-color="#c6a46c"/><stop offset=".8" stop-color="#f0dcb0"/><stop offset="1" stop-color="#b48f55"/></linearGradient></defs><path fill="url(#gold)" fill-rule="evenodd" d="M0 0 L212.5 0 L212.5 174 L106.25 235.73 L65.7 212.17 L65.7 185.67 L106.25 209.23 L157.26 179.77 L121.72 136.6 L55.2 136.6 L55.2 206.07 L0 174 Z M22.2 21.5 L22.2 160.4 L32.5 166.38 L32.5 114.5 L103.53 114.5 L34.31 30.4 L123.4 30.4 A52.9 52.9 0 0 1 146.37 130.95 L177.08 168.26 L190.6 160.4 L190.6 21.5 Z M81.8 52.5 L131.59 112.99 A30.8 30.8 0 0 0 123.4 52.5 Z"/></svg>프라임에셋 프리미엄</div>
+<body class="recovery" data-recovery="offline">
+<a class="recovery-skip" href="#main">본문으로 건너뛰기</a>
+<div class="recovery-strip" role="region" aria-label="테스트 페이지 안내">테스트 페이지 — 정식 오픈 전 확인용</div>
+<header class="recovery-header">
+  <a class="recovery-brand" href="/" data-recovery-link><svg viewBox="0 0 212.5 235.73" aria-hidden="true" focusable="false"><defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9bc82"/><stop offset=".22" stop-color="#b8935a"/><stop offset=".48" stop-color="#8a6a3a"/><stop offset=".62" stop-color="#c6a46c"/><stop offset=".8" stop-color="#f0dcb0"/><stop offset="1" stop-color="#b48f55"/></linearGradient></defs><path fill="url(#gold)" fill-rule="evenodd" d="M0 0 L212.5 0 L212.5 174 L106.25 235.73 L65.7 212.17 L65.7 185.67 L106.25 209.23 L157.26 179.77 L121.72 136.6 L55.2 136.6 L55.2 206.07 L0 174 Z M22.2 21.5 L22.2 160.4 L32.5 166.38 L32.5 114.5 L103.53 114.5 L34.31 30.4 L123.4 30.4 A52.9 52.9 0 0 1 146.37 130.95 L177.08 168.26 L190.6 160.4 L190.6 21.5 Z M81.8 52.5 L131.59 112.99 A30.8 30.8 0 0 0 123.4 52.5 Z"/></svg><span>프라임에셋 프리미엄</span></a>
+  <nav aria-label="빠른 이동"><span data-guest><a class="recovery-header-link" href="/" data-recovery-link>홈으로 돌아가기 ↗</a></span><span data-member hidden><a class="recovery-header-link" href="/members/" data-recovery-link>인트라넷으로 돌아가기 ↗</a></span></nav>
 </header>
-<main>
-  <div class="card" role="alert">
-    <h1>인터넷 연결이 끊겼어요</h1>
-    <p>와이파이나 모바일 데이터를 확인한 뒤 '다시 시도'를 눌러 주세요. 연결이 돌아오면 이 화면은 저절로 다시 불러옵니다.</p>
-    <button class="btn" type="button" id="retry">다시 시도</button>
-    <p class="note">회원 정보·실적 자료는 연결된 뒤에 보입니다.</p>
+<main id="main" class="recovery-main" tabindex="-1">
+  <div class="recovery-layout">
+    <section aria-labelledby="recovery-title">
+      <p class="recovery-eyebrow"><span class="recovery-code">OFFLINE</span>연결 확인 필요</p>
+      <h1 id="recovery-title">연결을<br>확인해 주세요</h1>
+      <p class="recovery-intro">요청한 화면을 불러오지 못했어요. 와이파이나 모바일 데이터를 확인한 뒤 다시 시도해 주세요.</p>
+      <div class="recovery-actions"><button class="recovery-button recovery-button--primary" type="button" id="recovery-retry" aria-describedby="recovery-status" hidden>다시 시도</button><span data-guest><a class="recovery-button" href="/" data-recovery-link>홈으로<span aria-hidden="true">→</span></a></span><span data-member hidden><a class="recovery-button" href="/members/" data-recovery-link>인트라넷으로<span aria-hidden="true">→</span></a></span></div>
+      <p class="recovery-status" id="recovery-status" role="status" aria-live="polite" aria-atomic="true"></p><p class="recovery-hint">회원 정보·실적 자료는 연결된 뒤에 보입니다.</p><noscript><p class="recovery-noscript">연결을 확인한 뒤 브라우저의 새로고침이나 아래 이동 링크를 이용해 주세요. 자동 재시도는 자바스크립트가 필요합니다.</p></noscript>
+      <details class="recovery-extra"><summary>연결이 계속 안 된다면</summary><ul><li>와이파이와 모바일 데이터 연결을 확인해 주세요.</li><li>공용 와이파이라면 네트워크 로그인 화면이 있는지 확인해 주세요.</li><li>다른 사이트도 열리지 않으면 네트워크를 바꾼 뒤 다시 시도해 주세요.</li></ul></details>
+    </section>
+    <aside class="recovery-paths" aria-label="다음으로 갈 곳">
+      <div data-guest>
+        <h2>연결 후 둘러볼 곳</h2>
+        <p class="recovery-paths-intro">연결된 뒤 아래 페이지로 이동할 수 있어요.</p>
+        <ul class="recovery-links">
+          <li><a class="recovery-destination" href="/performance/" data-recovery-link><span><strong>실적보드</strong><small>프리미엄사업부의 실적 살펴보기</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="recovery-destination" href="/members/" data-recovery-link><span><strong>설계사 인트라넷</strong><small>로그인·회원가입 및 영업지원 도구</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+        </ul>
+      </div>
+      <div data-member hidden>
+        <h2>연결 후 이어갈 업무</h2>
+        <p class="recovery-paths-intro">연결된 뒤 영업지원 도구를 다시 이용하세요.</p>
+        <ul class="recovery-links">
+          <li><a class="recovery-destination" href="/members/#pa-favorites" data-recovery-link><span><strong>자주 쓰는 도구</strong><small>인트라넷에 고정한 도구 모아 보기</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="recovery-destination" href="/members/#directory" data-recovery-link><span><strong>전체 도구 찾기</strong><small>업무별 영업지원 도구 찾아보기</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="recovery-destination" href="/performance/" data-recovery-link><span><strong>실적보드</strong><small>실적 자료 다시 확인하기</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+        </ul>
+      </div>
+    </aside>
   </div>
 </main>
+<footer class="recovery-footer"><span>프라임에셋 프리미엄사업부</span><nav aria-label="관련 안내"><a href="/privacy/" data-recovery-link>개인정보처리방침</a></nav></footer>
 <script>
+/* PAGE 7 · 안내용 세션 힌트만 읽는다. 권한·승인은 기존 인트라넷에서 확인.
+   offline.html에는 이 파일 그대로 포함한다. API·추적·저장소 쓰기 없음. */
 (function () {
-  function again() { location.reload(); }
-  document.getElementById('retry').addEventListener('click', again);
-  window.addEventListener('online', again);
+  'use strict';
+  var doc = document;
+  var offline = doc.body.dataset.recovery === 'offline';
+  var originalURL = location.href;
+  var member = false;
+  function hasStoredSession() {
+    try {
+      for (var i = 0; i < localStorage.length; i += 1) {
+        var key = localStorage.key(i);
+        if (!/^sb-[a-z0-9]+-auth-token$/.test(key)) continue;
+        var value;
+        try { value = JSON.parse(localStorage.getItem(key) || 'null'); } catch (error) { continue; }
+        if (value && value.access_token && (!value.expires_at || value.expires_at * 1000 > Date.now() - 86400000)) return true;
+      }
+    } catch (error) { /* 저장소 제한 시에도 공개 목적지로 이동 가능. */ }
+    return false;
+  }
+  function refreshMemberDisplay() {
+    member = hasStoredSession();
+    var active = doc.activeElement;
+    var leaving = active && active.closest && active.closest(member ? '[data-guest]' : '[data-member]');
+    doc.querySelectorAll('[data-member]').forEach(function (el) { el.hidden = !member; });
+    doc.querySelectorAll('[data-guest]').forEach(function (el) { el.hidden = member; });
+    if (leaving) {
+      var next = doc.querySelector(member ? '.recovery-actions [data-member] a' : '.recovery-actions [data-guest] a');
+      if (next) next.focus({ preventScroll: true });
+    }
+  }
+  refreshMemberDisplay();
+  window.addEventListener('storage', function (event) {
+    if (event.key === null || /^sb-[a-z0-9]+-auth-token$/.test(event.key || '')) refreshMemberDisplay();
+  });
+  window.addEventListener('pageshow', refreshMemberDisplay);
+  window.addEventListener('focus', refreshMemberDisplay);
+  doc.addEventListener('visibilitychange', function () { if (!doc.hidden) refreshMemberDisplay(); });
+
+  var back = doc.getElementById('recovery-back');
+  if (back) {
+    try {
+      var previous = new URL(doc.referrer);
+      // 외부 사이트나 같은 오류 페이지로 되돌아가는 동선은 표시하지 않는다.
+      if (previous.origin === location.origin && previous.pathname !== location.pathname && !/\/(404|offline)\.html$/.test(previous.pathname) && history.length > 1) {
+        back.hidden = false;
+        back.addEventListener('click', function () { history.back(); });
+      }
+    } catch (error) { /* 직접 방문이면 확실한 목적지 링크만 표시. */ }
+  }
+  if (!offline) return;
+
+  var retry = doc.getElementById('recovery-retry');
+  var status = doc.getElementById('recovery-status');
+  var busy = false;
+  retry.hidden = false;
+  function defaultTarget() {
+    // SW 대체 화면은 원래 URL을 그대로 보유. 직접 안내 페이지를 연 경우만 홈으로.
+    return location.pathname === '/offline.html' ? (member ? '/members/' : '/') : originalURL;
+  }
+  function navigate(target) {
+    var next = new URL(target, location.href);
+    // 앵커만 바뀌면 assign()은 문서를 요청하지 않으므로 원래 위치 복원 후 새로고침.
+    if (next.origin === location.origin && next.pathname === location.pathname && next.search === location.search) {
+      if (next.href !== location.href) {
+        try { history.replaceState(null, '', next.href); } catch (error) { /* 새로고침은 계속 제공. */ }
+      }
+      location.reload();
+    } else location.assign(target);
+  }
+  function checkConnection(target) {
+    if (busy) return;
+    if (navigator.onLine === false) {
+      status.textContent = '아직 연결되지 않았어요. 와이파이나 모바일 데이터를 켠 뒤 다시 시도해 주세요.';
+      return;
+    }
+    target = target || defaultTarget();
+    if (!window.fetch || !window.AbortController) { navigate(target); return; }
+    busy = true;
+    retry.setAttribute('aria-disabled', 'true');
+    retry.textContent = '연결 확인 중…';
+    status.textContent = '요청한 페이지에 연결할 수 있는지 확인하고 있어요.';
+    var controller = new AbortController();
+    var timer;
+    // HEAD는 SW 캐시·fallback을 거치지 않는다. 대상 페이지 응답을 확인한 뒤 이동.
+    var timeout = new Promise(function (_, reject) {
+      timer = window.setTimeout(function () { controller.abort(); reject(new Error('timeout')); }, 6000);
+    });
+    Promise.race([fetch(target, { method: 'HEAD', mode: 'same-origin', cache: 'no-store', credentials: 'omit', redirect: 'follow', signal: controller.signal }), timeout])
+      .then(function (response) {
+        if (new URL(response.url, location.href).origin !== location.origin) throw new Error('origin');
+        if (!(response.ok || response.status === 404)) throw new Error('unavailable');
+        // 404도 서버 응답: 다시 열어 올바른 '페이지 없음' 안내를 받는다.
+        status.textContent = '연결을 확인했어요. 페이지를 다시 열고 있어요.';
+        navigate(target);
+      })
+      .catch(function () {
+        status.textContent = '아직 페이지에 연결할 수 없어요. 연결 상태를 확인하거나 잠시 뒤 다시 시도해 주세요.';
+      })
+      .finally(function () {
+        window.clearTimeout(timer);
+        busy = false;
+        retry.removeAttribute('aria-disabled');
+        retry.textContent = '다시 시도';
+      });
+  }
+  retry.addEventListener('click', function () { checkConnection(); });
+  // 자동 복귀는 연결 복구 이벤트당 1회. 반복 폴링·무한 새로고침 없음.
+  window.addEventListener('online', function () { checkConnection(); });
+  window.addEventListener('offline', function () {
+    status.textContent = '연결이 끊겨 있어요. 와이파이나 모바일 데이터를 확인해 주세요.';
+  });
+  doc.querySelectorAll('[data-recovery-link]').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      checkConnection(link.href);
+    });
+  });
+  status.textContent = navigator.onLine === false
+    ? '연결이 끊겨 있어요. 연결이 돌아오면 자동으로 다시 시도합니다.'
+    : '연결 복구를 기다리고 있어요. 연결했다면 다시 시도를 눌러 주세요.';
 })();
 </script>
 </body>

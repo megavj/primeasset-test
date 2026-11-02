@@ -6,52 +6,53 @@
 <meta name="theme-color" content="#070a12">
 <meta name="robots" content="noindex,nofollow">
 <title>페이지를 찾을 수 없어요 | 프라임에셋 프리미엄 (테스트)</title>
-<!-- 우리 404(FUNC-FIX B5): GitHub Pages 가 없는 주소마다 이 파일을 404 상태로 보여 줌. 어느 깊이의 주소에서 열려도 깨지지 않게 링크·자산은 모두 / 로 시작.
-     디자인은 다른 페이지와 같은 glass.css(토큰·메뉴 막대·카드·버튼) 그대로. 테스트 띠는 낭독기 구역(region) 안에 둠. 방문 집계 없음. -->
+<!-- PAGE 7: 오류에서 다음 행동으로. offline은 CSS·JS·SVG 자체 포함, 404는 깊은 주소에도 안전한 절대 경로. -->
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="/assets/glass.css?v=13">
-<style>
-.g-404{max-width:720px;margin:0 auto;padding:var(--s6) 16px var(--s5)}
-.g-404 .g-card{text-align:center}
-.g-404 h1{font-size:var(--fs-h2);font-weight:var(--fw-h2);letter-spacing:-.02em;line-height:var(--lh-h2);margin:6px 0 var(--s2)}
-.g-404 p{color:var(--text-2);margin:0 auto var(--s3);max-width:30em}
-.g-404-links{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
-@media (max-width:720px){.g-404{padding-top:var(--s5)}.g-404-links li{flex:1 1 100%}.g-404-links .g-btn{width:100%}}
-</style>
+<link rel="stylesheet" href="/assets/recovery.css?v=1">
 </head>
-<body>
-<a class="g-skip" href="#main">본문으로 건너뛰기</a>
-<div class="g-bg" aria-hidden="true"></div>
-<div class="g-strip" role="region" aria-label="테스트 페이지 안내">테스트 페이지 — 정식 오픈 전 확인용</div>
-
-<header class="g-nav">
-  <div class="g-bar">
-    <a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33"><span>프라임에셋 프리미엄</span></a>
-    <nav class="g-menu" aria-label="주요 메뉴">
-      <a href="/">홈</a>
-      <a href="/performance/">실적보드</a>
-      <a href="http://wiki.primeasset.info/">보험위키</a>
-      <a href="/members/">설계사 인트라넷</a>
-    </nav>
-  </div>
+<body class="recovery" data-recovery="404">
+<a class="recovery-skip" href="#main">본문으로 건너뛰기</a>
+<div class="recovery-strip" role="region" aria-label="테스트 페이지 안내">테스트 페이지 — 정식 오픈 전 확인용</div>
+<header class="recovery-header">
+  <a class="recovery-brand" href="/" data-recovery-link><svg viewBox="0 0 212.5 235.73" aria-hidden="true" focusable="false"><defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9bc82"/><stop offset=".22" stop-color="#b8935a"/><stop offset=".48" stop-color="#8a6a3a"/><stop offset=".62" stop-color="#c6a46c"/><stop offset=".8" stop-color="#f0dcb0"/><stop offset="1" stop-color="#b48f55"/></linearGradient></defs><path fill="url(#gold)" fill-rule="evenodd" d="M0 0 L212.5 0 L212.5 174 L106.25 235.73 L65.7 212.17 L65.7 185.67 L106.25 209.23 L157.26 179.77 L121.72 136.6 L55.2 136.6 L55.2 206.07 L0 174 Z M22.2 21.5 L22.2 160.4 L32.5 166.38 L32.5 114.5 L103.53 114.5 L34.31 30.4 L123.4 30.4 A52.9 52.9 0 0 1 146.37 130.95 L177.08 168.26 L190.6 160.4 L190.6 21.5 Z M81.8 52.5 L131.59 112.99 A30.8 30.8 0 0 0 123.4 52.5 Z"/></svg><span>프라임에셋 프리미엄</span></a>
+  <nav aria-label="빠른 이동"><span data-guest><a class="recovery-header-link" href="/" data-recovery-link>홈으로 돌아가기 ↗</a></span><span data-member hidden><a class="recovery-header-link" href="/members/" data-recovery-link>인트라넷으로 돌아가기 ↗</a></span></nav>
 </header>
-
-<main id="main" class="g-404">
-  <div class="g-card">
-    <span class="g-kicker">404</span>
-    <h1>찾는 페이지가 없어요</h1>
-    <p>주소가 바뀌었거나 잘못 입력됐을 수 있어요. 아래에서 가려던 곳을 골라 주세요.</p>
-    <ul class="g-404-links">
-      <li><a class="g-btn g-btn--pri" href="/">홈으로</a></li>
-      <li><a class="g-btn g-btn--ghost" href="/performance/">실적보드</a></li>
-      <li><a class="g-btn g-btn--ghost" href="/members/">설계사 인트라넷</a></li>
-    </ul>
+<main id="main" class="recovery-main" tabindex="-1">
+  <div class="recovery-layout">
+    <section aria-labelledby="recovery-title">
+      <p class="recovery-eyebrow"><span class="recovery-code">404</span>페이지 안내</p>
+      <h1 id="recovery-title">페이지를<br>찾을 수 없어요</h1>
+      <p class="recovery-intro">주소가 바뀌었거나 잘못 입력됐을 수 있어요. 가려던 곳을 아래에서 다시 찾아보세요.</p>
+      <div class="recovery-actions"><span data-guest><a class="recovery-button recovery-button--primary" href="/" data-recovery-link>홈으로<span aria-hidden="true">→</span></a></span><span data-member hidden><a class="recovery-button recovery-button--primary" href="/members/" data-recovery-link>인트라넷으로<span aria-hidden="true">→</span></a></span><button class="recovery-button" type="button" id="recovery-back" hidden>이전 페이지</button></div>
+      <p class="recovery-hint" data-member hidden>도구 이용 권한은 인트라넷에서 확인합니다.</p>
+      <details class="recovery-extra"><summary>주소를 다시 확인하려면</summary><ul><li>직접 입력했다면 주소의 철자와 경로를 확인해 주세요.</li><li>복사한 링크라면 주소가 끝까지 복사됐는지 확인해 주세요.</li><li>오래된 즐겨찾기라면 홈이나 인트라넷에서 원하는 페이지를 다시 찾아 주세요.</li></ul></details>
+    </section>
+    <aside class="recovery-paths" aria-label="다음으로 갈 곳">
+      <div data-guest>
+        <h2>다시, 여기서 시작하세요</h2>
+        <p class="recovery-paths-intro">원하는 정보가 있는 곳으로 바로 이동하세요.</p>
+        <ul class="recovery-links">
+          <li><a class="recovery-destination" href="/performance/" data-recovery-link><span><strong>실적보드</strong><small>프리미엄사업부의 실적 살펴보기</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="recovery-destination" href="/members/" data-recovery-link><span><strong>설계사 인트라넷</strong><small>로그인·회원가입 및 영업지원 도구</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+        </ul>
+      </div>
+      <div data-member hidden>
+        <h2>하던 업무로 돌아가세요</h2>
+        <p class="recovery-paths-intro">영업지원 홈에서 하던 업무를 이어가세요.</p>
+        <ul class="recovery-links">
+          <li><a class="recovery-destination" href="/members/#pa-favorites" data-recovery-link><span><strong>자주 쓰는 도구</strong><small>인트라넷에 고정한 도구 모아 보기</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="recovery-destination" href="/members/#directory" data-recovery-link><span><strong>전체 도구 찾기</strong><small>업무별 영업지원 도구 찾아보기</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="recovery-destination" href="/performance/" data-recovery-link><span><strong>실적보드</strong><small>실적 자료 다시 확인하기</small></span><span class="recovery-arrow" aria-hidden="true">↗</span></a></li>
+        </ul>
+      </div>
+    </aside>
   </div>
 </main>
-
-<footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="/privacy/">개인정보처리방침</a></footer>
+<footer class="recovery-footer"><span>프라임에셋 프리미엄사업부</span><nav aria-label="관련 안내"><a href="http://wiki.primeasset.info/">보험위키</a><a href="/privacy/" data-recovery-link>개인정보처리방침</a></nav></footer>
+<script src="/assets/recovery.js?v=1" defer></script>
 </body>
 </html>

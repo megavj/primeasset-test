@@ -74,7 +74,7 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-notice-body p{font-size:14px;line-height:1.6;color:var(--text-2);margin:12px 0 8px}
 .g-members .pa-text-button{font:inherit;font-size:14px;color:var(--text-2);background:transparent;border:0;cursor:pointer;min-height:44px;padding:8px 0;text-decoration:underline;text-underline-offset:4px}
 .g-members .pa-text-button:hover{color:var(--text)}
-.g-members .pa-home-block{margin:32px 0 0;min-width:0}
+.g-members .pa-home-block{margin:32px 0 0;min-width:0;scroll-margin-top:110px}
 .g-members .pa-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 8px}
 .g-members .pa-section-heading h2{font-size:22px;font-weight:500;letter-spacing:-.025em}
 .g-members .pa-section-heading>a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;color:var(--text-2);text-decoration:none}

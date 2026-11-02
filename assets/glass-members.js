@@ -37,7 +37,7 @@
   if (linkErr) { console.debug("[auth redirect error]", linkErr); history.replaceState(null, "", location.pathname); }
   // FUNC-FIX A4: 주소의 칸(#stats·#info·#me·#home)을 지우기 전에 기억 → 화면을 그린 뒤 그 칸으로 이동(첫 1번만, 탭 전환 때 다시 그려도 끌려가지 않음).
   //   로그인 전이면 이 기기에 잠시(30분) 저장했다가 로그인 후 이동. 메인 도구 허브의 자물쇠 카드도 같은 키(pa_goto)에 저장(tool-hub.js). 돌아오는 주소는 그대로 /members/
-  const SECTIONS = ["home", "stats", "info", "me", "directory", "news"];
+  const SECTIONS = ["home", "stats", "info", "me", "directory", "news", "pa-favorites"];
   const knownSection = s => SECTIONS.includes(s) || /^info-([0-9]|1[01])$/.test(s);
   const GOTO_KEY = "pa_goto", GOTO_TTL = 30 * 60 * 1000;
   let goto = knownSection(location.hash.slice(1)) ? location.hash.slice(1) : null;
@@ -474,7 +474,7 @@
   // 메뉴(홈·실적·자료·내 정보) 현재 위치 표시 — 배치용, 데이터와 무관
   function markTab() {
     const raw = (location.hash || "#home").slice(1);
-    const cur = /^info-/.test(raw) ? "info" : ["directory", "news"].includes(raw) ? "home" : raw;
+    const cur = /^info-/.test(raw) ? "info" : ["directory", "news", "pa-favorites"].includes(raw) ? "home" : raw;
     if (cur === "main") return; // 건너뛰기 링크(#main)는 탭 표시를 바꾸지 않음
     document.querySelectorAll("[data-tab]").forEach(a => {
       const on = a.getAttribute("data-tab") === cur; a.classList.toggle("on", on);
