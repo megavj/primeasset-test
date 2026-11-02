@@ -9,6 +9,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="description" content="19개 본부(2026년 10월) · 1,123명 설계사(CY'25 실가동). 수수료는 본사가 직접 지급하고 수수료표·시책·영업규정을 매달 공개합니다. 경력·신입 합류 문의.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="프라임에셋 프리미엄">
@@ -22,11 +23,12 @@
 <meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,123명 설계사, 월 보험료 50억 2,332만 원">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-<link rel="stylesheet" href="assets/glass.css?v=8">
-<link rel="stylesheet" href="assets/perf-board.css?v=1">
+<link rel="stylesheet" href="assets/glass.css?v=9">
+<link rel="stylesheet" href="assets/perf-board.css?v=2">
 <link rel="stylesheet" href="assets/home-board.css?v=1">
 <link rel="stylesheet" href="assets/home-layout.css?v=1">
 <link rel="stylesheet" href="assets/tool-hub.css?v=1">
+<link rel="stylesheet" href="assets/home-motion.css?v=1">
 <script>document.documentElement.classList.add('js');if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
 </head>
 <body class="g-main">
@@ -43,6 +45,7 @@
       <a href="http://wiki.primeasset.info/">보험위키</a>
       <a href="members/">설계사 인트라넷</a>
       <a href="members/#login" class="g-menu-login">로그인</a>
+      <a href="#" class="g-menu-install" hidden>앱 설치</a>
     </nav>
     <div class="g-nav-btns">
       <a class="g-btn g-btn--ghost" href="members/#signup">회원가입</a>
@@ -69,9 +72,9 @@
       </div>
     </div>
     <div class="g-stats" id="numbers">
-      <div class="g-tile g-stat"><b>19개 본부</b><small>함께하는 본부 (2026년 10월)</small></div>
-      <div class="g-tile g-stat"><b>1,123명</b><small>CY'25 실가동 설계사 · 전국 사무실 62개</small></div>
-      <div class="g-tile g-stat"><b>50억 2,332만 원</b><small>CY'25 장기 인보장성 월 보험료 · 계약 77,000건</small></div>
+      <div class="g-tile g-stat"><b data-count>19개 본부</b><small>함께하는 본부 (2026년 10월)</small></div>
+      <div class="g-tile g-stat"><b data-count>1,123명</b><small>CY'25 실가동 설계사 · 전국 사무실 62개</small></div>
+      <div class="g-tile g-stat"><b data-count>50억 2,332만 원</b><small>CY'25 장기 인보장성 월 보험료 · 계약 77,000건</small></div>
       <div class="g-tile g-stat"><b>프리미엄사업부 1위</b><small>2021년부터 · 사업부(188계열 본부 연합) 합계 기준, 프라임에셋 본부 단위 비교 (팜스)</small></div>
     </div>
   </section>
@@ -133,22 +136,22 @@
     <p class="g-lead">경력자에게는 수수료와 제도를, 신입에게는 교육과 도구를 먼저 보여 드립니다.</p>
     <div class="g-cq">
       <div class="g-bento g-bento--why">
-        <div class="g-tile g-bento-item g-bento-item--lg">
+        <div class="g-tile g-reveal g-bento-item g-bento-item--lg">
           <h3>수수료가 투명합니다</h3>
           <p>본사가 설계사에게 직접 지급하고, 매달 수수료표·시책·영업규정을 공개합니다.</p>
           <details class="g-more"><summary>더 보기</summary><p>팜스에서 계약별 수수료를 원 단위로 확인할 수 있습니다. 몸값 선지급 대신 공개된 규정으로 대우합니다.</p></details>
         </div>
-        <div class="g-tile g-bento-item">
+        <div class="g-tile g-reveal g-bento-item">
           <h3>규정대로 승격됩니다</h3>
           <p>설계사 → 팀장 → 지사장 → 본부장.</p>
           <details class="g-more"><summary>더 보기</summary><p>규정을 채우면 자동 승격되고, 누구나 노력하면 관리자가 될 수 있습니다.</p><p>본사 조직도·담당 연락처가 공개되고 직급별 교육을 지원합니다. 조직에 충성을 요구하지 않고, 설계사의 성공을 조직의 성공으로 봅니다.</p></details>
         </div>
-        <div class="g-tile g-bento-item">
+        <div class="g-tile g-reveal g-bento-item">
           <h3>교육과 도구가 준비돼 있습니다</h3>
           <p>보상·온라인영업 등 교육을 매뉴얼로 만들어 분야별 전문가가 함께합니다.</p>
           <details class="g-more"><summary>더 보기</summary><p>회원 전용 영업도구와 보험정보 카페 자료 3,200여 건.</p><p>월 1회 실전 강의, 익명 질문방(늅늅방), 바른 영업을 지향합니다. 출퇴근 자유·아침 조회 없이, 설계·심사 지원을 받아 스스로 성과를 만듭니다.</p></details>
         </div>
-        <div class="g-tile g-bento-item g-bento-item--wide">
+        <div class="g-tile g-reveal g-bento-item g-bento-item--wide">
           <h3>프라임에셋은 어떤 곳인가요</h3>
           <p>프라임에셋은 설계사 1만여 명이 근무하는 초대형 GA 독립 법인이며 영업규정집을 공개합니다.</p>
           <details class="g-more"><summary>더 보기</summary><p>자세한 자료는 로그인 후 인트라넷 '프리미엄 안내 자료'에 있습니다.</p></details>
@@ -191,12 +194,12 @@
     </svg>
     <div class="g-cq">
       <div class="g-hub-bento">
-        <div class="g-tile g-hub-intro">
+        <div class="g-tile g-reveal g-hub-intro">
           <p class="g-hub-intro__n"><b>24</b><span>개 도구·채널·사이트</span></p>
           <p>누르면 회원가입으로 이동합니다.</p>
           <a class="g-btn g-btn--ghost" href="members/#signup">회원가입</a>
         </div>
-        <div class="g-tile g-hub-search" role="search">
+        <div class="g-tile g-reveal g-hub-search" role="search">
           <label class="sr" for="hub-q">도구 검색</label>
           <input class="g-hub-q" id="hub-q" type="search" placeholder="도구 찾기 (예: 상품, 수당, ㅅㄷ)" autocomplete="off" enterkeyhint="search" spellcheck="false">
           <p class="g-hub-count" id="hub-count" aria-live="polite">도구 24개 · 묶음 4개</p>
@@ -205,48 +208,48 @@
         <div class="g-hub-group g-hub-group--a" data-group="분석·답변">
           <h3>분석·답변 <small>AI 도구 · 회원 전용</small></h3>
           <div class="g-hub-grid">
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-layers"/></svg></span><span class="g-hub-body"><b>상품통합분석기</b><small>상품·비교자료 통합 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-scan"/></svg></span><span class="g-hub-body"><b>상품분석기</b><small>보험상품 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-chat"/></svg></span><span class="g-hub-body"><b>전산답변기</b><small>전산·IT 질문 답변</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-shield"/></svg></span><span class="g-hub-body"><b>보상답변기</b><small>보험금 청구·보상 답변</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-spark"/></svg></span><span class="g-hub-body"><b>AI 영업비서</b><small>화법·상담·DB영업 도움</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>소식지 분석기</b><small>소식지 내용 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-layers"/></svg></span><span class="g-hub-body"><b>상품통합분석기</b><small>상품·비교자료 통합 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-scan"/></svg></span><span class="g-hub-body"><b>상품분석기</b><small>보험상품 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-chat"/></svg></span><span class="g-hub-body"><b>전산답변기</b><small>전산·IT 질문 답변</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-shield"/></svg></span><span class="g-hub-body"><b>보상답변기</b><small>보험금 청구·보상 답변</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-spark"/></svg></span><span class="g-hub-body"><b>AI 영업비서</b><small>화법·상담·DB영업 도움</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>소식지 분석기</b><small>소식지 내용 분석</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
           </div>
         </div>
 
         <div class="g-hub-group g-hub-group--b" data-group="계산·자료">
           <h3>계산·자료 <small>회원 전용 (실적보드는 공개)</small></h3>
           <div class="g-hub-grid">
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-calc"/></svg></span><span class="g-hub-body"><b>수당계산기</b><small>예상 수수료·수당 계산</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-search"/></svg></span><span class="g-hub-body"><b>자료검색기</b><small>자료·문서 통합 검색</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>최신보험뉴스</b><small>보험뉴스·최신 이슈 확인</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card g-hub-card--open" href="performance/"><span class="g-hub-ico"><svg><use href="#i-chart"/></svg></span><span class="g-hub-body"><b>실적보드</b><small>사업부 2026년 실적 현황</small></span><span class="g-hub-go" aria-hidden="true">→</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#stats" data-tool><span class="g-hub-ico"><svg><use href="#i-table"/></svg></span><span class="g-hub-body"><b>실적표</b><small>실적 요약 · 실적 표</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info" data-tool><span class="g-hub-ico"><svg><use href="#i-book"/></svg></span><span class="g-hub-body"><b>프리미엄 안내 자료</b><small>교육·채널·제도 안내 자료</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-calc"/></svg></span><span class="g-hub-body"><b>수당계산기</b><small>예상 수수료·수당 계산</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-search"/></svg></span><span class="g-hub-body"><b>자료검색기</b><small>자료·문서 통합 검색</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>최신보험뉴스</b><small>보험뉴스·최신 이슈 확인</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card g-hub-card--open" href="performance/"><span class="g-hub-ico"><svg><use href="#i-chart"/></svg></span><span class="g-hub-body"><b>실적보드</b><small>사업부 2026년 실적 현황</small></span><span class="g-hub-go" aria-hidden="true">→</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#stats" data-tool><span class="g-hub-ico"><svg><use href="#i-table"/></svg></span><span class="g-hub-body"><b>실적표</b><small>실적 요약 · 실적 표</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info" data-tool><span class="g-hub-ico"><svg><use href="#i-book"/></svg></span><span class="g-hub-body"><b>프리미엄 안내 자료</b><small>교육·채널·제도 안내 자료</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
           </div>
         </div>
 
         <div class="g-hub-group g-hub-group--c" data-group="정보·교육 채널">
           <h3>정보·교육 채널 <small>회원가입 후 안내</small></h3>
           <div class="g-hub-grid">
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-users"/></svg></span><span class="g-hub-body"><b>보험정보 공유방(단톡방)</b><small>프리미엄 정보공유 단톡방</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-folder"/></svg></span><span class="g-hub-body"><b>보험정보 공유 카페(자료 3,200여 건)</b><small>오래 보관할 보험자료</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-question"/></svg></span><span class="g-hub-body"><b>익명질문&amp;답변방(늅늅방)</b><small>익명 질문·답변방</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-infinity"/></svg></span><span class="g-hub-body"><b>고급정보 무한공유(전설의 고무공)</b><small>리크루팅 영업지원 시스템</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-school"/></svg></span><span class="g-hub-body"><b>스탠다드 캠퍼스(월 1회 실전 교육)</b><small>교육→자료→실행 교육 시스템</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>프리미엄 최신보험뉴스</b><small>최신 보험뉴스·마케팅 팁</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-users"/></svg></span><span class="g-hub-body"><b>보험정보 공유방(단톡방)</b><small>프리미엄 정보공유 단톡방</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-folder"/></svg></span><span class="g-hub-body"><b>보험정보 공유 카페(자료 3,200여 건)</b><small>오래 보관할 보험자료</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-question"/></svg></span><span class="g-hub-body"><b>익명질문&amp;답변방(늅늅방)</b><small>익명 질문·답변방</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-infinity"/></svg></span><span class="g-hub-body"><b>고급정보 무한공유(전설의 고무공)</b><small>리크루팅 영업지원 시스템</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-school"/></svg></span><span class="g-hub-body"><b>스탠다드 캠퍼스(월 1회 실전 교육)</b><small>교육→자료→실행 교육 시스템</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-news"/></svg></span><span class="g-hub-body"><b>프리미엄 최신보험뉴스</b><small>최신 보험뉴스·마케팅 팁</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
           </div>
         </div>
 
         <div class="g-hub-group g-hub-group--d" data-group="홈페이지·사이트">
           <h3>홈페이지·사이트 <small>바로가기 (보험위키는 공개)</small></h3>
           <div class="g-hub-grid">
-            <a class="g-tile g-hub-card g-hub-card--open" href="http://wiki.primeasset.info/" target="_blank" rel="noopener"><span class="g-hub-ico"><svg><use href="#i-wiki"/></svg></span><span class="g-hub-body"><b>보험위키</b><small>보장·용어·청구 가이드</small></span><span class="g-hub-go" aria-hidden="true"><svg><use href="#i-out"/></svg></span><span class="sr">새 창</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-globe"/></svg></span><span class="g-hub-body"><b>188 영업지원시스템</b><small>188본부 메인페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-note"/></svg></span><span class="g-hub-body"><b>보험노트</b><small>보험노트 공식 홈페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-building"/></svg></span><span class="g-hub-body"><b>프라임에셋 본사</b><small>프라임에셋 본사 사이트</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-fb"/></svg></span><span class="g-hub-body"><b>김상현 이사 페이스북</b><small>이사 페이스북 페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
-            <a class="g-tile g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-home"/></svg></span><span class="g-hub-body"><b>기존 프리미엄 사이트</b><small>프리미엄사업부 공식 홈페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card g-hub-card--open" href="http://wiki.primeasset.info/" target="_blank" rel="noopener"><span class="g-hub-ico"><svg><use href="#i-wiki"/></svg></span><span class="g-hub-body"><b>보험위키</b><small>보장·용어·청구 가이드</small></span><span class="g-hub-go" aria-hidden="true"><svg><use href="#i-out"/></svg></span><span class="sr">새 창</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-globe"/></svg></span><span class="g-hub-body"><b>188 영업지원시스템</b><small>188본부 메인페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-note"/></svg></span><span class="g-hub-body"><b>보험노트</b><small>보험노트 공식 홈페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-building"/></svg></span><span class="g-hub-body"><b>프라임에셋 본사</b><small>프라임에셋 본사 사이트</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-fb"/></svg></span><span class="g-hub-body"><b>김상현 이사 페이스북</b><small>이사 페이스북 페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+            <a class="g-tile g-reveal g-hub-card" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-home"/></svg></span><span class="g-hub-body"><b>기존 프리미엄 사이트</b><small>프리미엄사업부 공식 홈페이지</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
           </div>
         </div>
       </div>
@@ -258,7 +261,7 @@
   <section class="g-sec" id="ceo">
     <h2>김상현 이사</h2>
     <p class="g-lead">프라임에셋 이사, 프리미엄사업부 대표.</p>
-    <div class="g-card g-ceo g-ceo--v3">
+    <div class="g-card g-reveal g-ceo g-ceo--v3">
       <div class="g-ceo-bio">
         <p class="g-quote">말보다 데이터와 시스템으로 일하는 보험영업가</p>
         <p>프라임에셋 188본부 본부장 · 프리미엄사업부. 2017년 188본부를 시작으로 19개 본부 연합으로 키웠습니다.</p>
@@ -297,14 +300,14 @@
   <!-- 자주 묻는 질문: 3개 노출 + 나머지 2개 접기 (전체는 /story/#faq) -->
   <section class="g-sec" id="faq">
     <h2>자주 묻는 질문</h2>
-    <details class="g-faq"><summary>Q. 원수사나 대리점이나 똑같지 않나요?</summary><p>A. 다릅니다. 대리점마다, 프라임에셋 안에서도 모두 다릅니다.</p></details>
-    <details class="g-faq"><summary>Q. 정착지원금 주시나요?</summary><p>A. 몸값 선지급 대신 공개된 규정과 환경으로 대우합니다.</p></details>
-    <details class="g-faq"><summary>Q. 디비 지급해 주나요?</summary><p>A. 디비를 받는 대신 수당이 낮아지는 구조를 권하지 않습니다. 온라인·디비·지인·개척 등 가망고객 확보는 함께 진행합니다.</p></details>
-    <details class="g-fold g-fold--faq">
+    <details class="g-faq g-reveal"><summary>Q. 원수사나 대리점이나 똑같지 않나요?</summary><p>A. 다릅니다. 대리점마다, 프라임에셋 안에서도 모두 다릅니다.</p></details>
+    <details class="g-faq g-reveal"><summary>Q. 정착지원금 주시나요?</summary><p>A. 몸값 선지급 대신 공개된 규정과 환경으로 대우합니다.</p></details>
+    <details class="g-faq g-reveal"><summary>Q. 디비 지급해 주나요?</summary><p>A. 디비를 받는 대신 수당이 낮아지는 구조를 권하지 않습니다. 온라인·디비·지인·개척 등 가망고객 확보는 함께 진행합니다.</p></details>
+    <details class="g-fold g-fold--faq g-reveal">
       <summary>질문 2개 더 보기</summary>
       <div class="g-fold-body">
-        <details class="g-faq"><summary>Q. 보험영업을 제대로 배우고 싶습니다.</summary><p>A. 영업방식·공부자료·보상교육, 필요한 건 말씀만 주세요.</p></details>
-        <details class="g-faq"><summary>Q. 함께 일하려면 무엇이 필요한가요?</summary><p>A. 의지와 노력. 그 외에는 저희가 준비합니다. — 프라임에셋 이사 김상현</p></details>
+        <details class="g-faq g-reveal"><summary>Q. 보험영업을 제대로 배우고 싶습니다.</summary><p>A. 영업방식·공부자료·보상교육, 필요한 건 말씀만 주세요.</p></details>
+        <details class="g-faq g-reveal"><summary>Q. 함께 일하려면 무엇이 필요한가요?</summary><p>A. 의지와 노력. 그 외에는 저희가 준비합니다. — 프라임에셋 이사 김상현</p></details>
       </div>
     </details>
     <p class="g-note g-note--sec"><a class="g-link" href="story/#faq">질문 더 보기</a></p>
@@ -312,7 +315,7 @@
 
   <!-- 합류 문의 -->
   <section class="g-sec g-contact" id="contact">
-    <div class="g-card">
+    <div class="g-card g-reveal">
       <h2 class="g-h2">함께 할 멋진 설계사를 찾고 있습니다.</h2>
       <p class="g-lead">수수료·디비 얼마 이야기 대신, 10년·20년 매년 성장할 수 있는 이야기를 하고 싶습니다. 경력·신입 모두 환영.</p>
       <div class="g-actions">
@@ -433,6 +436,10 @@
 <script src="assets/home-layout.js?v=1" defer></script>
 <!-- 도구 허브 검색(입력 즉시 필터·초성) + 로그인 세션이 있으면 자물쇠 대신 인트라넷으로(권한 판정은 인트라넷 그대로) -->
 <script src="assets/tool-hub.js?v=1" defer></script>
+<!-- 스크롤 연출: 숫자 카운트업 + scroll-driven animation 미지원 시 카드 등장 대체(IntersectionObserver). 움직임 줄이기면 아무것도 안 함 -->
+<script src="assets/home-motion.js?v=1" defer></script>
+<!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) + 메뉴 안 조용한 설치 버튼 -->
+<script src="assets/pwa.js?v=1" defer></script>
 <!-- 첫 화면 3D 로고(회전 가감속 + 반짝이는 파티클 64개): WebGL 되고 움직임 줄이기가 아니면 위 WebP 자리에 실시간 3D를 그림. three.js r187(MIT)은 assets/three/ 안, 외부 요청 없음. 안 되면 WebP 그대로 -->
 <script src="assets/three/logo3d-loader.js?v=2" defer></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(이름·이메일·쿠키·식별자 없음). 설정은 auth-config.js 재사용 -->

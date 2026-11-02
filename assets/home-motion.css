@@ -1,0 +1,32 @@
+/* 메인(index.html) 스크롤 연출 — MAIN-V3-20261102 ④(스크롤·넘김·PWA·그래프)
+   · 카드 순차 등장(.g-reveal): CSS scroll-driven animation(animation-timeline: view()) 우선. 미지원 브라우저는 assets/home-motion.js 가 html.io 를 붙이고 IntersectionObserver 로 .is-in 을 준다.
+     JS 가 꺼져 있고 scroll-driven 도 안 되면 처음부터 그대로 보인다(숨김 상태를 CSS 기본값으로 두지 않음).
+   · 첫 화면 글·숫자 타일: 로드 때 한 번 짧게 떠오름(시간 기반, 절제).
+   · 숫자 0→값 카운트업은 JS(assets/home-motion.js). 최종 값은 원래 글자와 같고, JS 가 꺼지면 처음부터 최종값.
+   · prefers-reduced-motion: glass.css 공통 규칙(animation·transition 없음)으로 전부 정지. */
+@keyframes g-in{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes g-in-soft{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* 스크롤 진입 연출: 요소가 아래에서 들어오는 동안(entry 0%→45%) 떠오름, --i 만큼 늦게 시작(순차) */
+@supports (animation-timeline:view()){
+  .g-reveal{animation:g-in linear both;animation-timeline:view();animation-range-start:entry calc(var(--i,0) * 7%);animation-range-end:entry calc(45% + var(--i,0) * 7%)}
+}
+/* 대체(IntersectionObserver): JS 가 html.io 를 붙인 뒤에만 숨김 → .is-in 으로 전환 */
+html.io .g-reveal{opacity:0;transform:translateY(18px);transition:opacity .75s cubic-bezier(.16,1,.3,1),transform .75s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--i,0) * 70ms)}
+html.io .g-reveal.is-in{opacity:1;transform:none}
+/* 첫 화면: 로드 때 글 → 버튼 → 숫자 타일 순서로 짧게 */
+.g-hero-text>*{animation:g-in-soft .7s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i,0) * 80ms)}
+.g-hero-text>:nth-child(1){--i:0}.g-hero-text>:nth-child(2){--i:1}.g-hero-text>:nth-child(3){--i:2}.g-hero-text>:nth-child(4){--i:3}.g-hero-text>:nth-child(5){--i:4}
+.g-stat{animation:g-in-soft .8s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(.35s + var(--i,0) * 90ms)}
+.g-stat:nth-child(1){--i:0}.g-stat:nth-child(2){--i:1}.g-stat:nth-child(3){--i:2}.g-stat:nth-child(4){--i:3}
+/* 숫자 글자는 카운트 중에도 폭이 흔들리지 않게 */
+.g-stat b{font-variant-numeric:tabular-nums}
+/* 순차 등장 순서(--i): 벤토 칸·허브 카드·FAQ */
+.g-bento>:nth-child(1){--i:0}.g-bento>:nth-child(2){--i:1}.g-bento>:nth-child(3){--i:2}.g-bento>:nth-child(4){--i:3}
+.g-hub-grid>:nth-child(1){--i:0}.g-hub-grid>:nth-child(2){--i:1}.g-hub-grid>:nth-child(3){--i:2}.g-hub-grid>:nth-child(4){--i:3}.g-hub-grid>:nth-child(5){--i:4}.g-hub-grid>:nth-child(6){--i:5}
+#faq>details:nth-of-type(1){--i:0}#faq>details:nth-of-type(2){--i:1}#faq>details:nth-of-type(3){--i:2}#faq>details:nth-of-type(4){--i:3}
+/* 메뉴 안 '앱 설치'(설치 가능할 때만 보임) */
+.g-menu .g-menu-install{color:var(--navy)}
+/* 페이지 넘김(cross-document View Transitions)은 공통 glass.css 끝에 선언(@view-transition) — 메뉴·띠는 고정 이름으로 제자리 유지 */
+@media (prefers-reduced-motion:reduce){
+  .g-reveal,.g-hero-text>*,.g-stat{animation:none!important;transition:none!important;opacity:1!important;transform:none!important}
+}

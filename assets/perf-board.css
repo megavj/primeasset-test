@@ -5,6 +5,7 @@
    · 2부(파일 뒤쪽): 188 performance/index.html 의 페이지 전용 <style>(히어로·카드·순위 배치·마무리·바닥글·애니메이션)을 같은 방식으로 옮김.
    · 색 대비: 금색 글자는 어두운 금(#8a6d1f, 흰 바탕 4.9:1), 큰 숫자 그라데이션은 #7a5f1c~#b4891f(3.2:1 이상, 큰 글자), 생보 #2563eb·손보 #b45309(4.5:1 이상).
    · 외부 글꼴(Marcellus)·CDN 없음 — 글꼴은 사이트 공통 Pretendard.
+   · v=2(MAIN-V3-20261102 ④): 월별 막대 툴팁(.pb-tip) 글자색을 어두운 바탕에 맞게 밝은 색으로(이전엔 바탕과 같은 어두운 색). 메인·/performance/ 공통.
    ===================================================================== */
 
 .pb {
@@ -369,7 +370,7 @@
   border-radius: 14px;
   background: rgba(9, 11, 15, .96);
   box-shadow: 0 20px 44px rgba(30, 58, 138, .18);
-  color: var(--pb-ink);
+  color: #f5f2ea;                 /* v=2(MAIN-V3-20261102 ④): 어두운 툴팁 바탕 위 밝은 글자(이전 var(--pb-ink) 는 바탕과 같은 어두운 색이라 안 보였음) */
   font-size: 12px;
   line-height: 1.35;
   pointer-events: none;
@@ -384,18 +385,18 @@
   transform: translate(-50%, 0);
   transition: opacity .16s, transform .16s;
 }
-.pb-tip__head { margin: 0; color: var(--pb-muted); font-size: 11px; }
+.pb-tip__head { margin: 0; color: #cbd5e1; font-size: 11px; }
 .pb-tip__value { margin: 3px 0 0; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
-.pb-tip__sub { margin: 2px 0 9px; color: var(--pb-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.pb-tip__sub { margin: 2px 0 9px; color: #cbd5e1; font-size: 11px; font-variant-numeric: tabular-nums; }
 .pb-tip dl {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 5px 14px;
   margin: 0;
   padding-top: 9px;
-  border-top: 1px solid var(--pb-line);
+  border-top: 1px solid rgba(255, 255, 255, .18);
 }
-.pb-tip dt { display: flex; align-items: center; gap: 6px; color: var(--pb-muted); }
+.pb-tip dt { display: flex; align-items: center; gap: 6px; color: #cbd5e1; }
 .pb-tip dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
 .pb-key { display: inline-block; width: 12px; height: 2px; border-radius: 2px; }
 .pb-key--life { background: var(--pb-life); }

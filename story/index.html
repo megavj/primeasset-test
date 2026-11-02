@@ -9,6 +9,7 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="description" content="김상현 이사 소개, 2017년 188본부부터 19개 본부 연합까지 연혁 26개, 함께하는 본부 19개, 숫자 더 보기, 방향과 목표 10개, 자주 묻는 질문.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="프라임에셋 프리미엄">
@@ -22,7 +23,7 @@
 <meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,123명 설계사, 월 보험료 50억 2,332만 원">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-<link rel="stylesheet" href="../assets/glass.css?v=8">
+<link rel="stylesheet" href="../assets/glass.css?v=9">
 </head>
 <body class="g-main g-story">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -248,5 +249,7 @@
 <script src="../assets/branches.js?v=1"></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(이름·이메일·쿠키·식별자 없음) -->
 <script src="../assets/stats-beacon.js?v=1" data-page="/story/"></script>
+<!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) -->
+<script src="../assets/pwa.js?v=1" defer></script>
 </body>
 </html>
