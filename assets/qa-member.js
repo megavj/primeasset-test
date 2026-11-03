@@ -3,6 +3,18 @@
   const m = location.pathname.match(/^\/qa\/([a-z0-9-]+)\/?$/);
   if (!m) return;
   const slug = m[1].replace(/^\d{4}-\d{2}-\d{2}-/, '');
+  // AUDIT-20261103: 이 기기에 로그인 기록이 없으면(대부분의 공개 방문자) Supabase SDK(약 218KB)를 받지 않고 공개본 그대로 둔다.
+  // 권한 판정은 여전히 서버 RLS가 한다(여기는 '받을지 말지'만 정함). 판정 키는 site-nav.js와 같은 sb-*-auth-token.
+  try {
+    let has = false;
+    for (let i = 0; i < localStorage.length && !has; i += 1) {
+      const k = localStorage.key(i);
+      if (!/^sb-[a-z0-9]+-auth-token$/.test(k)) continue;
+      const v = JSON.parse(localStorage.getItem(k) || 'null');
+      has = !!(v && (v.access_token || v.refresh_token));
+    }
+    if (!has) return;
+  } catch (e) { /* 저장소를 못 읽으면 기존처럼 확인 */ }
   let tries = 0;
   async function run() {
     let sb; try { sb = await window.paClient(); } catch (e) { return; }
