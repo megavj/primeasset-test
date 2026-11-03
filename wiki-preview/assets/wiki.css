@@ -379,8 +379,8 @@ td:first-child{white-space:nowrap;color:var(--cyan);font-family:var(--fm);font-s
   --bg-1:#0c111c;      /* 카드·타일 면 */
   --bg-2:#131a29;      /* 입력칸·표 머리·불투명 대체 면 */
   --text:#f2eee6;      /* 본문 글자: 오프화이트(바탕 대비 17:1) */
-  --text-2:#aab4c4;    /* 보조 글자: 차분한 회청(8:1 이상) */
-  --text-3:#8a96a9;    /* 캡션: 가장 옅은 회청(가장 밝은 면 위에서도 5:1 이상) */
+  --text-2:#c5cdd9;    /* 보조 글자: 차분한 회청(8:1 이상) */
+  --text-3:#a6b0c0;    /* 캡션: 가장 옅은 회청(가장 밝은 면 위에서도 5:1 이상) */
   --gold:#d6b97e;      /* 포인트 금색 하나(로고 #d9bc82~#c6a46c 계열): 주 행동·머리말·핵심 숫자에만 */
   --gold-hi:#e3c994;   /* 금색 버튼 마우스 올림 */
   --on-gold:#15110a;   /* 금색 바탕 위 글자(10:1) */
@@ -435,3 +435,58 @@ html{scrollbar-gutter:stable}button,input{font-family:var(--font)}button,a{touch
 
 /* Keyboard focus must remain visible on the central atlas search control. */
 .center:focus-visible .core{stroke:var(--text);stroke-width:4px}
+
+/* 2차: 상세 페이지 탐색(하위 목록·관련·이전/다음·사이드바 하위 단계). 색은 기존 토큰만 사용. */
+.pagehead .kind{display:block;margin:20px 0 4px}
+.crumbs{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
+.crumbs [aria-current]{color:var(--text-3)}
+.article h2{margin:40px 0 16px}
+.article h2:first-of-type{margin-top:8px}
+.article ul,.article ol{color:var(--text-2);padding-left:22px;margin:0 0 20px}
+.article li{margin:6px 0}
+.article li strong,.article p strong{color:var(--text);font-weight:600}
+.article a.xref{color:var(--text);text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:1px}
+.article a.xref:hover,.article a.xref:focus-visible{color:var(--gold)}
+.article .tablewrap{overflow-x:auto;margin:8px 0 24px;border:1px solid var(--line);border-radius:var(--r-tile)}
+.article table{min-width:0;font-size:15px;line-height:1.6}
+.article th{font-family:var(--font);font-size:14px;letter-spacing:0;color:var(--text);background:var(--bg-2);font-weight:600}
+.article td{color:var(--text-2)}
+.practice h2,.faq h2{margin-top:0}
+.faq{margin:28px 0}
+.kids{margin:40px 0 8px;padding-top:28px;border-top:1px solid var(--line)}
+.kids h2,.related h2{font-size:20px;margin:0 0 16px}
+.kid-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.kid{display:flex;flex-direction:column;gap:6px;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r-tile);background:var(--bg-1);text-decoration:none;transition:border-color .2s,transform .2s}
+.kid:hover,.kid:focus-visible{border-color:var(--line-2);transform:translateY(-1px)}
+.kid b{color:var(--text);font-size:16px;font-weight:600;line-height:1.45}
+.kid>span:last-child{color:var(--text-3);font-size:14px;line-height:1.55}
+.kid .eyebrow,.related .eyebrow{font-size:11px}
+.related{margin:32px 0 0}
+.related a{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.related a:hover{color:var(--gold)}
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:28px 0 40px}
+.pager a{display:flex;flex-direction:column;gap:4px;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r-tile);text-decoration:none}
+.pager a:hover{border-color:var(--line-2)}
+.pager a span{font-size:13px;color:var(--text-3)}
+.pager a b{font-size:15px;font-weight:500;color:var(--text);line-height:1.45}
+.pager .next{text-align:right;grid-column:2}
+.side .side-sub{margin:2px 0 6px 10px;padding-left:10px;border-left:1px solid var(--line)}
+.side .side-sub a{font-size:13px;padding-block:5px;color:var(--text-3)}
+.side .side-sub a.on,.side a.on{color:var(--gold)}
+.atlas-list .al-parts{display:flex;flex-wrap:wrap;gap:2px 6px}
+.atlas-list .al-parts a{text-decoration:underline;text-decoration-color:var(--line-2)}
+.atlas-svg .hit{fill:transparent;pointer-events:all}
+.atlas-svg .part{cursor:pointer;pointer-events:all}
+.atlas-svg .part:hover,.atlas-svg .part:focus{fill:var(--gold)}
+.sitemap .dcard{margin-bottom:16px}
+.sitemap ul{list-style:none;padding-left:0;margin:0}
+.sitemap ul ul{padding-left:16px;border-left:1px solid var(--line);margin:4px 0 8px 6px}
+.sitemap li a{display:inline-block;padding:4px 0;color:var(--text-2);text-decoration:none}
+.sitemap li a:hover{color:var(--gold)}
+.sitemap h2 a{text-decoration:none}
+.gitem .permalink{display:inline-block;margin-top:8px}
+html.js-rv #atlas-static{display:none}
+@media(max-width:520px){.kid-grid,.pager{grid-template-columns:minmax(0,1fr)}.pager .next{grid-column:1}.article table{font-size:14px}}
+
+/* 팀쿡 2026-11-03 이사 승인: 본문 폭 좁힘(가독성) */
+@media(min-width:821px){.article{max-width:720px}}
