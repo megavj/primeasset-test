@@ -264,6 +264,7 @@
         const { error } = await sb.rpc("complete_profile", values);
         if (error) throw error;
         draftActive = false; clearDraft(owner);
+        window.dispatchEvent(new Event("pa:profile")); // 공통 메뉴: 로그아웃·내 정보 표시
         await boot();
       } catch (error) {
         console.debug("[complete_profile]", error);
@@ -332,23 +333,10 @@
     } }, "승인 요청");
     return el("div", { class: "pa-req-row" }, btn, out);
   }
-  // 승인 대기 회원은 전체 승인 요청 버튼 하나만 표시합니다.
-  // 요청은 request_access(null) 1건(S4 SQL: resource_id 빈칸 = 전체 승인 요청). S4 적용 전에는 서버가 거절 → 이유 안내, 적용 후 '요청 접수됨'
+  // 승인 대기 회원: 가입정보 제출 시 관리자에게 알림 메일이 자동 발송되므로(일론 notify-signup) 별도 '승인 요청' 버튼 없이 안내만 표시합니다.
   function pendingCard() {
-    const out = el("p", { class: "pa-note pa-wait-msg", role: "status" });
-    const btn = el("button", { class: "g-btn g-btn--pri pa-wait-req", type: "button", onclick: async () => {
-      btn.disabled = true; btn.textContent = "보내는 중…"; out.textContent = "";
-      const { data: res, error } = await sb.rpc("request_access", { p_resource_id: null });
-      if (!error) {
-        btn.textContent = "요청 접수됨"; // 접수 뒤에는 잠금(다시 눌러도 서버는 1건만 둠)
-        out.textContent = res === "already" ? "이미 승인 요청이 접수돼 있어요. 관리자가 확인 중입니다." : "승인 요청이 접수됐어요. 관리자가 확인한 뒤 열립니다.";
-        return;
-      }
-      btn.disabled = false; btn.textContent = reqFail(out, error) ? "다시 시도" : "승인 요청 보내기";
-    } }, "승인 요청 보내기");
     return el("div", { class: "pa-card pa-banner pa-wait" }, el("h2", { class: "pa-h3" }, "승인 대기 중 — 관리자 확인 후 열립니다"),
-      el("p", {}, "인트라넷을 둘러보실 수 있지만 🔒 표시 메뉴는 관리자 승인 후 열립니다. 빨리 확인받으려면 승인 요청을 보내 주세요."),
-      el("div", { class: "pa-row" }, btn), out);
+      el("p", {}, "가입 신청이 관리자에게 자동으로 전달됐어요. 승인되면 🔒 표시 메뉴가 열립니다. 그동안 인트라넷은 둘러보실 수 있어요."));
   }
 
   const SITE_LINKS = [

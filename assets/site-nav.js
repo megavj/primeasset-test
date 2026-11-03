@@ -30,7 +30,7 @@
   if (tabs) {
     tabs.innerHTML = '<div class="g-bar">' + link('home', '/', '홈') + link('intranet', '/members/#home', '인트라넷') + link('me', '/members/#me', '내 정보') + '</div>';
   }
-  let session = null, admin = false, roleToken = '', roleTime = 0, roleEpoch = 0, authClient = null, sdkPromise = null;
+  let session = null, admin = false, incomplete = false, roleToken = '', roleTime = 0, roleEpoch = 0, authClient = null, sdkPromise = null;
   function readSession() {
     try {
       const project = config.url && new URL(config.url).hostname.split('.')[0];
@@ -53,9 +53,10 @@
     return '';
   }
   function render() {
-    const inside = !!session;
+    // 가입정보 입력 전(profile_done=false)에는 로그인 전처럼 보이되 로그인·로그아웃 버튼은 숨깁니다(이사 지시: 가입 화면에 로그아웃 없음).
+    const inside = !!session && !incomplete;
     for (const key of ['intranet', 'me', 'logout']) menu.querySelector('[data-nav-key="' + key + '"]').hidden = !inside;
-    for (const key of ['join', 'login']) menu.querySelector('[data-nav-key="' + key + '"]').hidden = inside;
+    for (const key of ['join', 'login']) menu.querySelector('[data-nav-key="' + key + '"]').hidden = !!session;
     menu.querySelector('[data-nav-key="admin"]').hidden = !(inside && admin);
     header.dataset.auth = inside ? (admin ? 'admin' : 'member') : 'guest';
     if (tabs) tabs.hidden = !inside;
@@ -88,14 +89,15 @@
       }
       if (epoch !== roleEpoch || !session || session.access_token !== token) return;
       admin = !!(data && data[0] && data[0].is_admin && data[0].status === 'active');
+      incomplete = !!(data && data[0] && data[0].profile_done === false);
       render();
     } catch (_) {
-      if (epoch === roleEpoch) { admin = false; roleToken = ''; render(); }
+      if (epoch === roleEpoch) { admin = false; incomplete = false; roleToken = ''; render(); }
     }
   }
   function setSession(next) {
     if ((session && session.user && session.user.id) !== (next && next.user && next.user.id) || !next) {
-      admin = false; roleToken = ''; roleEpoch += 1;
+      admin = false; incomplete = false; roleToken = ''; roleEpoch += 1;
     }
     session = next;
     render();
@@ -128,6 +130,7 @@
   document.addEventListener('keydown', event => { if (event.key === 'Escape' && header.classList.contains('is-open')) closeMenu(true); });
   document.addEventListener('click', event => { if (!header.contains(event.target)) closeMenu(false); });
   window.addEventListener('hashchange', render);
+  window.addEventListener('pa:profile', () => { roleToken = ''; refresh(); }); // 가입정보 저장 직후 메뉴 갱신
   window.addEventListener('storage', event => { if (event.key === null || sessionKey.test(event.key || '')) refresh(); });
   window.addEventListener('pageshow', refresh);
   window.addEventListener('focus', refresh);
