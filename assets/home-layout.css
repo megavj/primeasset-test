@@ -33,3 +33,25 @@
   html.js body:has(input:focus) .g-cta-bar.is-on{transform:translateY(140%);opacity:0;pointer-events:none}
 }
 @media (prefers-reduced-motion:reduce){html.js .g-cta-bar{transition:none}}
+
+/* 영업지원시스템: 기존 카드 토큰 사용, 휴대폰(720px 이하)에서만 제목으로 접기. */
+.g-sales-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+.g-sales-card{min-width:0}
+.g-sales-card h3{margin:0;font-size:var(--fs-h3);font-weight:var(--fw-h3);line-height:var(--lh-h3);letter-spacing:-.01em}
+.g-sales-toggle{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:0;border:0;background:none;color:var(--text);font:inherit;text-align:left}
+.g-sales-toggle:disabled{opacity:1;color:var(--text);-webkit-text-fill-color:currentColor}
+.g-sales-icon{flex:none;color:var(--gold)}
+.g-sales-chevron{display:none;flex:none;margin-left:auto;color:var(--text-2)}
+.g-sales-panel[hidden]{display:none}
+.g-sales-description{margin:var(--s1) 0 var(--s3);color:var(--text-2)}
+.g-sales-panel ul{margin:0;padding:var(--s3) 0 0 20px;border-top:1px solid var(--line);color:var(--text-2)}
+.g-sales-panel li+li{margin-top:var(--s1)}
+.g-sales-panel li::marker{color:var(--text-3)}
+.g-sales-panel strong{color:var(--gold);font-weight:600;white-space:nowrap}
+@media(max-width:720px){
+  .g-sales-grid{grid-template-columns:1fr}
+  .g-sales-toggle:not(:disabled){cursor:pointer}
+  .g-sales-toggle:not(:disabled) .g-sales-chevron{display:block}
+  .g-sales-toggle[aria-expanded="true"] .g-sales-chevron{transform:rotate(180deg)}
+  .g-sales-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:5px;border-radius:4px}
+}
