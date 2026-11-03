@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://test.primeasset.info/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,123명 설계사, 월 보험료 50억 2,332만 원">
+<meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,200명 설계사, 월 보험료 50억 2,332만 원">
 <meta name="twitter:card" content="summary_large_image">
 <script>
 /* FUNC-FIX B7: CSS 를 받기 전에(그래서 아무것도 그려지기 전에) 이 기기의 로그인 세션 유무로 처음 모양을 정함 — 나중에 바뀌며 흔들리지 않게.
@@ -45,7 +45,7 @@
 </script>
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="../assets/glass.css?v=14">
-<link rel="stylesheet" href="../assets/members-ux.css?v=10">
+<link rel="stylesheet" href="../assets/members-ux.css?v=11">
 </head>
 <body class="g-members">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -74,7 +74,7 @@
   <h1 class="sr">설계사 인트라넷</h1><!-- 낭독용 제목(h1): 화면 카드 제목은 h2 -->
   <!-- FUNC-FIX B7: 로그인 화면 맨 위 소개 한 줄은 고정 글로 여기 둠(자바스크립트가 다시 그리지 않음 → 첫 그림부터 보이고 깜빡임·가장 큰 글(LCP) 늦어짐 없음).
        로그인 화면일 때만 보임: 로그인 세션이 있으면(html.pa-in·body.pa-logged) 또는 다른 화면이면(body.pa-hero-off, glass-members.js) 숨김 -->
-  <div class="pa-login pa-hero-static"><div class="pa-card pa-card--hero"><p class="pa-pitch">가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.</p></div></div>
+  <div class="pa-login pa-hero-static"><div class="pa-card pa-card--hero"><p class="pa-pitch">승인 후, 도구 24개와 실적 자료를 한곳에서.</p></div></div>
   <!-- FUNC-FIX B7: 불러오는 동안 실제 화면 모양의 틀(스켈레톤). 로그인 세션이 이 기기에 있으면 인트라넷 모양, 없으면 로그인 화면 모양.
        틀은 화면 높이만큼 자리를 잡아 바닥글이 밀려 내려가지 않게(흔들림 CLS) 하고, 1초 안에 끝나면 보이지 않음(깜빡임 없음). 화면이 그려지면 통째로 바뀜 -->
   <div id="pa-app" aria-busy="true">
@@ -111,7 +111,7 @@
 <script src="../assets/vendor/supabase-2.118.0.js"></script>
 <script src="../assets/auth-config.js?v=2"></script>
 <script src="../assets/glass-chart.js?v=2"></script>
-<script src="../assets/glass-members.js?v=16"></script>
+<script src="../assets/glass-members.js?v=17"></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(로그인 전/후 모두, 이름·이메일·식별자 없음) -->
 <script src="../assets/stats-beacon.js?v=1" data-page="/members/"></script>
 <!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) -->

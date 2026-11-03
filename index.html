@@ -10,13 +10,13 @@
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="description" content="19개 본부(2026년 10월) · 1,200명 설계사(CY'25 실가동). 수수료는 본사가 직접 지급하고 수수료표·시책·영업규정을 매달 공개합니다. 경력·신입 합류 문의.">
+<meta name="description" content="19개 본부 · 1,200명 설계사가 함께 성장하는 곳. 수수료는 본사가 직접 지급하고 수수료표·시책·영업규정을 매달 공개합니다. 경력·신입 합류 문의.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="프라임에셋 프리미엄">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:url" content="https://test.primeasset.info/">
 <meta property="og:title" content="프라임에셋 프리미엄 — 19개 본부, 1,200명 설계사가 함께 성장하는 곳">
-<meta property="og:description" content="19개 본부(2026년 10월) · 1,200명 설계사(CY'25 실가동). 수수료는 본사가 직접 지급하고 수수료표·시책·영업규정을 매달 공개합니다. 경력·신입 합류 문의.">
+<meta property="og:description" content="19개 본부 · 1,200명 설계사가 함께 성장하는 곳. 수수료는 본사가 직접 지급하고 수수료표·시책·영업규정을 매달 공개합니다. 경력·신입 합류 문의.">
 <meta property="og:image" content="https://test.primeasset.info/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="assets/glass.css?v=13">
 <link rel="stylesheet" href="assets/perf-board.css?v=7">
 <link rel="stylesheet" href="assets/home-board.css?v=4">
-<link rel="stylesheet" href="assets/home-layout.css?v=4">
+<link rel="stylesheet" href="assets/home-layout.css?v=5">
 <link rel="stylesheet" href="assets/tool-hub.css?v=5">
 <link rel="stylesheet" href="assets/home-motion.css?v=5">
 <link rel="stylesheet" href="assets/home-dark.css?v=3">
@@ -84,7 +84,6 @@
   <!-- 프리미엄사업부 실적보드(MAIN-V3-01): 188 홈(188.primeasset.info/#performance)의 '프리미엄사업부 실적보드'를 마크업 그대로 이식.
        S5-20261102: 월별 월보험료·계약건수 10개월은 이사님 제공 팜스 본부별 마감(사업부 본부 합계, 원 → 천원 사사오입) — 저장소 밖 harness/s5perf.py 가 계산·생성(/performance/ 와 같은 자료, perf-data JSON 은 아래). 막대는 전부 단색(생보·손보 구분 없음), 본부별 자료는 넣지 않음. 연출은 assets/perf-board.js(188 원본, 툴팁 생보·손보 줄만 뺌). 디자인만 test 유리 톤(assets/home-board.css) -->
   <section class="g-sec g-board pb" id="performance" aria-labelledby="board-title">
-    <p class="pb-eyebrow g-board-eyebrow">2026 · <span data-pb-stat="period_en">JAN—OCT</span></p>
     <h2 id="board-title">프리미엄사업부 실적보드</h2>
     <p class="g-lead">숫자로 증명하는 곳!</p>
     <div class="pb pb-home">
@@ -92,7 +91,7 @@
         <header class="pb-home__head" data-pb-play>
           <div class="pb-home__caption">
             <p class="pb-home__label" id="pb-home-title">2026년 <span data-pb-stat="period">1~10월</span> 누적 월보험료</p>
-            <p class="pb-basis">기준: 2026년 <span data-pb-stat="period">1~10월</span> · 팜스 본부별 마감<span class="g-nowrap">(사업부 본부 합계)</span> · 월납보험료</p>
+            <p class="pb-basis">사업부 합계 · 팜스 마감 기준</p>
           </div>
           <p class="pb-home__total"><b class="pb-goldtext" data-pb-stat="total_eok2" data-pb-count="2200">35.30</b><span>억</span></p>
         </header>
@@ -162,7 +161,7 @@
        회원 도구의 가입·인트라넷 이동과 검색·초성 검색은 assets/tool-hub.js 에서 유지. -->
   <section class="g-sec g-hub" id="tools" aria-labelledby="tools-title">
     <h2 id="tools-title">설계사 성장 시스템</h2>
-    <p class="g-lead">가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.</p>
+    <p class="g-lead">영업에 필요한 도구를 한곳에.</p>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
       <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 5 9-5"/></symbol>
       <symbol id="i-calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7h7M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15v2.5"/></symbol>
@@ -193,7 +192,7 @@
       <div class="g-hub-top">
         <div class="g-reveal g-hub-intro">
           <p class="g-hub-intro__n"><b>24</b><span>개 도구·채널·사이트</span></p>
-          <p>누르면 회원가입으로 이동합니다.</p>
+          <p>회원 전용 도구는 가입 후 이용하세요.</p>
           <a class="g-btn g-btn--ghost" href="members/#signup">회원가입</a>
         </div>
         <div class="g-reveal g-hub-search" role="search">
@@ -207,7 +206,7 @@
         <a class="g-card g-reveal g-hub-card g-hub-card--key" data-group="분석·답변" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-spark"/></svg></span><span class="g-hub-body"><b>AI 영업비서</b><small>화법·상담·DB영업 도움</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
         <a class="g-card g-reveal g-hub-card g-hub-card--key" data-group="계산·자료" href="members/#signup" data-member data-in="members/#home" data-tool><span class="g-hub-ico"><svg><use href="#i-calc"/></svg></span><span class="g-hub-body"><b>수당계산기</b><small>예상 수수료·수당 계산</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
         <a class="g-card g-reveal g-hub-card g-hub-card--key g-hub-card--open" data-group="계산·자료" href="performance/"><span class="g-hub-ico"><svg><use href="#i-chart"/></svg></span><span class="g-hub-body"><b>실적보드</b><small>사업부 2026년 실적 현황</small></span><span class="g-hub-go" aria-hidden="true">→</span></a>
-        <a class="g-card g-reveal g-hub-card g-hub-card--key g-hub-card--wide" data-group="정보·교육 채널" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-folder"/></svg></span><span class="g-hub-body"><b>보험정보 공유 카페(자료 3,200여 건)</b><small>오래 보관할 보험자료</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
+        <a class="g-card g-reveal g-hub-card g-hub-card--key g-hub-card--wide" data-group="정보·교육 채널" href="members/#signup" data-member data-in="members/#info"><span class="g-hub-ico"><svg><use href="#i-folder"/></svg></span><span class="g-hub-body"><b>보험정보 공유 카페</b><small>오래 보관할 보험자료</small></span><span class="g-hub-lock" aria-hidden="true"><svg><use href="#i-lock"/></svg></span><span class="sr">회원 전용 · 누르면 회원가입</span></a>
         <a class="g-card g-reveal g-hub-card g-hub-card--key g-hub-card--open" data-group="홈페이지·사이트" href="http://wiki.primeasset.info/" target="_blank" rel="noopener"><span class="g-hub-ico"><svg><use href="#i-wiki"/></svg></span><span class="g-hub-body"><b>보험위키</b><small>보장·용어·청구 가이드</small></span><span class="g-hub-go" aria-hidden="true"><svg><use href="#i-out"/></svg></span><span class="sr">새 창</span></a>
       </div>
       <div class="g-hub-all" id="hub-all">
@@ -311,8 +310,8 @@
   <!-- 합류 문의 -->
   <section class="g-sec g-contact" id="contact">
     <div class="g-panel g-reveal">
-      <h2 class="g-h2">함께 할 멋진 설계사를 찾고 있습니다.</h2>
-      <p class="g-lead">수수료·디비 얼마 이야기 대신, 10년·20년 매년 성장할 수 있는 이야기를 하고 싶습니다. 경력·신입 모두 환영.</p>
+      <h2 class="g-h2">함께 성장할 설계사를 찾습니다.</h2>
+      <p class="g-lead">성장할 환경을 함께 만듭니다. 경력·신입 모두 환영합니다.</p>
       <div class="g-actions">
         <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
         <a class="g-btn g-btn--ghost g-btn--lg" href="tel:010-8714-9262">전화 010-8714-9262</a>

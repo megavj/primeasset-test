@@ -9,11 +9,7 @@
 .pa-wait-msg{margin:8px 0 0;color:var(--text-2)}
 .pa-wait-msg:empty{display:none}
 .pa-wait-list{margin:16px 0 0;border-top:1px solid var(--line);padding-top:6px}
-.pa-wait-list>summary{cursor:pointer;list-style:none;font-weight:var(--fw-label);color:var(--text);min-height:48px;display:flex;align-items:center;gap:8px}
-.pa-wait-list>summary::-webkit-details-marker{display:none}
-.pa-wait-list>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid var(--text-2);border-bottom:1.5px solid var(--text-2);transform:rotate(45deg) translateY(-2px);margin-left:2px}
-.pa-wait-list[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
-.pa-wait-list>summary:hover{color:var(--gold-hi)}
+.pa-wait-list>h3{font-weight:var(--fw-label);color:var(--text);min-height:48px;display:flex;align-items:center;gap:8px;margin:0}
 .pa-wait-cat h3{font-size:17px;font-weight:600;margin:16px 0 8px}
 .pa-wait-cat h3 small{font-size:15px;font-weight:400;color:var(--text-3)}
 
@@ -110,11 +106,8 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-filter{min-height:44px;padding:9px 16px;border:1px solid var(--line-2);border-radius:8px;background:var(--bg-1);color:var(--text-2);font:inherit;font-size:14px;cursor:pointer}
 .g-members .pa-filter[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:var(--on-gold);font-weight:500}
 .g-members .pa-work-group{border-top:1px solid var(--line);padding:0 0 12px}
-.g-members .pa-work-group>summary{display:flex;align-items:center;gap:12px;list-style:none;min-height:62px;cursor:pointer;font-size:18px;font-weight:500}
-.g-members .pa-work-group>summary::-webkit-details-marker{display:none}
-.g-members .pa-work-group>summary small{font-size:14px;color:var(--text-3);font-weight:400}
-.g-members .pa-work-group>summary::after{content:"+";margin-left:auto;color:var(--text-3);font-size:22px;font-weight:400}
-.g-members .pa-work-group[open]>summary::after{content:"−"}
+.g-members .pa-work-group>h3{display:flex;align-items:center;gap:12px;min-height:62px;font-size:18px;font-weight:500;margin:0}
+.g-members .pa-work-group>h3 small{font-size:14px;color:var(--text-3);font-weight:400}
 .g-members .pa-site-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 24px;margin-top:16px}
 .g-members .pa-site-link{display:flex;flex-direction:column;gap:4px;padding:12px 0;text-decoration:none;border-top:1px solid var(--line);min-height:64px}
 .g-members .pa-site-link b{font-size:16px;font-weight:500}
@@ -192,3 +185,11 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 }
 .g-members .g-btn--sm{min-height:44px}
 .g-members .g-foot a{display:inline-flex;align-items:center;min-height:44px}
+
+/* 20261103: 로그인·안내 자료는 접기 없이 표시. 실적표의 접기는 유지합니다. */
+.g-members .pa-email-login{margin-top:20px;border-top:1px solid var(--line);padding-top:18px}
+.g-members .pa-email-login h3{font-size:16px;font-weight:var(--fw-label);margin:0 0 12px}
+.g-members .pa-info-card{margin-top:16px;scroll-margin-top:120px}
+.g-members .pa-info-card h4{font-size:17px;font-weight:var(--fw-label);line-height:1.5;margin:0 0 10px}
+.g-members .pa-info-card p{overflow-wrap:anywhere}
+.g-members .pa-info-links{margin-bottom:0}

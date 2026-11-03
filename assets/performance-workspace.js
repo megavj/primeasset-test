@@ -141,7 +141,7 @@
         var button = byId('pf-focus');
         if (button) {
           button.setAttribute('aria-pressed', String(state.focus));
-          button.textContent = state.focus ? '전체 보기' : '집중 보기';
+          button.textContent = state.focus ? '전체 화면 구성 보기' : '집중 보기';
         }
       }
       function render() {
@@ -227,7 +227,7 @@
         writeLocation(false);
         var target = byId(enabled ? 'pf-focus-exit' : 'pf-focus');
         if (moveFocus && target) target.focus({ preventScroll: true });
-        announce(enabled ? '집중 보기입니다. Escape 키 또는 전체 보기로 돌아갈 수 있습니다.' : '전체 보기로 돌아왔습니다.');
+        announce(enabled ? '집중 보기입니다. Escape 키 또는 전체 화면 구성 보기 버튼으로 돌아갈 수 있습니다.' : '전체 보기로 돌아왔습니다.');
       }
       function summary() {
         var stats = selectedStats();

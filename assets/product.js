@@ -298,7 +298,7 @@
     const a=r.answer||{}, sources=sourceList(a), host=byId('answer');
     host.replaceChildren(); host.hidden=false;
     host.append(el('div','px-answer-question','질문 · '+job.q));
-    const top=el('div','px-section-top'); top.append(el('span','px-eyebrow',arrived?'ANSWER READY':'RECENT ANSWER'));
+    const top=el('div','px-section-top'); top.append(el('span','px-eyebrow',arrived?'분석 답변':'최근 답변'));
     const actions=el('div','px-actions');
     [['답변 복사',()=>copy(answerText(job,r))],['공유',()=>share(answerText(job,r),'상품 분석 답변')],['새 질문',()=>{byId('question').value='';updateComposer();byId('question').focus();scroll(byId('question-form'));}]].forEach(([label,fn])=>{const b=el('button','px-btn',label);b.type='button';b.addEventListener('click',fn);actions.append(b);});
     top.append(actions);host.append(top);
@@ -320,7 +320,6 @@
     const src=el('section','px-sources');src.append(el('h3','','답변의 근거'),el('p','px-small','문서명 · 쪽 · 기준월을 확인하세요. 출처 번호는 아래 근거로 이동합니다.'));
     sources.forEach(s=>{const div=el('div','px-source','['+str(s.n)+'] '+sourceText(s));if(/^\d{1,2}$/.test(str(s.n)))div.id='source-'+s.n;div.tabIndex=-1;src.append(div);});
     if(!sources.length)src.append(el('p','px-small','제공된 출처가 없습니다.'));host.append(src);
-    const timing=el('details','px-detail'),summary=el('summary','px-small','처리 정보');timing.append(summary,el('p','px-small',[r.searchSec!=null?'검색 '+Math.round(r.searchSec)+'초':'',r.answerSec!=null?'답변 '+Math.round(r.answerSec)+'초':'',r.model?'처리 모델 '+str(r.model).replace(/^openai:/,''):''].filter(Boolean).join(' · ')||'제공된 처리 정보가 없습니다.'));host.append(timing);
     host.append(el('p','px-small','내부검색 자료 기준 자동 생성 답변입니다. 실제 설계·고지 전 원문과 전산을 확인하세요.'));
     scroll(host);title.focus({preventScroll:true});announce(arrived?'답변이 도착했습니다. 근거를 함께 확인하세요.':'최근 답변을 열었습니다.');
   }

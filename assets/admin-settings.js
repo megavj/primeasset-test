@@ -252,7 +252,7 @@
       draw();
       const f = createFields({}, "새 페이지·도구");
       return el("div", { class: "adm-stack" },
-        note("메뉴를 펼쳐 편집한 뒤 변경 저장을 눌러 주세요. 새 메뉴를 추가하면 메뉴 권한에서 사용할 등급도 지정해 주세요."),
+        note("편집 후 저장하세요. 새 메뉴는 이용 등급도 지정하세요."),
         el("div", { class: "adm-toolbar" }, field("페이지·도구 검색", search), field("종류", kindFilter), field("표시 상태", activeFilter)), count, body,
         el("details", { class: "adm-panel" }, el("summary", {}, "새 페이지·도구 추가"), el("div", { class: "adm-stack" }, fieldsView(f), actions(button("페이지·도구 추가", async () => {
           const value = values(f);
@@ -285,7 +285,7 @@
         body.replaceChildren(shown.length ? table(["시각", "처리자", "대상", "작업", "변경 내용"], shown.map((record) => {
           const detail = record.detail || {}, before = detail.before || {}, after = detail.after || {};
           return el("tr", {}, cell(fmt(record.at)), cell(record.actor_email || "시스템"), cell(`${tableNames[record.target_table] || record.target_table || "—"} · ${after.email || after.name || before.email || before.name || record.target_id || ""}`),
-            cell(actionNames[record.action] || record.action || "—"), cell(el("details", {}, el("summary", {}, "변경 내용 보기"), el("p", { class: "adm-audit-detail" }, changes(record)))));
+            cell(actionNames[record.action] || record.action || "—"), cell(el("details", {}, el("summary", {}, "변경 내용"), el("p", { class: "adm-audit-detail" }, changes(record)))));
         }), "최근 변경 기록") : empty(records.length ? "조건에 맞는 기록이 없습니다" : "아직 변경 기록이 없습니다", records.length ? "검색어나 대상을 바꿔 주세요." : "관리자가 설정을 변경하면 기록이 표시됩니다."));
       };
       const reload = button("기록 새로고침", read);

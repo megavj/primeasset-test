@@ -206,7 +206,7 @@
       group.append(facts);
       host.append(group);
     });
-    host.append(node('p', 'px-small px-muted', '보험사 소식지(' + text(response.month) + ')를 Mac 내부검색에서 조회해 정리한 내용입니다. 쪽 번호를 누르면 원문 발췌를 조회합니다. 처리기 연결이 필요합니다.'));
+    host.append(node('p', 'px-small px-muted', '보험사 소식지(' + text(response.month) + ') 기준입니다. 쪽 번호로 원문을 확인하세요.'));
   }
   function fact(item, insurer, month, alive) {
     var wrapper = node('div', 'px-source');
@@ -387,13 +387,12 @@
     if (sections.length) {
       var official = section('공식 자료 · 소식지 횡단 비교');
       sections.forEach(function (item) {
-        var details = node('details', 'px-detail');
-        details.open = true;
-        details.append(node('summary', '', text(item.title) + ' · ' + item.items.length + '건'));
+        var group = node('section', 'px-detail');
+        group.append(node('h4', 'px-detail-title', text(item.title) + ' · ' + item.items.length + '건'));
         var items = node('div', 'px-list');
         list(item.items).forEach(function (entry) { items.append(reportItem(entry, report, alive)); });
-        details.append(items);
-        official.append(details);
+        group.append(items);
+        official.append(group);
       });
       host.append(official);
     }

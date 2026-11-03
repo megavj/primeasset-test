@@ -1,12 +1,12 @@
 /* PAGE-1 20261103: 영업지원 홈, 31개 서버 메뉴·안내·사이트 통합검색, 별 고정, 계정별 최근 사용,
-   업무별 분류, 소식 재확인, 실적 접기·오류 재시도. 서버 권한/RPC/자료 원문은 유지.
+   업무별 분류, 소식 상시 표시, 실적 접기·오류 재시도. 서버 권한/RPC/자료 원문은 유지.
    프라임에셋 프리미엄 — 회원 로그인·도구 목록 (Supabase). 기존 유리 디자인 기반: assets/members.js 사본, 화면 배치·클래스만 다름. 3단계: 검색(초성)·최근 쓴 도구·새 소식 배너·승인 요청·막대그래프(assets/glass-chart.js) 추가. Supabase 호출·권한 판정은 그대로(새 함수 request_access 는 없으면 오픈채팅 안내로 대체).
    4단계(web-design-guidelines): 입력칸 이름(aria-label)·autocomplete·inputmode, 보내는 동안 버튼 잠금, 결과 문구 aria-live, 카드 제목은 h2.pa-h3(h1→h2 순서). 호출·인자는 그대로.
    도구 주소는 이 파일에 없음: 로그인 후 서버(my_resources)가 권한 있는 것만 내려줌
-   FUNC-FIX-20261102: A1 승인 대기 회원은 메뉴별 버튼 31개 대신 안내 + '승인 요청 보내기' 1개(request_access(null), S4 SQL) + 접힌 메뉴 목록, 거절돼도 오픈채팅 자동 열기 없음.
+   FUNC-FIX-20261102: A1 승인 대기 회원은 메뉴별 버튼 31개 대신 안내 + '승인 요청 보내기' 1개(request_access(null), S4 SQL) + 상시 표시 메뉴 목록, 거절돼도 오픈채팅 자동 열기 없음.
      A6 '실적 요약'은 공개 실적보드 자료(/performance/ #perf-data)에서 기간·숫자를 읽음(코드에 기간 없음). 화면 꾸밈은 assets/members-ux.css
      A3 오류 안내 한국어(재요청 제한 남은 초·만료 링크·연결 끊김 다시 시도, 영어 원문은 console.debug), A4 주소의 칸 기억 → 그린 뒤 이동·로그인 전 칸은 이 기기에 잠시 저장
-     A5 카카오톡 안 브라우저면 구글 버튼 위 안내 + 이메일 로그인 먼저 펼침, B7 불러오는 틀은 members/index.html(첫 show() 때 사라짐) */
+     A5 카카오톡 안 브라우저면 구글 버튼 위 안내 + 이메일 로그인 상시 표시, B7 불러오는 틀은 members/index.html(첫 show() 때 사라짐) */
 (function () {
   const C = window.PA_AUTH || {};
   const $ = (s) => document.querySelector(s);
@@ -95,8 +95,8 @@
       out.textContent = /email|address/i.test(`${error.code || ""} ${error.message || ""}`) && error.status === 400 ? "이메일 주소를 확인해 주세요." : "메일을 보내지 못했어요. 잠시 후 다시 시도해 주세요.";
       tick();
     });
-    const mailBox = el("details", { style: "margin-top:14px" }, el("summary", {}, "구글 계정이 없으면: 이메일로 로그인"), el("div", { class: "pa-row" }, email, sendBtn));
-    // FUNC-FIX A5: 카카오톡 안 브라우저는 구글이 로그인을 막을 수 있음(403 disallowed_useragent) → 구글 버튼 위 안내 + 이메일 로그인 먼저 펼침.
+    const mailBox = el("section", { class: "pa-email-login", "aria-labelledby": "pa-email-title" }, el("h3", { id: "pa-email-title" }, "이메일로 로그인"), el("div", { class: "pa-row" }, email, sendBtn));
+    // FUNC-FIX A5: 카카오톡 안 브라우저는 구글이 로그인을 막을 수 있음(403 disallowed_useragent) → 구글 버튼 위 안내 + 이메일 로그인 상시 표시.
     //   '다른 브라우저로 열기' 버튼(kakaotalk://web/openExternal, 비공식)은 보조 — 누를 때만, 안 되더라도 안내문은 그대로 남음
     let kakao = null;
     if (KAKAO) {
@@ -105,7 +105,6 @@
         el("p", {}, el("b", {}, "카카오톡 안에서는 구글 로그인이 막힐 수 있어요"), ` → 오른쪽 아래 ⋮ → 다른 브라우저로 열기${ios ? "(아이폰은 'Safari로 열기')" : ""}`),
         el("p", { class: "pa-note" }, "다른 브라우저로 옮기기 어려우면 아래 '이메일로 로그인'을 쓰세요."),
         el("a", { class: "g-btn g-btn--ghost g-btn--sm", href: "kakaotalk://web/openExternal?url=" + encodeURIComponent(location.href) }, "다른 브라우저로 열기"));
-      mailBox.open = true;
     }
     // FUNC-FIX A3: 만료·이미 쓴 메일 링크로 돌아온 경우(주소는 위에서 정리함)
     let errCard = null;
@@ -114,19 +113,18 @@
       errCard = el("div", { class: "pa-card pa-banner pa-linkerr", role: "alert" },
         el("h2", { class: "pa-h3" }, expired ? "링크가 만료됐어요 — 새 메일 받기" : "로그인을 마치지 못했어요"),
         el("p", {}, expired ? "로그인 링크는 한 번만, 받은 뒤 정해진 시간 안에만 쓸 수 있어요. 이메일 주소를 넣고 새 메일을 받아 주세요." : "잠시 후 아래에서 다시 로그인해 주세요."),
-        expired ? el("div", { class: "pa-row" }, el("button", { class: "g-btn g-btn--pri", type: "button", onclick: () => { mailBox.open = true; email.focus(); } }, "새 메일 받기")) : null);
-      if (expired) mailBox.open = true;
+        expired ? el("div", { class: "pa-row" }, el("button", { class: "g-btn g-btn--pri", type: "button", onclick: () => email.focus() }, "새 메일 받기")) : null);
       linkErr = null; // 한 번만 안내
     }
-    // FUNC-FIX B7: 맨 위 소개 한 줄('가입하면 도구 24개와 실적 자료를 쓸 수 있습니다.')은 members/index.html 의 고정 글(.pa-hero-static)을 보여 줌 — 다시 그리지 않음
+    // FUNC-FIX B7: 맨 위 소개 한 줄('승인 후, 도구 24개와 실적 자료를 한곳에서.')은 members/index.html 의 고정 글(.pa-hero-static)을 보여 줌 — 다시 그리지 않음
     show(el("div", { class: "pa-login" }, errCard,
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, su ? "회원가입 · 로그인" : "로그인"),
-        N("구글 계정 버튼 하나로 로그인. 처음이면 로그인하는 순간 가입 신청이 됩니다."),
+        N("구글로 간편 로그인. 처음이라면 가입 신청부터."),
         kakao,
         el("button", { class: "g-btn g-btn--pri g-btn--lg g-wide", type: "button", onclick: () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: here } }) }, "구글 계정으로 로그인"),
         mailBox,
         out),
-      el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "가입 · 승인 · 이용 3단계"),
+      el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "가입 → 승인 → 이용"),
         el("ol", { class: "pa-steps" }, el("li", {}, el("b", {}, "가입"), "구글로 로그인 → 이름·소속 본부·휴대폰 입력, 개인정보 동의"),
           el("li", {}, el("b", {}, "승인"), "관리자가 확인하고 등급을 정합니다"),
           el("li", {}, el("b", {}, "이용"), "등급에 맞는 도구·실적 자료가 열립니다 (승인 전에는 🔒)"))),
@@ -160,7 +158,6 @@
   // ─── 3단계: 도구 검색(초성)·최근 쓴 도구(이 기기만)·새 소식 배너·잠긴 메뉴 '승인 요청' ───
   const OPENCHAT = "https://open.kakao.com/o/sFMF26y";
   const RECENT_KEY = "pa_recent_tools";   // [{id,name}] 최대 6개 — 주소는 저장하지 않음(권한 목록 my_menu 에서 다시 찾음)
-  const NOTICE_KEY = "pa_notice_closed";  // 닫은 새 소식 본문(같은 내용이면 이 기기에서 다시 안 뜸)
   const store = { get: (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } } };
   // 한글 초성 검색: 'ㅅㅍ' → 상품… (초성 글자는 그 초성으로 시작하는 모든 음절과 맞음, 나머지 글자는 그대로)
   const CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
@@ -194,7 +191,7 @@
     } }, "승인 요청");
     return el("div", { class: "pa-req-row" }, btn, out);
   }
-  // 승인 대기 회원: 메뉴별 버튼 31개 대신 안내 + '전체 승인 요청' 버튼 1개 + 접힌 메뉴 목록.
+  // 승인 대기 회원: 메뉴별 버튼 31개 대신 안내 + '전체 승인 요청' 버튼 1개 + 상시 표시 메뉴 목록.
   // 요청은 request_access(null) 1건(S4 SQL: resource_id 빈칸 = 전체 승인 요청). S4 적용 전에는 서버가 거절 → 이유 안내, 적용 후 '요청 접수됨'
   function pendingCard(data) {
     const out = el("p", { class: "pa-note pa-wait-msg", role: "status" });
@@ -210,7 +207,7 @@
     } }, "승인 요청 보내기");
     const groups = {};
     for (const r of data) (groups[r.category] = groups[r.category] || []).push(r);
-    const list = el("details", { class: "pa-wait-list" }, el("summary", {}, `승인 후 열리는 메뉴 ${data.length}개 보기`),
+    const list = el("section", { class: "pa-wait-list", "aria-labelledby": "pa-wait-title" }, el("h3", { id: "pa-wait-title" }, "승인 후 이용할 메뉴"),
       ...Object.entries(groups).map(([cat, rs]) => el("div", { class: "pa-wait-cat" }, el("h3", {}, cat, el("small", {}, ` ${rs.length}개`)),
         el("ul", { class: "pa-list" }, ...rs.map(r => el("li", { class: "pa-locked" }, el("span", {}, "🔒 " + r.name), r.description ? el("small", {}, r.description) : null))))));
     return el("div", { class: "pa-card pa-banner pa-wait" }, el("h2", { class: "pa-h3" }, "승인 대기 중 — 관리자 확인 후 열립니다"),
@@ -254,7 +251,7 @@
     const productSource = data.find(r => r.name === "상품통합분석기");
     const catalog = [
       ...data.map(r => ({ ...r, key: "menu:" + r.id, kind: "회원 도구", work: workFor(r), aliases: /AI.*영업비서/.test(r.name) ? "AI 영업비서" : /최신보험뉴스/.test(r.name) ? "프리미엄 최신보험뉴스" : "" })),
-      ...INFO.map(([name, ps, links], i) => ({ key: "info:" + i, name, description: ps[0], url: "#info-" + i, unlocked: true, kind: "안내 자료", work: workFor({ name }), aliases: "프리미엄 안내 자료 교육 채널 제도 " + (INFO_ALIASES[i] || ""), searchText: ps.join(" ") + " " + links.map(l => l[1]).join(" "), detail: true })),
+      ...INFO.map(([name, ps, links], i) => ({ key: "info:" + i, name, description: INFO_BRIEFS[i], url: "#info-" + i, unlocked: true, kind: "안내 자료", work: workFor({ name }), aliases: "프리미엄 안내 자료 교육 채널 제도 " + (INFO_ALIASES[i] || ""), searchText: ps.join(" ") + " " + links.map(l => l[1]).join(" "), detail: true })),
       ...SITE_LINKS.map(([name, description, url], i) => ({ key: "site:" + i, name, description, url, unlocked: true, kind: "사이트", work: WORK[5] })),
       { key: "page:product", id: productSource && productSource.id, name: "상품분석기 · 질문 작업실", description: "질문 입력부터 답변 확인까지 · 상품통합분석기 권한으로 이용", url: productSource && productSource.unlocked && productSource.url ? "../product/" : null, unlocked: !!(productSource && productSource.unlocked), kind: "사이트 내 도구", work: WORK[0], internal: true },
       { key: "page:performance", name: "실적보드", description: "사업부 실적 현황 · 공개 자료", url: "../performance/", unlocked: true, kind: "실적", work: WORK[3], internal: true },
@@ -315,10 +312,10 @@
     }
     const filterBar = el("div", { class: "pa-filters", role: "group", "aria-label": "업무별 도구 분류" });
     function drawDirectory() {
-      directory.replaceChildren(...WORK.filter(w => activeWork === "전체" || activeWork === w).map((w, i) => {
+      directory.replaceChildren(...WORK.filter(w => activeWork === "전체" || activeWork === w).map(w => {
         const items = catalog.filter(r => r.work === w);
-        return el("details", { class: "pa-work-group", ...(activeWork !== "전체" || i === 0 ? { open: "" } : {}) },
-          el("summary", {}, el("span", {}, w), el("small", {}, `${items.length}개`)), el("div", { class: "pa-work-grid" }, ...items.map(tile)));
+        return el("section", { class: "pa-work-group", "aria-label": w },
+          el("h3", {}, el("span", {}, w), el("small", {}, `${items.length}개`)), el("div", { class: "pa-work-grid" }, ...items.map(tile)));
       }));
     }
     ["전체", ...WORK].forEach(w => filterBar.append(el("button", { class: "pa-filter", type: "button", "aria-pressed": String(w === activeWork), onclick: () => {
@@ -357,11 +354,7 @@
         const t = raw === "사업부 실적보드 2026년 1~9월 반영 (2026-10 미마감)"
           ? "공개 실적보드: 2026년 1~10월 팜스 월별 합계 반영. 인트라넷 상세표는 각 표에 표시된 기간·출처를 확인해 주세요."
           : raw;
-        const render = () => {
-          const closed = t && store.get(NOTICE_KEY, "") === t;
-          noticeBody.replaceChildren(el("p", {}, closed ? "새 소식을 접어 두었습니다." : t || "등록된 새 소식이 없습니다."), t ? el("button", { class: "pa-text-button", type: "button", onclick: () => { store.set(NOTICE_KEY, closed ? "" : t); render(); } }, closed ? "새 소식 다시 보기" : "접어 두기") : "");
-        };
-        render();
+        noticeBody.replaceChildren(el("p", {}, t || "등록된 새 소식이 없습니다."));
       } catch (e) {
         noticeBody.replaceChildren(N("새 소식을 불러오지 못했습니다."), el("button", { class: "pa-text-button", type: "button", onclick: loadNotice }, "다시 시도"));
       }
@@ -374,11 +367,11 @@
         N("고정 도구와 최근 사용은 이 브라우저에 저장됩니다. 다른 기기에는 동기화되지 않습니다."),
         el("div", { class: "pa-head-btns" }, p.is_admin ? el("a", { class: "g-btn g-btn--ghost", href: "admin/" }, "관리자 화면") : null, logoutBtn())));
     const links = el("div", { class: "pa-card" }, el("h3", {}, "자주 찾는 사이트"), el("div", { class: "pa-site-list" }, ...catalog.filter(r => r.kind === "사이트").map(r => toolLink(r, "pa-site-link"))));
-    const head = el("header", { class: "pa-home-head" }, el("div", {}, el("p", { class: "pa-eyebrow" }, "PREMIUM · WORKSPACE"), el("h2", { class: "pa-home-title" }, "영업지원 홈"), el("p", { class: "pa-home-sub" }, "찾는 도구부터, 필요한 자료까지.")),
+    const head = el("header", { class: "pa-home-head" }, el("div", {}, el("h2", { class: "pa-home-title" }, "영업지원 홈"), el("p", { class: "pa-home-sub" }, "영업에 필요한 도구와 자료, 한곳에.")),
       el("a", { class: "pa-account", href: "#me" }, el("span", { class: "pa-account-status" }, status), el("b", {}, p.name || "내 계정"), el("small", {}, `${p.grade || "등급 미지정"} · 내 정보 →`)));
-    const fav = el("section", { id: "pa-favorites", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, "자주 쓰는 도구"), el("a", { href: "#directory", id: "pa-edit-pins" }, "도구 찾아 고정하기 →")), N("★로 고정 · 이 기기에서 빠르게 열기"), favoriteGrid);
+    const fav = el("section", { id: "pa-favorites", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, "자주 쓰는 도구"), el("a", { href: "#directory", id: "pa-edit-pins" }, "도구 찾아 고정하기 →")), N("자주 쓰는 도구는 ★로 고정하세요."), favoriteGrid);
     const recent = el("section", { id: "pa-recent", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, "최근 사용"), el("button", { class: "pa-text-button", type: "button", onclick: () => { store.set(recentKey, []); drawRecent(); announce.textContent = "최근 사용 기록을 지웠습니다."; } }, "기록 지우기")), recentGrid);
-    const browse = el("section", { id: "directory", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, "업무별 도구·자료"), el("a", { href: "#stats" }, "실적 요약·표 ↓")), N(`회원 메뉴 ${data.length}개와 안내 자료·사이트를 함께 모았습니다. 잠긴 메뉴는 승인 후 열립니다.`),
+    const browse = el("section", { id: "directory", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, "업무별 도구·자료"), el("a", { href: "#stats" }, "실적 요약·표 ↓")), N("도구와 자료를 한곳에. 잠긴 메뉴는 승인 후 열립니다."),
       data.length ? null : N("등록된 회원 메뉴가 없습니다. 안내 자료와 사이트는 아래에서 이용할 수 있습니다."), filterBar, directory);
     drawFavorites(); drawRecent(); drawDirectory();
     show(announce, el("section", { class: "pa-sec", id: "home" }, head,
@@ -397,7 +390,7 @@
     markTab();
     if (t.tagName === "DETAILS") t.open = true;
     if (moveFocus) {
-      const focus = t.querySelector("summary, h2, h3") || t;
+      const focus = t.querySelector("summary, h2, h3, h4") || t;
       if (focus.tagName !== "SUMMARY") focus.setAttribute("tabindex", "-1");
       focus.focus({ preventScroll: true });
     }
@@ -409,6 +402,32 @@
   }
 
   const INFO = [["교육 방향", ["프리미엄은 개개인의 전문화를 목표로 합니다. 자료 공유, 영업 방향 제시, 영업지원시스템 구성.", "이를 위해 늅늅방·정보방·카페·고무공 등을 운영합니다. 편한 영업보다 전문가가 되고 싶은 분을 지향합니다.", "Q&A: 하루에 얼마나 일하나 → 잘하는 분은 최대한 많이 하려 한다 / 초심 유지 → 생활패턴을 단순화(일-휴식 반복) / 약관 활용 → 외울 때까지 보고 적용 / 약한 세일즈 단계(AP·니즈환기·PT) → 집중 공부·연습 / 마감 앞 실적 부진 → 더 영업한다 / 힘들 때 → 더 영업에 집중한다.", "Q. 영업방법들을 보면 정말 어려운 방법도 많은데 그걸 어떻게 하죠? → 잘하는 분: ??(질문 자체가 이해가 안 됨) / 못하는 분: 쉬운 영업을 찾는다.", "Q. 영업하다 너무 힘들 땐 어떻게 해야 하나요? → 잘하는 분: 힘들지만 더 영업에 집중한다 / 못하는 분: 힘드니 쉰다."], [["https://www.primeasset.info/901c7125-6058-442d-b752-2ea048e4899c", "원문 보기"]]], ["보험정보 공유방 (단톡방)", ["프리미엄 산하 정보공유 단톡방. 누구든 필요한 자료를 공유하는 문화.", "상품자료, 리플렛, 인수기준, 주요 공지·안내, 질병 관련 자료 등. 오래 볼 자료는 정보카페로 옮겨 관리."], [["https://www.primeasset.info/81665774-c58c-409d-b515-1088b13fb755", "원문 보기"]]], ["보험정보 공유 카페", ["약 3,200여 개 보험자료 등록 (2025.12 기준).", "운영 원칙: 오래 보관할 자료 저장 / 보험·세무·보상 등 모든 자료 / 영업 방향·가이드 / 새 버전 나오면 기존 글 갱신 / 관련 글끼리 링크로 연결.", "공부자료: 보험경제뉴스, 추천견적·사례, 온라인영업, 기타영업, 강의·공부자료, 질병 자료, 보상자료, 분쟁사례, 추천강의, 영상자료, 블로그 모음, 상품자료, 기타자료.", "업무자료: 마케팅, 프라임에셋 자료, 시험 응시, 업무(+수납) 매뉴얼, 연락처, 보도자료, 리플렛, 보험이미지.", "손해보험 이슈(현대·메리츠·DB·하나·흥국·농협·한화·롯데·KB·삼성·예별·AIG 등), 생명보험 이슈."], [["https://www.primeasset.info/a2418d63-aa59-4abc-868d-0ec0fb67f6df", "원문 보기"]]], ["익명질문&답변방 (늅늅방)", ["프리미엄만의 익명 질문·답변방. 서로 누구인지 몰라도 묻고 답하는 문화가 자리 잡았습니다. 여러 번 개편을 거쳐 정착."], [["https://www.primeasset.info/9ac86671-1eca-4e19-a200-058d36a57a0c", "원문 보기"]]], ["고급정보 무한공유 (전설의 고무공)", ["리크루팅을 위한 영업지원 시스템. 수백 명의 타사 설계사와 정보 공유·소통. 그 밖의 리크루팅 제도도 준비·지원.", "참여 문의: 김상현 이사 010-8714-9262"], [["https://www.primeasset.info/979bd9c5-1680-4c63-8f6f-478ed8a55704", "원문 보기"]]], ["스탠다드 캠퍼스 (최신 교육시스템)", ["교육 → 자료 → 실행까지 연결된 내부 교육 시스템. 오프라인 강의 월 1회 실전 교육.", "상품저장소·디비저장소: 상품 / 화법 / 매뉴얼 / AI툴 / 디비 / 온라인 / 프로세스 / 이슈사항."], [["https://www.primeasset.info/32eb41e1-af69-80d2-9f2d-f40fc29a3ee5", "원문 보기"]]], ["영업규정집", ["프라임에셋은 영업규정집을 공개합니다(위촉·해촉, 관리자 승격·분할, 수수료, 준법 등). 승격 기준과 수수료 지급 기준이 투명하게 공개된다는 뜻입니다.", "다운로드: 프라임에셋_영업규정집_2024.pdf, 영업규정_요약본_2024.pdf (원문 페이지)"], [["https://www.primeasset.info/b94a8b28-d0cd-43da-9093-2aa713546115", "원문·파일 보기"]]], ["수수료 / 시책", ["수수료 총량은 원수사 판매실적·지급 방식, 대리점의 지급 방식(선지급·총량·시책)에 따라 달라집니다. 지급 방식 공개 여부, 매달 수수료표 공유, 급여 역계산 가능 여부를 확인해야 합니다.", "프라임에셋: 본사가 관리자·설계사에게 직접 급여 지급(중간관리자가 손댈 수 없음) / 매달 엑셀 수수료표·시책규정·영업규정 공개 / 상위 관리자와 지급률 협의 가능 / 본사전략시상으로 법인시상의 최대 190% 추가지급(본부장 30%, 지사장 60%, 설계사 100%) / 팜스에서 급여명세서 발행, 모든 계약 수수료·시책 원 단위 역추적 / 프라임 선지급제도.", "자료: 보험모집수수료(연동·고정지급률, 생보·손보, FC소득 예시), 증원수수료, 본부장·지사장 수수료(영업관리·분할·공헌), 시상. 수수료홍보자료(생명 2022.08, 손해 2023.09), 2023 영업규정집."], [["https://www.primeasset.info/f111be50-47d9-4f0a-97b7-922fa1af11cf", "원문·파일 보기"]]], ["승격 기준", ["직급: 설계사 - 팀장 - 지사장 - 본부장. 영업규정 조건을 만족하면 자동 승격(상위 관리자가 임의로 못 바꿈).", "팀장: 분기 전환성적 5천만 원(산하 합산 월납 약 100만 원 내외) / 지사장: 총인원 7명 이상 + 분기 전환성적 2억 원(월납 약 400만 원) / 본부장: 총인원 20명 이상 + 4분기 내 2분기 합산 전환성적 12억 원 이상(월납 약 1천만 원).", "설계사는 기본 연동지급률, 상위 관리자와 고정지급률 협의 가능. 신입·경력에 따라 직급·수수료 일부 조정 가능."], [["https://www.primeasset.info/19db7b3d-38fd-451c-a185-0b9d2670b182", "원문 보기"]]], ["프라임에셋은 어떤 곳인가요", ["초대형 GA, 1만여 명 설계사가 근무하는 독립법인. 소개·연혁·재무정보·판매회사, 공정성·투명성·지속성, 밸류체인, 수수료, CEO 메시지, 지표 및 현황."], [["https://www.primeasset.info/ee68e65a-2196-4af3-9236-0dbfba91ade7", "원문 보기"], ["http://primeasset.kr/", "프라임에셋 본사 사이트"]]], ["본사 지원 시스템", ["본사 조직도와 담당 연락처가 산하 설계사에게 공개됩니다.", "준법감시팀(금소법·심의), 인사행정팀(자격시험·협회등록·위촉), 계약관리팀(생손보 30개사 전담), 영업지원팀(복리후생·영업자료), 경영관리팀(수수료·시책 정산), 리스크관리팀, 재무관리팀, 교육지원팀(직급별·온라인 교육, 상품비교), 시스템지원팀, 미래상상팀.", "본사교육: 직급별(프라임입문·팀장리더십·지사장조직관리·본부장 본부운영), 테마별(신입 FC 입문, 인보험 마스터, 원수사별 심화, 외부강사, 보상특강), 온라인(원데이테마, 수요클래스, 유튜브 라이브 월간프라임, 관리자양성)."], [["https://www.primeasset.info/26b3958c-c24d-4767-9871-0515e8dd8d85", "원문 보기"]]], ["자료 모음", ["보험 카테고리: 보험 일을 하면서 필요한 상품·영업·지식·보상 등의 목적별 분류입니다. 이 카테고리에 있는 항목이 대부분의 보험영업에서 필요한 기초가 됩니다. 큰 분류와 작은 분류까지 실제 사례와 접목해 풀어 나갈 수 있게 하는 것이 목적이며, 책의 목차 같은 역할을 합니다. 파일: 보험 카테고리_바탕화면.zip(바탕화면용 이미지 압축파일), 보험 카테고리_화이트ver.pdf(교육용 출력 파일) — 원문 페이지에서 받습니다.", "프라임에셋 2024 브로슈어(PDF), 프라임에셋 입사설명회(2025.05), 보험 카테고리(바탕화면 이미지·출력용 PDF), 나를 돌아보는 시간(오늘의 한마디), 프리미엄 최신보험뉴스 안내, 2023 연말결산 자료."], [["https://www.primeasset.info/d6e84c39-d252-4882-b12e-1fde5e94ea76", "브로슈어"], ["https://www.primeasset.info/95e25396-d707-4032-b0b9-8353613b9556", "보험 카테고리"], ["https://www.primeasset.info/07d5cc3b-33c4-4bc5-81c5-b5d0a1064611", "나를 돌아보는 시간"], ["tool:최신보험뉴스", "최신보험뉴스 안내"], ["https://drive.google.com/drive/folders/1IHJs1d2D7ia48xYqrqvmngezAxyNhfgy?usp=drive_link", "2023 연말결산(구글 드라이브)"]]]];
+  // 자료 원문은 통합검색에 유지하고, 화면은 핵심 설명과 수치·기준 시점만 바로 표시합니다.
+  const INFO_BRIEFS = [
+    "자료 공유와 실전 교육으로 전문성을 키웁니다.",
+    "상품·인수기준·공지·질병 자료를 공유하고 오래 볼 자료는 카페에서 관리합니다.",
+    "보험·세무·보상 자료와 영업 가이드를 모으고 새 자료로 갱신합니다.",
+    "누구나 익명으로 묻고 답하는 프리미엄 질문방입니다.",
+    "타사 설계사와 정보를 나누고 리크루팅을 지원합니다.",
+    "교육·자료·실행을 연결하는 내부 교육 시스템입니다.",
+    "위촉·해촉·승격·분할·수수료·준법 기준을 영업규정집에서 확인하세요.",
+    "본사가 직접 지급하고, 매달 수수료표·시책규정·영업규정을 공개합니다.",
+    "설계사 → 팀장 → 지사장 → 본부장. 영업규정 조건을 채우면 자동 승격합니다.",
+    "1만여 명 설계사가 근무하는 독립법인 GA입니다.",
+    "본사 조직도·담당 연락처와 계약·준법·행정·교육 지원을 제공합니다.",
+    "브로슈어·입사설명회·보험 카테고리·뉴스·연말결산 자료를 확인하세요."
+  ];
+  // 수수료·승격 수치, 교육 주기, 자료 기준 시점과 연락처는 생략하지 않습니다.
+  const INFO_FACTS = {
+    2: ["약 3,200여 개 보험자료 등록 (2025.12 기준)."],
+    4: ["수백 명의 타사 설계사와 정보 공유·소통. 참여 문의: 김상현 이사 010-8714-9262"],
+    5: ["오프라인 강의 월 1회 실전 교육."],
+    6: ["다운로드: 프라임에셋_영업규정집_2024.pdf, 영업규정_요약본_2024.pdf (원문 페이지)"],
+    7: ["본사전략시상으로 법인시상의 최대 190% 추가지급(본부장 30%, 지사장 60%, 설계사 100%). 상위 관리자와 지급률 협의 가능. 팜스에서 모든 계약 수수료·시책을 원 단위로 확인합니다. 프라임 선지급제도.", "수수료홍보자료: 생명 2022.08, 손해 2023.09. 2023 영업규정집."],
+    8: ["팀장: 분기 전환성적 5천만 원(산하 합산 월납 약 100만 원 내외) / 지사장: 총인원 7명 이상 + 분기 전환성적 2억 원(월납 약 400만 원) / 본부장: 총인원 20명 이상 + 4분기 내 2분기 합산 전환성적 12억 원 이상(월납 약 1천만 원).", "설계사는 기본 연동지급률, 상위 관리자와 고정지급률 협의 가능. 신입·경력에 따라 직급·수수료 일부 조정 가능."],
+    10: ["계약관리팀: 생손보 30개사 전담. 직급별·테마별·온라인 교육 지원."],
+    11: ["프라임에셋 2024 브로슈어(PDF), 입사설명회(2025.05), 2023 연말결산. 보험 카테고리_바탕화면.zip·보험 카테고리_화이트ver.pdf는 원문에서 받으세요."]
+  };
   const fmt = (v) => /^-?\d{4,}$/.test(v) && !/^(19|20)\d\d$/.test(v) ? Number(v).toLocaleString("ko-KR") : v; // 연도(2012 등)는 쉼표 없이
   // HOME-29: 'tool:이름' 링크는 서버가 권한 있는 회원에게만 주소를 내려줌(공개 파일에 GAS 주소 없음)
   let myRes = null;
@@ -423,9 +442,10 @@
   }
   function infoCards() {
     return [el("div", { class: "pa-card" }, el("h3", {}, "프리미엄 안내 자료"),
-      N("기존 사이트(www.primeasset.info)의 교육·정보 채널·프라임에셋 제도 안내. 제목을 누르면 펼쳐지고, 파일은 원문 페이지에서 받습니다."),
-      ...INFO.map(([t, ps, ls], i) => el("details", { class: "pa-card pa-fold", id: "info-" + i }, el("summary", {}, t), ...ps.map(x => el("p", {}, x)),
-        el("p", {}, ...ls.flatMap(([u, n], i) => [i ? " · " : "", toolOr(u, n)])))))];
+      N("교육·제도·정보 채널 안내. 파일은 원문에서 받으세요."),
+      ...INFO.map(([t, ps, ls], i) => el("section", { class: "pa-card pa-info-card", id: "info-" + i, "aria-labelledby": "info-title-" + i }, el("h4", { id: "info-title-" + i }, t), el("p", {}, INFO_BRIEFS[i]),
+        ...(INFO_FACTS[i] || []).map(x => el("p", { class: "pa-note" }, x)),
+        el("p", { class: "pa-info-links" }, ...ls.flatMap(([u, n], j) => [j ? " · " : "", toolOr(u, n)])))))];
   }
   // 3. 실적 막대그래프(순수 SVG, assets/glass-chart.js). 표 key별 설정: x=이름 열, s=값 열, mult=원 환산 배수, limit=표의 앞 N줄만, skip=합계 줄 제외, short=가로축 글자 수
   //    숫자는 members_stats 가 내려준 표 값만 씀(새 숫자 없음). 설정에 없는 표는 그래프 없이 표만.

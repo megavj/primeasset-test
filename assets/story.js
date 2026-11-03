@@ -1,4 +1,4 @@
-/* PAGES-V1 5 · 페이지 탐색·연혁 펼치기·회원용 이동. 외부 요청/저장/권한 판정 없음. */
+/* PAGES-V1 5 · 페이지 탐색·회원용 이동. 외부 요청/저장/권한 판정 없음. */
 (function () {
   'use strict';
   var doc = document;
@@ -37,24 +37,6 @@
   doc.addEventListener('visibilitychange', function () { if (!doc.hidden) refreshMemberDisplay(); });
 
   function start() {
-    var eras = Array.prototype.slice.call(doc.querySelectorAll('.story-era'));
-    var expand = doc.getElementById('story-expand-history');
-    if (expand && eras.length) {
-      function syncExpand() {
-        var open = eras.every(function (era) { return era.open; });
-        expand.textContent = open ? '연혁 전체 접기' : '연혁 전체 펼치기';
-        expand.setAttribute('aria-expanded', String(open));
-      }
-      expand.parentElement.hidden = false;
-      expand.addEventListener('click', function () {
-        var open = !eras.every(function (era) { return era.open; });
-        eras.forEach(function (era) { era.open = open; });
-        syncExpand();
-      });
-      eras.forEach(function (era) { era.addEventListener('toggle', syncExpand); });
-      syncExpand();
-    }
-
     // Native anchors and details remain fully usable if JavaScript is unavailable.
     var links = Array.prototype.slice.call(doc.querySelectorAll('.story-reader nav a[href^="#"]'));
     var sections = links.map(function (link) { return doc.getElementById(link.hash.slice(1)); });

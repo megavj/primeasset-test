@@ -40,17 +40,6 @@
       printButton.hidden = false;
       printButton.addEventListener('click', function () { window.print(); });
     }
-    var toc = doc.querySelector('.privacy-toc details');
-    var compact = window.matchMedia('(max-width:800px)');
-    // Without JS the full native table of contents is already open and usable.
-    toc.open = !compact.matches;
-    doc.querySelectorAll('a[href="#contents"]').forEach(function (link) {
-      link.addEventListener('click', function () { toc.open = true; });
-    });
-    function revealContents() { if (location.hash === '#contents') toc.open = true; }
-    window.addEventListener('hashchange', revealContents);
-    revealContents();
-
     var links = Array.prototype.slice.call(doc.querySelectorAll('.privacy-toc a[href^="#"]'));
     var sections = links.map(function (link) { return doc.getElementById(link.hash.slice(1)); });
     var ticking = false;
@@ -72,7 +61,6 @@
     window.addEventListener('scroll', scheduleLocation, { passive: true });
     window.addEventListener('resize', scheduleLocation);
     window.addEventListener('hashchange', scheduleLocation);
-    toc.addEventListener('toggle', scheduleLocation);
 
     var status = doc.getElementById('privacy-status');
     var timer;
