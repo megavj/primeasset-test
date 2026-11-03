@@ -10,17 +10,17 @@
 <link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="description" content="프라임에셋 프리미엄 설계사 전용. 구글 계정 또는 이메일로 로그인하면 등급에 맞는 도구·자료·실적표가 열립니다.">
+<meta name="description" content="프라임에셋 프리미엄 설계사 전용. 로그인하고 승인받으면 업무 도구를 한곳에서 이용할 수 있습니다.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="프라임에셋 프리미엄">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:url" content="https://test.primeasset.info/members/">
 <meta property="og:title" content="설계사 인트라넷 — 프라임에셋 프리미엄">
-<meta property="og:description" content="프라임에셋 프리미엄 설계사 전용. 구글 계정 또는 이메일로 로그인하면 등급에 맞는 도구·자료·실적표가 열립니다.">
+<meta property="og:description" content="프라임에셋 프리미엄 설계사 전용. 로그인하고 승인받으면 업무 도구를 한곳에서 이용할 수 있습니다.">
 <meta property="og:image" content="https://test.primeasset.info/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,200명 설계사, 월 보험료 50억 2,332만 원">
+<meta property="og:image:alt" content="프라임에셋 프리미엄 — 설계사 인트라넷">
 <meta name="twitter:card" content="summary_large_image">
 <script>
 /* FUNC-FIX B7: CSS 를 받기 전에(그래서 아무것도 그려지기 전에) 이 기기의 로그인 세션 유무로 처음 모양을 정함 — 나중에 바뀌며 흔들리지 않게.
@@ -45,7 +45,7 @@
 </script>
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="../assets/glass.css?v=14">
-<link rel="stylesheet" href="../assets/members-ux.css?v=11">
+<link rel="stylesheet" href="../assets/members-ux.css?v=12">
 </head>
 <body class="g-members">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -63,8 +63,6 @@
     </nav>
     <nav class="g-menu g-menu--in" aria-label="인트라넷 메뉴">
       <a href="#home" class="on" data-tab="home">홈</a>
-      <a href="#stats" data-tab="stats">실적</a>
-      <a href="#info" data-tab="info">자료</a>
       <a href="#me" data-tab="me">내 정보</a>
     </nav>
   </div>
@@ -74,7 +72,7 @@
   <h1 class="sr">설계사 인트라넷</h1><!-- 낭독용 제목(h1): 화면 카드 제목은 h2 -->
   <!-- FUNC-FIX B7: 로그인 화면 맨 위 소개 한 줄은 고정 글로 여기 둠(자바스크립트가 다시 그리지 않음 → 첫 그림부터 보이고 깜빡임·가장 큰 글(LCP) 늦어짐 없음).
        로그인 화면일 때만 보임: 로그인 세션이 있으면(html.pa-in·body.pa-logged) 또는 다른 화면이면(body.pa-hero-off, glass-members.js) 숨김 -->
-  <div class="pa-login pa-hero-static"><div class="pa-card pa-card--hero"><p class="pa-pitch">승인 후, 도구 24개와 실적 자료를 한곳에서.</p></div></div>
+  <div class="pa-login pa-hero-static"><div class="pa-card pa-card--hero"><p class="pa-pitch">승인 후, 업무 도구를 한곳에서.</p></div></div>
   <!-- FUNC-FIX B7: 불러오는 동안 실제 화면 모양의 틀(스켈레톤). 로그인 세션이 이 기기에 있으면 인트라넷 모양, 없으면 로그인 화면 모양.
        틀은 화면 높이만큼 자리를 잡아 바닥글이 밀려 내려가지 않게(흔들림 CLS) 하고, 1초 안에 끝나면 보이지 않음(깜빡임 없음). 화면이 그려지면 통째로 바뀜 -->
   <div id="pa-app" aria-busy="true">
@@ -98,20 +96,17 @@
 
 <footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="../privacy/">개인정보처리방침</a></footer>
 
-<!-- 휴대폰: 로그인 후 아래 고정 탭바(홈·실적·자료·내 정보) -->
+<!-- 휴대폰: 로그인 후 아래 고정 탭바(홈·내 정보) -->
 <nav class="g-tabbar" aria-label="인트라넷 메뉴">
   <div class="g-bar">
     <a href="#home" class="on" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>홈</a>
-    <a href="#stats" data-tab="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-8"/><path d="M22 20H2"/></svg>실적</a>
-    <a href="#info" data-tab="info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>자료</a>
     <a href="#me" data-tab="me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>내 정보</a>
   </div>
 </nav>
 
 <script src="../assets/vendor/supabase-2.118.0.js"></script>
 <script src="../assets/auth-config.js?v=2"></script>
-<script src="../assets/glass-chart.js?v=2"></script>
-<script src="../assets/glass-members.js?v=17"></script>
+<script src="../assets/glass-members.js?v=18"></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(로그인 전/후 모두, 이름·이메일·식별자 없음) -->
 <script src="../assets/stats-beacon.js?v=1" data-page="/members/"></script>
 <!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) -->
