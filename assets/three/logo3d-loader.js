@@ -6,6 +6,7 @@
   var mm = window.matchMedia;
   if (mm && mm('(prefers-reduced-motion: reduce)').matches) return;
   var con = navigator.connection; if (con && con.saveData) return;
+  if (mm && mm('(max-width: 720px)').matches) return; // 이사 결정 2026-11-04: 휴대폰은 정지 그림만(데이터·배터리 절약)
   if (!document.querySelector('.g-hero-logo img')) return;
   var ok = false;
   try {
