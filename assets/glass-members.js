@@ -358,7 +358,7 @@
     if (epoch !== renderEpoch) return;
     if (error || !Array.isArray(raw)) return failView("메뉴 목록을 불러오지 못했습니다", error, true);
     // my_menu는 활성 메뉴만 반환합니다. active를 포함하는 응답도 같은 일반 규칙으로 처리합니다.
-    const data = raw.filter(r => r.active !== false);
+    const data = raw.filter(r => r.active !== false && !/승격/.test(r.name || "")); // 이사 지시 2026-11-03: 승격기준 박스 숨김
     const key = JSON.stringify([storageOwner, "intranet", p, data]);
     if (viewKey === key) return; // 같은 인증 상태의 갱신은 검색·즐겨찾기·내 정보 편집도 유지
     mode(true);
@@ -447,16 +447,23 @@
     const clearSearch = el("button", { class: "pa-search-clear", type: "button", hidden: "", "aria-label": "검색어 지우기", onclick: () => { q.value = ""; searchTools(); q.focus(); } }, "지우기");
     const search = el("div", { class: "pa-home-search" }, el("label", { for: "pa-q" }, "필요한 도구를 찾아보세요"),
       el("div", { class: "pa-search-field" }, q, clearSearch, el("kbd", { "aria-hidden": "true" }, "/")));
-    const noticeBody = el("div", { class: "pa-notice-body" }, N("새 소식을 불러오는 중…"));
-    const noticeBox = el("section", { class: "pa-home-notice pa-home-block", id: "news", "aria-labelledby": "pa-news-title" }, el("h2", { id: "pa-news-title" }, "새 소식"), noticeBody);
+    // 이사 지시 2026-11-03: 새 소식 박스 삭제 → '새로운 보험자료'(최근 2일 내 /qa/ 새 글 제목)
+    const noticeBody = el("div", { class: "pa-notice-body" }, N("새 보험자료를 불러오는 중…"));
+    const noticeBox = el("section", { class: "pa-home-notice pa-home-block", id: "news", "aria-labelledby": "pa-news-title" },
+      el("h2", { id: "pa-news-title" }, "새로운 보험자료"), noticeBody);
     const loadNotice = async () => {
-      noticeBody.replaceChildren(N("새 소식을 불러오는 중…"));
+      noticeBody.replaceChildren(N("새 보험자료를 불러오는 중…"));
       try {
-        const { data: n, error: err } = await sb.from("site_notice").select("text").eq("id", 1).maybeSingle();
-        if (err) throw err;
-        noticeBody.replaceChildren(el("p", {}, n && String(n.text || "").trim() || "등록된 새 소식이 없습니다."));
+        const res = await fetch("/qa/_data/posts.json", { cache: "no-cache" });
+        if (!res.ok) throw new Error("posts " + res.status);
+        const since = Date.now() - 2 * 86400000;
+        const recent = (await res.json()).filter(x => Date.parse(x.datePublished || x.date) >= since)
+          .sort((a, b) => Date.parse(b.datePublished || b.date) - Date.parse(a.datePublished || a.date));
+        noticeBody.replaceChildren(recent.length
+          ? el("ul", { class: "pa-qa-new" }, ...recent.map(x => el("li", {}, el("a", { href: "/qa/" + x.slug + "/" }, x.question), " ", el("small", {}, String(x.datePublished || x.date).slice(5, 10).replace("-", ".")))))
+          : el("p", {}, "최근 2일 동안 올라온 새 보험자료가 없습니다."), el("a", { class: "pa-qa-all", href: "/qa/" }, "보험자료 전체 보기 →"));
       } catch (e) {
-        noticeBody.replaceChildren(N("새 소식을 불러오지 못했습니다."), el("button", { class: "pa-text-button", type: "button", onclick: loadNotice }, "다시 시도"));
+        noticeBody.replaceChildren(N("새 보험자료를 불러오지 못했습니다."), el("button", { class: "pa-text-button", type: "button", onclick: loadNotice }, "다시 시도"));
       }
     };
     const greeting = el("h2", { class: "pa-home-title" }, `${p.name || "회원"}님, 안녕하세요`);

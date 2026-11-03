@@ -40,7 +40,7 @@
         if (!sessionKey.test(key) || (expected && key !== expected)) continue;
         let value;
         try { value = JSON.parse(localStorage.getItem(key) || 'null'); } catch (_) { continue; }
-        if (value && value.access_token && (!value.expires_at || value.expires_at * 1000 > Date.now() - 86400000)) return value;
+        if (value && value.access_token && (value.refresh_token || !value.expires_at || value.expires_at * 1000 > Date.now() - 86400000)) return value;
       }
     } catch (_) { /* 저장이 차단되어도 공개 메뉴는 사용할 수 있습니다. */ }
     return null;
@@ -113,7 +113,15 @@
       if (['INITIAL_SESSION', 'SIGNED_IN', 'TOKEN_REFRESHED', 'SIGNED_OUT', 'USER_UPDATED'].includes(event)) setSession(next);
     });
   }
-  function refresh() { bindAuth(); setSession(readSession()); }
+  // 이사 지시 2026-11-03: 메인에서 로그인하면 모든 페이지에서 로그인 유지. 만료된 출입증은 SDK로 자동 갱신(실패 시 로그아웃 표시).
+  let renewing = false;
+  function renewIfNeeded(s) {
+    if (!s || renewing || window.PA_SB || !s.refresh_token) return;
+    if (s.expires_at && s.expires_at * 1000 > Date.now() + 60000) return;
+    renewing = true;
+    clientForLogout().then(sb => sb.auth.getSession()).catch(() => {}).finally(() => { renewing = false; });
+  }
+  function refresh() { bindAuth(); const s = readSession(); setSession(s); renewIfNeeded(s); }
   function closeMenu(focus) {
     const restoreFocus = focus || menu.contains(document.activeElement);
     header.classList.remove('is-open'); toggle.setAttribute('aria-expanded', 'false');
