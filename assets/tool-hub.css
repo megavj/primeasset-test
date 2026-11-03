@@ -1,81 +1,8 @@
-/* 설계사 성장 시스템(index.html #tools).
-   대표 도구 6개와 나머지 18개를 항상 표시. 검색은 이름·설명·묶음·초성으로 24개 전체를 필터링.
-   자물쇠·회원가입·기존 세션의 인트라넷 이동과 반응형 카드 배치는 유지. */
-
-/* 맨 위 한 줄: 소개 + 검색 */
-.g-hub-top{display:grid;gap:var(--s3);grid-template-columns:1fr;align-items:end;margin:0 0 var(--s4)}
-.g-hub-intro{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--s2) var(--s3)}
-.g-hub-intro__n{grid-column:1 / -1;margin:0;display:flex;align-items:baseline;gap:8px;color:var(--text)}
-.g-hub-intro__n b{font-size:48px;font-weight:300;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.g-hub-intro__n span{font-size:var(--fs-cap);font-weight:var(--fw-label);color:var(--text-2)}
-.g-hub-intro>p:not(.g-hub-intro__n){margin:0;font-size:var(--fs-cap);color:var(--text-3)}
-.g-hub-intro .g-btn{justify-self:start}
-.g-hub-search{display:flex;flex-direction:column;gap:var(--s1)}
-.g-hub-q{width:100%;min-height:52px;padding:12px 16px 12px 48px;border:1px solid var(--line-2);border-radius:var(--r-in);font:inherit;font-size:17px;color:var(--text);background:var(--bg-2) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aab4c4' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-3.5-3.5'/></svg>") no-repeat 16px center/20px 20px;transition:border-color .2s ease,box-shadow .2s ease}
-.g-hub-q:hover{border-color:rgba(255,255,255,.26)}
-.g-hub-q:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(214,185,126,.22);outline:none}
-.g-hub-q::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;width:18px;height:18px;cursor:pointer;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aab4c4' stroke-width='2' stroke-linecap='round'><path d='M6 6l12 12M18 6 6 18'/></svg>") no-repeat center/18px}
-.g-hub-count{margin:0;font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3)}
-
-/* 카드 공통 내용: 아이콘 · 이름+한 줄 설명 · 자물쇠/화살표 */
-.g-hub-card{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);min-width:0}
-.g-hub-ico{flex:none;width:40px;height:40px;border-radius:var(--r-tile);background:rgba(255,255,255,.05);color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:color .25s ease}
-.g-hub-ico svg{width:20px;height:20px}
-.g-hub-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
-.g-hub-body b{font-size:var(--fs-body);font-weight:600;line-height:1.4;letter-spacing:-.01em}
-.g-hub-body small{font-size:var(--fs-cap);color:var(--text-3);line-height:var(--lh-cap);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.g-hub-lock,.g-hub-go{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text-3);background:rgba(255,255,255,.05)}
-.g-hub-lock svg,.g-hub-go svg{width:14px;height:14px}
-.g-hub-go{color:var(--text);background:rgba(255,255,255,.08);font-weight:500;font-size:15px}
-.g-hub-card--open .g-hub-ico{background:var(--gold-soft);color:var(--gold)} /* 바로 열리는 공개 도구(실적보드·보험위키)만 아이콘 금색 */
-.g-hub-card:hover .g-hub-ico{color:var(--text)}
-.g-hub-card--open:hover .g-hub-ico{color:var(--gold-hi)}
-.g-hub.is-member .g-hub-lock{display:none}
-.g-hub.is-member .g-hub-card[data-member]::after{content:"";position:absolute;right:20px;top:50%;width:7px;height:7px;margin-top:-5px;border-right:1.5px solid var(--text-2);border-top:1.5px solid var(--text-2);transform:rotate(45deg)}
-.g-hub.is-member .g-hub-card[data-member] .g-hub-body{padding-right:24px} /* 화살표 자리 */
-.g-hub-none{margin:var(--s2) 0 0;color:var(--text-3)}
-
-/* 대표 도구 6개: 휴대폰은 가로형 카드 1열, 560px~ 2열, 860px~ 4열 벤토(넓은 칸 2) */
-.g-hub-key{display:grid;gap:var(--s2);grid-template-columns:1fr}
-.g-hub-card--key .g-hub-body b{font-size:var(--fs-h3);font-weight:var(--fw-h3);line-height:var(--lh-h3)}
-.g-hub-card--key .g-hub-body small{color:var(--text-2);-webkit-line-clamp:3}
-
-/* 추가 도구 18개: 얇은 선 아래 묶음 4개 · 작은 타일을 항상 표시 */
-.g-hub-all{margin:var(--s4) 0 0;border-top:1px solid var(--line)}
-.g-hub-all:has(.g-hub-group):not(:has(.g-hub-card:not([hidden]))){display:none}
-.g-hub-groups{display:grid;gap:var(--s4);grid-template-columns:1fr;padding:var(--s2) 0 var(--s1)}
-.g-hub-group{min-width:0}
-.g-hub-group>h3{font-size:var(--fs-cap);font-weight:var(--fw-label);line-height:var(--lh-cap);letter-spacing:.02em;color:var(--text-2);margin:0 0 var(--s2);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.g-hub-group>h3 small{font-size:var(--fs-cap);font-weight:400;color:var(--text-3)}
-.g-hub-grid{display:grid;gap:var(--s1);grid-template-columns:1fr}
-.g-hub-grid .g-hub-card{min-height:68px}
-.g-hub-grid .g-hub-ico{width:32px;height:32px;border-radius:8px}
-.g-hub-grid .g-hub-ico svg{width:17px;height:17px}
-
-/* 검색 중: 숨긴 것은 공통 [hidden] 규칙으로 사라짐 */
-
-@container (min-width:560px){
-  .g-hub-key{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .g-hub-intro{grid-template-columns:auto auto;justify-content:start}
-}
-@container (min-width:860px){
-  .g-hub-top{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:var(--s5)}
-  .g-hub-key{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .g-hub-card--key{flex-direction:column;align-items:flex-start;gap:var(--s2);min-height:200px} /* 여백은 일반 카드 고정값(32) */
-  .g-hub-card--key .g-hub-lock,.g-hub-card--key .g-hub-go{position:absolute;top:var(--pad-card);right:var(--pad-card)}
-  .g-hub-card--wide{grid-column:span 2}
-  .g-hub-card--key .g-hub-body{flex:0 1 auto;padding-right:var(--s1)}
-  .g-hub.is-member .g-hub-card--key[data-member]::after{top:calc(var(--pad-card) + 14px);right:calc(var(--pad-card) + 10px)}
-  .g-hub-groups{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4) var(--s5)}
-  .g-hub-grid{grid-template-columns:1fr} /* 묶음 2열 · 묶음 안은 한 줄 목록 */
-}
-/* 컨테이너 쿼리 미지원: 화면 폭 기준 2열 */
-@supports not (container-type:inline-size){
-  @media (min-width:600px){.g-hub-key,.g-hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-}
-@media (max-width:720px){
-  .g-hub-intro__n b{font-size:40px}
-  .g-hub-q{font-size:16px;min-height:48px}
-}
-@media (prefers-reduced-motion:reduce){.g-hub-ico,.g-hub-q{transition:none}}
+/* 메인 설계사 성장 시스템: 합류 후 제공하는 네 가지 강점. */
+.g-growth-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s2);margin-top:var(--s4)}
+.g-growth-card{min-width:0}
+.g-growth-card h3{margin:0 0 var(--s2);font-size:var(--fs-h3);font-weight:var(--fw-h3);line-height:var(--lh-h3);color:var(--gold)}
+.g-growth-card p{margin:0;color:var(--text-2);font-size:var(--fs-body);line-height:var(--lh-body);word-break:keep-all}
+.g-growth-note{margin:var(--s3) 0 0;color:var(--text-3);font-size:var(--fs-cap)}
+@media(max-width:1000px){.g-growth-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.g-growth-grid{grid-template-columns:1fr}}

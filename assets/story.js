@@ -37,28 +37,16 @@
   doc.addEventListener('visibilitychange', function () { if (!doc.hidden) refreshMemberDisplay(); });
 
   function start() {
-    // Native anchors and details remain fully usable if JavaScript is unavailable.
-    var links = Array.prototype.slice.call(doc.querySelectorAll('.story-reader nav a[href^="#"]'));
-    var sections = links.map(function (link) { return doc.getElementById(link.hash.slice(1)); });
-    var ticking = false;
-    function updateLocation() {
-      ticking = false;
-      var current = -1;
-      sections.forEach(function (section, index) {
-        if (section && section.getBoundingClientRect().top <= Math.max(160, window.innerHeight * 0.3)) current = index;
-      });
-      links.forEach(function (link, index) {
-        if (index === current) link.setAttribute('aria-current', 'location');
-        else link.removeAttribute('aria-current');
-      });
+    // Keep branch cards concise after the shared address loader refreshes them.
+    var branches = doc.getElementById('branch-list');
+    function tidyBranchCards() {
+      if (!branches) return;
+      Array.prototype.forEach.call(branches.querySelectorAll('.br small'), function (note) { note.remove(); });
     }
-    function scheduleLocation() {
-      if (!ticking) { ticking = true; window.requestAnimationFrame(updateLocation); }
+    if (branches) {
+      tidyBranchCards();
+      new MutationObserver(tidyBranchCards).observe(branches, { childList: true, subtree: true });
     }
-    window.addEventListener('scroll', scheduleLocation, { passive: true });
-    window.addEventListener('resize', scheduleLocation);
-    doc.addEventListener('toggle', scheduleLocation, true);
-    updateLocation();
     refreshMemberDisplay();
   }
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', start, { once: true });

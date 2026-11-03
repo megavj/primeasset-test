@@ -22,7 +22,7 @@ html.io .g-reveal.is-in{opacity:1;transform:none}
 .g-stat b{font-variant-numeric:tabular-nums}
 /* 순차 등장 순서(--i): 벤토 칸·대표 도구·FAQ */
 .g-bento>:nth-child(1){--i:0}.g-bento>:nth-child(2){--i:1}.g-bento>:nth-child(3){--i:2}.g-bento>:nth-child(4){--i:3}
-.g-hub-key>:nth-child(1){--i:0}.g-hub-key>:nth-child(2){--i:1}.g-hub-key>:nth-child(3){--i:2}.g-hub-key>:nth-child(4){--i:3}.g-hub-key>:nth-child(5){--i:4}.g-hub-key>:nth-child(6){--i:5} /* 대표 도구 6개(접힌 목록 타일은 연출 없이 바로) */
+.g-growth-grid>:nth-child(1){--i:0}.g-growth-grid>:nth-child(2){--i:1}.g-growth-grid>:nth-child(3){--i:2}.g-growth-grid>:nth-child(4){--i:3}
 #faq>details:nth-of-type(1){--i:0}#faq>details:nth-of-type(2){--i:1}#faq>details:nth-of-type(3){--i:2}#faq>details:nth-of-type(4){--i:3}
 /* 메뉴 안 '앱 설치'(설치 가능할 때만 보임) */
 .g-menu .g-menu-install{color:var(--text)}

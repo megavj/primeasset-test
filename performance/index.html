@@ -10,13 +10,13 @@
 <link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="description" content="프라임에셋 프리미엄사업부 2026년 1~10월 실적보드. 누적 월보험료 35.30억, 계약 56,815건(팜스 본부별 마감 · 사업부 본부 합계), 19개 본부, 30개 제휴 보험사의 월별 추이와 본부·보험사 순위(1~9월 기준)를 확인하세요.">
+<meta name="description" content="프라임에셋 프리미엄사업부 실적보드. 2026년 1~10월 누적 월보험료 35.30억, 계약 56,815건. 19개 본부와 함께 성장할 경력·신입 설계사를 찾습니다.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="프라임에셋 프리미엄">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:url" content="https://test.primeasset.info/performance/">
 <meta property="og:title" content="프리미엄사업부 실적보드 · 2026년 1~10월 — 프라임에셋 프리미엄">
-<meta property="og:description" content="누적 월보험료 35.30억(2026년 1~10월 · 팜스 본부별 마감) · 19개 본부 · 30개 제휴 보험사">
+<meta property="og:description" content="2026년 1~10월 누적 월보험료 35.30억 · 19개 본부 · 30개 제휴 보험사. 함께 성장할 설계사를 찾습니다.">
 <meta property="og:image" content="https://test.primeasset.info/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="../assets/perf-board.css?v=7">
 
 
-<link rel="stylesheet" href="../assets/performance-workspace.css?v=2">
+<link rel="stylesheet" href="../assets/performance-workspace.css?v=3">
 </head>
 <body class="g-main g-perf lux-page perf-workspace">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -44,14 +44,12 @@
 <main id="main" class="pb" tabindex="-1">
   <section class="pf-intro pb-wrap" aria-labelledby="pb-title">
     <div><h1 id="pb-title">프리미엄사업부 실적보드</h1>
-    <p class="pf-lead perf-guest-only">월별 실적과 본부·보험사 순위를 한눈에.</p>
-    <p class="pf-lead perf-member-only">기간을 골라 비교하고, 상담에 필요한 자료로 바로 공유하세요.</p></div>
-    <a href="#basis" class="pf-source-link">자료 기준 확인 <span aria-hidden="true">↗</span></a>
+    <p class="pf-lead">월별 실적과 본부·보험사 순위를 한눈에.</p></div>
   </section>
   <nav class="pf-section-nav pb-wrap" aria-label="실적보드 바로가기"><a href="#overview">월별 실적 <span>1~10월</span></a><a href="#comparison">월 비교</a><a href="#details">생보·손보 <span>1~9월</span></a><a href="#branches">본부 순위</a><a href="#carriers">보험사 순위</a><a href="#share">공유·저장</a></nav>
   <div class="pf-focus-top"><span>프라임에셋 프리미엄 · 실적 자료</span><button id="pf-focus-exit" type="button" class="pf-button">전체 화면 구성 보기 <span aria-hidden="true">↗</span></button></div>
   <section id="overview" class="pb-wrap pf-overview" aria-labelledby="pb-home-title">
-    <div class="pf-board-head"><div><h2 id="pb-home-title">월별 실적</h2></div><span class="pf-badge">팜스 본부별 마감</span></div>
+    <div class="pf-board-head"><div><h2 id="pb-home-title">월별 실적</h2></div></div>
     <div id="pf-enhancements" class="pf-toolbar" hidden>
       <form id="pf-period-form" class="pf-period-form">
         <span class="pf-control-title">2026년</span><label>시작 월<select id="pf-from" aria-describedby="pf-period-error"><option value="1" selected>1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option></select></label><span class="pf-range-dash" aria-hidden="true">—</span><label>종료 월<select id="pf-to" aria-describedby="pf-period-error"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10" selected>10월</option></select></label><button type="submit" id="pf-apply" class="pf-button pf-button--gold">적용</button>
@@ -62,12 +60,11 @@
     <noscript><p class="pf-note">전체 자료를 보고 있습니다. 기간 선택·월 비교·공유 도구는 자바스크립트를 켜면 사용할 수 있습니다.</p></noscript>
     <p id="pf-init-error" class="pf-error" role="alert" hidden>보기 도구를 불러오지 못했습니다. 아래 전체 기간 자료는 그대로 확인할 수 있습니다. 새로고침 후 다시 시도해 주세요.</p>
     <div class="pf-summary-grid">
-      <div class="pf-total"><p class="pf-metric-label"><span id="pf-period-label">2026년 1~10월</span> 합계 월보험료</p><p class="pf-total-number"><strong id="pf-total">35.30</strong><span>억</span></p><p class="pf-exact"><span id="pf-exact">3,530,053</span>천원 <span>· 월납보험료</span></p></div>
+      <div class="pf-total"><p class="pf-metric-label"><span id="pf-period-label">2026년 1~10월</span> 합계 월보험료</p><p class="pf-total-number"><strong id="pf-total">35.30</strong><span>억</span></p></div>
       <dl class="pf-metrics"><div><dt>총 계약건수</dt><dd><span id="pf-count">56,815</span><small>건</small></dd><dd class="pf-metric-sub">월평균 <span id="pf-count-average">5,682</span>건</dd></div><div><dt>월평균 월보험료</dt><dd><span id="pf-average">3.53</span><small>억</small></dd><dd class="pf-metric-sub"><span id="pf-months">10</span>개월 평균</dd></div><div><dt>기간 내 최고 월</dt><dd><span id="pf-peak-value">4.53</span><small>억</small></dd><dd id="pf-peak-month" class="pf-metric-sub">3월</dd></div></dl>
     </div>
-    <p class="pf-basis">원자료 기준: 2026년 1~10월 · 팜스 본부별 마감(사업부 본부 합계) · 월납보험료 · 10월분 2026-11-02 조회</p>
     <figure class="pf-chart" aria-labelledby="pb-trend-title">
-      <figcaption class="pf-chart-heading"><h3 id="pb-trend-title">월별 월보험료 추이</h3><span><span id="pf-chart-period">1~10월</span> · 단위 억원</span></figcaption>
+      <figcaption class="pf-chart-heading"><h3 id="pb-trend-title">월별 월보험료 추이</h3><span><span id="pf-chart-period">2026년 1~10월</span> · 단위 억원</span></figcaption>
       <div class="pf-chart-scroll" role="region" aria-label="월별 차트, 좌우 스크롤" tabindex="0"><div class="pf-chart-inner"><div class="pf-chart-axis" aria-hidden="true"><span>5억</span><span>4억</span><span>3억</span><span>2억</span><span>1억</span><span>0</span></div><div id="pf-chart-bars" class="pf-chart-bars"><button class="pf-month-bar" type="button" data-month="1" aria-label="1월 월보험료 341,763천원, 계약 5,817건"><span class="pf-bar-value">3.42</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:68.3526%"></span></span><span class="pf-bar-label">1월</span></button>
 <button class="pf-month-bar" type="button" data-month="2" aria-label="2월 월보험료 315,389천원, 계약 5,292건"><span class="pf-bar-value">3.15</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:63.0778%"></span></span><span class="pf-bar-label">2월</span></button>
 <button class="pf-month-bar" type="button" data-month="3" aria-label="3월 월보험료 452,629천원, 계약 7,475건"><span class="pf-bar-value">4.53</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:90.5258%"></span></span><span class="pf-bar-label">3월</span></button>
@@ -78,44 +75,21 @@
 <button class="pf-month-bar" type="button" data-month="8" aria-label="8월 월보험료 336,162천원, 계약 5,372건"><span class="pf-bar-value">3.36</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:67.2324%"></span></span><span class="pf-bar-label">8월</span></button>
 <button class="pf-month-bar" type="button" data-month="9" aria-label="9월 월보험료 324,368천원, 계약 5,188건"><span class="pf-bar-value">3.24</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:64.8736%"></span></span><span class="pf-bar-label">9월</span></button>
 <button class="pf-month-bar" type="button" data-month="10" aria-label="10월 월보험료 342,883천원, 계약 5,348건"><span class="pf-bar-value">3.43</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:68.5766%"></span></span><span class="pf-bar-label">10월</span></button></div></div></div>
-      <p class="pf-chart-help">막대를 선택하면 상세 수치가 표시됩니다. 좁은 화면에서는 좌우로 밀어보세요.</p>
-      <dl class="pf-inspector" aria-label="선택한 월 상세"><div><dt>선택 월</dt><dd id="pf-inspect-month">10월</dd></div><div><dt>월보험료</dt><dd><span id="pf-inspect-value">342,883</span>천원</dd></div><div><dt>계약건수</dt><dd><span id="pf-inspect-count">5,348</span>건</dd></div><div><dt>연초부터 누적</dt><dd><span id="pf-inspect-cumulative">3,530,053</span>천원</dd></div></dl>
+      <dl class="pf-inspector" aria-label="선택한 월 상세"><div><dt>선택 월</dt><dd id="pf-inspect-month">10월</dd></div><div><dt>월보험료</dt><dd><span id="pf-inspect-value">342,883</span>천원</dd></div><div><dt>계약건수</dt><dd><span id="pf-inspect-count">5,348</span>건</dd></div><div><dt>연초부터 누적</dt><dd><span id="pf-inspect-cumulative">35.30</span>억</dd></div></dl>
     </figure>
-    <section class="pf-data-section pf-monthly-data" aria-labelledby="pf-monthly-data-title"><h3 id="pf-monthly-data-title" class="pf-data-title">월별 원자료 <span>단위 천원 · 건</span></h3><p class="pf-table-hint">선택한 기간의 월을 표시합니다. ‘연초부터 누적’은 선택 기간과 관계없이 1월부터의 합계입니다. 표는 좌우로 스크롤할 수 있습니다.</p>
-          <div class="pb-table-wrap" tabindex="0" role="region" aria-label="월별 실적 표, 좌우 스크롤">
-            <table id="pf-monthly-table" class="pb-table pb-table--num">
-              <caption id="pf-table-caption">2026년 1~10월 월별 실적 · 금액 단위 천원</caption>
-              <thead><tr><th scope="col">월</th><th scope="col">월보험료</th><th scope="col">연초부터 누적</th><th scope="col">계약건수</th></tr></thead>
-              <tbody>
-                <tr data-month="1"><th scope="row">1월</th><td>341,763</td><td>341,763</td><td>5,817</td></tr>
-                <tr data-month="2"><th scope="row">2월</th><td>315,389</td><td>657,152</td><td>5,292</td></tr>
-                <tr data-month="3"><th scope="row">3월</th><td>452,629</td><td>1,109,781</td><td>7,475</td></tr>
-                <tr data-month="4"><th scope="row">4월</th><td>395,328</td><td>1,505,109</td><td>6,409</td></tr>
-                <tr data-month="5"><th scope="row">5월</th><td>333,210</td><td>1,838,319</td><td>4,796</td></tr>
-                <tr data-month="6"><th scope="row">6월</th><td>382,752</td><td>2,221,071</td><td>6,122</td></tr>
-                <tr data-month="7"><th scope="row">7월</th><td>305,569</td><td>2,526,640</td><td>4,996</td></tr>
-                <tr data-month="8"><th scope="row">8월</th><td>336,162</td><td>2,862,802</td><td>5,372</td></tr>
-                <tr data-month="9"><th scope="row">9월</th><td>324,368</td><td>3,187,170</td><td>5,188</td></tr>
-                <tr data-month="10"><th scope="row">10월</th><td>342,883</td><td>3,530,053</td><td>5,348</td></tr>
-              </tbody>
-              <tfoot><tr><th scope="row">합계</th><td data-pf-sum="prem">3,530,053</td><td>—</td><td data-pf-sum="cnt">56,815</td></tr></tfoot>
-            </table>
-          </div>
-          </section>
   </section>
   <section id="comparison" class="pb-wrap pf-comparison" aria-labelledby="pf-compare-heading" data-pf-js hidden>
-    <div class="pf-board-head"><div><h2 id="pf-compare-heading">월별 비교</h2><p class="pf-note">조회 기간과 별도로 두 달을 선택하세요.</p></div><div class="pf-compare-selects"><label>기준 월<select id="pf-base"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9" selected>9월</option><option value="10">10월</option></select></label><span aria-hidden="true">→</span><label>비교 월<select id="pf-month"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10" selected>10월</option></select></label></div></div>
+    <div class="pf-board-head"><div><h2 id="pf-compare-heading">월별 비교</h2></div><div class="pf-compare-selects"><label>기준 월<select id="pf-base"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9" selected>9월</option><option value="10">10월</option></select></label><span aria-hidden="true">→</span><label>비교 월<select id="pf-month"><option value="1">1월</option><option value="2">2월</option><option value="3">3월</option><option value="4">4월</option><option value="5">5월</option><option value="6">6월</option><option value="7">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10" selected>10월</option></select></label></div></div>
     <p id="pf-compare-title" class="pf-compare-title">2026년 9월 → 10월</p>
-    <div class="pb-table-wrap" role="region" aria-label="두 달 실적 비교, 좌우 스크롤" tabindex="0"><table class="pf-compare-table"><caption class="sr">선택한 두 달의 월보험료와 계약건수 비교</caption><thead><tr><th scope="col">지표</th><th scope="col"><span class="pf-compare-base-label">9월</span> 기준</th><th scope="col"><span class="pf-compare-current-label">10월</span> 비교</th><th scope="col">기준 월 대비 변화</th></tr></thead><tbody><tr><th scope="row">월보험료</th><td id="pf-compare-prem-base">324,368천원</td><td id="pf-compare-prem-current">342,883천원</td><td id="pf-compare-prem-diff">+18,515천원 (+5.7%)</td></tr><tr><th scope="row">계약건수</th><td id="pf-compare-count-base">5,188건</td><td id="pf-compare-count-current">5,348건</td><td id="pf-compare-count-diff">+160건 (+3.1%)</td></tr></tbody></table></div><p id="pf-compare-note" class="pf-note">증감률은 기준 월 대비 계산값이며 소수점 첫째 자리에서 표시합니다.</p>
+    <div class="pb-table-wrap" role="region" aria-label="두 달 실적 비교, 좌우 스크롤" tabindex="0"><table class="pf-compare-table"><caption class="sr">선택한 두 달의 월보험료와 계약건수 비교</caption><thead><tr><th scope="col">지표</th><th scope="col"><span class="pf-compare-base-label">9월</span> 기준</th><th scope="col"><span class="pf-compare-current-label">10월</span> 비교</th><th scope="col">기준 월 대비 변화</th></tr></thead><tbody><tr><th scope="row">월보험료</th><td id="pf-compare-prem-base">324,368천원</td><td id="pf-compare-prem-current">342,883천원</td><td id="pf-compare-prem-diff">+18,515천원 (+5.7%)</td></tr><tr><th scope="row">계약건수</th><td id="pf-compare-count-base">5,188건</td><td id="pf-compare-count-current">5,348건</td><td id="pf-compare-count-diff">+160건 (+3.1%)</td></tr></tbody></table></div>
   </section>
-  <section id="share" class="pb-wrap pf-actions" aria-label="현재 실적 자료 사용" data-pf-js hidden><div><h2>공유·저장</h2><p>기간과 자료 기준도 함께 저장됩니다.</p></div><div class="pf-action-buttons"><button id="pf-focus" type="button" class="pf-button" aria-pressed="false">집중 보기</button><button id="pf-share" type="button" class="pf-button pf-button--gold">현재 보기 공유</button><button id="pf-copy" type="button" class="pf-button">요약 복사</button><button id="pf-image" type="button" class="pf-button">이미지 저장</button><button id="pf-print" type="button" class="pf-button">인쇄 / PDF</button></div><div id="pf-share-fallback" hidden><label for="pf-share-url">공유할 내용을 직접 복사해 주세요</label><textarea id="pf-share-url" rows="4" readonly></textarea></div></section>
-  <section id="details" class="pb-wrap pf-detail pf-detail-intro" aria-labelledby="pf-detail-heading"><div class="pf-board-head"><h2 id="pf-detail-heading">생보·손보 구성과 순위</h2><span class="pf-badge">2026년 1~9월 고정 자료</span></div><p>생보·손보 구성과 본부·보험사 순위는 <strong>1~9월 원자료</strong>입니다.<br>10월 생보·손보·보험사별 자료와 같은 출처의 본부 누적 순위 자료는 미수령입니다. 팜스 19개 본부 10월 단월 자료와 합산하지 않습니다.<br>위 월별 조회 기간과 별도이며, 출처가 달라 월별 합계와 직접 비교하지 않습니다.</p></section>
-  <section class="pb-wrap pf-context-grid pf-detail" aria-label="사업부 규모와 보험 구성"><div class="pf-context-card"><h2>사업부 규모와 누적 흐름</h2><dl class="pf-scale"><div><dt>본부</dt><dd>19<small>개</small></dd></div><div><dt>제휴 보험사</dt><dd>30<small>곳</small></dd></div></dl><p class="pf-note">본부: 1~3월 16개, 4~6월 18개, 7월부터 19개(신설 본부는 생긴 달부터 합계)<br>보험사: 1~9월 실적 발생 기준 · 생보 19곳 · 손보 11곳</p><div class="pf-milestones"><h3>2026년 누적 달성 타임라인</h3><ol><li><b>10억</b><span>3월</span></li><li><b>20억</b><span>6월</span></li><li><b>30억</b><span>9월</span></li></ol><p class="pf-note">팜스 월별 합계 기준 · 1~10월 전체 자료</p></div></div>      <article class="pb-card pb-card--mix" aria-labelledby="pb-mix-title">
+  <section id="share" class="pb-wrap pf-actions" aria-label="현재 실적 자료 사용" data-pf-js hidden><div><h2>공유·저장</h2></div><div class="pf-action-buttons"><button id="pf-focus" type="button" class="pf-button" aria-pressed="false">집중 보기</button><button id="pf-share" type="button" class="pf-button pf-button--gold">현재 보기 공유</button><button id="pf-copy" type="button" class="pf-button">요약 복사</button><button id="pf-image" type="button" class="pf-button">이미지 저장</button><button id="pf-print" type="button" class="pf-button">인쇄 / PDF</button></div><div id="pf-share-fallback" hidden><label for="pf-share-url">공유할 내용을 직접 복사해 주세요</label><textarea id="pf-share-url" rows="4" readonly></textarea></div></section>
+  <section id="details" class="pb-wrap pf-context-grid pf-detail" aria-label="사업부 규모와 보험 구성"><div class="pf-context-card"><h2>사업부 규모와 누적 흐름</h2><dl class="pf-scale"><div><dt>본부</dt><dd>19<small>개</small></dd></div><div><dt>제휴 보험사</dt><dd>30<small>곳</small></dd></div></dl><div class="pf-milestones"><h3>2026년 누적 달성 타임라인</h3><ol><li><b>10억</b><span>3월</span></li><li><b>20억</b><span>6월</span></li><li><b>30억</b><span>9월</span></li></ol></div></div>      <article class="pb-card pb-card--mix" aria-labelledby="pb-mix-title">
         <header class="pb-card__head">
           <div class="pb-card__title">
 
             <h2 id="pb-mix-title">생보·손보 구성</h2>
-            <p class="pb-card__desc"><b>기준: 2026년 <span data-pb-stat="detail_period">1~9월</span>(188 실적보드 원자료)</b> 누적 월보험료</p>
+            <p class="pb-card__desc">2026년 1~9월</p>
           </div>
         </header>
         <!-- pb:donut -->
@@ -130,7 +104,6 @@
           </ul>
         </div>
         <!-- /pb:donut -->
-        <p class="pb-card__note">실적 발생 보험사 생보 <b data-pb-stat="carriers_life">19</b>곳 · 손보 <b data-pb-stat="carriers_nonlife">11</b>곳</p>
       </article></section>
   <section id="branches" class="pb-wrap pb-sec pf-detail" aria-label="본부별 순위">
       <article class="pb-card" aria-labelledby="pb-rank-title">
@@ -138,14 +111,14 @@
           <div class="pb-card__title">
 
             <h2 id="pb-rank-title">본부별 누적 순위</h2>
-            <p class="pb-card__desc"><b>기준: 2026년 <span data-pb-stat="detail_period">1~9월</span>(188 실적보드 원자료)</b> 누적 월보험료 · <span data-pb-stat="branches">19</span>개 본부. 월을 선택해 순위 변화를 확인하세요. 카드·표는 1~9월 최종값입니다.</p>
+            <p id="pf-rank-state" class="pb-card__desc" role="status">2026년 1~9월</p>
           </div>
         </header>
         <div class="pb-rank">
           <aside class="pb-hl" aria-labelledby="pb-hl-name">
 
             <h3 class="pb-hl__name" id="pb-hl-name" data-pb-stat="hl_name">188본부</h3>
-            <p class="pb-hl__rank"><span class="pb-hl__rank-num pb-goldtext"><b data-pb-stat="hl_rank">3</b><small>위</small></span><span class="pb-hl__rank-of">사업부 <span data-pb-stat="branches">19</span>개 본부 중 <span data-pb-stat="detail_period">1~9월</span>(188 실적보드 원자료) 누적 순위</span></p>
+            <p class="pb-hl__rank"><span class="pb-hl__rank-num pb-goldtext"><b data-pb-stat="hl_rank">3</b><small>위</small></span><span class="pb-hl__rank-of">사업부 <span data-pb-stat="branches">19</span>개 본부 중</span></p>
             <dl class="pb-hl__stats">
               <div><dt>누적 월보험료</dt><dd><b data-pb-stat="hl_eok2">3.27</b>억</dd></div>
               <div><dt>사업부 내 비중</dt><dd><b data-pb-stat="hl_share">10.2</b>%</dd></div>
@@ -154,12 +127,11 @@
           </aside>
           <div class="pb-race" data-pb-race>
             <div class="pb-race__head"><label class="pf-rank-select" data-pf-js hidden>누적 월 <select id="pf-rank-month"><option value="1">1월까지</option><option value="2">2월까지</option><option value="3">3월까지</option><option value="4">4월까지</option><option value="5">5월까지</option><option value="6">6월까지</option><option value="7">7월까지</option><option value="8">8월까지</option><option value="9" selected>9월까지</option></select></label>
-              <p class="pb-race__month"><b data-pb-race-month data-pb-stat="race_label">9월 누적</b></p>
               <span class="pb-race__progress" aria-hidden="true"><i data-pb-race-progress></i></span>
               <button data-pf-js hidden class="pb-replay" type="button" data-pb-race-replay aria-label="본부 순위 레이스 다시 보기"><span aria-hidden="true">↻</span> 순위 변화 재생</button>
             </div>
-            <p id="pf-rank-state" class="pf-note" role="status">2026년 1~9월 누적 · 고정 상세 자료</p><!-- pb:race -->
-            <ol class="pb-race__list" data-pb-race-list style="--pb-n:19" aria-label="본부별 2026년 1~9월(188 실적보드 원자료) 누적 월보험료 순위">
+            <!-- pb:race -->
+            <ol class="pb-race__list" data-pb-race-list style="--pb-n:19" aria-label="본부별 2026년 1~9월 누적 월보험료 순위">
               <li class="pb-race__row" data-name="236본부" style="--r:0;--w:100.00%"><span class="pb-race__rank"><b>1</b><span class="pb-sr">위</span></span><span class="pb-race__name">236본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">5.09억</span></li>
               <li class="pb-race__row" data-name="254본부" style="--r:1;--w:96.79%"><span class="pb-race__rank"><b>2</b><span class="pb-sr">위</span></span><span class="pb-race__name">254본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">4.93억</span></li>
               <li class="pb-race__row is-hl" data-name="188본부" style="--r:2;--w:64.26%"><span class="pb-race__rank"><b>3</b><span class="pb-sr">위</span></span><span class="pb-race__name">188본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">3.27억</span></li>
@@ -186,10 +158,10 @@
         <section class="pf-data-section" aria-labelledby="pf-branch-data-title">
           <h3 id="pf-branch-data-title" class="pf-data-title">본부별 실적표</h3>
           <!-- pb:table-branches -->
-          <p class="pf-table-hint">좁은 화면에서는 표를 좌우로 밀어 확인하세요. 키보드는 표에 초점을 두고 방향키를 누르세요.</p><div class="pb-table-wrap" tabindex="0" role="region" aria-label="본부별 순위 전체 표, 좌우 스크롤">
+          <div class="pb-table-wrap" tabindex="0" role="region" aria-label="본부별 순위 전체 표, 좌우 스크롤">
             <table class="pb-table">
-              <caption>기준: 2026년 1~9월(188 실적보드 원자료) · 본부별 누적 월보험료 · 단위 천원</caption>
-              <thead><tr><th scope="col">순위</th><th scope="col">본부</th><th scope="col">누적 월보험료</th><th scope="col">비중</th></tr></thead>
+              <caption>2026년 1~9월</caption>
+              <thead><tr><th scope="col">순위</th><th scope="col">본부</th><th scope="col">누적 월보험료(천원)</th><th scope="col">비중</th></tr></thead>
               <tbody>
                 <tr><th scope="row">1위</th><td>236본부</td><td>508,867</td><td>15.9%</td></tr>
                 <tr><th scope="row">2위</th><td>254본부</td><td>492,519</td><td>15.4%</td></tr>
@@ -225,15 +197,15 @@
           <div class="pb-card__title">
 
             <h2 id="pb-ins-title">보험사별 누적 Top 10</h2>
-            <p class="pb-card__desc"><b>기준: 2026년 <span data-pb-stat="detail_period">1~9월</span>(188 실적보드 원자료)</b> · 실적이 발생한 제휴 보험사 <span data-pb-stat="carriers">30</span>곳 중 누적 월보험료 상위 10곳</p>
+            <p class="pb-card__desc">2026년 1~9월</p>
           </div>
           <dl class="pb-card__stats">
             <div><dt>Top 10 합계</dt><dd><span data-pb-stat="top10_eok2">23.11</span>억</dd></div>
-            <div><dt>1~9월 전체 대비</dt><dd><span data-pb-stat="top10_share">72.3</span>%</dd></div>
+            <div><dt>전체 대비</dt><dd><span data-pb-stat="top10_share">72.3</span>%</dd></div>
           </dl>
         </header>
         <!-- pb:chips -->
-        <ol class="pb-chips" aria-label="보험사별 2026년 1~9월(188 실적보드 원자료) 누적 월보험료 상위 10곳">
+        <ol class="pb-chips" aria-label="보험사별 2026년 1~9월 누적 월보험료 상위 10곳">
           <li class="pb-chip is-top" style="--s:100.0%;--i:0"><span class="pb-chip__rank" aria-hidden="true">01</span><span class="pb-chip__body"><strong class="pb-chip__name">NH손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 5,262건</span></span><span class="pb-chip__val">3.78<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
           <li class="pb-chip is-top" style="--s:84.4%;--i:1"><span class="pb-chip__rank" aria-hidden="true">02</span><span class="pb-chip__body"><strong class="pb-chip__name">KB손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 6,655건</span></span><span class="pb-chip__val">3.19<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
           <li class="pb-chip is-top" style="--s:84.2%;--i:2"><span class="pb-chip__rank" aria-hidden="true">03</span><span class="pb-chip__body"><strong class="pb-chip__name">DB손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 5,889건</span></span><span class="pb-chip__val">3.18<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
@@ -249,10 +221,10 @@
         <section class="pf-data-section" aria-labelledby="pf-carrier-data-title">
           <h3 id="pf-carrier-data-title" class="pf-data-title">제휴 보험사 실적표</h3>
           <!-- pb:table-carriers -->
-          <p class="pf-table-hint">좁은 화면에서는 표를 좌우로 밀어 확인하세요. 키보드는 표에 초점을 두고 방향키를 누르세요.</p><div class="pb-table-wrap" tabindex="0" role="region" aria-label="보험사별 순위 전체 표, 좌우 스크롤">
+          <div class="pb-table-wrap" tabindex="0" role="region" aria-label="보험사별 순위 전체 표, 좌우 스크롤">
             <table class="pb-table">
-              <caption>기준: 2026년 1~9월(188 실적보드 원자료) 누적 · 보험사 30곳 · 단위 천원</caption>
-              <thead><tr><th scope="col">순위</th><th scope="col">보험사</th><th scope="col">구분</th><th scope="col">누적 월보험료</th><th scope="col">계약건수</th><th scope="col">비중</th></tr></thead>
+              <caption>2026년 1~9월</caption>
+              <thead><tr><th scope="col">순위</th><th scope="col">보험사</th><th scope="col">구분</th><th scope="col">누적 월보험료(천원)</th><th scope="col">계약건수</th><th scope="col">비중</th></tr></thead>
               <tbody>
                 <tr><th scope="row">1위</th><td>NH손해</td><td>손보</td><td>378,279</td><td>5,262</td><td>11.8%</td></tr>
                 <tr><th scope="row">2위</th><td>KB손해</td><td>손보</td><td>319,257</td><td>6,655</td><td>10.0%</td></tr>
@@ -293,12 +265,9 @@
     </section>
 
 
-      <section id="basis" class="pb-wrap pb-foot pf-detail" aria-labelledby="pf-basis-title"><h2 id="pf-basis-title">자료 기준과 출처</h2>
-      <p>기준: 2026년 <span data-pb-stat="period">1~10월</span> · 팜스 본부별 마감<span class="g-nowrap">(사업부 본부 합계)</span> · 월납보험료 · <span class="g-nowrap">10월분 2026-11-02 조회</span>. 프리미엄사업부 월보험료(단위 천원, 원 단위 자료를 천원으로 반올림)와 계약건수 합계입니다. 본부 수는 1~3월 16개, 4~6월 18개, 7월부터 19개(신설 본부는 생긴 달부터 합계). 생보·손보 구성과 본부별·보험사별 순위, 제휴 보험사 수는 2026년 <span data-pb-stat="detail_period">1~9월</span>(188 실적보드 원자료) 기준입니다. 억 단위는 반올림 표기이며, 반올림으로 항목별 합계가 총계와 몇 천원 다를 수 있습니다.</p>
-      <p>출처: 월별 월보험료·계약건수(1~10월)는 팜스 본부별 마감의 사업부 본부 합계(10월분 2026-11-02 조회), 생보·손보 구성과 본부별·보험사별 순위는 188 영업지원시스템 실적보드(188.primeasset.info)의 1~9월 원자료입니다. 선택 기간 합계·평균·월 비교는 위 월별 원자료에서 계산합니다. 상세 자료는 출처가 달라 월별 합계와 직접 비교하지 않습니다.</p>
-    </section>
+      <section id="basis" class="pb-wrap pb-foot pf-detail" aria-label="실적 기준"><p>팜스 마감 기준</p></section>
 
-      <section class="pb-wrap pb-cta perf-guest-only pf-detail" aria-labelledby="pb-cta-title">
+      <section class="pb-wrap pb-cta pf-detail" aria-labelledby="pb-cta-title">
       <div class="pb-cta__panel g-card">
 
         <h2 id="pb-cta-title">함께 성장할 설계사를 찾습니다.</h2>
@@ -311,7 +280,6 @@
     </section>
 
 
-  <section class="pb-wrap pf-member-return perf-member-only pf-detail" aria-label="영업 도구로 이동"><div><h2>다음 업무는 인트라넷에서.</h2><p>실적표와 영업 도구를 바로 확인하세요.</p></div><a class="pf-button pf-button--gold" href="../members/#stats">인트라넷 실적표</a><a class="pf-button" href="../members/">영업지원 홈</a></section>
 </main>
 <footer class="g-foot g-foot--full">
   <p class="g-foot-brand"><img src="../assets/logo.svg" alt="" width="22" height="24">프라임에셋 프리미엄사업부</p>
@@ -397,7 +365,7 @@
 }
 </script>
 <!-- 공개 원자료 JSON은 인트라넷이 읽는 계약입니다. 원본 값·키를 보존합니다. 방문 집계 없음. -->
-<script src="../assets/performance-workspace.js?v=2" defer></script>
+<script src="../assets/performance-workspace.js?v=3" defer></script>
 <script src="../assets/auth-config.js?v=2"></script>
 <script src="../assets/pwa.js?v=1" defer></script>
 </body>

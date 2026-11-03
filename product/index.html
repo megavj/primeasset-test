@@ -9,44 +9,38 @@
   <title>상품 통합 분석기 | 프라임에셋 프리미엄 (테스트)</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-  <link rel="stylesheet" href="../assets/glass.css?v=14">
-  <link rel="stylesheet" href="../assets/product.css?v=2">
-  <script src="../assets/product-library.js?v=2" defer></script>
-  <script src="../assets/product.js?v=2" defer></script>
+  <link rel="stylesheet" href="../assets/glass.css?v=15">
+  <link rel="stylesheet" href="../assets/product.css?v=3">
+  <script src="../assets/product-library.js?v=3" defer></script>
+  <script src="../assets/product.js?v=3" defer></script>
 </head>
 <body class="product-page">
   <a class="g-skip" href="#main">본문으로 건너뛰기</a>
   <div class="g-strip">테스트 페이지입니다 · 프라임에셋 프리미엄</div>
   <header class="px-header">
-    <a class="px-brand" href="../"><img src="../assets/favicon.svg" width="32" height="32" alt=""><span>프라임에셋 <strong>프리미엄</strong></span></a>
-    <nav aria-label="페이지 이동"><a href="../members/">인트라넷 <span aria-hidden="true">↗</span></a><a id="original-app" target="_blank" rel="noopener noreferrer">기존 분석기 <span aria-hidden="true">↗</span></a></nav>
+    <a class="px-brand" href="../" aria-label="프라임에셋 프리미엄 메인"><img src="../assets/favicon.svg" width="28" height="28" alt=""><h1>상품 통합 분석기</h1></a>
+    <nav aria-label="페이지 이동"><a href="/members/">인트라넷으로 돌아가기</a><a id="original-app" target="_blank" rel="noopener noreferrer">기존 분석기 <span aria-hidden="true">↗</span></a></nav>
   </header>
   <main id="main" class="px-workspace" tabindex="-1">
-    <div class="px-heading">
-      <div><p class="px-eyebrow">회원 영업 도구</p><h1>상품 통합 분석기<span class="px-heading-dot" aria-hidden="true">.</span></h1><p class="px-muted">상품 질문부터 상담 준비까지.</p></div>
-      <div class="px-connection"><span class="px-status-dot" aria-hidden="true"></span><span id="processor-state" role="status">연결 확인 중</span><button id="connection-retry" class="px-text-btn" type="button" aria-label="분석기 연결 다시 확인">다시 확인</button></div>
-    </div>
-    <div id="connection-notice" class="px-notice" hidden></div>
     <div class="px-tabs" role="tablist" aria-label="분석기 업무">
-      <button id="tab-product" role="tab" aria-selected="true" aria-controls="panel-product" tabindex="0"><span aria-hidden="true">01</span> 상품 질문</button>
-      <button id="tab-news" role="tab" aria-selected="false" aria-controls="panel-news" tabindex="-1"><span aria-hidden="true">02</span> 보험사 소식지</button>
-      <button id="tab-now" role="tab" aria-selected="false" aria-controls="panel-now" tabindex="-1"><span aria-hidden="true">03</span> 지금 중요한 내용</button>
+      <button id="tab-product" role="tab" aria-selected="true" aria-controls="panel-product" tabindex="0">상품 질문</button>
+      <button id="tab-news" role="tab" aria-selected="false" aria-controls="panel-news" tabindex="-1">보험사 소식지</button>
+      <button id="tab-now" role="tab" aria-selected="false" aria-controls="panel-now" tabindex="-1">지금 중요한 내용</button>
     </div>
     <section id="panel-product" role="tabpanel" aria-labelledby="tab-product">
       <div class="px-layout">
         <div class="px-main-column">
-          <section class="px-card px-composer" aria-labelledby="composer-title">
-            <div class="px-section-top"><span class="px-eyebrow">질문 → 근거 확인 → 상담 준비</span></div>
-            <h2 id="composer-title">어떤 상품을 살펴볼까요?</h2>
-            <p class="px-muted">상품 비교·가입조건·이달 시책을 질문하세요.</p>
+          <section class="px-card px-composer" aria-label="상품 질문 입력">
             <form id="question-form" novalidate>
               <label class="px-field-label" for="question">질문</label>
               <textarea id="question" rows="4" maxlength="600" aria-describedby="question-help question-count question-error" placeholder="예) 메리츠화재와 KB손보 암보험의 가입조건과 주의점을 비교해줘" required minlength="2"></textarea>
               <div class="px-input-meta"><span id="question-help">고객 이름·연락처 등 개인정보는 입력하지 마세요.</span><span id="question-count">0 / 600</span></div>
-              <section class="px-filters" id="filters" aria-labelledby="filters-title"><h3 class="px-filter-heading" id="filters-title">보험사·상품군 선택 <span id="filter-summary">선택 사항</span></h3><div class="px-filter-grid"><label>보험사<select id="insurer"><option value="">전체 보험사</option></select></label><label>상품군<select id="category"><option value="">전체 상품군</option></select></label></div><p class="px-small">선택한 조건은 질문에 함께 반영됩니다.</p></section>
+              <section class="px-filters" id="filters" aria-labelledby="filters-title"><h3 class="px-filter-heading" id="filters-title">보험사·상품군 선택 <span id="filter-summary">선택 사항</span></h3><div class="px-filter-grid"><label>보험사<select id="insurer"><option value="">전체 보험사</option></select></label><label>상품군<select id="category"><option value="">전체 상품군</option></select></label></div></section>
               <p id="question-error" class="px-error" role="alert" hidden></p>
               <div class="px-submit-row"><span class="px-small">Ctrl / ⌘ + Enter로 질문</span><button type="submit" id="ask-button" class="px-btn px-primary">질문 보내기 <span aria-hidden="true">↗</span></button></div>
             </form>
+            <div class="px-connection"><span class="px-status-dot" aria-hidden="true"></span><span id="processor-state" role="status">연결 확인 중</span><button id="connection-retry" class="px-text-btn" type="button" aria-label="분석기 연결 다시 확인">다시 확인</button></div>
+            <div id="connection-notice" class="px-notice" hidden></div>
           </section>
           <section id="progress" class="px-card px-progress" aria-labelledby="progress-title" hidden>
             <div class="px-section-top"><h2 id="progress-title" tabindex="-1">질문 전송 중</h2><span id="progress-time" class="px-small">0초</span></div>
@@ -56,15 +50,14 @@
           <article id="answer" class="px-card px-answer" aria-label="분석 답변" hidden></article>
           <section class="px-examples" aria-labelledby="examples-title"><div class="px-section-top"><h2 id="examples-title">이렇게 물어보세요</h2><span class="px-small">선택 후 수정할 수 있어요</span></div><div id="examples" class="px-example-list"></div></section>
         </div>
-        <aside class="px-sidebar" aria-label="질문 기록과 이용 안내">
-          <section class="px-card px-history"><div class="px-section-top"><h2>최근 질문</h2><button id="clear-history" class="px-text-btn" type="button">지우기</button></div><p class="px-small">이 탭에서만 보관합니다.</p><div id="recent-questions"></div><p id="storage-notice" class="px-small" hidden>브라우저 저장이 제한되어 새로고침하면 기록이 사라집니다.</p></section>
-          <section class="px-guide"><span class="px-guide-mark" aria-hidden="true">↳</span><h2>상담 전, 근거를 확인하세요.</h2><ol><li><span>01</span><div><strong>조건을 구체적으로</strong><p>보험사·상품명·기준월을 함께 입력하세요.</p></div></li><li><span>02</span><div><strong>출처를 따라 확인</strong><p>답변의 출처 번호로 문서명과 쪽을 찾아보세요.</p></div></li><li><span>03</span><div><strong>상담에 맞게 활용</strong><p>원문과 전산 확인 후 답변을 복사하거나 공유하세요.</p></div></li></ol></section>
+        <aside class="px-sidebar" aria-label="질문 기록">
+          <section class="px-card px-history"><div class="px-section-top"><h2>최근 질문</h2><button id="clear-history" class="px-text-btn" type="button">지우기</button></div><div id="recent-questions"></div><p id="storage-notice" class="px-small" hidden>브라우저 저장이 제한되어 새로고침하면 기록이 사라집니다.</p></section>
         </aside>
       </div>
     </section>
     <section id="panel-news" role="tabpanel" aria-labelledby="tab-news" hidden><div class="px-card"><div class="px-section-top"><div><h2>보험사별 소식지 <span id="nl-month" class="px-tag"></span></h2></div><button id="news-retry" class="px-btn" type="button">새로고침</button></div><p class="px-muted">최신 저장 월의 상품·시책·인수기준을 확인하세요. 쪽 번호로 원문을 확인할 수 있습니다.</p><div id="nl-list"></div></div><div id="nl-detail" class="px-card" hidden></div></section>
     <section id="panel-now" role="tabpanel" aria-labelledby="tab-now" hidden><div class="px-card"><div class="px-section-top"><div><h2>지금 중요한 내용 <span id="now-month" class="px-tag"></span></h2></div><button id="now-retry" class="px-btn" type="button">새로고침</button></div><p class="px-muted">보험사 공식 소식지와 현장 소식을 구분해 살펴보세요.</p><div id="now-body"></div></div></section>
-    <footer class="px-footer"><span>PREMIUM · 상품 통합 분석기</span><p>자동 생성된 답변은 참고 자료입니다. 실제 설계·고지 전 원문과 전산을 확인하세요.</p></footer>
+    <footer class="px-footer"><span>PREMIUM · 상품 통합 분석기</span><p>자동 생성된 답변은 참고 자료입니다. 원문과 전산을 확인하세요.</p></footer>
   </main>
   <div id="toast" class="px-toast" role="status" hidden></div>
   <dialog id="copy-dialog" class="px-copy-dialog"><h2>내용을 선택해 복사하세요</h2><p class="px-muted">자동 복사를 사용할 수 없는 환경입니다.</p><label class="sr" for="copy-content">복사할 내용</label><textarea id="copy-content" readonly rows="10"></textarea><form method="dialog"><button class="px-btn">닫기</button></form></dialog>

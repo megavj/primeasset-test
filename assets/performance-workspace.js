@@ -129,7 +129,7 @@
         put('pf-inspect-month', inspectedMonth + '월');
         put('pf-inspect-value', grouped(data.total[inspectedMonth - 1]));
         put('pf-inspect-count', grouped(data.count_total[inspectedMonth - 1]));
-        put('pf-inspect-cumulative', grouped(cumulative[inspectedMonth - 1]));
+        put('pf-inspect-cumulative', eok(cumulative[inspectedMonth - 1]));
         bars.forEach(function (bar) {
           var active = Number(bar.dataset.month) === inspectedMonth;
           bar.classList.toggle('is-active', active);
@@ -154,7 +154,6 @@
         put('pf-period-label', periodLabel());
         put('pf-chart-period', periodLabel());
         put('pf-total', eok(stats.sum));
-        put('pf-exact', grouped(stats.sum));
         put('pf-count', grouped(stats.count));
         put('pf-average', eok(stats.average));
         put('pf-count-average', grouped(Math.round(stats.countAverage)));
@@ -180,13 +179,6 @@
         chart.style.setProperty('--pf-month-count', String(stats.months));
         if (chart.parentElement) chart.parentElement.style.minWidth = Math.max(240, stats.months * 52 + 42) + 'px';
         inspect(state.to);
-        all('#pf-monthly-table tbody tr[data-month]').forEach(function (row) {
-          var month = Number(row.dataset.month);
-          row.hidden = month < state.from || month > state.to;
-        });
-        all('[data-pf-sum="prem"]').forEach(function (el) { el.textContent = grouped(stats.sum); });
-        all('[data-pf-sum="cnt"]').forEach(function (el) { el.textContent = grouped(stats.count); });
-        put('pf-table-caption', periodLabel() + ' 월별 원자료 · 월납보험료 단위: 천원 · 누적은 선택 기간과 관계없이 연초부터 계산');
         put('pf-compare-title', state.base + '월 → ' + state.month + '월 비교');
         all('.pf-compare-base-label').forEach(function (el) { el.textContent = state.base + '월'; });
         all('.pf-compare-current-label').forEach(function (el) { el.textContent = state.month + '월'; });
@@ -200,9 +192,6 @@
           var el = byId(id);
           if (el) el.dataset.direction = (index ? compare.countDiff : compare.premDiff) > 0 ? 'up' : (index ? compare.countDiff : compare.premDiff) < 0 ? 'down' : 'same';
         });
-        put('pf-compare-note', state.base === state.month ?
-          '같은 달을 선택했습니다. 차이는 0입니다. 모든 합계·평균·증감은 원자료로 계산한 값이며 증감률은 기준월 대비입니다.' :
-          '비교 월은 조회 기간과 별도로 선택합니다. 차이 = 비교월 − 기준월, 증감률 = 차이 ÷ 기준월 × 100. 원자료로 계산한 값입니다.');
         all('[data-pf-preset]').forEach(function (button) {
           var preset = button.dataset.pfPreset;
           var active = preset === 'all' ? state.from === 1 && state.to === length :
@@ -235,17 +224,14 @@
         return [
           '프리미엄사업부 실적보드',
           '조회 기간: ' + periodLabel() + ' (' + stats.months + '개월)',
-          '월납보험료 합계: ' + grouped(stats.sum) + '천원 (' + eok(stats.sum) + '억원)',
+          '월납보험료 합계: ' + eok(stats.sum) + '억원',
           '계약건수 합계: ' + grouped(stats.count) + '건',
           '월평균 월납보험료: ' + eok(stats.average) + '억원',
           '선택 기간 최고 월: ' + stats.peak + '월 ' + grouped(data.total[stats.peak - 1]) + '천원',
           '월 비교: 기준 ' + state.base + '월 → 비교 ' + state.month + '월',
           '월납보험료: ' + grouped(compare.basePrem) + ' → ' + grouped(compare.currentPrem) + '천원 / 차이 ' + signed(compare.premDiff) + '천원 (' + percentage(compare.premDiff, compare.basePrem) + ')',
           '계약건수: ' + grouped(compare.baseCount) + ' → ' + grouped(compare.currentCount) + '건 / 차이 ' + signed(compare.countDiff) + '건 (' + percentage(compare.countDiff, compare.baseCount) + ')',
-          '합계·평균·증감은 원자료로 계산. 억원·증감률 표시는 반올림.',
-          '기준: ' + data.basis,
-          '출처: ' + data.source,
-          '본부 수 기준: ' + data.branch_note,
+          '팜스 마감 기준',
           '현재 화면: ' + stateUrl().href
         ].join('\n');
       }
@@ -358,7 +344,7 @@
       });
       action('pf-copy', async function () {
         var text = summary();
-        if (await copyText(text)) announce('조회 기간·월 비교·출처가 포함된 요약을 복사했습니다.');
+        if (await copyText(text)) announce('실적 요약을 복사했습니다.');
         else manualCopy(text, true);
       });
       action('pf-share', async function () {
@@ -413,13 +399,10 @@
           var gold = '#d6b97e';
           var font = '-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
           var footer = [
-            { text: '계산 안내: 합계·평균·증감은 원자료로 계산. 증감률은 기준월 대비. 억원과 증감률 표시는 반올림.', gap: 0 },
-            { text: '조회 기준: ' + data.basis, gap: 5 },
-            { text: '출처: ' + data.source, gap: 5 },
-            { text: '본부 수 기준: ' + data.branch_note, gap: 5 },
+            { text: '팜스 마감 기준', gap: 0 },
             { text: '현재 보기: ' + stateUrl().href, gap: 10, link: true }
           ];
-          // 원자료 출처와 공유 URL의 실제 줄 수부터 측정하여 긴 주소도 잘리지 않게 한다.
+          // 공유 URL의 실제 줄 수부터 측정하여 긴 주소도 잘리지 않게 한다.
           var footerBottom = 1103;
           footer.forEach(function (line) {
             ctx.font = '400 ' + (line.link ? 18 : 19) + 'px ' + font;
@@ -443,9 +426,9 @@
           ctx.fillStyle = muted;
           ctx.fillText(periodLabel() + ' · 월납보험료 / 계약건수', 72, 183);
           var cards = [
-            ['선택 기간 월납보험료', eok(stats.sum) + '억원', grouped(stats.sum) + '천원'],
+            ['선택 기간 월납보험료', eok(stats.sum) + '억원', periodLabel()],
             ['계약건수 합계', grouped(stats.count) + '건', stats.months + '개월 합계'],
-            ['월평균 월납보험료', eok(stats.average) + '억원', '원자료 합계 ÷ ' + stats.months + '개월']
+            ['월평균 월납보험료', eok(stats.average) + '억원', stats.months + '개월 평균']
           ];
           cards.forEach(function (card, index) {
             var x = 72 + index * 494;
@@ -466,7 +449,7 @@
           ctx.fillText('월별 월납보험료', 72, 447);
           ctx.fillStyle = muted;
           ctx.font = '400 20px ' + font;
-          ctx.fillText('단위: 억원 · 선택 기간 내 최대값을 기준으로 막대 높이 표시', 72, 480);
+          ctx.fillText('단위: 억원', 72, 480);
           var max = data.total[stats.peak - 1];
           var chartX = 104;
           var chartWidth = 1380;
@@ -523,7 +506,7 @@
           anchor.click();
           anchor.remove();
           window.setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
-          announce('선택한 기간·월 비교·출처가 담긴 PNG 이미지 저장을 시작했습니다.');
+          announce('실적 PNG 이미지 저장을 시작했습니다.');
         } catch (error) {
           announce('이미지를 저장하지 못했습니다. 브라우저의 인쇄 또는 요약 복사를 이용해 주세요.');
         } finally { if (button) button.disabled = false; }
@@ -587,7 +570,6 @@
         var timer = 0;
         var playing = false;
         var current = months.length;
-        var label = block.querySelector('[data-pb-race-month]');
         var progress = block.querySelector('[data-pb-race-progress]');
         function setPlaying(enabled) {
           playing = enabled;
@@ -612,10 +594,10 @@
             item.value.textContent = final ? item.finalValue : eok(item.sums[month - 1]) + '억';
             list.appendChild(item.row);
           });
-          if (label) label.textContent = month + '월 누적';
           if (progress) progress.style.width = (month / months.length * 100).toFixed(2) + '%';
-          list.setAttribute('aria-label', '본부별 2026년 1~' + month + '월 누적 월납보험료 순위 · 1~9월 상세 원자료');
-          put('pf-rank-state', '2026년 1~' + month + '월 누적 · 본부·보험사 상세 원자료 기준. 아래 원자료 표는 1~9월 최종값입니다.' + (playing ? ' 재생 중입니다.' : ''));
+          var rankPeriod = '2026년 ' + (month === 1 ? '1' : '1~' + month) + '월';
+          list.setAttribute('aria-label', '본부별 ' + rankPeriod + ' 누적 월보험료 순위');
+          put('pf-rank-state', rankPeriod);
         }
         if (select) select.addEventListener('change', function () {
           var value = Number(select.value);
