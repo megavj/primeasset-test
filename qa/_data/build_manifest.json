@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "files": [
+    "assets/qa.css",
+    "qa/2026-11-01-premium-waiver-overdue-payments/index.html",
+    "qa/2026-11-02-insurance-dispute-policy-issues/index.html",
+    "qa/2026-11-03-shockwave-treatment-necessity-disputes/index.html",
+    "qa/feed.xml",
+    "qa/field/business-method/index.html",
+    "qa/field/case-law/index.html",
+    "qa/field/compensation/index.html",
+    "qa/field/disputes/index.html",
+    "qa/field/summary/index.html",
+    "qa/field/terms/index.html",
+    "qa/index.html",
+    "qa/sitemap.xml"
+  ]
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>프라임에셋 프리미엄 보험자료</title>
+    <link>https://test.primeasset.info/qa/</link>
+    <description>보험설계사를 위한 매일 질문과 답변</description>
+    <language>ko-kr</language>
+    <atom:link href="https://test.primeasset.info/qa/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 03 Nov 2026 06:00:00 +0900</lastBuildDate>
+    <item>
+      <title>체외충격파 실손보험금 분쟁에서는 치료 필요성을 어떻게 살펴보나요?</title>
+      <link>https://test.primeasset.info/qa/2026-11-03-shockwave-treatment-necessity-disputes/</link>
+      <guid isPermaLink="true">https://test.primeasset.info/qa/2026-11-03-shockwave-treatment-necessity-disputes/</guid>
+      <pubDate>Tue, 03 Nov 2026 06:00:00 +0900</pubDate>
+      <category>분쟁사례</category>
+      <description>체외충격파치료 실손보험금 분쟁에서는 의학적 근거에 바탕을 둔 기준과 개별 치료의 필요성을 함께 살펴봅니다. 특수한 사정이 있으면 일부 판단기준을 충족하지 못해도 치료 필요성 등을 감안해 지급 가능 여부를 검토할 수 있습니다. 치료를 받았다는 사실이나 특수한 사정만으로 지급을 단정하거나 모든 계약에 같은 판단을 적용해서는 안 됩니다.</description>
+    </item>
+    <item>
+      <title>보험금 분쟁에서 약관은 어떤 내용이 쟁점인지에 따라 확인할 부분이 달라지나요?</title>
+      <link>https://test.primeasset.info/qa/2026-11-02-insurance-dispute-policy-issues/</link>
+      <guid isPermaLink="true">https://test.primeasset.info/qa/2026-11-02-insurance-dispute-policy-issues/</guid>
+      <pubDate>Mon, 02 Nov 2026 06:00:00 +0900</pubDate>
+      <category>판례</category>
+      <description>보험금 분쟁에서는 지급 기준의 해석인지 계약 후 알릴 의무의 이행인지에 따라 확인할 약관 내용이 달라집니다. 암 진단보험금의 분류조항에서는 약관의 뜻을 해석하는 문제와 설명의무 위반 여부를 구분해 살펴봐야 합니다. 직업 변경 통지 분쟁은 변경을 알리는 약관 내용과 의무 이행이 쟁점이므로 암 분류 분쟁과 나누어 설명해야 합니다.</description>
+    </item>
+    <item>
+      <title>보험료 납입면제를 받으면 전에 연체한 보험료도 안 내도 되나요?</title>
+      <link>https://test.primeasset.info/qa/2026-11-01-premium-waiver-overdue-payments/</link>
+      <guid isPermaLink="true">https://test.primeasset.info/qa/2026-11-01-premium-waiver-overdue-payments/</guid>
+      <pubDate>Sun, 01 Nov 2026 06:00:00 +0900</pubDate>
+      <category>약관</category>
+      <description>납입면제가 적용되더라도 면제 이전에 연체한 보험료는 별도로 납입하도록 정한 약관이 있습니다. 이러한 약관에서는 이전 연체보험료를 내지 않으면 납입최고와 해지 규정에 따라 해지될 수 있습니다. 구체적인 해지 시점은 납입면제 문구만으로 확정하지 말고 해당 계약의 해지 규정을 확인해야 합니다.</description>
+    </item>
+  </channel>
+</rss>

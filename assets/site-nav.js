@@ -14,7 +14,7 @@
     '<a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33"><span>프라임에셋 프리미엄</span></a>' +
     '<button id="pa-nav-toggle" type="button" aria-controls="pa-nav-menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>메뉴</span></button>' +
     '<nav id="pa-nav-menu" aria-label="주요 메뉴">' +
-    link('home', '/', '홈') + link('performance', '/performance/', '실적보드') + link('wiki', 'http://wiki.primeasset.info/', '보험위키') +
+    link('home', '/', '홈') + link('performance', '/performance/', '실적보드') + link('qa', '/qa/', '보험자료') + link('wiki', 'http://wiki.primeasset.info/', '보험위키') +
     link('intranet', '/members/#home', '설계사 인트라넷', 'hidden') + link('me', '/members/#me', '내 정보', 'hidden') +
     link('admin', '/members/admin/', '관리자', 'hidden') +
     '<button data-nav-key="install" class="g-menu-install" type="button" hidden>앱 설치</button>' +
@@ -48,6 +48,7 @@
   function currentKey() {
     if (path === '/') return 'home';
     if (path === '/performance') return 'performance';
+    if (path === '/qa' || path.startsWith('/qa/')) return 'qa';
     if (path === '/members/admin') return admin ? 'admin' : '';
     if (isMembers) return session ? (location.hash === '#me' ? 'me' : 'intranet') : 'login';
     return '';

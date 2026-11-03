@@ -1,0 +1,75 @@
+/* 보험자료: 메인 Pretendard·어두운 색상·유리 토큰 공유. */
+.g-qa{--text-2:#bec8d7;--text-3:#a9b6ca;--qa-wrap:1080px}
+.g-qa .g-bg{background:var(--bg-0)}
+.g-qa main{max-width:var(--qa-wrap);margin:0 auto;padding:0 24px 80px;min-height:55vh}
+.qa-audience{max-width:var(--qa-wrap);margin:16px auto 0;padding:0 24px;color:#ff6668;font-size:14px;line-height:1.6;font-weight:500}
+.qa-hero{padding:64px 0 40px;max-width:760px}
+.qa-eyebrow{margin:0 0 16px;color:var(--gold);font-size:14px;font-weight:500;letter-spacing:.04em}
+.qa-hero h1{margin:0;font-size:clamp(36px,4.3vw,56px);line-height:1.24;font-weight:600;letter-spacing:-.04em;word-break:keep-all;overflow-wrap:anywhere}
+.qa-hero-lead{margin:20px 0 0;max-width:38em;color:var(--text-2);font-size:17px;line-height:1.8;word-break:keep-all}
+.qa-list-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 20px}
+.qa-list-top p{margin:0;color:var(--text-3);font-size:14px}
+.qa-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 32px;padding:0;list-style:none}
+.qa-filters a{display:inline-flex;align-items:center;min-height:44px;padding:9px 18px;border:1px solid var(--line-2);border-radius:999px;color:var(--text-2);font-size:14px;text-decoration:none;transition:background .2s,border-color .2s}
+.qa-filters a:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.qa-filters a[aria-current="page"]{background:var(--gold-soft);border-color:var(--gold);color:var(--gold-hi)}
+.qa-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.qa-card{display:flex;flex-direction:column;min-width:0;padding:28px;border:1px solid var(--glass-line);border-radius:var(--r-card);background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015));box-shadow:var(--shadow-1)}
+.qa-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;color:var(--text-3);font-size:14px;line-height:1.5}
+.qa-field{padding:3px 9px;background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:6px;color:var(--text-2)}
+.qa-meta time{font-variant-numeric:tabular-nums}
+.qa-card h2{font-size:21px;line-height:1.5;letter-spacing:-.025em;font-weight:500;margin:24px 0 16px;word-break:keep-all;overflow-wrap:anywhere}
+.qa-card-link{color:var(--text);text-decoration:none}
+.qa-card-link:hover{color:var(--gold-hi)}
+.qa-card-summary{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:0 0 28px;color:var(--text-2);font-size:15px;line-height:1.8}
+.qa-card-bottom{margin-top:auto;padding-top:20px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;color:var(--text-3)}
+.qa-card-arrow{color:var(--gold);font-size:18px;line-height:1}
+.qa-pager{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:center;align-items:center;margin-top:40px;font-size:14px;color:var(--text-3)}
+.qa-pager a{display:inline-flex;align-items:center;min-height:44px;color:var(--text);text-decoration:none}
+.qa-pager a:hover{color:var(--gold-hi)}
+.qa-empty{margin:0;padding:40px 24px;border:1px solid var(--line);border-radius:16px;color:var(--text-2);line-height:1.8}
+.qa-article{max-width:800px;margin:0 auto}
+.qa-article .qa-hero{padding-top:40px;max-width:none}
+.qa-article .qa-hero h1{font-size:clamp(30px,3.7vw,46px);line-height:1.36}
+.qa-back{display:inline-flex;align-items:center;min-height:44px;margin-top:24px;gap:10px;color:var(--text-2);font-size:14px;text-decoration:none}
+.qa-back:hover{color:var(--gold-hi)}
+.qa-article .qa-meta{margin-top:24px}
+.qa-summary{padding:32px;border:1px solid var(--glass-line);border-top-color:rgba(214,185,126,.65);border-radius:20px;background:var(--glass);box-shadow:var(--shadow-1)}
+.qa-summary h2{font-size:16px;line-height:1.5;color:var(--gold-hi);font-weight:500;margin:0 0 20px}
+.qa-summary ol{display:grid;gap:16px;list-style:none;counter-reset:answer;margin:0;padding:0}
+.qa-summary li{position:relative;padding-left:32px;font-size:17px;line-height:1.8;word-break:keep-all;overflow-wrap:anywhere;counter-increment:answer}
+.qa-summary li::before{content:counter(answer,decimal-leading-zero);position:absolute;left:0;top:2px;font-size:13px;color:var(--text-3);font-variant-numeric:tabular-nums}
+.qa-section{padding:48px 0;border-bottom:1px solid var(--line)}
+.qa-section>h2{font-size:24px;font-weight:500;letter-spacing:-.025em;line-height:1.4;margin:0 0 24px}
+.qa-article-body{font-size:17px;line-height:1.95;color:var(--text-2);word-break:keep-all;overflow-wrap:anywhere}
+.qa-article-body p{margin:0 0 24px}
+.qa-article-body>:last-child{margin-bottom:0}
+.qa-article-body h2,.qa-article-body h3{font-size:20px;color:var(--text);font-weight:500;line-height:1.5;margin:32px 0 16px}
+.qa-article-body strong{font-weight:500;color:var(--text)}
+.qa-article-body ul,.qa-article-body ol{padding-left:24px}
+.qa-article-body li{margin:8px 0}
+.qa-article-body blockquote{margin:24px 0;border-left:2px solid var(--gold);padding-left:20px}
+.qa-practice{margin:0;padding:0;list-style:none;display:grid;gap:16px}
+.qa-practice li{position:relative;padding:20px 24px 20px 48px;background:var(--bg-1);border:1px solid var(--line);border-radius:12px;font-size:16px;line-height:1.85;color:var(--text-2);word-break:keep-all;overflow-wrap:anywhere}
+.qa-practice li::before{position:absolute;left:24px;top:30px;content:"";width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.qa-disclaimer{margin:24px 0 0;font-size:14px;line-height:1.8;color:var(--text-3)}
+.qa-tags{display:flex;flex-wrap:wrap;gap:8px 12px;margin:20px 0 0;color:var(--text-3);font-size:14px}
+.qa-related ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.qa-related a{display:inline-flex;min-height:44px;align-items:center;color:var(--text-2);line-height:1.7;text-decoration:none}
+.qa-related a:hover{color:var(--gold-hi)}
+.qa-related p{font-size:15px;color:var(--text-3);margin:0;line-height:1.8}
+.qa-post-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:32px 0}
+.qa-post-nav a{padding:20px;border:1px solid var(--line);border-radius:12px;color:var(--text);text-decoration:none;font-size:15px;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere}
+.qa-post-nav a:hover{border-color:var(--line-2);background:var(--glass)}
+.qa-post-nav span{display:block;font-size:14px;margin-bottom:8px;color:var(--text-3)}
+.qa-post-nav .qa-next{grid-column:2}
+.qa-all-link{display:flex;justify-content:center}
+.g-qa .g-foot{max-width:var(--qa-wrap);margin:0 auto;padding:24px;border-top:1px solid var(--line);font-size:14px;color:var(--text-3)}
+.g-qa .g-foot a{display:inline-flex;align-items:center;min-height:44px;color:var(--text-3);text-decoration:none}
+.g-qa :focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.qa-noscript-menu{display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;font-size:14px}
+.qa-noscript-menu a{display:inline-flex;align-items:center;min-height:44px}
+.g-qa .g-nav:has(noscript nav) .g-bar{flex-wrap:wrap;border-radius:24px}
+@media(max-width:900px){.qa-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.qa-card{padding:24px}.qa-hero{padding-top:48px}}
+@media(max-width:600px){.g-qa main{padding:0 20px 56px}.qa-audience{padding:0 20px;font-size:14px;margin-top:12px}.qa-hero{padding:40px 0 32px}.qa-hero h1{font-size:38px}.qa-hero-lead{font-size:16px}.qa-filters{gap:8px;margin-bottom:24px}.qa-filters a{padding:8px 14px}.qa-grid{grid-template-columns:1fr;gap:16px}.qa-card h2{font-size:21px;margin-top:20px}.qa-card-summary{font-size:15px}.qa-list-top{margin-bottom:16px}.qa-article .qa-hero{padding-top:24px}.qa-article .qa-hero h1{font-size:30px;line-height:1.4}.qa-back{margin-top:20px}.qa-summary{padding:24px 20px}.qa-summary li{font-size:16px;padding-left:28px}.qa-section{padding:36px 0}.qa-section>h2{font-size:22px}.qa-article-body{font-size:16px}.qa-practice li{font-size:16px;padding:18px 18px 18px 40px}.qa-practice li::before{left:18px;top:29px}.qa-post-nav{gap:12px}.qa-post-nav a{padding:16px;font-size:14px}.qa-post-nav span{font-size:14px}.g-qa .g-foot{padding:24px 20px}.qa-article .qa-meta{gap:10px}}
+@media print{.g-qa .g-nav,.qa-audience,.qa-post-nav,.qa-all-link,.g-qa .g-foot{display:none!important}.g-qa main{max-width:none;padding:0}.qa-article{max-width:none}.qa-summary,.qa-practice li{break-inside:avoid}}
