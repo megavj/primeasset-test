@@ -490,3 +490,6 @@ html.js-rv #atlas-static{display:none}
 
 /* 팀쿡 2026-11-03 이사 승인: 본문 폭 좁힘(가독성) */
 @media(min-width:821px){.article{max-width:720px}}
+
+/* AUDIT-20261103: 지식지도 목록의 작은 "열기 →" 링크 누르는 영역을 24px 이상으로(WCAG 2.2 2.5.8). 글자 크기·색은 그대로. */
+.atlas-list .al-go{display:inline-flex;align-items:center;min-height:24px;min-width:24px}
