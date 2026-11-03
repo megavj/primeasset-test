@@ -1,7 +1,7 @@
 # HOME-04 테스트페이지 빈 틀 생성기 (샘알트만) — 상대경로라 하위주소/정식주소 어디서든 동작
 import os, sys
 OUT = sys.argv[1]
-MENU = [("", "홈"), ("http://wiki.primeasset.info/", "보험위키"), ("members/", "설계사 인트라넷")]
+MENU = [("", "홈"), ("/wiki/", "보험위키"), ("members/", "설계사 인트라넷")]
 # 2026-10-31 구조 개편: 삭제한 페이지 → 메인으로 보내는 안내 파일만 남김
 REMOVED = ["about/", "join/", "tools/", "links/"]
 

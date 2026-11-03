@@ -11,7 +11,7 @@ def home(MENU):
     b = theme.box
     tools = "".join(f"<a class='wf-item' href='members/#signup' data-tool><b>{t}</b><small>회원 전용 · 누르면 회원가입</small></a>" for t in TOOLS)
     tools += "".join(f"<a class='wf-item' href='members/#signup'><b>{t}</b><small>교육·정보 채널 · 회원가입 후 안내</small></a>" for t in CHANNELS)
-    links = ("<a class='wf-item' href='http://wiki.primeasset.info/'><b>보험위키</b><small>wiki.primeasset.info</small></a>"
+    links = ("<a class='wf-item' href='/wiki/'><b>보험위키</b><small>보장·용어·청구 가이드</small></a>"
              "<a class='wf-item' href='https://188.primeasset.info/' target='_blank' rel='noopener'><b>188 영업지원시스템</b><small>188.primeasset.info</small></a>"
              "<a class='wf-item' href='https://bohumnote.com/' target='_blank' rel='noopener'><b>보험노트</b><small>bohumnote.com</small></a>"
              "<a class='wf-item' href='http://primeasset.kr/' target='_blank' rel='noopener'><b>프라임에셋 본사</b><small>primeasset.kr</small></a>"

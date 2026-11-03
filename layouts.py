@@ -4,7 +4,7 @@ import os, sys, re, html
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import theme, home
 OUT = sys.argv[1]
-MENU = [("", "홈"), ("http://wiki.primeasset.info/", "보험위키"), ("members/", "설계사 인트라넷")]
+MENU = [("", "홈"), ("/wiki/", "보험위키"), ("members/", "설계사 인트라넷")]
 
 # 1) 메인 섹션을 현재 home.py 에서 그대로 가져와 단위별로 나눔
 cap = []

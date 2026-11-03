@@ -340,7 +340,7 @@
   }
 
   const SITE_LINKS = [
-    { key: "site:0", name: "보험위키", description: "보장·용어·청구 가이드", url: "http://wiki.primeasset.info/" },
+    { key: "site:0", name: "보험위키", description: "보장·용어·청구 가이드", url: "/wiki/" },
     { key: "site:2", name: "보험노트", description: "보험노트 공식 홈페이지", url: "https://bohumnote.com/" }
   ];
   const WORK = ["영업 준비", "상담·보상", "청약·계약", "정보 공유", "업무 지원"];
