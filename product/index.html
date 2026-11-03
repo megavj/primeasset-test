@@ -6,10 +6,11 @@
   <meta name="robots" content="noindex,nofollow">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#070a12">
+<link rel="manifest" href="/manifest.webmanifest">
   <title>상품 통합 분석기 | 프라임에셋 프리미엄 (테스트)</title>
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-  <link rel="stylesheet" href="../assets/glass.css?v=15">
+  <link rel="stylesheet" href="../assets/glass.css?v=16">
   <link rel="stylesheet" href="../assets/product.css?v=3">
   <script src="../assets/product-library.js?v=3" defer></script>
   <script src="../assets/product.js?v=3" defer></script>
@@ -17,6 +18,11 @@
 <body class="product-page">
   <a class="g-skip" href="#main">본문으로 건너뛰기</a>
   <div class="g-strip">테스트 페이지입니다 · 프라임에셋 프리미엄</div>
+<header class="g-nav pa-site-nav" data-site-nav>
+  <div class="g-bar"><a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
+    <noscript><nav aria-label="주요 메뉴"><a href="/">홈</a> · <a href="/performance/">실적보드</a> · <a href="http://wiki.primeasset.info/">보험위키</a> · <a href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류문의</a> · <a href="/members/#login">로그인</a></nav></noscript>
+  </div>
+</header>
   <header class="px-header">
     <a class="px-brand" href="../" aria-label="프라임에셋 프리미엄 메인"><img src="../assets/favicon.svg" width="28" height="28" alt=""><h1>상품 통합 분석기</h1></a>
     <nav aria-label="페이지 이동"><a href="/members/">인트라넷으로 돌아가기</a><a id="original-app" target="_blank" rel="noopener noreferrer">기존 분석기 <span aria-hidden="true">↗</span></a></nav>
@@ -62,5 +68,9 @@
   <div id="toast" class="px-toast" role="status" hidden></div>
   <dialog id="copy-dialog" class="px-copy-dialog"><h2>내용을 선택해 복사하세요</h2><p class="px-muted">자동 복사를 사용할 수 없는 환경입니다.</p><label class="sr" for="copy-content">복사할 내용</label><textarea id="copy-content" readonly rows="10"></textarea><form method="dialog"><button class="px-btn">닫기</button></form></dialog>
   <noscript><p class="px-noscript">분석기를 사용하려면 JavaScript를 켜 주세요. <a href="../members/">인트라넷으로 돌아가기</a></p></noscript>
+
+<script src="/assets/auth-config.js?v=2"></script>
+<script src="/assets/site-nav.js?v=1" defer></script>
+<script src="/assets/pwa.js?v=1" defer></script>
 </body>
 </html>

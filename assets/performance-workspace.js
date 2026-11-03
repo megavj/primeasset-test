@@ -13,6 +13,18 @@
   function put(id, value) { var el = byId(id); if (el) el.textContent = value; }
   function grouped(value) { return numberFormat.format(value); }
   function eok(value) { return (value / 100000).toFixed(2); }
+  // 기존 소수 둘째 자리 억 표시의 값을 백만원 단위까지 그대로 풀어 쓴다.
+  function money(value) {
+    var units = Math.round(Number(eok(value)) * 100);
+    var whole = Math.floor(units / 100);
+    var rest = units % 100;
+    var thousand = Math.floor(rest / 10);
+    var hundred = rest % 10;
+    var parts = [];
+    if (whole) parts.push(whole + '억');
+    if (rest) parts.push((thousand ? thousand + '천' : '') + (hundred ? hundred + '백' : '') + '만원');
+    return parts.join(' ') || '0원';
+  }
   function signed(value) { return (value > 0 ? '+' : value < 0 ? '−' : '') + grouped(Math.abs(value)); }
   function percentage(diff, base) {
     if (!base) return diff ? '기준값 0: 증감률 계산 불가' : '0.0%';
@@ -129,7 +141,7 @@
         put('pf-inspect-month', inspectedMonth + '월');
         put('pf-inspect-value', grouped(data.total[inspectedMonth - 1]));
         put('pf-inspect-count', grouped(data.count_total[inspectedMonth - 1]));
-        put('pf-inspect-cumulative', eok(cumulative[inspectedMonth - 1]));
+        put('pf-inspect-cumulative', money(cumulative[inspectedMonth - 1]));
         bars.forEach(function (bar) {
           var active = Number(bar.dataset.month) === inspectedMonth;
           bar.classList.toggle('is-active', active);
@@ -153,12 +165,12 @@
         monthControl.value = String(state.month);
         put('pf-period-label', periodLabel());
         put('pf-chart-period', periodLabel());
-        put('pf-total', eok(stats.sum));
+        put('pf-total', money(stats.sum));
         put('pf-count', grouped(stats.count));
-        put('pf-average', eok(stats.average));
+        put('pf-average', money(stats.average));
         put('pf-count-average', grouped(Math.round(stats.countAverage)));
         put('pf-months', String(stats.months));
-        put('pf-peak-value', eok(data.total[stats.peak - 1]));
+        put('pf-peak-value', money(data.total[stats.peak - 1]));
         put('pf-peak-month', stats.peak + '월');
         bars.forEach(function (bar) {
           var month = Number(bar.dataset.month);
@@ -224,9 +236,9 @@
         return [
           '프리미엄사업부 실적보드',
           '조회 기간: ' + periodLabel() + ' (' + stats.months + '개월)',
-          '월납보험료 합계: ' + eok(stats.sum) + '억원',
+          '월납보험료 합계: ' + money(stats.sum),
           '계약건수 합계: ' + grouped(stats.count) + '건',
-          '월평균 월납보험료: ' + eok(stats.average) + '억원',
+          '월평균 월납보험료: ' + money(stats.average),
           '선택 기간 최고 월: ' + stats.peak + '월 ' + grouped(data.total[stats.peak - 1]) + '천원',
           '월 비교: 기준 ' + state.base + '월 → 비교 ' + state.month + '월',
           '월납보험료: ' + grouped(compare.basePrem) + ' → ' + grouped(compare.currentPrem) + '천원 / 차이 ' + signed(compare.premDiff) + '천원 (' + percentage(compare.premDiff, compare.basePrem) + ')',
@@ -426,9 +438,9 @@
           ctx.fillStyle = muted;
           ctx.fillText(periodLabel() + ' · 월납보험료 / 계약건수', 72, 183);
           var cards = [
-            ['선택 기간 월납보험료', eok(stats.sum) + '억원', periodLabel()],
+            ['선택 기간 월납보험료', money(stats.sum), periodLabel()],
             ['계약건수 합계', grouped(stats.count) + '건', stats.months + '개월 합계'],
-            ['월평균 월납보험료', eok(stats.average) + '억원', stats.months + '개월 평균']
+            ['월평균 월납보험료', money(stats.average), stats.months + '개월 평균']
           ];
           cards.forEach(function (card, index) {
             var x = 72 + index * 494;
@@ -439,7 +451,7 @@
             ctx.fillText(card[0], x + 28, 258);
             ctx.fillStyle = index === 0 ? gold : ink;
             ctx.font = '700 43px ' + font;
-            ctx.fillText(card[1], x + 28, 318);
+            ctx.fillText(card[1], x + 28, 318, 412);
             ctx.fillStyle = muted;
             ctx.font = '400 21px ' + font;
             ctx.fillText(card[2], x + 28, 358);
@@ -591,7 +603,7 @@
             item.row.style.setProperty('--r', final ? item.finalR : String(index));
             item.row.style.setProperty('--w', final ? item.finalW : (max ? item.sums[month - 1] / max * 100 : 0).toFixed(2) + '%');
             item.rank.textContent = final ? item.finalRank : String(index + 1);
-            item.value.textContent = final ? item.finalValue : eok(item.sums[month - 1]) + '억';
+            item.value.textContent = final ? item.finalValue : money(item.sums[month - 1]);
             list.appendChild(item.row);
           });
           if (progress) progress.style.width = (month / months.length * 100).toFixed(2) + '%';

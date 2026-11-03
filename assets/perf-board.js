@@ -29,6 +29,19 @@
   }
 
   /* ---------- 카운트업: 정적 텍스트(예: 32.0, 51,539, 3.55)를 목표값으로 삼는다 ---------- */
+  // 기존 소수 둘째 자리 억 표시의 값을 백만원 단위까지 그대로 풀어 쓴다.
+  function formatEok(value) {
+    var units = Math.round(Number(value) * 100);
+    var whole = Math.floor(units / 100);
+    var rest = units % 100;
+    var thousand = Math.floor(rest / 10);
+    var hundred = rest % 10;
+    var parts = [];
+    if (whole) parts.push(whole + '억');
+    if (rest) parts.push((thousand ? thousand + '천' : '') + (hundred ? hundred + '백' : '') + '만원');
+    return parts.join(' ') || '0원';
+  }
+
   function parseFigure(text) {
     var raw = String(text).replace(/^\s+|\s+$/g, '');
     if (!/^\d[\d,]*(\.\d+)?$/.test(raw)) return null;
@@ -42,6 +55,7 @@
   }
 
   function formatFigure(value, figure) {
+    if (figure.money) return formatEok(Number(value.toFixed(figure.decimals)));
     var out = value.toFixed(figure.decimals);
     if (figure.grouped) {
       var parts = out.split('.');
@@ -52,7 +66,13 @@
   }
 
   function figureOf(el) {
-    if (el.pbFigure === undefined) el.pbFigure = parseFigure(el.textContent);
+    if (el.pbFigure === undefined) {
+      el.pbFigure = parseFigure(el.hasAttribute('data-pb-eok') ? el.getAttribute('data-pb-eok') : el.textContent);
+      if (el.pbFigure && el.hasAttribute('data-pb-eok')) {
+        el.pbFigure.money = true;
+        el.pbFigure.raw = formatEok(el.pbFigure.value);
+      }
+    }
     return el.pbFigure;
   }
 

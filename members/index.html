@@ -44,7 +44,7 @@
 })();
 </script>
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-<link rel="stylesheet" href="../assets/glass.css?v=14">
+<link rel="stylesheet" href="../assets/glass.css?v=16">
 <link rel="stylesheet" href="../assets/members-ux.css?v=13">
 </head>
 <body class="g-members">
@@ -52,19 +52,9 @@
 <div class="g-bg" aria-hidden="true"></div>
 <div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
 
-<header class="g-nav">
-  <div class="g-bar">
-    <a class="g-logo" href="../"><img class="g-mark g-mark--shield" src="../assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
-    <nav class="g-menu g-menu--public" aria-label="주요 메뉴">
-      <a href="../">홈</a>
-      <a href="../performance/">실적보드</a>
-      <a href="http://wiki.primeasset.info/">보험위키</a>
-      <a href="./" class="on" aria-current="page">설계사 인트라넷</a>
-    </nav>
-    <nav class="g-menu g-menu--in" aria-label="인트라넷 메뉴">
-      <a href="#home" class="on" data-tab="home">홈</a>
-      <a href="#me" data-tab="me">내 정보</a>
-    </nav>
+<header class="g-nav pa-site-nav" data-site-nav>
+  <div class="g-bar"><a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
+    <noscript><nav aria-label="주요 메뉴"><a href="/">홈</a> · <a href="/performance/">실적보드</a> · <a href="http://wiki.primeasset.info/">보험위키</a> · <a href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류문의</a> · <a href="/members/#login">로그인</a></nav></noscript>
   </div>
 </header>
 
@@ -96,13 +86,8 @@
 
 <footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="../privacy/">개인정보처리방침</a></footer>
 
-<!-- 휴대폰: 로그인 후 아래 고정 탭바(홈·내 정보) -->
-<nav class="g-tabbar" aria-label="인트라넷 메뉴">
-  <div class="g-bar">
-    <a href="#home" class="on" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>홈</a>
-    <a href="#me" data-tab="me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>내 정보</a>
-  </div>
-</nav>
+<!-- 휴대폰 공통 탭: 사이트 홈 · 인트라넷 · 내 정보 -->
+<nav class="g-tabbar pa-site-tabs" data-site-tabs aria-label="회원 빠른 메뉴" hidden></nav>
 
 <script src="../assets/vendor/supabase-2.118.0.js"></script>
 <script src="../assets/auth-config.js?v=2"></script>
@@ -110,6 +95,7 @@
 <!-- 익명 합계: 페이지 경로·종류만 보냄(로그인 전/후 모두, 이름·이메일·식별자 없음) -->
 <script src="../assets/stats-beacon.js?v=1" data-page="/members/"></script>
 <!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) -->
+<script src="/assets/site-nav.js?v=1" defer></script>
 <script src="../assets/pwa.js?v=1" defer></script>
 </body>
 </html>

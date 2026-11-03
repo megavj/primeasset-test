@@ -48,6 +48,7 @@
   };
   if (!C.url || !C.anonKey || !window.supabase) { box.replaceChildren(empty('로그인 서버를 연결하지 못했습니다', '잠시 후 새로고침해 주세요.')); return; }
   const sb = window.supabase.createClient(C.url, C.anonKey);
+  window.PA_SB = sb; // 공통 상단 메뉴도 기존 인증 클라이언트를 재사용합니다.
   const S = {grades:[],members:[],resources:[],branches:[],perms:new Set(),profile:null,requests:[],requestError:null,loadedAt:null};
   const gname = id => S.grades.find(g => g.id === id)?.name || '등급 없음';
   let tab = 'tasks', busy = false, dirty = false, ready = false, loadVersion = 0;

@@ -2,7 +2,8 @@
 (async function () {
   const C = window.PA_AUTH || {}, box = document.getElementById("branch-list");
   if (!box || !C.url || !C.anonKey || !window.supabase) return;
-  const { data, error } = await window.supabase.createClient(C.url, C.anonKey).from("branches").select("no,url,sort").eq("visible", true).order("sort");
+  const sb = window.PA_SB || (window.PA_SB = window.supabase.createClient(C.url, C.anonKey));
+  const { data, error } = await sb.from("branches").select("no,url,sort").eq("visible", true).order("sort");
   if (error || !data || !data.length) return;
   box.replaceChildren(...data.map(b => {
     const e = document.createElement(b.url ? "a" : "span");

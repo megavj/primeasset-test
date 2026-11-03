@@ -10,35 +10,38 @@
 <link rel="icon" href="../assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.webmanifest">
-<meta name="description" content="프라임에셋 프리미엄사업부 실적보드. 2026년 1~10월 누적 월보험료 35.30억, 계약 56,815건. 19개 본부와 함께 성장할 경력·신입 설계사를 찾습니다.">
+<meta name="description" content="프라임에셋 프리미엄사업부 실적보드. 2026년 1~10월 누적 월보험료 35억 3천만원, 계약 56,815건. 19개 본부와 함께 성장할 경력·신입 설계사를 찾습니다.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="프라임에셋 프리미엄">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:url" content="https://test.primeasset.info/performance/">
 <meta property="og:title" content="프리미엄사업부 실적보드 · 2026년 1~10월 — 프라임에셋 프리미엄">
-<meta property="og:description" content="2026년 1~10월 누적 월보험료 35.30억 · 19개 본부 · 30개 제휴 보험사. 함께 성장할 설계사를 찾습니다.">
+<meta property="og:description" content="2026년 1~10월 누적 월보험료 35억 3천만원 · 19개 본부 · 30개 제휴 보험사. 함께 성장할 설계사를 찾습니다.">
 <meta property="og:image" content="https://test.primeasset.info/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,200명 설계사, 월 보험료 50억 2,332만 원">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-<link rel="stylesheet" href="../assets/glass.css?v=14">
+<link rel="stylesheet" href="../assets/glass.css?v=16">
 <link rel="stylesheet" href="../assets/perf-board.css?v=7">
 
 
 <link rel="stylesheet" href="../assets/performance-workspace.css?v=3">
+<style>
+/* 금액을 소수 억 대신 한글 단위로 읽을 수 있게 표시한다. */
+.pf-total-number strong{font-size:clamp(32px,3.6vw,48px);line-height:1.3;word-break:keep-all}
+.pf-metrics dd:has(#pf-average),.pf-metrics dd:has(#pf-peak-value){font-size:18px;white-space:normal;word-break:keep-all}
+.perf-workspace .pb-race__row{grid-template-columns:26px minmax(58px,84px) minmax(20px,1fr) 116px}
+.perf-workspace .pb-chip__val{font-size:20px;word-break:keep-all;line-height:1.3}
+@media(max-width:760px){.perf-workspace .pb-race__row{grid-template-columns:22px 56px minmax(16px,1fr) 104px;column-gap:6px}.perf-workspace .pb-race__val{font-size:12px}.pf-metrics dd:has(#pf-average),.pf-metrics dd:has(#pf-peak-value){font-size:16px}.perf-workspace .pb-chip__val{font-size:18px}}
+</style>
 </head>
 <body class="g-main g-perf lux-page perf-workspace">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
-<header class="pf-site-header">
-  <div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
-  <div class="pf-site-bar">
-    <a class="g-logo" href="../"><img class="g-mark g-mark--shield" src="../assets/logo.svg" alt="" width="30" height="33"><span>프라임에셋 프리미엄</span></a>
-    <nav class="pf-site-nav" aria-label="주요 메뉴">
-      <a href="../">홈</a><a href="./" aria-current="page">실적보드</a><a href="../members/">설계사 인트라넷</a>
-      <a href="../members/#login" class="perf-guest-only">로그인</a><a href="../members/#signup" class="perf-guest-only">회원가입</a><a href="../members/#me" class="perf-member-only">내 정보</a>
-    </nav>
+<header class="g-nav pa-site-nav" data-site-nav>
+  <div class="g-bar"><a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
+    <noscript><nav aria-label="주요 메뉴"><a href="/">홈</a> · <a href="/performance/">실적보드</a> · <a href="http://wiki.primeasset.info/">보험위키</a> · <a href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류문의</a> · <a href="/members/#login">로그인</a></nav></noscript>
   </div>
 </header>
 <main id="main" class="pb" tabindex="-1">
@@ -60,8 +63,8 @@
     <noscript><p class="pf-note">전체 자료를 보고 있습니다. 기간 선택·월 비교·공유 도구는 자바스크립트를 켜면 사용할 수 있습니다.</p></noscript>
     <p id="pf-init-error" class="pf-error" role="alert" hidden>보기 도구를 불러오지 못했습니다. 아래 전체 기간 자료는 그대로 확인할 수 있습니다. 새로고침 후 다시 시도해 주세요.</p>
     <div class="pf-summary-grid">
-      <div class="pf-total"><p class="pf-metric-label"><span id="pf-period-label">2026년 1~10월</span> 합계 월보험료</p><p class="pf-total-number"><strong id="pf-total">35.30</strong><span>억</span></p></div>
-      <dl class="pf-metrics"><div><dt>총 계약건수</dt><dd><span id="pf-count">56,815</span><small>건</small></dd><dd class="pf-metric-sub">월평균 <span id="pf-count-average">5,682</span>건</dd></div><div><dt>월평균 월보험료</dt><dd><span id="pf-average">3.53</span><small>억</small></dd><dd class="pf-metric-sub"><span id="pf-months">10</span>개월 평균</dd></div><div><dt>기간 내 최고 월</dt><dd><span id="pf-peak-value">4.53</span><small>억</small></dd><dd id="pf-peak-month" class="pf-metric-sub">3월</dd></div></dl>
+      <div class="pf-total"><p class="pf-metric-label"><span id="pf-period-label">2026년 1~10월</span> 합계 월보험료</p><p class="pf-total-number"><strong id="pf-total">35억 3천만원</strong></p></div>
+      <dl class="pf-metrics"><div><dt>총 계약건수</dt><dd><span id="pf-count">56,815</span><small>건</small></dd><dd class="pf-metric-sub">월평균 <span id="pf-count-average">5,682</span>건</dd></div><div><dt>월평균 월보험료</dt><dd><span id="pf-average">3억 5천3백만원</span></dd><dd class="pf-metric-sub"><span id="pf-months">10</span>개월 평균</dd></div><div><dt>기간 내 최고 월</dt><dd><span id="pf-peak-value">4억 5천3백만원</span></dd><dd id="pf-peak-month" class="pf-metric-sub">3월</dd></div></dl>
     </div>
     <figure class="pf-chart" aria-labelledby="pb-trend-title">
       <figcaption class="pf-chart-heading"><h3 id="pb-trend-title">월별 월보험료 추이</h3><span><span id="pf-chart-period">2026년 1~10월</span> · 단위 억원</span></figcaption>
@@ -75,7 +78,7 @@
 <button class="pf-month-bar" type="button" data-month="8" aria-label="8월 월보험료 336,162천원, 계약 5,372건"><span class="pf-bar-value">3.36</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:67.2324%"></span></span><span class="pf-bar-label">8월</span></button>
 <button class="pf-month-bar" type="button" data-month="9" aria-label="9월 월보험료 324,368천원, 계약 5,188건"><span class="pf-bar-value">3.24</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:64.8736%"></span></span><span class="pf-bar-label">9월</span></button>
 <button class="pf-month-bar" type="button" data-month="10" aria-label="10월 월보험료 342,883천원, 계약 5,348건"><span class="pf-bar-value">3.43</span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill" style="--bar-height:68.5766%"></span></span><span class="pf-bar-label">10월</span></button></div></div></div>
-      <dl class="pf-inspector" aria-label="선택한 월 상세"><div><dt>선택 월</dt><dd id="pf-inspect-month">10월</dd></div><div><dt>월보험료</dt><dd><span id="pf-inspect-value">342,883</span>천원</dd></div><div><dt>계약건수</dt><dd><span id="pf-inspect-count">5,348</span>건</dd></div><div><dt>연초부터 누적</dt><dd><span id="pf-inspect-cumulative">35.30</span>억</dd></div></dl>
+      <dl class="pf-inspector" aria-label="선택한 월 상세"><div><dt>선택 월</dt><dd id="pf-inspect-month">10월</dd></div><div><dt>월보험료</dt><dd><span id="pf-inspect-value">342,883</span>천원</dd></div><div><dt>계약건수</dt><dd><span id="pf-inspect-count">5,348</span>건</dd></div><div><dt>연초부터 누적</dt><dd><span id="pf-inspect-cumulative">35억 3천만원</span></dd></div></dl>
     </figure>
   </section>
   <section id="comparison" class="pb-wrap pf-comparison" aria-labelledby="pf-compare-heading" data-pf-js hidden>
@@ -95,12 +98,12 @@
         <!-- pb:donut -->
         <div class="pb-donut" data-pb-donut>
           <div class="pb-donut__ring">
-            <svg class="pb-donut__svg" viewBox="0 0 240 240" role="img" aria-label="생보·손보 구성: 손해보험 19.47억 60.9%, 생명보험 12.49억 39.1%"><circle class="pb-donut__track" cx="120" cy="120" r="96"/><circle class="pb-seg pb-seg--nonlife" data-key="nonlife" cx="120" cy="120" r="96" stroke-dasharray="364.46 603.19" transform="rotate(-89.10 120 120)" style="--len:364.46px;--d:0.00s"/><circle class="pb-seg pb-seg--life" data-key="life" cx="120" cy="120" r="96" stroke-dasharray="232.72 603.19" transform="rotate(130.21 120 120)" style="--len:232.72px;--d:0.50s"/></svg>
+            <svg class="pb-donut__svg" viewBox="0 0 240 240" role="img" aria-label="생보·손보 구성: 손해보험 19억 4천7백만원 60.9%, 생명보험 12억 4천9백만원 39.1%"><circle class="pb-donut__track" cx="120" cy="120" r="96"/><circle class="pb-seg pb-seg--nonlife" data-key="nonlife" cx="120" cy="120" r="96" stroke-dasharray="364.46 603.19" transform="rotate(-89.10 120 120)" style="--len:364.46px;--d:0.00s"/><circle class="pb-seg pb-seg--life" data-key="life" cx="120" cy="120" r="96" stroke-dasharray="232.72 603.19" transform="rotate(130.21 120 120)" style="--len:232.72px;--d:0.50s"/></svg>
             <p class="pb-donut__center" aria-hidden="true"><b><span data-pb-donut-pct>60.9</span><small>%</small></b><span data-pb-donut-label>손해보험</span></p>
           </div>
           <ul class="pb-donut__legend">
-            <li><button type="button" data-key="nonlife" data-pct="60.9" data-label="손해보험"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i><span>손해보험</span><b>19.47억</b><em>60.9%</em></button></li>
-            <li><button type="button" data-key="life" data-pct="39.1" data-label="생명보험"><i class="pb-dot pb-dot--life" aria-hidden="true"></i><span>생명보험</span><b>12.49억</b><em>39.1%</em></button></li>
+            <li><button type="button" data-key="nonlife" data-pct="60.9" data-label="손해보험"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i><span>손해보험</span><b>19억 4천7백만원</b><em>60.9%</em></button></li>
+            <li><button type="button" data-key="life" data-pct="39.1" data-label="생명보험"><i class="pb-dot pb-dot--life" aria-hidden="true"></i><span>생명보험</span><b>12억 4천9백만원</b><em>39.1%</em></button></li>
           </ul>
         </div>
         <!-- /pb:donut -->
@@ -120,7 +123,7 @@
             <h3 class="pb-hl__name" id="pb-hl-name" data-pb-stat="hl_name">188본부</h3>
             <p class="pb-hl__rank"><span class="pb-hl__rank-num pb-goldtext"><b data-pb-stat="hl_rank">3</b><small>위</small></span><span class="pb-hl__rank-of">사업부 <span data-pb-stat="branches">19</span>개 본부 중</span></p>
             <dl class="pb-hl__stats">
-              <div><dt>누적 월보험료</dt><dd><b data-pb-stat="hl_eok2">3.27</b>억</dd></div>
+              <div><dt>누적 월보험료</dt><dd><b data-pb-stat="hl_eok2">3억 2천7백만원</b></dd></div>
               <div><dt>사업부 내 비중</dt><dd><b data-pb-stat="hl_share">10.2</b>%</dd></div>
               <div><dt>월간 순위</dt><dd data-pb-stat="hl_streak">9개월 연속 월간 TOP 3</dd></div>
             </dl>
@@ -132,25 +135,25 @@
             </div>
             <!-- pb:race -->
             <ol class="pb-race__list" data-pb-race-list style="--pb-n:19" aria-label="본부별 2026년 1~9월 누적 월보험료 순위">
-              <li class="pb-race__row" data-name="236본부" style="--r:0;--w:100.00%"><span class="pb-race__rank"><b>1</b><span class="pb-sr">위</span></span><span class="pb-race__name">236본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">5.09억</span></li>
-              <li class="pb-race__row" data-name="254본부" style="--r:1;--w:96.79%"><span class="pb-race__rank"><b>2</b><span class="pb-sr">위</span></span><span class="pb-race__name">254본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">4.93억</span></li>
-              <li class="pb-race__row is-hl" data-name="188본부" style="--r:2;--w:64.26%"><span class="pb-race__rank"><b>3</b><span class="pb-sr">위</span></span><span class="pb-race__name">188본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">3.27억</span></li>
-              <li class="pb-race__row" data-name="249본부" style="--r:3;--w:46.62%"><span class="pb-race__rank"><b>4</b><span class="pb-sr">위</span></span><span class="pb-race__name">249본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">2.37억</span></li>
-              <li class="pb-race__row" data-name="227본부" style="--r:4;--w:42.19%"><span class="pb-race__rank"><b>5</b><span class="pb-sr">위</span></span><span class="pb-race__name">227본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">2.15억</span></li>
-              <li class="pb-race__row" data-name="255본부" style="--r:5;--w:35.62%"><span class="pb-race__rank"><b>6</b><span class="pb-sr">위</span></span><span class="pb-race__name">255본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1.81억</span></li>
-              <li class="pb-race__row" data-name="350본부" style="--r:6;--w:32.48%"><span class="pb-race__rank"><b>7</b><span class="pb-sr">위</span></span><span class="pb-race__name">350본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1.65억</span></li>
-              <li class="pb-race__row" data-name="345본부" style="--r:7;--w:32.24%"><span class="pb-race__rank"><b>8</b><span class="pb-sr">위</span></span><span class="pb-race__name">345본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1.64억</span></li>
-              <li class="pb-race__row" data-name="364본부" style="--r:8;--w:28.38%"><span class="pb-race__rank"><b>9</b><span class="pb-sr">위</span></span><span class="pb-race__name">364본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1.44억</span></li>
-              <li class="pb-race__row" data-name="320본부" style="--r:9;--w:21.13%"><span class="pb-race__rank"><b>10</b><span class="pb-sr">위</span></span><span class="pb-race__name">320본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1.08억</span></li>
-              <li class="pb-race__row" data-name="308본부" style="--r:10;--w:20.23%"><span class="pb-race__rank"><b>11</b><span class="pb-sr">위</span></span><span class="pb-race__name">308본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1.03억</span></li>
-              <li class="pb-race__row" data-name="242본부" style="--r:11;--w:19.80%"><span class="pb-race__rank"><b>12</b><span class="pb-sr">위</span></span><span class="pb-race__name">242본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1.01억</span></li>
-              <li class="pb-race__row" data-name="285본부" style="--r:12;--w:19.11%"><span class="pb-race__rank"><b>13</b><span class="pb-sr">위</span></span><span class="pb-race__name">285본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">0.97억</span></li>
-              <li class="pb-race__row" data-name="379본부" style="--r:13;--w:18.47%"><span class="pb-race__rank"><b>14</b><span class="pb-sr">위</span></span><span class="pb-race__name">379본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">0.94억</span></li>
-              <li class="pb-race__row" data-name="346본부" style="--r:14;--w:17.88%"><span class="pb-race__rank"><b>15</b><span class="pb-sr">위</span></span><span class="pb-race__name">346본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">0.91억</span></li>
-              <li class="pb-race__row" data-name="384본부" style="--r:15;--w:11.72%"><span class="pb-race__rank"><b>16</b><span class="pb-sr">위</span></span><span class="pb-race__name">384본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">0.60억</span></li>
-              <li class="pb-race__row" data-name="375본부" style="--r:16;--w:8.63%"><span class="pb-race__rank"><b>17</b><span class="pb-sr">위</span></span><span class="pb-race__name">375본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">0.44억</span></li>
-              <li class="pb-race__row" data-name="246본부" style="--r:17;--w:6.70%"><span class="pb-race__rank"><b>18</b><span class="pb-sr">위</span></span><span class="pb-race__name">246본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">0.34억</span></li>
-              <li class="pb-race__row" data-name="338본부" style="--r:18;--w:5.89%"><span class="pb-race__rank"><b>19</b><span class="pb-sr">위</span></span><span class="pb-race__name">338본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">0.30억</span></li>
+              <li class="pb-race__row" data-name="236본부" style="--r:0;--w:100.00%"><span class="pb-race__rank"><b>1</b><span class="pb-sr">위</span></span><span class="pb-race__name">236본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">5억 9백만원</span></li>
+              <li class="pb-race__row" data-name="254본부" style="--r:1;--w:96.79%"><span class="pb-race__rank"><b>2</b><span class="pb-sr">위</span></span><span class="pb-race__name">254본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">4억 9천3백만원</span></li>
+              <li class="pb-race__row is-hl" data-name="188본부" style="--r:2;--w:64.26%"><span class="pb-race__rank"><b>3</b><span class="pb-sr">위</span></span><span class="pb-race__name">188본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">3억 2천7백만원</span></li>
+              <li class="pb-race__row" data-name="249본부" style="--r:3;--w:46.62%"><span class="pb-race__rank"><b>4</b><span class="pb-sr">위</span></span><span class="pb-race__name">249본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">2억 3천7백만원</span></li>
+              <li class="pb-race__row" data-name="227본부" style="--r:4;--w:42.19%"><span class="pb-race__rank"><b>5</b><span class="pb-sr">위</span></span><span class="pb-race__name">227본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">2억 1천5백만원</span></li>
+              <li class="pb-race__row" data-name="255본부" style="--r:5;--w:35.62%"><span class="pb-race__rank"><b>6</b><span class="pb-sr">위</span></span><span class="pb-race__name">255본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1억 8천1백만원</span></li>
+              <li class="pb-race__row" data-name="350본부" style="--r:6;--w:32.48%"><span class="pb-race__rank"><b>7</b><span class="pb-sr">위</span></span><span class="pb-race__name">350본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1억 6천5백만원</span></li>
+              <li class="pb-race__row" data-name="345본부" style="--r:7;--w:32.24%"><span class="pb-race__rank"><b>8</b><span class="pb-sr">위</span></span><span class="pb-race__name">345본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1억 6천4백만원</span></li>
+              <li class="pb-race__row" data-name="364본부" style="--r:8;--w:28.38%"><span class="pb-race__rank"><b>9</b><span class="pb-sr">위</span></span><span class="pb-race__name">364본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1억 4천4백만원</span></li>
+              <li class="pb-race__row" data-name="320본부" style="--r:9;--w:21.13%"><span class="pb-race__rank"><b>10</b><span class="pb-sr">위</span></span><span class="pb-race__name">320본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1억 8백만원</span></li>
+              <li class="pb-race__row" data-name="308본부" style="--r:10;--w:20.23%"><span class="pb-race__rank"><b>11</b><span class="pb-sr">위</span></span><span class="pb-race__name">308본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1억 3백만원</span></li>
+              <li class="pb-race__row" data-name="242본부" style="--r:11;--w:19.80%"><span class="pb-race__rank"><b>12</b><span class="pb-sr">위</span></span><span class="pb-race__name">242본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">1억 1백만원</span></li>
+              <li class="pb-race__row" data-name="285본부" style="--r:12;--w:19.11%"><span class="pb-race__rank"><b>13</b><span class="pb-sr">위</span></span><span class="pb-race__name">285본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">9천7백만원</span></li>
+              <li class="pb-race__row" data-name="379본부" style="--r:13;--w:18.47%"><span class="pb-race__rank"><b>14</b><span class="pb-sr">위</span></span><span class="pb-race__name">379본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">9천4백만원</span></li>
+              <li class="pb-race__row" data-name="346본부" style="--r:14;--w:17.88%"><span class="pb-race__rank"><b>15</b><span class="pb-sr">위</span></span><span class="pb-race__name">346본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">9천1백만원</span></li>
+              <li class="pb-race__row" data-name="384본부" style="--r:15;--w:11.72%"><span class="pb-race__rank"><b>16</b><span class="pb-sr">위</span></span><span class="pb-race__name">384본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">6천만원</span></li>
+              <li class="pb-race__row" data-name="375본부" style="--r:16;--w:8.63%"><span class="pb-race__rank"><b>17</b><span class="pb-sr">위</span></span><span class="pb-race__name">375본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">4천4백만원</span></li>
+              <li class="pb-race__row" data-name="246본부" style="--r:17;--w:6.70%"><span class="pb-race__rank"><b>18</b><span class="pb-sr">위</span></span><span class="pb-race__name">246본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">3천4백만원</span></li>
+              <li class="pb-race__row" data-name="338본부" style="--r:18;--w:5.89%"><span class="pb-race__rank"><b>19</b><span class="pb-sr">위</span></span><span class="pb-race__name">338본부</span><span class="pb-race__track" aria-hidden="true"><i class="pb-race__bar"></i></span><span class="pb-race__val">3천만원</span></li>
             </ol>
             <!-- /pb:race -->
           </div>
@@ -200,22 +203,22 @@
             <p class="pb-card__desc">2026년 1~9월</p>
           </div>
           <dl class="pb-card__stats">
-            <div><dt>Top 10 합계</dt><dd><span data-pb-stat="top10_eok2">23.11</span>억</dd></div>
+            <div><dt>Top 10 합계</dt><dd><span data-pb-stat="top10_eok2">23억 1천1백만원</span></dd></div>
             <div><dt>전체 대비</dt><dd><span data-pb-stat="top10_share">72.3</span>%</dd></div>
           </dl>
         </header>
         <!-- pb:chips -->
         <ol class="pb-chips" aria-label="보험사별 2026년 1~9월 누적 월보험료 상위 10곳">
-          <li class="pb-chip is-top" style="--s:100.0%;--i:0"><span class="pb-chip__rank" aria-hidden="true">01</span><span class="pb-chip__body"><strong class="pb-chip__name">NH손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 5,262건</span></span><span class="pb-chip__val">3.78<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip is-top" style="--s:84.4%;--i:1"><span class="pb-chip__rank" aria-hidden="true">02</span><span class="pb-chip__body"><strong class="pb-chip__name">KB손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 6,655건</span></span><span class="pb-chip__val">3.19<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip is-top" style="--s:84.2%;--i:2"><span class="pb-chip__rank" aria-hidden="true">03</span><span class="pb-chip__body"><strong class="pb-chip__name">DB손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 5,889건</span></span><span class="pb-chip__val">3.18<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip" style="--s:59.4%;--i:3"><span class="pb-chip__rank" aria-hidden="true">04</span><span class="pb-chip__body"><strong class="pb-chip__name">KB라이프</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--life" aria-hidden="true"></i>생보 · 1,860건</span></span><span class="pb-chip__val">2.25<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip" style="--s:56.1%;--i:4"><span class="pb-chip__rank" aria-hidden="true">05</span><span class="pb-chip__body"><strong class="pb-chip__name">흥국생명</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--life" aria-hidden="true"></i>생보 · 3,319건</span></span><span class="pb-chip__val">2.12<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip" style="--s:55.2%;--i:5"><span class="pb-chip__rank" aria-hidden="true">06</span><span class="pb-chip__body"><strong class="pb-chip__name">흥국화재</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 3,102건</span></span><span class="pb-chip__val">2.09<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip" style="--s:53.9%;--i:6"><span class="pb-chip__rank" aria-hidden="true">07</span><span class="pb-chip__body"><strong class="pb-chip__name">신한라이프</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--life" aria-hidden="true"></i>생보 · 2,157건</span></span><span class="pb-chip__val">2.04<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip" style="--s:40.2%;--i:7"><span class="pb-chip__rank" aria-hidden="true">08</span><span class="pb-chip__body"><strong class="pb-chip__name">삼성화재</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 4,173건</span></span><span class="pb-chip__val">1.52<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip" style="--s:39.2%;--i:8"><span class="pb-chip__rank" aria-hidden="true">09</span><span class="pb-chip__body"><strong class="pb-chip__name">한화손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 2,730건</span></span><span class="pb-chip__val">1.48<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
-          <li class="pb-chip" style="--s:38.2%;--i:9"><span class="pb-chip__rank" aria-hidden="true">10</span><span class="pb-chip__body"><strong class="pb-chip__name">현대해상</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 2,549건</span></span><span class="pb-chip__val">1.44<small>억</small></span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip is-top" style="--s:100.0%;--i:0"><span class="pb-chip__rank" aria-hidden="true">01</span><span class="pb-chip__body"><strong class="pb-chip__name">NH손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 5,262건</span></span><span class="pb-chip__val">3억 7천8백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip is-top" style="--s:84.4%;--i:1"><span class="pb-chip__rank" aria-hidden="true">02</span><span class="pb-chip__body"><strong class="pb-chip__name">KB손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 6,655건</span></span><span class="pb-chip__val">3억 1천9백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip is-top" style="--s:84.2%;--i:2"><span class="pb-chip__rank" aria-hidden="true">03</span><span class="pb-chip__body"><strong class="pb-chip__name">DB손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 5,889건</span></span><span class="pb-chip__val">3억 1천8백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip" style="--s:59.4%;--i:3"><span class="pb-chip__rank" aria-hidden="true">04</span><span class="pb-chip__body"><strong class="pb-chip__name">KB라이프</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--life" aria-hidden="true"></i>생보 · 1,860건</span></span><span class="pb-chip__val">2억 2천5백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip" style="--s:56.1%;--i:4"><span class="pb-chip__rank" aria-hidden="true">05</span><span class="pb-chip__body"><strong class="pb-chip__name">흥국생명</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--life" aria-hidden="true"></i>생보 · 3,319건</span></span><span class="pb-chip__val">2억 1천2백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip" style="--s:55.2%;--i:5"><span class="pb-chip__rank" aria-hidden="true">06</span><span class="pb-chip__body"><strong class="pb-chip__name">흥국화재</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 3,102건</span></span><span class="pb-chip__val">2억 9백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip" style="--s:53.9%;--i:6"><span class="pb-chip__rank" aria-hidden="true">07</span><span class="pb-chip__body"><strong class="pb-chip__name">신한라이프</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--life" aria-hidden="true"></i>생보 · 2,157건</span></span><span class="pb-chip__val">2억 4백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip" style="--s:40.2%;--i:7"><span class="pb-chip__rank" aria-hidden="true">08</span><span class="pb-chip__body"><strong class="pb-chip__name">삼성화재</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 4,173건</span></span><span class="pb-chip__val">1억 5천2백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip" style="--s:39.2%;--i:8"><span class="pb-chip__rank" aria-hidden="true">09</span><span class="pb-chip__body"><strong class="pb-chip__name">한화손해</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 2,730건</span></span><span class="pb-chip__val">1억 4천8백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
+          <li class="pb-chip" style="--s:38.2%;--i:9"><span class="pb-chip__rank" aria-hidden="true">10</span><span class="pb-chip__body"><strong class="pb-chip__name">현대해상</strong><span class="pb-chip__meta"><i class="pb-dot pb-dot--nonlife" aria-hidden="true"></i>손보 · 2,549건</span></span><span class="pb-chip__val">1억 4천4백만원</span><span class="pb-chip__bar" aria-hidden="true"><i></i></span></li>
         </ol>
         <!-- /pb:chips -->
         <section class="pf-data-section" aria-labelledby="pf-carrier-data-title">
@@ -273,7 +276,7 @@
         <h2 id="pb-cta-title">함께 성장할 설계사를 찾습니다.</h2>
         <p class="pb-cta__text">경력·신입 모두 환영합니다.</p>
         <div class="pb-cta__actions">
-          <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
+          <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#F5D76E" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.78 1.9 5.22 4.74 6.59l-1.2 4.39a.28.28 0 0 0 .43.31l5.2-3.53c.27.02.55.03.83.03 5.52 0 10-3.48 10-7.79S17.52 3 12 3Z"/><path fill="#201B11" d="M7 9h10v1.5H7zm0 3h6v1.5H7z"/></svg>합류문의</a>
           <a class="g-btn g-btn--ghost g-btn--lg" href="tel:010-8714-9262">전화 010-8714-9262</a>
         </div>
       </div>
@@ -365,8 +368,9 @@
 }
 </script>
 <!-- 공개 원자료 JSON은 인트라넷이 읽는 계약입니다. 원본 값·키를 보존합니다. 방문 집계 없음. -->
-<script src="../assets/performance-workspace.js?v=3" defer></script>
+<script src="../assets/performance-workspace.js?v=4" defer></script>
 <script src="../assets/auth-config.js?v=2"></script>
+<script src="/assets/site-nav.js?v=1" defer></script>
 <script src="../assets/pwa.js?v=1" defer></script>
 </body>
 </html>

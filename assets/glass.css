@@ -703,3 +703,34 @@ body.g-admin details.pa-fold>summary{cursor:pointer;font-weight:600;min-height:4
   @view-transition{navigation:none}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 }
+
+/* 20261103: 공개·회원 공통 상단 메뉴. 본문/인증 폼의 메뉴 스타일에는 영향을 주지 않습니다. */
+body .g-nav.pa-site-nav{max-width:1240px}
+body .g-nav.pa-site-nav .pa-nav-bar{gap:12px;flex-wrap:nowrap;border-radius:24px}
+.pa-site-nav .pa-nav-bar .g-logo{width:auto;flex-shrink:0;font-size:16px}
+.pa-site-nav #pa-nav-menu{display:flex;align-items:center;justify-content:flex-end;gap:2px;margin-left:auto;min-width:0}
+.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button,.pa-site-nav #pa-nav-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 11px;border:0;border-radius:999px;background:transparent;color:var(--text-2);font:inherit;font-size:14px;font-weight:500;text-decoration:none;white-space:nowrap;cursor:pointer;line-height:1.4}
+.pa-site-nav #pa-nav-menu>[aria-current]{background:rgba(255,255,255,.08);color:var(--gold-hi)}
+.pa-site-nav #pa-nav-menu>a:hover,.pa-site-nav #pa-nav-menu>button:hover,.pa-site-nav #pa-nav-toggle:hover{background:rgba(255,255,255,.07);color:var(--text)}
+.pa-site-nav #pa-nav-menu>[data-nav-key=join]{color:var(--gold-hi)}
+.pa-site-nav #pa-nav-menu>[data-nav-key=logout],.pa-site-nav #pa-nav-menu>[data-nav-key=login]{border:1px solid var(--line-2)}
+.pa-site-nav #pa-nav-menu>[hidden],.pa-site-tabs[hidden]{display:none!important}
+.pa-site-nav #pa-nav-toggle{display:none;flex-shrink:0;margin-left:auto}
+.pa-site-nav #pa-nav-status{padding:12px 18px;margin:6px 0 0;border:1px solid var(--line-2);border-radius:16px;background:var(--bg-2);font-size:14px;color:var(--text)}
+.g-kakao-icon{display:inline-block;flex:none;width:20px;height:20px;vertical-align:middle;margin-right:5px}
+.pa-site-nav .g-kakao-icon{margin:0}
+.g-members .g-tabbar.pa-site-tabs .g-bar{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-members .g-tabbar.pa-site-tabs a{font-size:14px;min-width:0}
+@media(max-width:1100px){
+ body .g-nav.pa-site-nav .pa-nav-bar{flex-wrap:wrap}
+ .pa-site-nav #pa-nav-toggle{display:inline-flex}
+ .pa-site-nav #pa-nav-menu{display:none;width:100%;flex-basis:100%;margin:0;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding-top:8px;border-top:1px solid var(--line)}
+ .pa-site-nav.is-open #pa-nav-menu{display:grid}
+ .pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button{justify-content:flex-start;border-radius:12px;padding:10px 14px}
+}
+@media(max-width:420px){
+ body .g-nav.pa-site-nav .pa-nav-bar{gap:6px;padding:7px 10px}
+ .pa-site-nav .pa-nav-bar .g-logo{width:auto;gap:7px;font-size:14px}
+ .pa-site-nav .g-logo .g-mark{width:24px;height:26px}
+ .pa-site-nav #pa-nav-toggle{padding:8px 10px;font-size:13px}
+}

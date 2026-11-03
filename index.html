@@ -23,7 +23,7 @@
 <meta property="og:image:alt" content="프라임에셋 프리미엄 — 19개 본부, 1,200명 설계사, 월 보험료 50억 2,332만 원">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
-<link rel="stylesheet" href="assets/glass.css?v=13">
+<link rel="stylesheet" href="assets/glass.css?v=16">
 <link rel="stylesheet" href="assets/perf-board.css?v=7">
 <link rel="stylesheet" href="assets/home-board.css?v=4">
 <link rel="stylesheet" href="assets/home-layout.css?v=6">
@@ -31,25 +31,20 @@
 <link rel="stylesheet" href="assets/home-motion.css?v=6">
 <link rel="stylesheet" href="assets/home-dark.css?v=3">
 <script>document.documentElement.classList.add('js');if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
+<style>
+/* 한글 금액은 기존 소수 억 표기와 같은 값을 유지하며 작은 화면에서 줄바꿈한다. */
+.g-board .pb-home__total{font-size:clamp(32px,4.2vw,58px);white-space:normal;line-height:1.2}
+.g-board [data-pb-eok="3.53"]{font-size:clamp(18px,1.7vw,24px);line-height:1.4;word-break:keep-all;white-space:normal}
+</style>
 </head>
 <body class="g-main">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
 <div class="g-bg" aria-hidden="true"></div>
 <div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
 
-<header class="g-nav">
-  <div class="g-bar">
-    <a class="g-logo" href="./"><img class="g-mark g-mark--shield" src="assets/logo.svg" alt="" width="30" height="33"><span>프라임에셋 프리미엄</span></a>
-    <nav class="g-menu" aria-label="주요 메뉴">
-      <a href="./" class="on" aria-current="page">홈</a>
-      <a href="performance/">실적보드</a>
-      <a href="http://wiki.primeasset.info/">보험위키</a>
-      <a href="members/#login" class="g-menu-login">로그인</a>
-      <a href="#" class="g-menu-install" hidden>앱 설치</a>
-    </nav>
-    <div class="g-nav-btns">
-      <a class="g-btn g-btn--pri" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의</a>
-    </div>
+<header class="g-nav pa-site-nav" data-site-nav>
+  <div class="g-bar"><a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
+    <noscript><nav aria-label="주요 메뉴"><a href="/">홈</a> · <a href="/performance/">실적보드</a> · <a href="http://wiki.primeasset.info/">보험위키</a> · <a href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류문의</a> · <a href="/members/#login">로그인</a></nav></noscript>
   </div>
 </header>
 
@@ -62,7 +57,7 @@
         <p class="g-kicker">프라임에셋 프리미엄사업부</p>
         <h1 id="hero-title">19개 본부, 1,200명 설계사가 <span class="g-nowrap">함께 성장하는 곳</span></h1>
         <div class="g-actions">
-          <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
+          <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#F5D76E" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.78 1.9 5.22 4.74 6.59l-1.2 4.39a.28.28 0 0 0 .43.31l5.2-3.53c.27.02.55.03.83.03 5.52 0 10-3.48 10-7.79S17.52 3 12 3Z"/><path fill="#201B11" d="M7 9h10v1.5H7zm0 3h6v1.5H7z"/></svg>합류문의</a>
         </div>
       </div>
       <div class="g-hero-logo">
@@ -82,7 +77,6 @@
        S5-20261102: 월별 월보험료·계약건수 10개월은 이사님 제공 팜스 본부별 마감(사업부 본부 합계, 원 → 천원 사사오입) — 저장소 밖 harness/s5perf.py 가 계산·생성(/performance/ 와 같은 자료, perf-data JSON 은 아래). 막대는 전부 단색(생보·손보 구분 없음), 본부별 자료는 넣지 않음. 연출은 assets/perf-board.js(188 원본, 툴팁 생보·손보 줄만 뺌). 디자인만 test 유리 톤(assets/home-board.css) -->
   <section class="g-sec g-board pb" id="performance" aria-labelledby="board-title">
     <h2 id="board-title">프리미엄사업부 실적보드</h2>
-    <p class="g-lead">숫자로 증명하는 곳!</p>
     <div class="pb pb-home">
       <article class="pb-home__board" data-pb-reveal aria-labelledby="pb-home-title">
         <header class="pb-home__head" data-pb-play>
@@ -90,7 +84,7 @@
             <p class="pb-home__label" id="pb-home-title">2026년 <span data-pb-stat="period">1~10월</span> 누적 월보험료</p>
             <p class="pb-basis">사업부 합계 · 팜스 마감 기준</p>
           </div>
-          <p class="pb-home__total"><b class="pb-goldtext" data-pb-stat="total_eok2" data-pb-count="2200">35.30</b><span>억</span></p>
+          <p class="pb-home__total"><b class="pb-goldtext" data-pb-stat="total_eok2" data-pb-count="2200" data-pb-eok="35.30">35억 3천만원</b></p>
         </header>
         <figure class="pb-combo" data-pb-combo data-pb-play>
           <!-- pb:combo -->
@@ -100,18 +94,18 @@
               <div class="pb-combo__grid" aria-hidden="true"><i style="--y:0%"></i><i style="--y:20%"></i><i style="--y:40%"></i><i style="--y:60%"></i><i style="--y:80%"></i><i style="--y:100%"></i></div>
               <svg class="pb-combo__curve" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs><linearGradient id="pbComboWash" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8c96a" stop-opacity=".2"/><stop offset="1" stop-color="#e8c96a" stop-opacity="0"/></linearGradient></defs><path class="pb-curve-area" fill="url(#pbComboWash)" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,351.3 850.0,351.3C883.3,351.3 916.7,326.6 950.0,314.2L950.0,1000L50.0,1000Z"/><path class="pb-curve-glow" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,351.3 850.0,351.3C883.3,351.3 916.7,326.6 950.0,314.2"/><path class="pb-curve" d="M50.0,316.5C83.3,334.1 116.7,369.2 150.0,369.2C183.3,369.2 216.7,94.7 250.0,94.7C283.3,94.7 316.7,169.5 350.0,209.3C383.3,249.2 416.7,333.6 450.0,333.6C483.3,333.6 516.7,234.5 550.0,234.5C583.3,234.5 616.7,388.9 650.0,388.9C683.3,388.9 716.7,327.7 750.0,327.7C783.3,327.7 816.7,351.3 850.0,351.3C883.3,351.3 916.7,326.6 950.0,314.2"/></svg>
               <ol class="pb-combo__cols" style="--n:10">
-                <li class="pb-col" style="--h:68.35%;--i:0"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">1<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="1월 월보험료 3.42억(341,763천원), 누적 3.42억, 계약 5,817건" data-m="1월" data-v="3.42억" data-k="341,763천원" data-cum="3.42억" data-cnt="5,817건"></button></li>
-                <li class="pb-col" style="--h:63.08%;--i:1"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">2<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="2월 월보험료 3.15억(315,389천원), 누적 6.57억, 계약 5,292건" data-m="2월" data-v="3.15억" data-k="315,389천원" data-cum="6.57억" data-cnt="5,292건"></button></li>
-                <li class="pb-col is-peak" style="--h:90.53%;--i:2"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">3<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="3월 월보험료 4.53억(452,629천원), 누적 11.10억, 계약 7,475건" data-m="3월" data-v="4.53억" data-k="452,629천원" data-cum="11.10억" data-cnt="7,475건"></button></li>
-                <li class="pb-col" style="--h:79.07%;--i:3"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">4<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="4월 월보험료 3.95억(395,328천원), 누적 15.05억, 계약 6,409건" data-m="4월" data-v="3.95억" data-k="395,328천원" data-cum="15.05억" data-cnt="6,409건"></button></li>
-                <li class="pb-col" style="--h:66.64%;--i:4"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">5<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="5월 월보험료 3.33억(333,210천원), 누적 18.38억, 계약 4,796건" data-m="5월" data-v="3.33억" data-k="333,210천원" data-cum="18.38억" data-cnt="4,796건"></button></li>
-                <li class="pb-col" style="--h:76.55%;--i:5"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">6<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="6월 월보험료 3.83억(382,752천원), 누적 22.21억, 계약 6,122건" data-m="6월" data-v="3.83억" data-k="382,752천원" data-cum="22.21억" data-cnt="6,122건"></button></li>
-                <li class="pb-col" style="--h:61.11%;--i:6"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">7<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="7월 월보험료 3.06억(305,569천원), 누적 25.27억, 계약 4,996건" data-m="7월" data-v="3.06억" data-k="305,569천원" data-cum="25.27억" data-cnt="4,996건"></button></li>
-                <li class="pb-col" style="--h:67.23%;--i:7"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">8<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="8월 월보험료 3.36억(336,162천원), 누적 28.63억, 계약 5,372건" data-m="8월" data-v="3.36억" data-k="336,162천원" data-cum="28.63억" data-cnt="5,372건"></button></li>
-                <li class="pb-col" style="--h:64.87%;--i:8"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">9<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="9월 월보험료 3.24억(324,368천원), 누적 31.87억, 계약 5,188건" data-m="9월" data-v="3.24억" data-k="324,368천원" data-cum="31.87억" data-cnt="5,188건"></button></li>
-                <li class="pb-col" style="--h:68.58%;--i:9"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">10<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="10월 월보험료 3.43억(342,883천원), 누적 35.30억, 계약 5,348건" data-m="10월" data-v="3.43억" data-k="342,883천원" data-cum="35.30억" data-cnt="5,348건"></button></li>
+                <li class="pb-col" style="--h:68.35%;--i:0"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">1<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="1월 월보험료 3억 4천2백만원(341,763천원), 누적 3억 4천2백만원, 계약 5,817건" data-m="1월" data-v="3억 4천2백만원" data-k="341,763천원" data-cum="3억 4천2백만원" data-cnt="5,817건"></button></li>
+                <li class="pb-col" style="--h:63.08%;--i:1"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">2<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="2월 월보험료 3억 1천5백만원(315,389천원), 누적 6억 5천7백만원, 계약 5,292건" data-m="2월" data-v="3억 1천5백만원" data-k="315,389천원" data-cum="6억 5천7백만원" data-cnt="5,292건"></button></li>
+                <li class="pb-col is-peak" style="--h:90.53%;--i:2"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">3<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="3월 월보험료 4억 5천3백만원(452,629천원), 누적 11억 1천만원, 계약 7,475건" data-m="3월" data-v="4억 5천3백만원" data-k="452,629천원" data-cum="11억 1천만원" data-cnt="7,475건"></button></li>
+                <li class="pb-col" style="--h:79.07%;--i:3"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">4<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="4월 월보험료 3억 9천5백만원(395,328천원), 누적 15억 5백만원, 계약 6,409건" data-m="4월" data-v="3억 9천5백만원" data-k="395,328천원" data-cum="15억 5백만원" data-cnt="6,409건"></button></li>
+                <li class="pb-col" style="--h:66.64%;--i:4"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">5<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="5월 월보험료 3억 3천3백만원(333,210천원), 누적 18억 3천8백만원, 계약 4,796건" data-m="5월" data-v="3억 3천3백만원" data-k="333,210천원" data-cum="18억 3천8백만원" data-cnt="4,796건"></button></li>
+                <li class="pb-col" style="--h:76.55%;--i:5"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">6<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="6월 월보험료 3억 8천3백만원(382,752천원), 누적 22억 2천1백만원, 계약 6,122건" data-m="6월" data-v="3억 8천3백만원" data-k="382,752천원" data-cum="22억 2천1백만원" data-cnt="6,122건"></button></li>
+                <li class="pb-col" style="--h:61.11%;--i:6"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">7<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="7월 월보험료 3억 6백만원(305,569천원), 누적 25억 2천7백만원, 계약 4,996건" data-m="7월" data-v="3억 6백만원" data-k="305,569천원" data-cum="25억 2천7백만원" data-cnt="4,996건"></button></li>
+                <li class="pb-col" style="--h:67.23%;--i:7"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">8<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="8월 월보험료 3억 3천6백만원(336,162천원), 누적 28억 6천3백만원, 계약 5,372건" data-m="8월" data-v="3억 3천6백만원" data-k="336,162천원" data-cum="28억 6천3백만원" data-cnt="5,372건"></button></li>
+                <li class="pb-col" style="--h:64.87%;--i:8"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">9<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="9월 월보험료 3억 2천4백만원(324,368천원), 누적 31억 8천7백만원, 계약 5,188건" data-m="9월" data-v="3억 2천4백만원" data-k="324,368천원" data-cum="31억 8천7백만원" data-cnt="5,188건"></button></li>
+                <li class="pb-col" style="--h:68.58%;--i:9"><span class="pb-col__bar"></span><span class="pb-col__dot"></span><span class="pb-col__label" aria-hidden="true">10<span class="pb-col__unit">월</span></span><button class="pb-col__hit" type="button" aria-label="10월 월보험료 3억 4천3백만원(342,883천원), 누적 35억 3천만원, 계약 5,348건" data-m="10월" data-v="3억 4천3백만원" data-k="342,883천원" data-cum="35억 3천만원" data-cnt="5,348건"></button></li>
               </ol>
-              <p class="pb-combo__peak" style="--x:25.00%;--h:90.53%" aria-hidden="true"><span>최고</span> <b>4.53억</b></p>
+              <p class="pb-combo__peak" style="--x:25.00%;--h:90.53%" aria-hidden="true"><span>최고</span> <b>4억 5천3백만원</b></p>
             </div>
           </div>
           <!-- /pb:combo -->
@@ -121,7 +115,7 @@
           <li class="pb-kpi"><span class="pb-kpi__label">총 계약건수</span><p class="pb-kpi__value"><b data-pb-stat="count" data-pb-count>56,815</b><small>건</small></p></li>
           <li class="pb-kpi"><span class="pb-kpi__label">본부</span><p class="pb-kpi__value"><b data-pb-stat="branches" data-pb-count>19</b><small>개</small></p></li>
           <li class="pb-kpi"><span class="pb-kpi__label">제휴 보험사</span><p class="pb-kpi__value"><b data-pb-stat="carriers" data-pb-count>30</b><small>곳</small></p></li>
-          <li class="pb-kpi"><span class="pb-kpi__label">월평균 월보험료</span><p class="pb-kpi__value"><b data-pb-stat="avg_eok2" data-pb-count>3.53</b><small>억</small></p></li>
+          <li class="pb-kpi"><span class="pb-kpi__label">월평균 월보험료</span><p class="pb-kpi__value"><b data-pb-stat="avg_eok2" data-pb-count data-pb-eok="3.53">3억 5천3백만원</b></p></li>
         </ul>
       </article>
       <a class="g-link g-link--arrow pb-home__more" href="performance/">실적보드 전체 보기 <span class="g-btn__arrow" aria-hidden="true">→</span></a>
@@ -144,7 +138,7 @@
         </div>
         <div class="g-card g-reveal g-bento-item">
           <h3>교육과 도구가 준비돼 있습니다</h3>
-          <p>분야별 전문가의 보상·온라인영업 교육과 월 1회 실전 강의. 회원 전용 영업도구와 보험정보 카페 자료 3,200여 건을 지원합니다.</p>
+          <p>영업플랫폼과 수많은 교육과 자료를 지원합니다.</p>
         </div>
       </div>
     </div>
@@ -154,12 +148,11 @@
   <section class="g-sec g-hub" id="tools" aria-labelledby="tools-title">
     <h2 id="tools-title">설계사 성장 시스템</h2>
     <div class="g-growth-grid">
-      <article class="g-card g-reveal g-growth-card"><h3>AI 상품 분석</h3><p>상품의 핵심을 빠르게 짚어 상담의 깊이를 더합니다.</p></article>
-      <article class="g-card g-reveal g-growth-card"><h3>상담·화법 지원</h3><p>고객에게 맞는 설명과 제안으로 상담을 돕습니다.</p></article>
-      <article class="g-card g-reveal g-growth-card"><h3>계산·청약 도구</h3><p>복잡한 계산과 청약 준비를 간편하게 돕습니다.</p></article>
-      <article class="g-card g-reveal g-growth-card"><h3>자료·교육</h3><p>현장에 필요한 자료와 교육으로 성장을 뒷받침합니다.</p></article>
+      <article class="g-card g-reveal g-growth-card"><h3>전문화된 자체 AI 플랫폼</h3><p>카톡으로 바로 답변을 받으세요. 상품/보상/화법/전산 등 전용카톡AI지원</p></article>
+      <article class="g-card g-reveal g-growth-card"><h3>상담·화법 지원</h3><p>계약확률을 높이는 온라인/오프라인 화법 매뉴얼을 제공합니다.</p></article>
+      <article class="g-card g-reveal g-growth-card"><h3>각종 영업지원툴</h3><p>가망고객확보부터 고객관리까지. 준비된 영업지원을 활용하세요.</p></article>
+      <article class="g-card g-reveal g-growth-card"><h3>자료·교육</h3><p>수천개의 실시간 업데이트 되는 자료를 공유합니다.</p></article>
     </div>
-    <p class="g-growth-note">합류 후 회원 전용으로 제공</p>
   </section>
 
   <!-- 김상현 이사 -->
@@ -189,14 +182,9 @@
       <h2 class="g-h2">함께 성장할 설계사를 찾습니다.</h2>
       <p class="g-lead">경력·신입 모두 환영합니다.</p>
       <div class="g-actions">
-        <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
+        <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#F5D76E" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.78 1.9 5.22 4.74 6.59l-1.2 4.39a.28.28 0 0 0 .43.31l5.2-3.53c.27.02.55.03.83.03 5.52 0 10-3.48 10-7.79S17.52 3 12 3Z"/><path fill="#201B11" d="M7 9h10v1.5H7zm0 3h6v1.5H7z"/></svg>합류문의</a>
         <a class="g-btn g-btn--ghost g-btn--lg" href="tel:010-8714-9262">전화 010-8714-9262</a>
       </div>
-      <p class="g-contact-lines">
-        입사·이직 미팅: 프라임에셋 이사 김상현 · 전화 <a href="tel:010-8714-9262">010-8714-9262</a><br>
-        카카오 오픈채팅: <a href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener" data-track="join">https://open.kakao.com/o/sFMF26y</a><br>
-        이직 및 기타 문의: <a href="mailto:megavj@naver.com">megavj@naver.com</a>
-      </p>
     </div>
   </section>
 </main>
@@ -211,7 +199,7 @@
 <!-- 휴대폰: 아래 고정 합류 문의 막대 -->
 <div class="g-cta-bar" role="region" aria-label="합류 문의">
   <div class="g-bar">
-    <a class="g-btn g-btn--pri" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류 문의 (카카오 오픈채팅)</a>
+    <a class="g-btn g-btn--pri" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#F5D76E" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.78 1.9 5.22 4.74 6.59l-1.2 4.39a.28.28 0 0 0 .43.31l5.2-3.53c.27.02.55.03.83.03 5.52 0 10-3.48 10-7.79S17.52 3 12 3Z"/><path fill="#201B11" d="M7 9h10v1.5H7zm0 3h6v1.5H7z"/></svg>합류문의</a>
     <a class="g-btn g-btn--ghost" href="tel:010-8714-9262" aria-label="전화 010-8714-9262"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></a>
   </div>
 </div>
@@ -291,12 +279,13 @@
   }
 }
 </script>
-<script src="assets/perf-board.js?v=3" defer></script>
+<script src="assets/perf-board.js?v=4" defer></script>
 <!-- 휴대폰 아래 고정 합류 문의 막대: 첫 화면(숫자 타일 포함)이 지나간 뒤에만 보임 -->
 <script src="assets/home-layout.js?v=1" defer></script>
 <!-- 스크롤 연출: 숫자 카운트업 + scroll-driven animation 미지원 시 카드 등장 대체(IntersectionObserver). 움직임 줄이기면 아무것도 안 함 -->
 <script src="assets/home-motion.js?v=1" defer></script>
 <!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) + 메뉴 안 조용한 설치 버튼 -->
+<script src="/assets/site-nav.js?v=1" defer></script>
 <script src="assets/pwa.js?v=1" defer></script>
 <!-- 첫 화면 3D 로고(회전 가감속 + 반짝이는 파티클 64개): WebGL 되고 움직임 줄이기가 아니면 위 WebP 자리에 실시간 3D를 그림. three.js r187(MIT)은 assets/three/ 안, 외부 요청 없음. 안 되면 WebP 그대로 -->
 <script src="assets/three/logo3d-loader.js?v=2" defer></script>
