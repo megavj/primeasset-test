@@ -23,3 +23,6 @@
   .g-hero--dark .g-stats{margin-top:var(--s4)}
 }
 @media (forced-colors:active){.g-hero--dark{background:Canvas;color:CanvasText}}
+/* AUDIT-20261103: 3D 캔버스(그림 폭의 1.5배)가 721~1100px 폭에서 화면 오른쪽 밖으로 나가 가로 스크롤이 생기던 문제.
+   본문(main)은 화면 전체 폭이라 가로만 잘라도(clip, 스크롤 상자 아님·sticky 영향 없음) 화면 안 모양은 그대로다. */
+.g-main > main{overflow-x:clip}

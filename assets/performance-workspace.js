@@ -72,11 +72,13 @@
         bar.type = 'button';
         bar.className = 'pf-month-bar' + (index === peak ? ' is-peak' : '');
         bar.dataset.month = String(index + 1);
-        bar.setAttribute('aria-label', label + ' 월보험료 ' + grouped(data.total[index]) +
-          '천원, 계약 ' + grouped(data.count_total[index]) + '건, 연초부터 누적 ' + grouped(cumulative[index]) + '천원');
-        bar.innerHTML = '<span class="pf-bar-value"></span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill"></span></span><span class="pf-bar-label"></span>';
+        // AUDIT-20261103: aria-label이 보이는 글자(막대 위 숫자·월)를 덮어써 '보이는 이름 = 읽는 이름'(WCAG 2.5.3)이 어긋나던 것을,
+        // 보이는 글자는 그대로 두고 화면에 안 보이는 설명(.sr)을 뒤에 붙이는 방식으로 바꿈. 읽는 내용(월·금액·건수·누적)은 같다.
+        bar.innerHTML = '<span class="pf-bar-value"></span><span class="pf-bar-track" aria-hidden="true"><span class="pf-bar-fill"></span></span><span class="pf-bar-label"></span><span class="sr"></span>';
         bar.querySelector('.pf-bar-value').textContent = eok(data.total[index]);
         bar.querySelector('.pf-bar-label').textContent = label;
+        bar.querySelector('.sr').textContent = ' 월보험료 ' + grouped(data.total[index]) +
+          '천원, 계약 ' + grouped(data.count_total[index]) + '건, 연초부터 누적 ' + grouped(cumulative[index]) + '천원';
         bar.querySelector('.pf-bar-fill').style.setProperty('--bar-height', (data.total[index] / ceiling * 100).toFixed(2) + '%');
         fragment.appendChild(bar);
         return bar;
@@ -200,7 +202,11 @@
           if (!part.hasAttribute('data-pct')) return;
           if (part.tagName !== 'BUTTON') { part.setAttribute('role', 'button'); part.tabIndex = 0; }
           part.setAttribute('aria-pressed', 'false');
-          part.setAttribute('aria-label', part.dataset.label + ' ' + part.dataset.pct + '% 강조');
+          // AUDIT-20261103: 글자가 보이는 버튼은 보이는 글자(이름·금액·비율)를 그대로 읽게 하고 '강조'만 숨김 글자로 덧붙임(WCAG 2.5.3).
+          // 글자가 없는 도넛 조각(SVG)은 지금처럼 aria-label.
+          if (part.tagName === 'BUTTON' && part.textContent.trim()) {
+            if (!part.querySelector('.sr')) { var hint = doc.createElement('span'); hint.className = 'sr'; hint.textContent = ' 강조'; part.appendChild(hint); }
+          } else part.setAttribute('aria-label', part.dataset.label + ' ' + part.dataset.pct + '% 강조');
           part.addEventListener('focus', function () { show(key); });
           part.addEventListener('blur', function () { show(pinned); });
           part.addEventListener('click', function () { pinned = pinned === key ? null : key; show(pinned); });
