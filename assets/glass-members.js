@@ -1,6 +1,9 @@
 /* 설계사 인트라넷: 회원 메뉴의 권한·활성 상태를 유지하며 업무별로 표시합니다.
    이름으로 메뉴를 숨기지 않습니다. 관리자가 숨긴 메뉴와 빈 분류는 데이터에 따라 제외됩니다.
    검색(초성)·계정별 즐겨찾기·승인 요청·본인 정보 수정. */
+/* AUDIT-20261103: 다른 사이트가 이 화면을 보이지 않는 액자(iframe)로 띄워 클릭을 유도하는 것(클릭재킹) 방지.
+   GitHub Pages는 X-Frame-Options 헤더를 못 주므로, 다른 출처 액자 안이면 화면을 숨긴다. 같은 사이트 안 액자는 허용. */
+(function () { try { if (window.top !== window.self && window.top.location.origin !== window.location.origin) throw 0; } catch (e) { document.documentElement.style.display = 'none'; } })();
 (function () {
   const C = window.PA_AUTH || {};
   const $ = (s) => document.querySelector(s);

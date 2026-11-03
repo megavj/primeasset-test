@@ -2,6 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PP1muTypDtCYy2NnIb77cbYuCmT+ZNOprkAI4E0Oaik='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070a12">
 <meta name="robots" content="noindex,nofollow">
@@ -363,7 +365,7 @@
 <!-- 스크롤 연출: 숫자 카운트업 + scroll-driven animation 미지원 시 카드 등장 대체(IntersectionObserver). 움직임 줄이기면 아무것도 안 함 -->
 <script src="assets/home-motion.js?v=1" defer></script>
 <!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) + 메뉴 안 조용한 설치 버튼 -->
-<script src="/assets/site-nav.js?v=20261103-wiki" defer></script>
+<script src="/assets/site-nav.js?v=20261103-audit" defer></script>
 <script src="assets/pwa.js?v=1" defer></script>
 <!-- 첫 화면 3D 로고(회전 가감속 + 반짝이는 파티클 64개): WebGL 되고 움직임 줄이기가 아니면 위 WebP 자리에 실시간 3D를 그림. three.js r187(MIT)은 assets/three/ 안, 외부 요청 없음. 안 되면 WebP 그대로 -->
 <script src="assets/three/logo3d-loader.js?v=2" defer></script>

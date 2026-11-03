@@ -1,6 +1,8 @@
 <!doctype html>
 <!-- 가입 승인/거절 확인 페이지. 메일 버튼 → 이 페이지 → [확인]을 눌러야 처리(메일 보안검사의 자동 열람으로 처리되는 것 방지). 비밀값 없음. -->
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="ko"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-B4yVko/obPP8uMdgGVnBh/UKWukPAfyQ3LxGvwT+vM0='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>가입 승인 확인 · 프라임에셋 프리미엄</title>
 <style>
 :root{color-scheme:dark}
@@ -28,6 +30,7 @@ a{color:#c9a961}
   <p id="n" class="note"></p>
 </main>
 <script>
+(function () { try { if (window.top !== window.self && window.top.location.origin !== window.location.origin) throw 0; } catch (e) { document.documentElement.style.display = 'none'; } })(); // AUDIT-20261103: 다른 출처 액자(클릭재킹) 차단
 (() => {
   const API = "https://ztypllzgjivutzorhayz.supabase.co/functions/v1/member-decision";
   const ACT = { approve: "승인", reject: "거절" };
@@ -39,7 +42,7 @@ a{color:#c9a961}
   // 결과가 JSON이든 글자/HTML이든 읽어서 쉬운 문장으로 보여 줌(무료 주소는 HTML을 글자로 돌려줄 수 있음)
   const readResult = async (res) => {
     const t = await res.text();
-    try { return JSON.parse(t); } catch { const d = document.createElement("div"); d.innerHTML = t; return { text: (d.textContent || "").trim() }; }
+    try { return JSON.parse(t); } catch { const d = new DOMParser().parseFromString(t, "text/html"); return { text: ((d.body && d.body.textContent) || "").trim() }; }
   };
   if (!v.m || !v.a || !v.e || !v.s || !ACT[v.a]) { fail("링크가 올바르지 않습니다."); return; }
   (async () => {

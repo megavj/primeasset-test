@@ -1,5 +1,8 @@
 /* 관리자 업무 공간. 권한은 기존 my_profile + 서버 RLS/트리거로 판정한다.
    승인·권한 변경은 기존 테이블/API, 요청 완료는 기존 RPC를 사용한다. */
+/* AUDIT-20261103: 다른 사이트가 이 화면을 보이지 않는 액자(iframe)로 띄워 클릭을 유도하는 것(클릭재킹) 방지.
+   GitHub Pages는 X-Frame-Options 헤더를 못 주므로, 다른 출처 액자 안이면 화면을 숨긴다. 같은 사이트 안 액자는 허용. */
+(function () { try { if (window.top !== window.self && window.top.location.origin !== window.location.origin) throw 0; } catch (e) { document.documentElement.style.display = 'none'; } })();
 (function () {
   'use strict';
   const C = window.PA_AUTH || {}, box = document.getElementById('pa-app');

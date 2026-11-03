@@ -2,6 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-1C1OF9fxOMv9doZjU7y125Pbj0e4Z4Q6y47sjDA54/U='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#070a12">
 <meta name="robots" content="noindex,nofollow">
@@ -91,11 +93,11 @@
 
 <script src="../assets/vendor/supabase-2.118.0.js"></script>
 <script src="../assets/auth-config.js?v=2"></script>
-<script src="../assets/glass-members.js?v=22"></script>
+<script src="../assets/glass-members.js?v=23"></script>
 <!-- 익명 합계: 페이지 경로·종류만 보냄(로그인 전/후 모두, 이름·이메일·식별자 없음) -->
 <script src="../assets/stats-beacon.js?v=1" data-page="/members/"></script>
 <!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) -->
-<script src="/assets/site-nav.js?v=20261103-wiki" defer></script>
+<script src="/assets/site-nav.js?v=20261103-audit" defer></script>
 <script src="../assets/pwa.js?v=1" defer></script>
 </body>
 </html>
