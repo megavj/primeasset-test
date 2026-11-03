@@ -1,0 +1,83 @@
+<!doctype html>
+<!-- 가입 승인/거절 확인 페이지. 메일 버튼 → 이 페이지 → [확인]을 눌러야 처리(메일 보안검사의 자동 열람으로 처리되는 것 방지). 비밀값 없음. -->
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>가입 승인 확인 · 프라임에셋 프리미엄</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:32px 16px;font-family:Pretendard,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;color:#eef0f5;
+background:radial-gradient(1200px 600px at 50% -10%,rgba(201,169,97,.14),transparent 60%),#0b0e14}
+.card{width:100%;max-width:420px;padding:32px 28px;border-radius:20px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);
+box-shadow:0 20px 60px rgba(0,0,0,.45);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.brand{font-size:13px;letter-spacing:.04em;color:#c9a961;margin:0 0 18px}
+h1{font-size:20px;line-height:1.45;margin:0 0 8px;font-weight:700;word-break:keep-all}
+.sub{color:#a7adbb;margin:0 0 24px;font-size:15px;min-height:1.2em}
+.btn{appearance:none;border:0;border-radius:12px;padding:14px 0;width:100%;font-size:16px;font-weight:700;cursor:pointer;color:#0b0e14;background:#c9a961}
+.btn.reject{background:#e5484d;color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.note{margin:16px 0 0;font-size:13px;color:#7d8494}
+.ok{color:#c9a961}.bad{color:#ff8a8f}
+a{color:#c9a961}
+</style></head>
+<body>
+<main class="card" aria-live="polite">
+  <p class="brand">프라임에셋 프리미엄사업부</p>
+  <h1 id="q">신청 내용을 확인하는 중…</h1>
+  <p id="b" class="sub"></p>
+  <button id="go" class="btn" type="button" hidden>확인</button>
+  <p id="n" class="note"></p>
+</main>
+<script>
+(() => {
+  const API = "https://ztypllzgjivutzorhayz.supabase.co/functions/v1/member-decision";
+  const ACT = { approve: "승인", reject: "거절" };
+  const p = new URLSearchParams(location.search);
+  const v = { m: p.get("m") || "", a: p.get("a") || "", e: p.get("e") || "", s: p.get("s") || "" };
+  const q = document.getElementById("q"), b = document.getElementById("b"), go = document.getElementById("go"), n = document.getElementById("n");
+  const ADMIN = '관리자 화면(<a href="/members/admin/">열기</a>)에서 처리해 주세요.';
+  const fail = (msg) => { q.textContent = msg; q.className = "bad"; go.hidden = true; n.innerHTML = ADMIN; };
+  // 결과가 JSON이든 글자/HTML이든 읽어서 쉬운 문장으로 보여 줌(무료 주소는 HTML을 글자로 돌려줄 수 있음)
+  const readResult = async (res) => {
+    const t = await res.text();
+    try { return JSON.parse(t); } catch { const d = document.createElement("div"); d.innerHTML = t; return { text: (d.textContent || "").trim() }; }
+  };
+  if (!v.m || !v.a || !v.e || !v.s || !ACT[v.a]) { fail("링크가 올바르지 않습니다."); return; }
+  (async () => {
+    try {
+      const r = await readResult(await fetch(API + "?" + new URLSearchParams({ ...v, format: "json" })));
+      if (r.result === "pending") {
+        q.textContent = (r.name || "이름 없음") + "님 가입을 " + ACT[r.action || v.a] + "할까요?";
+        b.textContent = [r.branch, r.phone].filter(Boolean).join(" · ");
+        go.textContent = ACT[r.action || v.a] + " 확인";
+        if ((r.action || v.a) === "reject") go.classList.add("reject");
+        go.hidden = false;
+      } else if (r.result === "already") { q.textContent = "이미 처리된 신청입니다."; n.textContent = "다시 처리할 필요가 없습니다."; }
+      else fail(r.message || r.text || "처리할 수 없는 요청입니다. 링크가 만료됐을 수 있습니다.");
+    } catch { fail("확인 중 오류가 났습니다."); }
+  })();
+  go.addEventListener("click", async () => {
+    go.disabled = true; go.textContent = "처리 중…";
+    try {
+      const res = await fetch(API, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ ...v, confirm: "1", format: "json" }) });
+      const r = await readResult(res);
+      go.hidden = true;
+      if (res.ok && (r.result === "approved" || r.result === "rejected" || r.ok || (!r.result && !r.error))) {
+        const done = r.result === "rejected" || v.a === "reject" ? "거절했습니다." : "승인했습니다.";
+        q.textContent = done; q.className = "ok"; b.textContent = r.message || (r.text && r.text.length < 120 ? r.text : "");
+        n.textContent = "이 창은 닫으셔도 됩니다.";
+      } else if (r.result === "already") { q.textContent = "이미 처리된 신청입니다."; }
+      else fail(r.message || r.text || "처리하지 못했습니다.");
+    } catch {
+      // 처리 응답을 읽지 못한 경우(브라우저 보안 제한 등): 상태를 다시 조회해 실제 처리 여부를 확인
+      try {
+        const r2 = await readResult(await fetch(API + "?" + new URLSearchParams({ ...v, format: "json" })));
+        go.hidden = true;
+        if (r2.result === "already") { q.textContent = ACT[v.a] + "했습니다."; q.className = "ok"; n.textContent = "이 창은 닫으셔도 됩니다."; }
+        else if (r2.result === "pending") { go.hidden = false; go.disabled = false; go.textContent = ACT[v.a] + " 확인"; n.textContent = "처리되지 않았습니다. 다시 눌러 주세요."; }
+        else fail(r2.message || "처리 결과를 확인하지 못했습니다.");
+      } catch { fail("처리 결과를 확인하지 못했습니다. 관리자 화면에서 상태를 확인해 주세요."); }
+    }
+  });
+})();
+</script>
+</body></html>
