@@ -1,7 +1,6 @@
-/* 도구 허브 검색 + 회원 표시(MAIN-V3-03, 메인 index.html #tools).
+/* 설계사 성장 시스템 검색 + 회원 표시(MAIN-V3-03, 메인 index.html #tools).
    · 검색: 입력 즉시 이름·설명·묶음으로 거름. 한글 초성('ㅅㄷ' → 수당…) 지원, 띄어쓰기로 여러 낱말(모두 포함). 빈 묶음은 숨김, 결과 수는 aria-live 로 읽힘.
-   · DESIGN-DARK-03: 대표 도구 6개(.g-hub-key, 원래 묶음 이름은 data-group)와 '전체 도구 보기'(details.g-hub-all) 안 18개를 함께 찾는다.
-     검색하는 동안은 접힌 목록을 펼쳐 두고, 검색어를 지우면 검색 전 접힘 상태로 되돌린다.
+   · 대표 도구 6개(.g-hub-key)와 묶음 4개의 도구 18개를 항상 표시하고 함께 찾는다. 검색어를 지우면 24개가 모두 돌아온다.
    · 회원: 이 기기에 인트라넷 로그인 세션(supabase-js 가 localStorage 에 두는 sb-*-auth-token)이 있으면 자물쇠를 떼고 카드 주소를 인트라넷(members/#…)으로 바꾼다.
      도구 주소·권한은 인트라넷이 서버(my_menu)에서 그대로 판정한다 — 여기서는 Supabase 를 부르지도, 권한을 판단하지도 않는다. 세션이 없으면 그대로 회원가입(members/#signup).
    · FUNC-FIX A4: 세션이 없을 때 자물쇠 카드를 누르면 가려던 칸을 localStorage 'pa_goto' 에 잠시 저장(로그인 후 인트라넷이 그 칸으로). */
@@ -14,8 +13,6 @@
   var cards = Array.prototype.slice.call(hub.querySelectorAll('.g-hub-card'));
   var groups = Array.prototype.slice.call(hub.querySelectorAll('.g-hub-group'));
   var keyBox = hub.querySelector('.g-hub-key'); // 대표 도구 6개(아래 세션 확인의 key 와 다른 이름)
-  var all = hub.querySelector('.g-hub-all');   // '전체 도구 보기'(details) — 검색 중에는 펼침
-  var wasOpen = null;                          // 검색 시작 전 접힘 상태(검색어를 지우면 되돌림)
   var total = cards.length;
   var base = count ? count.textContent : '';
 
@@ -43,12 +40,10 @@
       cards.forEach(function (c) { c.hidden = false; });
       groups.forEach(function (g) { g.hidden = false; });
       if (keyBox) keyBox.hidden = false;
-      if (all && wasOpen !== null) { all.open = wasOpen; wasOpen = null; }
       if (count) count.textContent = base;
       if (none) none.hidden = true;
       return;
     }
-    if (all && wasOpen === null) { wasOpen = all.open; all.open = true; }
     var terms = k.split(/\s+/).map(choRx);
     var found = 0;
     cards.forEach(function (c) {

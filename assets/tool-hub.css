@@ -1,10 +1,6 @@
-/* 도구 허브(index.html #tools) — MAIN-V3-20261102 ③(도구 허브·검색) → DESIGN-DARK-20261102 ③(도구 허브 정리)
-   · 24개가 같은 무게로 페이지 가운데를 차지하던 배치를 → 대표 도구 6개만 크게(벤토: 일반 카드 .g-card, 넓은 칸 2 + 보통 칸 4),
-     나머지 18개는 '전체 도구 보기'(details) 안 묶음 4개 · 작은 타일(.g-tile) 목록으로 접음. 카드 수 24 그대로
-   · 맨 위 한 줄: 왼쪽 '24개 도구·채널·사이트' + 회원가입(보조 버튼), 오른쪽 검색창
-   · 검색 중(.is-q, assets/tool-hub.js): 접힌 목록도 펼쳐 24개 전부에서 찾고, 안 맞는 카드·빈 묶음·빈 대표 칸은 숨김. 지우면 원래 접힘 상태로
-   · 자물쇠(비로그인 → 회원가입) · 세션이 있으면(.is-member) 자물쇠 없이 인트라넷 주소 — 이전 그대로
-   · 배치는 컨테이너 쿼리(.g-cq 폭): 휴대폰 1열 → 560px 2열 → 860px 4열 벤토 */
+/* 설계사 성장 시스템(index.html #tools).
+   대표 도구 6개와 나머지 18개를 항상 표시. 검색은 이름·설명·묶음·초성으로 24개 전체를 필터링.
+   자물쇠·회원가입·기존 세션의 인트라넷 이동과 반응형 카드 배치는 유지. */
 
 /* 맨 위 한 줄: 소개 + 검색 */
 .g-hub-top{display:grid;gap:var(--s3);grid-template-columns:1fr;align-items:end;margin:0 0 var(--s4)}
@@ -44,13 +40,9 @@
 .g-hub-card--key .g-hub-body b{font-size:var(--fs-h3);font-weight:var(--fw-h3);line-height:var(--lh-h3)}
 .g-hub-card--key .g-hub-body small{color:var(--text-2);-webkit-line-clamp:3}
 
-/* 전체 도구 보기: 얇은 선 아래 글자 링크로 펼침 → 묶음 4개 · 작은 타일 */
+/* 추가 도구 18개: 얇은 선 아래 묶음 4개 · 작은 타일을 항상 표시 */
 .g-hub-all{margin:var(--s4) 0 0;border-top:1px solid var(--line)}
-.g-hub-all>summary{display:inline-flex;align-items:center;gap:8px;min-height:56px;cursor:pointer;list-style:none;font-size:var(--fs-body);font-weight:var(--fw-label);color:var(--text);transition:color .2s ease}
-.g-hub-all>summary::-webkit-details-marker{display:none}
-.g-hub-all>summary::after{content:"";width:7px;height:7px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s ease}
-.g-hub-all[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
-.g-hub-all>summary:hover{color:var(--gold-hi)}
+.g-hub-all:has(.g-hub-group):not(:has(.g-hub-card:not([hidden]))){display:none}
 .g-hub-groups{display:grid;gap:var(--s4);grid-template-columns:1fr;padding:var(--s2) 0 var(--s1)}
 .g-hub-group{min-width:0}
 .g-hub-group>h3{font-size:var(--fs-cap);font-weight:var(--fw-label);line-height:var(--lh-cap);letter-spacing:.02em;color:var(--text-2);margin:0 0 var(--s2);display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -61,7 +53,6 @@
 .g-hub-grid .g-hub-ico svg{width:17px;height:17px}
 
 /* 검색 중: 숨긴 것은 공통 [hidden] 규칙으로 사라짐 */
-.g-hub.is-q .g-hub-all>summary{color:var(--text-2)}
 
 @container (min-width:560px){
   .g-hub-key{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -87,4 +78,4 @@
   .g-hub-intro__n b{font-size:40px}
   .g-hub-q{font-size:16px;min-height:48px}
 }
-@media (prefers-reduced-motion:reduce){.g-hub-ico,.g-hub-all>summary,.g-hub-q{transition:none}}
+@media (prefers-reduced-motion:reduce){.g-hub-ico,.g-hub-q{transition:none}}

@@ -1,13 +1,12 @@
 /* 메인(index.html) 구성 — MAIN-V3-20261102 ②(구성·글 줄이기·벤토·이름)
    · 벤토 그리드(.g-bento): 큰 칸·작은 칸 조합, 컨테이너 쿼리(.g-cq 폭 기준). 휴대폰 1열 → 560px 2열 → 860px 3열
-   · 카드는 제목+한 줄, 나머지는 '더 보기'(details). FAQ 3개 + 접기. 이사 카드 한 줄 + 접기(소개·연혁)
+   · 카드에는 핵심 설명을 바로 표시. FAQ 질문 5개는 나란히 표시하고 답변만 접음. 이사 소개·연혁은 항상 표시
    · 휴대폰 아래 고정 '합류 문의' 막대: 첫 화면(숫자 타일)이 지나가기 전에는 숨김(assets/home-layout.js 가 .is-on 토글; JS 없으면 늘 보임) */
 .g-cq{container-type:inline-size}
 .g-bento{display:grid;gap:var(--s2);grid-template-columns:1fr}
 .g-bento-item{display:flex;flex-direction:column;min-width:0}
 .g-bento-item>h3{font-size:var(--fs-h3);font-weight:var(--fw-h3);line-height:var(--lh-h3);letter-spacing:-.01em;margin:0 0 var(--s1)}
 .g-bento-item>p{margin:0;color:var(--text-2);font-size:var(--fs-body)}
-.g-bento-item>.g-more{margin-top:auto;padding-top:var(--s2)}
 @container (min-width:560px){
   .g-bento{grid-template-columns:repeat(2,1fr)}
   .g-bento-item--lg,.g-bento-item--wide{grid-column:span 2}
@@ -22,14 +21,12 @@
   @media (min-width:600px){.g-bento{grid-template-columns:repeat(2,1fr)}.g-bento-item--lg,.g-bento-item--wide{grid-column:span 2}}
   @media (min-width:900px){.g-bento{grid-template-columns:repeat(3,1fr)}}
 }
-/* 이사 카드: 한 줄 + 접기(연혁은 펼치면 같은 카드 안에) */
+/* 이사 카드: 핵심 소개와 대표 연혁을 바로 표시 */
 .g-ceo--v3{grid-template-columns:1fr;gap:var(--s1)}
 .g-ceo--v3 .g-ceo-bio p{margin-bottom:var(--s1)}
 .g-ceo-tl{margin:var(--s1) 0 0;padding-top:var(--s1);border-top:1px solid var(--line)}
+.g-ceo-tl>h3{margin:0;font-size:var(--fs-h3);font-weight:var(--fw-h3)}
 .g-ceo-tl .g-tl{margin:var(--s2) 0 0}
-/* FAQ 접기 */
-.g-fold--faq{margin:4px 0 0}
-.g-fold>.g-fold-body{margin-top:12px}
 /* 휴대폰 고정 막대: JS 가 있으면 첫 화면 동안 숨김(아래로 내려가 있음), 숫자 타일이 지나가면 올라옴 */
 @media (max-width:720px){
   html.js .g-cta-bar{transform:translateY(140%);opacity:0;pointer-events:none;transition:transform .4s cubic-bezier(.16,1,.3,1),opacity .3s}
