@@ -6,8 +6,7 @@
     t.content.querySelectorAll('script,style,iframe,object,embed,link,meta').forEach(n => n.remove());
     t.content.querySelectorAll('*').forEach(n => [...n.attributes].forEach(a => n.removeAttribute(a.name))); return t.content; };
   async function run() {
-    const sb = window.PA_SB;
-    if (!sb) { if (++tries < 40) return setTimeout(run, 250); msg.textContent = '잠시 후 다시 열어 주세요.'; return; }
+    let sb; try { sb = await window.paClient(); } catch (e) { msg.textContent = '잠시 후 다시 열어 주세요.'; return; }
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { msg.innerHTML = '설계사 로그인 후 볼 수 있어요. <a href="/members/#login">로그인하기</a>'; return; }
     const { data, error } = await sb.from('wiki_member_sections').select('key,title,body_html').order('key');

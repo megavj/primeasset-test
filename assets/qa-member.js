@@ -5,8 +5,7 @@
   const slug = m[1].replace(/^\d{4}-\d{2}-\d{2}-/, '');
   let tries = 0;
   async function run() {
-    const sb = window.PA_SB;
-    if (!sb) { if (++tries < 40) setTimeout(run, 250); return; }
+    let sb; try { sb = await window.paClient(); } catch (e) { return; }
     try {
       const { data: { session } } = await sb.auth.getSession();
       if (!session) return;
