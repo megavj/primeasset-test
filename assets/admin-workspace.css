@@ -27,7 +27,7 @@ body.g-admin .g-admin-head .adm-eyebrow{margin-bottom:8px}
 .g-admin .adm-section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
 .g-admin .adm-section-head h2{font-size:26px;letter-spacing:-.025em;line-height:1.4;margin:0 0 6px}
 .g-admin h3{font-size:18px;line-height:1.5;letter-spacing:-.02em}
-.g-admin .adm-stack{display:grid;gap:20px;min-width:0}
+.g-admin .adm-stack{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;min-width:0}
 .g-admin .adm-panel,.g-admin .adm-task-panel{background:var(--bg-1);border:1px solid var(--line-2);border-radius:14px;padding:24px;min-width:0}
 .g-admin .adm-panel h3{margin:0 0 12px}
 .g-admin .adm-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 20px}
@@ -72,7 +72,7 @@ body.g-admin .g-admin-head .adm-eyebrow{margin-bottom:8px}
 .g-admin .adm-select-page{display:flex;align-items:center;gap:4px;font-size:14px;color:var(--text-2);margin-bottom:10px}
 .g-admin input[type=checkbox]{width:20px;height:20px;accent-color:var(--gold);cursor:pointer;margin:12px}
 .g-admin .adm-check input[type=checkbox]{margin:0}
-.g-admin .adm-table-scroll{max-width:100%;overflow:auto;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-1)}
+.g-admin .adm-table-scroll{position:relative;max-width:100%;overflow:auto;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-1)}
 .g-admin .adm-table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.6}
 .g-admin .adm-table th,.g-admin .adm-table td{padding:14px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;overflow-wrap:anywhere}
 .g-admin .adm-table th{background:var(--bg-2);color:var(--text-2);font-weight:500}
