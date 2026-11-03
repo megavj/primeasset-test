@@ -125,6 +125,13 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 /* 로그인과 승인 대기 화면의 입력·안내 */
 .g-members .pa-email-login{margin-top:20px;border-top:1px solid var(--line);padding-top:18px}
 .g-members .pa-email-login h3{font-size:16px;font-weight:var(--fw-label);margin:0 0 12px}
+.g-members .pa-otp-form{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.g-members .pa-otp-form>label{font-size:16px;font-weight:var(--fw-label)}
+.g-members .pa-otp-form .pa-note{margin:6px 0 10px}
+.g-members .pa-email-login .pa-row .pa-in{min-width:0;flex-basis:200px}
+.g-members #pa-otp{font-variant-numeric:tabular-nums;letter-spacing:.08em}
+.g-members .pa-switch-email{display:inline-block;margin-top:8px;font-size:14px}
+.g-members .pa-signup-account{overflow-wrap:anywhere}
 @media(max-width:1000px){
  .g-members .pa-work-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }

@@ -13,7 +13,8 @@
     return e;
   };
   const box = $("#pa-app");
-  const show = (...nodes) => { box.removeAttribute("aria-busy"); document.body.classList.add("pa-hero-off"); box.replaceChildren(...nodes); }; // FUNC-FIX B7: 불러오는 틀은 여기서 통째로 바뀜, 고정 소개 글은 로그인 화면만(아래 loginView)
+  let viewKey = null, disposeView = null;
+  const show = (...nodes) => { if (disposeView) disposeView(); disposeView = null; viewKey = null; box.removeAttribute("aria-busy"); document.body.classList.add("pa-hero-off"); box.replaceChildren(...nodes); }; // 실제 상태 전환 때만 화면 교체
   const N = (t) => el("p", { class: "pa-note" }, t); // 아주 짧은 안내만
   const msg = (t, sub) => el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, t), sub ? el("p", {}, sub) : null);
   const mode = (inside) => { document.body.classList.toggle("pa-logged", !!inside); document.documentElement.classList.remove("pa-in"); }; // 로그인 후: 홈·내 정보 메뉴 표시(html.pa-in 은 첫 화면 전 임시 표시, B7)
@@ -44,6 +45,61 @@
   const isRate = (e) => !!e && (e.status === 429 || /rate_limit|rate limit|only request this after/i.test(`${e.code || ""} ${e.message || ""}`));
   const hasKo = (t) => /[가-힣]/.test(String(t || ""));
   const NET_MSG = "인터넷 연결을 확인하고 다시 시도해 주세요.";
+  const digits = value => String(value || "").replace(/\D/g, "");
+  const formatPhone = value => {
+    const d = digits(value);
+    if (d.length <= 3 || d.length > 11) return d;
+    if (d.length <= 6) return d.slice(0, 3) + "-" + d.slice(3);
+    const middle = d.length > 10 ? 4 : 3;
+    return d.slice(0, 3) + "-" + d.slice(3, 3 + middle) + "-" + d.slice(3 + middle);
+  };
+  const validPhone = value => /^01[016789]\d{7,8}$/.test(digits(value));
+  const PHONE_MSG = "휴대폰 번호를 확인해 주세요. 010-8714-9262처럼 01로 시작하는 10~11자리 번호를 입력해 주세요.";
+  function formatPhoneInput(input) {
+    const before = input.value, start = input.selectionStart;
+    const count = digits(before.slice(0, start == null ? before.length : start)).length;
+    input.value = formatPhone(before);
+    if (document.activeElement === input && start != null) {
+      let pos = 0, seen = 0;
+      while (pos < input.value.length && seen < count) { if (/\d/.test(input.value[pos])) seen++; pos++; }
+      input.setSelectionRange(pos, pos);
+    }
+  }
+  function bindPhone(input) {
+    input.addEventListener("beforeinput", event => {
+      const pos = input.selectionStart;
+      if (pos == null || pos !== input.selectionEnd) return;
+      const forward = event.inputType === "deleteContentForward" && input.value[pos] === "-";
+      const backward = event.inputType === "deleteContentBackward" && input.value[pos - 1] === "-";
+      if (!forward && !backward) return;
+      event.preventDefault();
+      // 자동 하이픈에서 Delete/Backspace가 멈추지 않도록 인접 숫자까지 지웁니다.
+      input.setRangeText("", backward ? pos - 2 : pos, forward ? pos + 2 : pos, "end");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    input.addEventListener("input", () => formatPhoneInput(input));
+    input.addEventListener("blur", () => formatPhoneInput(input));
+  }
+  // 가입 초안은 이 탭 안에서 사용자별로만 보관하며 인증번호·토큰은 저장하지 않습니다.
+  const DRAFT_PREFIX = "pa_signup_draft_v1:";
+  const draftMemory = new Map();
+  function readDraft(owner) {
+    if (draftMemory.has(owner)) return draftMemory.get(owner);
+    try { return JSON.parse(sessionStorage.getItem(DRAFT_PREFIX + owner) || "null") || draftMemory.get(owner) || {}; }
+    catch { return draftMemory.get(owner) || {}; }
+  }
+  function saveDraft(owner, value) {
+    draftMemory.set(owner, value);
+    try { sessionStorage.setItem(DRAFT_PREFIX + owner, JSON.stringify(value)); } catch {}
+  }
+  function clearDraft(owner) {
+    draftMemory.delete(owner);
+    try { sessionStorage.removeItem(DRAFT_PREFIX + owner); } catch {}
+  }
+  function clearDrafts() {
+    draftMemory.clear();
+    try { Object.keys(sessionStorage).filter(k => k.startsWith(DRAFT_PREFIX)).forEach(k => sessionStorage.removeItem(k)); } catch {}
+  }
   const KAKAO = /KAKAOTALK/i.test(navigator.userAgent); // FUNC-FIX A5: 카카오톡 안 브라우저(안드로이드·아이폰 공통 표시)
   let retryOnline = null; // 연결 오류 화면이 떠 있으면 연결이 돌아올 때 자동으로 다시 시도
   window.addEventListener("online", () => { if (retryOnline) retryOnline(); });
@@ -63,32 +119,74 @@
     const email = el("input", { type: "email", name: "email", placeholder: "이메일 주소", class: "pa-in", autocomplete: "email", inputmode: "email", spellcheck: "false", autocapitalize: "off", "aria-label": "이메일 주소" });
     const out = el("p", { class: "pa-note", role: "status" }, note || "");
     const su = location.hash === "#signup";
-    // FUNC-FIX A3: 보낸 뒤·429(재요청 제한)면 같은 주소는 남은 초를 버튼에 보여 주며 잠금(다른 주소로 바꾸면 바로 풀림)
-    let cool = null, sent = false;
+    let cool = null, sent = false, sending = false, verifying = false, sentEmail = "", alive = true;
     const sendBtn = el("button", { class: "g-btn g-btn--ghost pa-send", type: "button" }, "인증 메일 받기");
+    const token = el("input", { class: "pa-in", id: "pa-otp", name: "token", type: "text", autocomplete: "one-time-code", inputmode: "numeric", pattern: "[0-9]{6,10}", placeholder: "메일로 받은 인증번호", "aria-describedby": "pa-otp-help", enterkeyhint: "done" });
+    token.addEventListener("input", () => { token.value = digits(token.value); });
+    const verifyBtn = el("button", { class: "g-btn g-btn--pri", type: "submit" }, "확인");
+    const otpForm = el("form", { class: "pa-otp-form", hidden: "", novalidate: "", onsubmit: async ev => {
+      ev.preventDefault();
+      if (sending || verifying) return;
+      token.value = digits(token.value);
+      if (!/^[0-9]{6,10}$/.test(token.value)) { out.textContent = "메일로 받은 숫자 인증번호를 입력해 주세요."; token.focus(); return; }
+      if (!sentEmail || email.value.trim().toLowerCase() !== sentEmail) { out.textContent = "이메일 주소를 확인하고 인증 메일을 먼저 받아 주세요."; return; }
+      verifying = true; email.disabled = true; token.disabled = true; verifyBtn.disabled = true; verifyBtn.textContent = "확인 중…"; out.textContent = ""; tick();
+      try {
+        const { error } = await sb.auth.verifyOtp({ email: sentEmail, token: token.value, type: "email" });
+        if (!alive) return;
+        if (error) throw error;
+        out.textContent = "인증됐어요. 가입 정보를 확인하는 중입니다.";
+        boot();
+      } catch (error) {
+        if (!alive) return;
+        console.debug("[verifyOtp]", error);
+        out.textContent = isNet(error) ? NET_MSG : isRate(error) ? "인증을 너무 여러 번 시도했어요. 잠시 기다린 뒤 다시 확인해 주세요." :
+          /expired|otp_expired/i.test(`${error.code || ""} ${error.message || ""}`) ? "인증번호가 틀렸거나 사용 시간이 지났어요. 번호를 다시 확인하거나 새 인증 메일을 받아 주세요." :
+          "인증번호를 확인해 주세요. 가장 최근에 받은 메일의 번호를 입력하고, 계속 안 되면 새 인증 메일을 받아 주세요.";
+      } finally {
+        verifying = false; email.disabled = false; token.disabled = false; verifyBtn.disabled = false; verifyBtn.textContent = "확인"; tick();
+      }
+    } }, el("label", { for: "pa-otp" }, "인증번호"),
+      el("p", { id: "pa-otp-help", class: "pa-note" }, "메일로 받은 인증번호를 입력하거나, 메일의 링크를 눌러 주세요."),
+      el("div", { class: "pa-row" }, token, verifyBtn));
     const tick = () => {
+      if (!alive) return;
+      if (sending || verifying) { sendBtn.disabled = true; return; }
       const left = cool ? Math.ceil((cool.until - Date.now()) / 1000) : 0;
       if (left > 0 && email.value.trim().toLowerCase() === cool.email) { sendBtn.disabled = true; sendBtn.textContent = `다시 보내기 (${left}초)`; return; }
       if (cool && left <= 0) { clearInterval(cool.timer); cool = null; }
       sendBtn.disabled = false; sendBtn.textContent = sent ? "인증 메일 다시 받기" : "인증 메일 받기";
     };
-    const coolDown = (sec) => { if (cool) clearInterval(cool.timer); cool = { email: email.value.trim().toLowerCase(), until: Date.now() + sec * 1000, timer: setInterval(tick, 1000) }; tick(); };
-    email.addEventListener("input", tick);
-    sendBtn.addEventListener("click", async () => {
-      if (!/^\S+@\S+\.\S+$/.test(email.value)) { out.textContent = "이메일 주소를 확인해 주세요."; email.focus(); return; }
-      sendBtn.disabled = true; sendBtn.textContent = "보내는 중…"; // 요청이 시작된 뒤에만 잠금(두 번 보내기 방지)
-      const { error } = await sb.auth.signInWithOtp({ email: email.value.trim(), options: { emailRedirectTo: here } });
-      if (!error) { sent = true; out.textContent = "메일함에서 로그인 링크를 눌러 주세요. (스팸함도 확인) 메일이 안 오면 1분 뒤 다시 보낼 수 있어요."; coolDown(60); return; }
-      console.debug("[signInWithOtp]", error);
-      if (isRate(error)) {
-        const sec = Math.min(Math.max(Number((String(error.message || "").match(/after (\d+) second/) || [])[1]) || 60, 1), 3600);
-        out.textContent = "1분 뒤 다시 보낼 수 있어요. 방금 받은 메일이 있으면 그 메일의 링크를 눌러 주세요."; coolDown(sec); return;
-      }
-      if (isNet(error)) { out.textContent = NET_MSG; sendBtn.disabled = false; sendBtn.textContent = "다시 시도"; return; }
-      out.textContent = /email|address/i.test(`${error.code || ""} ${error.message || ""}`) && error.status === 400 ? "이메일 주소를 확인해 주세요." : "메일을 보내지 못했어요. 잠시 후 다시 시도해 주세요.";
+    const coolDown = (address, sec) => { if (cool) clearInterval(cool.timer); cool = { email: address, until: Date.now() + sec * 1000, timer: setInterval(tick, 1000) }; };
+    email.addEventListener("input", () => {
+      if (email.value.trim().toLowerCase() !== sentEmail) { otpForm.hidden = true; token.value = ""; }
+      else if (sentEmail) otpForm.hidden = false;
       tick();
     });
-    const mailBox = el("section", { class: "pa-email-login", "aria-labelledby": "pa-email-title" }, el("h3", { id: "pa-email-title" }, "이메일로 로그인"), el("div", { class: "pa-row" }, email, sendBtn));
+    const showCode = address => { sentEmail = address; token.value = ""; otpForm.hidden = false; };
+    sendBtn.addEventListener("click", async () => {
+      if (sending || verifying || sendBtn.disabled) return;
+      const address = email.value.trim().toLowerCase();
+      if (!/^\S+@\S+\.\S+$/.test(address)) { out.textContent = "이메일 주소를 확인해 주세요."; email.focus(); return; }
+      sending = true; email.disabled = true; verifyBtn.disabled = true; sendBtn.disabled = true; sendBtn.textContent = "보내는 중…";
+      try {
+        const { error } = await sb.auth.signInWithOtp({ email: address, options: { emailRedirectTo: here } });
+        if (!alive) return;
+        if (error) throw error;
+        sent = true; showCode(address); coolDown(address, 60);
+        out.textContent = "인증 메일을 보냈어요. 스팸함도 확인해 주세요. 메일이 안 오면 1분 뒤 다시 받을 수 있어요.";
+        token.focus();
+      } catch (error) {
+        if (!alive) return;
+        console.debug("[signInWithOtp]", error);
+        if (isRate(error)) {
+          const sec = Math.min(Math.max(Number((String(error.message || "").match(/after (\d+) second/) || [])[1]) || 60, 1), 3600);
+          showCode(address); coolDown(address, sec);
+          out.textContent = "메일을 너무 자주 요청했어요. 버튼에 표시된 시간이 지나면 다시 받을 수 있어요. 이미 받은 메일의 인증번호나 링크도 사용할 수 있어요.";
+        } else out.textContent = isNet(error) ? NET_MSG : /email|address/i.test(`${error.code || ""} ${error.message || ""}`) && error.status === 400 ? "이메일 주소를 확인해 주세요." : "메일을 보내지 못했어요. 잠시 후 다시 시도해 주세요.";
+      } finally { sending = false; email.disabled = false; verifyBtn.disabled = false; tick(); }
+    });
+    const mailBox = el("section", { class: "pa-email-login", "aria-labelledby": "pa-email-title" }, el("h3", { id: "pa-email-title" }, "이메일로 로그인"), el("div", { class: "pa-row" }, email, sendBtn), otpForm);
     // FUNC-FIX A5: 카카오톡 안 브라우저는 구글이 로그인을 막을 수 있음(403 disallowed_useragent) → 구글 버튼 위 안내 + 이메일 로그인 상시 표시.
     //   '다른 브라우저로 열기' 버튼(kakaotalk://web/openExternal, 비공식)은 보조 — 누를 때만, 안 되더라도 안내문은 그대로 남음
     let kakao = null;
@@ -124,29 +222,80 @@
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "연락처"), N("가입·승인 문의."),
         el("p", {}, "프라임에셋 이사 김상현 · 전화 ", el("a", { href: "tel:010-8714-9262" }, "010-8714-9262"), " · ",
           el("a", { href: "https://open.kakao.com/o/sFMF26y", target: "_blank", rel: "noopener" }, "카카오 오픈채팅")))));
+    viewKey = "login";
+    disposeView = () => { alive = false; if (cool) clearInterval(cool.timer); };
     document.body.classList.remove("pa-hero-off");
   }
 
-  function profileView(p) {
+  function profileView(p, owner, key) {
     mode(false);
     const n = el("input", { class: "pa-in", placeholder: "이름", name: "name", autocomplete: "name", "aria-label": "이름" });
     const b = el("input", { class: "pa-in", placeholder: "소속 본부·지사 (예: 188본부)", name: "organization", autocomplete: "organization", "aria-label": "소속 본부·지사" });
     const ph = el("input", { class: "pa-in", placeholder: "휴대폰 번호", type: "tel", name: "tel", autocomplete: "tel", inputmode: "tel", "aria-label": "휴대폰 번호" });
     const ok = el("input", { type: "checkbox", id: "pa-consent" });
     const out = el("p", { class: "pa-note", role: "status" });
-    show(el("div", { class: "pa-login" }, el("div", { class: "pa-card" },
-      el("h2", { class: "pa-h3" }, "가입 정보 입력"), N("처음 로그인한 분만 보입니다. 이름·소속 본부·휴대폰 번호와 [필수] 개인정보 수집 동의."), el("p", {}, `로그인 계정: ${p.email || ""}`), n, b, ph,
+    const draft = readDraft(owner);
+    n.value = typeof draft.name === "string" ? draft.name : p.name || "";
+    b.value = typeof draft.branch === "string" ? draft.branch : p.branch || "";
+    ph.value = formatPhone(typeof draft.phone === "string" ? draft.phone : p.phone || "");
+    ok.checked = draft.consent === true;
+    bindPhone(ph);
+    let saving = false, draftActive = true;
+    const remember = () => { if (draftActive) saveDraft(owner, { name: n.value, branch: b.value, phone: ph.value, consent: ok.checked }); };
+    [n, b, ph, ok].forEach(input => ["input", "change", "blur"].forEach(event => input.addEventListener(event, remember)));
+    const switchEmail = el("button", { class: "pa-text-button pa-switch-email", type: "button", onclick: async () => {
+      if (saving) return;
+      switchEmail.disabled = true;
+      try { await leaveAccount(); }
+      catch (error) { out.textContent = isNet(error) ? NET_MSG : "계정을 바꾸지 못했어요. 잠시 후 다시 눌러 주세요."; }
+      finally { switchEmail.disabled = false; }
+    } }, "다른 이메일로 가입하기");
+    const submit = el("button", { class: "g-btn g-btn--pri g-btn--lg", type: "submit" }, "가입 신청");
+    const form = el("form", { id: "pa-signup-form", novalidate: "", onsubmit: async ev => {
+      ev.preventDefault();
+      if (saving) return;
+      ph.value = formatPhone(ph.value); remember();
+      if (![n, b, ph].every(input => input.value.trim())) { out.textContent = "이름·소속·휴대폰 번호를 모두 입력해 주세요."; [n, b, ph].find(input => !input.value.trim()).focus(); return; }
+      if (!validPhone(ph.value)) { out.textContent = PHONE_MSG; ph.focus(); return; }
+      if (!ok.checked) { out.textContent = "개인정보 수집·이용 동의에 체크해 주세요."; ok.focus(); return; }
+      const values = { p_name: n.value.trim(), p_branch: b.value.trim(), p_phone: ph.value, p_consent: ok.checked };
+      saving = true; [n, b, ph, ok, submit, switchEmail].forEach(input => { input.disabled = true; }); submit.textContent = "보내는 중…"; out.textContent = "";
+      try {
+        const { error } = await sb.rpc("complete_profile", values);
+        if (error) throw error;
+        draftActive = false; clearDraft(owner);
+        await boot();
+      } catch (error) {
+        console.debug("[complete_profile]", error);
+        out.textContent = isNet(error) ? NET_MSG : hasKo(error.message) ? error.message + " — 입력 내용을 확인한 뒤 다시 눌러 주세요." : "가입 신청을 보내지 못했어요. 잠시 후 다시 눌러 주세요.";
+      } finally {
+        saving = false; [n, b, ph, ok, submit, switchEmail].forEach(input => { input.disabled = false; }); submit.textContent = "가입 신청";
+      }
+    } }, n, b, ph,
       el("label", { class: "pa-consent", for: "pa-consent" }, ok, " [필수] 개인정보 수집·이용에 동의합니다. ",
-        el("a", { href: "../privacy/", target: "_blank" }, "개인정보처리방침 보기")),
-      el("div", { class: "pa-head-btns" }, el("button", { class: "g-btn g-btn--pri g-btn--lg", type: "button", onclick: async (ev) => {
-        const btn = ev.currentTarget; btn.disabled = true; btn.textContent = "보내는 중…";
-        const { error } = await sb.rpc("complete_profile", { p_name: n.value, p_branch: b.value, p_phone: ph.value, p_consent: ok.checked });
-        btn.disabled = false; btn.textContent = "가입 신청";
-        if (error) { console.debug("[complete_profile]", error); out.textContent = isNet(error) ? NET_MSG : hasKo(error.message) ? error.message + " — 입력 내용을 확인한 뒤 다시 눌러 주세요." : "가입 신청을 보내지 못했어요. 잠시 후 다시 눌러 주세요."; } else boot();
-      } }, "가입 신청"), logoutBtn()), out)));
+        el("a", { href: "../privacy/", target: "_blank", rel: "noopener" }, "개인정보처리방침 보기")),
+      el("div", { class: "pa-head-btns" }, submit), out, switchEmail);
+    show(el("div", { class: "pa-login" }, el("div", { class: "pa-card" },
+      el("h2", { class: "pa-h3" }, "가입 정보 입력"), N("처음 로그인한 분만 보입니다. 이름·소속 본부·휴대폰 번호와 [필수] 개인정보 수집 동의."), el("p", { class: "pa-signup-account" }, `가입 계정: ${p.email || ""}`), form)));
+    viewKey = key;
+    window.addEventListener("pagehide", remember);
+    disposeView = () => { draftActive = false; window.removeEventListener("pagehide", remember); };
   }
 
-  const logoutBtn = () => el("button", { class: "g-btn g-btn--ghost g-btn--sm pa-logout", type: "button", onclick: async () => { const { error } = await sb.auth.signOut(); if (error) await sb.auth.signOut({ scope: "local" }); boot(); } }, "로그아웃"); // 연결이 끊겨도 이 기기에서는 로그아웃
+  async function leaveAccount() {
+    let result;
+    try { result = await sb.auth.signOut(); } catch (error) { result = { error }; }
+    if (result.error) result = await sb.auth.signOut({ scope: "local" });
+    if (result.error) throw result.error;
+    clearDrafts();
+    await boot();
+  }
+  const logoutBtn = () => el("button", { class: "g-btn g-btn--ghost g-btn--sm pa-logout", type: "button", onclick: async ev => {
+    const btn = ev.currentTarget; btn.disabled = true;
+    try { await leaveAccount(); }
+    catch (error) { console.debug("[signOut]", error); btn.textContent = "로그아웃 다시 시도"; }
+    finally { btn.disabled = false; }
+  } }, "로그아웃"); // 연결이 끊겨도 이 기기에서는 로그아웃
 
   // 도구 검색(초성)·즐겨찾기·승인 요청
   const OPENCHAT = "https://open.kakao.com/o/sFMF26y";
@@ -222,6 +371,8 @@
     if (error || !Array.isArray(raw)) return failView("메뉴 목록을 불러오지 못했습니다", error, true);
     // my_menu는 활성 메뉴만 반환합니다. active를 포함하는 응답도 같은 일반 규칙으로 처리합니다.
     const data = raw.filter(r => r.active !== false);
+    const key = JSON.stringify([storageOwner, "intranet", p, data]);
+    if (viewKey === key) return; // 같은 인증 상태의 갱신은 검색·즐겨찾기·내 정보 편집도 유지
     mode(true);
     const pending = p.status === "pending";
     const status = pending ? "승인 대기" : "승인 완료";
@@ -331,6 +482,7 @@
     drawFavorites(); drawDirectory();
     show(announce, el("section", { class: "pa-sec", id: "home" }, head,
       pending ? pendingCard() : banner, search, resultBox, fav, browse, noticeBox), me);
+    viewKey = key;
     loadNotice();
     markTab();
     if (goto) { jump(goto); goto = null; }
@@ -345,12 +497,15 @@
     const n = el("input", { class: "pa-in", id: "pa-edit-name", name: "name", value: p.name || "", required: "", autocomplete: "name" });
     const b = el("input", { class: "pa-in", id: "pa-edit-branch", name: "organization", value: p.branch || "", required: "", autocomplete: "organization" });
     const ph = el("input", { class: "pa-in", id: "pa-edit-phone", name: "tel", type: "tel", required: "", autocomplete: "tel", inputmode: "tel" });
+    bindPhone(ph);
     const consent = el("input", { id: "pa-edit-consent", type: "checkbox", required: "" });
     const submit = el("button", { class: "g-btn g-btn--pri", type: "submit" }, "변경 저장");
     const cancel = el("button", { class: "g-btn g-btn--ghost", type: "button", onclick: () => { form.hidden = true; edit.hidden = false; out.textContent = ""; edit.focus(); } }, "취소");
     const form = el("form", { id: "pa-profile-form", class: "pa-profile-form", hidden: "", onsubmit: async e => {
       e.preventDefault();
       if (![n, b, ph].every(x => x.value.trim())) { out.textContent = "이름·소속·연락처를 모두 입력해 주세요."; return; }
+      ph.value = formatPhone(ph.value);
+      if (!validPhone(ph.value)) { out.textContent = PHONE_MSG; ph.focus(); return; }
       const values = { name: n.value.trim(), branch: b.value.trim(), phone: ph.value.trim(), consent: consent.checked };
       [submit, cancel, n, b, ph, consent].forEach(x => { x.disabled = true; }); submit.textContent = "저장 중…"; out.textContent = "";
       try {
@@ -375,7 +530,7 @@
           if (error) throw error;
           p.phone = data && data.phone || "";
         }
-        n.value = p.name || ""; b.value = p.branch || ""; ph.value = p.phone || ""; consent.checked = false;
+        n.value = p.name || ""; b.value = p.branch || ""; ph.value = formatPhone(p.phone || ""); consent.checked = false;
         form.hidden = false; edit.hidden = true; n.focus();
       } catch (error) {
         console.debug("[profile contact]", error);
@@ -424,7 +579,7 @@
     if (input) { e.preventDefault(); input.focus(); input.scrollIntoView({ block: "center", behavior: "instant" }); }
   });
 
-  let logged = false;
+  let logged = false, currentOwner = null, authTimer = null;
   async function boot() {
     const epoch = ++renderEpoch;
     const { data: { session }, error: sErr } = await sb.auth.getSession();
@@ -432,10 +587,17 @@
     if (!session) {
       if (sErr && isNet(sErr)) return failView("로그인 상태를 확인하지 못했습니다", sErr, false);
       logged = false; requested.clear();
+      currentOwner = null; clearDrafts();
       if (goto) { saveGoto(goto); goto = null; } // 로그인 뒤 이 칸으로(이 기기에 30분)
+      if (viewKey === "login") return;
       return loginView(location.hash === "#signup" ? "처음 오셨나요? 구글 계정이나 이메일로 로그인하면 바로 가입 신청이 됩니다." : "");
     }
     const storageOwner = session.user.id || "local";
+    if (currentOwner && currentOwner !== storageOwner) {
+      mode(false); show(msg("가입 계정을 확인하는 중입니다"));
+      clearDraft(currentOwner); logged = false; requested.clear();
+    }
+    currentOwner = storageOwner;
     retryOnline = null;
     if (!goto) goto = takeGoto(); // 로그인 전에 가려던 칸
     if (!logged) { logged = true; sb.rpc("record_login", { p_method: (session.user.app_metadata || {}).provider || "", p_agent: navigator.userAgent }); }
@@ -445,11 +607,27 @@
     const p = data && data[0];
     if (error) return failView("회원 정보를 확인하지 못했습니다", error, true);
     if (!p) return show(msg("회원 정보를 확인하지 못했습니다", "잠시 후 다시 시도해 주세요."), logoutBtn());
-    if (!p.profile_done) return profileView(p);
+    if (!p.profile_done) {
+      const key = JSON.stringify([storageOwner, "signup", p.status]);
+      // 창 복귀의 SIGNED_IN·토큰 갱신·세션 재확인에도 같은 가입 폼과 포커스를 유지합니다.
+      if (viewKey !== key) profileView(p, storageOwner, key);
+      return;
+    }
+    clearDraft(storageOwner);
     if (p.status === "suspended") return show(msg("이용이 정지된 계정입니다", "문의는 관리자에게 해 주세요."), logoutBtn());
     if (p.status === "pending") return intranetView(p, null, epoch, storageOwner); // 안내·요청 버튼은 intranetView 가 메뉴 목록과 함께 그림(pendingCard)
     return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("Guest 등급입니다", "🔒 표시 메뉴는 등급이 정해지면 열립니다.") : null, epoch, storageOwner);
   }
-  sb.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" || ev === "SIGNED_OUT") boot(); });
+  sb.auth.onAuthStateChange((ev) => {
+    if (!["SIGNED_IN", "SIGNED_OUT", "TOKEN_REFRESHED"].includes(ev)) return;
+    if (ev === "SIGNED_OUT") {
+      mode(false); show(msg("로그인 화면으로 돌아가는 중입니다"));
+      clearDrafts(); // 이전 폼의 초안 리스너를 중단한 뒤 삭제
+    }
+    // Supabase의 인증 잠금 안에서 API를 다시 호출하지 않고, 이전 비동기 화면 응답도 무효화합니다.
+    renderEpoch++;
+    clearTimeout(authTimer);
+    authTimer = setTimeout(() => { boot(); }, 0);
+  });
   boot();
 })();
