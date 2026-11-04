@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-1C1OF9fxOMv9doZjU7y125Pbj0e4Z4Q6y47sjDA54/U='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#070a12">
+<meta name="theme-color" content="#f5f7fa">
 <meta name="robots" content="noindex,nofollow">
 <title>설계사 인트라넷 | 프라임에셋 프리미엄 (테스트)</title>
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
@@ -48,8 +48,9 @@
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="../assets/glass.css?v=16">
 <link rel="stylesheet" href="../assets/members-ux.css?v=14">
+<link rel="stylesheet" href="/assets/intranet-light.css?v=20261104-t10">
 </head>
-<body class="g-members">
+<body class="g-members intranet-light">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
 <div class="g-bg" aria-hidden="true"></div>
 <div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
@@ -64,7 +65,7 @@
   <h1 class="sr">설계사 인트라넷</h1><!-- 낭독용 제목(h1): 화면 카드 제목은 h2 -->
   <!-- FUNC-FIX B7: 로그인 화면 맨 위 소개 한 줄은 고정 글로 여기 둠(자바스크립트가 다시 그리지 않음 → 첫 그림부터 보이고 깜빡임·가장 큰 글(LCP) 늦어짐 없음).
        로그인 화면일 때만 보임: 로그인 세션이 있으면(html.pa-in·body.pa-logged) 또는 다른 화면이면(body.pa-hero-off, glass-members.js) 숨김 -->
-  <div class="pa-login pa-hero-static"><div class="pa-card pa-card--hero"><p class="pa-pitch">승인 후, 업무 도구를 한곳에서.</p></div></div>
+  <div class="pa-login pa-hero-static"><div class="pa-card pa-card--hero"><p class="pa-pitch">설계사 업무 도구</p></div></div>
   <!-- FUNC-FIX B7: 불러오는 동안 실제 화면 모양의 틀(스켈레톤). 로그인 세션이 이 기기에 있으면 인트라넷 모양, 없으면 로그인 화면 모양.
        틀은 화면 높이만큼 자리를 잡아 바닥글이 밀려 내려가지 않게(흔들림 CLS) 하고, 1초 안에 끝나면 보이지 않음(깜빡임 없음). 화면이 그려지면 통째로 바뀜 -->
   <div id="pa-app" aria-busy="true">

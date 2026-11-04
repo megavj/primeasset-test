@@ -5,29 +5,31 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>가입 승인 확인 · 프라임에셋 프리미엄</title>
 <style>
-:root{color-scheme:dark}
+:root{color-scheme:light}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:grid;place-items:center;padding:32px 16px;font-family:Pretendard,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;color:#eef0f5;
-background:radial-gradient(1200px 600px at 50% -10%,rgba(201,169,97,.14),transparent 60%),#0b0e14}
-.card{width:100%;max-width:420px;padding:32px 28px;border-radius:20px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);
-box-shadow:0 20px 60px rgba(0,0,0,.45);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-.brand{font-size:13px;letter-spacing:.04em;color:#c9a961;margin:0 0 18px}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:32px 16px;font-family:Pretendard,'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;color:var(--text);
+background:var(--bg-0)}
+.card{width:100%;max-width:420px;padding:32px 28px;border-radius:20px;text-align:center;background:var(--bg-1);border:1px solid var(--line);
+box-shadow:none}
+.brand{font-size:13px;letter-spacing:.04em;color:var(--accent);margin:0 0 18px}
 h1{font-size:20px;line-height:1.45;margin:0 0 8px;font-weight:700;word-break:keep-all}
-.sub{color:#a7adbb;margin:0 0 24px;font-size:15px;min-height:1.2em}
-.btn{appearance:none;border:0;border-radius:12px;padding:14px 0;width:100%;font-size:16px;font-weight:700;cursor:pointer;color:#0b0e14;background:#c9a961}
-.btn.reject{background:#e5484d;color:#fff}
+.sub{color:var(--text-2);margin:0 0 24px;font-size:15px;min-height:1.2em}
+.btn{appearance:none;border:0;border-radius:12px;padding:14px 0;width:100%;font-size:16px;font-weight:700;cursor:pointer;color:var(--on-gold);background:var(--accent)}
+.btn.reject{background:var(--danger);color:#fff}
 .btn:disabled{opacity:.55;cursor:default}
-.note{margin:16px 0 0;font-size:13px;color:#7d8494}
-.ok{color:#c9a961}.bad{color:#ff8a8f}
-a{color:#c9a961}
-</style></head>
-<body>
+.note{margin:16px 0 0;font-size:13px;color:var(--text-3)}
+.ok{color:var(--accent)}.bad{color:var(--danger)}
+a{color:var(--accent)}
+</style><link rel="stylesheet" href="/assets/intranet-light.css?v=20261104-t10">
+</head>
+<body class="intranet-light intranet-decision">
 <main class="card" aria-live="polite">
   <p class="brand">프라임에셋 프리미엄사업부</p>
   <h1 id="q">신청 내용을 확인하는 중…</h1>
   <p id="b" class="sub"></p>
   <button id="go" class="btn" type="button" hidden>확인</button>
   <p id="n" class="note"></p>
+  <noscript><p class="note">신청을 확인하려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript>
 </main>
 <script>
 (function () { try { if (window.top !== window.self && window.top.location.origin !== window.location.origin) throw 0; } catch (e) { document.documentElement.style.display = 'none'; } })(); // AUDIT-20261103: 다른 출처 액자(클릭재킹) 차단

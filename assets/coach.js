@@ -9,7 +9,7 @@
       diagform=document.getElementById('diagform');
 
   var MODE='coach', convo=[], attachedFiles=[], lastScripts=[], BUSY=false, filePending=0, fileGeneration=0;
-  var SB=null, ME=null;
+  var SB=null, ME=null, guard=null;
   var SESSION=newSid();
   function newSid(){ return 'S'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 
@@ -22,17 +22,15 @@
     app.hidden=true;
   }
   function safeUrl(value) { try { var u=new URL(String(value||'')); return u.protocol==='https:'&&!u.username&&!u.password; } catch(e){return false;} }
-  async function api(action,payload) {
-    var session=(await SB.auth.getSession()).data.session;
-    if(!session) {var missing=new Error('로그인이 만료됐어요. 다시 로그인해 주세요.');missing.code='unauthorized';throw missing;}
-    var response;
-    try { response=await fetch(COACH_API_URL,{method:'POST',body:JSON.stringify(Object.assign({action:action,token:session.access_token},payload||{})),credentials:'omit',redirect:'follow'}); }
-    catch(e) {throw new Error('코치 서버에 연결하지 못했어요. 관리자 설정(최초 권한 허용)이 끝나지 않았거나 연결이 잠시 불안정합니다.');}
-    var result;try{result=await response.json();}catch(e){throw new Error('코치 서버가 아직 준비되지 않았어요(관리자 설정 전). 잠시 후 다시 시도해 주세요.');}
-    if(!response.ok||!result||!result.ok){var err=new Error(result&&(result.message||result.error)||'처리하지 못했어요. 잠시 후 다시 시도해 주세요.');err.code=result&&(result.error||result.code);throw err;}
-    return result;
+  function clearSession() {
+    ME=null; reset(); clearDiagnostic(); setBusy(false); LASTREQ=null; input.value=''; modal.replaceChildren(); overlay.close();
+    document.getElementById('adminBtn').hidden=true;
+    document.getElementById('coach-legacy-wrap').hidden=true;
+    document.getElementById('coach-legacy').removeAttribute('href');
+    showGate('로그인 정보가 바뀌어 입력과 답변을 지웠습니다. <a href="">화면 다시 열기</a>');
   }
-  async function legacyLink() {
+  function api(action,payload,generation) { return guard.request(COACH_API_URL,action,payload,generation); }
+  async function legacyLink(generation) {
     var url=LEGACY_URL;
     try {
       var r=await SB.rpc('my_menu');
@@ -43,26 +41,28 @@
       var item=candidates.find(function(x){return /AKfycbyKIz|AKfycbw6JIh|AKfycbz8vba3|1rIZRrzlYTgq5g0omTg_02q73sUi83Fp8US200QeoXQc4iPC5Wef6FHZQ/.test(x.url||'');})||candidates.find(function(x){return /통합\s*코치|실전\s*상담|영업\s*비서/.test(x.name||'');});
       if(item)url=item.url;
     }catch(e){}
+    if(generation!==guard.current())return;
     document.getElementById('coach-legacy').href=url;document.getElementById('coach-legacy-wrap').hidden=false;
   }
   async function boot() {
     try {
       SB=await window.paClient();
-      var session=(await SB.auth.getSession()).data.session;
+      guard=window.paToolSession(SB,clearSession);
+      var session=await guard.initialize(),generation=guard.current();
       if(!session)return showGate('설계사 로그인 후 쓸 수 있어요. <a href="/members/#login">로그인하기</a>');
-      var profile=await SB.rpc('my_profile');
+      var profile=await SB.rpc('my_profile');guard.check(generation);
       if(profile.error)throw new Error('회원 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
       var member=profile.data&&profile.data[0];
       if(!member||member.status!=='active')return showGate(member&&member.status==='pending'?'가입 승인 대기 중이에요. 관리자가 승인하면 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>':'가입 승인된 설계사만 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>');
-      legacyLink();
-      ME=await api('whoami');
+      legacyLink(generation);
+      var memberInfo=await api('whoami',{},generation);guard.check(generation);ME=memberInfo;
       document.getElementById('coach-gate').hidden=true;app.hidden=false;
       document.getElementById('adminBtn').hidden=!(ME.user&&ME.user.admin);
-      var status=document.getElementById('coach-status');status.textContent=ME.ai&&ME.ai.ready?'AI 답변 준비됨':'AI 키 등록 전 — 관리자 설정 후 사용할 수 있어요';status.classList.toggle('is-ready',!!(ME.ai&&ME.ai.ready));
+      var status=document.getElementById('coach-status');status.textContent=ME.ai&&ME.ai.ready?'AI 답변 준비됨':'서비스 준비 중입니다. 잠시 후 이용해 주세요.';status.classList.toggle('is-ready',!!(ME.ai&&ME.ai.ready));
       document.getElementById('coach-limit').textContent='회원별 1시간 '+Number(ME.limits&&ME.limits.perHour||30)+'회';
       reset();applyModeUI();setChips(DEFAULTS);
-      SB.auth.onAuthStateChange(function(event){if(event==='SIGNED_OUT'){reset();ME=null;overlay.close();document.getElementById('coach-legacy-wrap').hidden=true;showGate('로그인이 만료됐어요. <a href="/members/#login">다시 로그인하기</a>');}});
-    } catch(e) {showGate(esc(e.message||'잠시 후 다시 열어 주세요.'));}
+
+    } catch(e) {if(e.code!=='stale_session')showGate(esc(e.message||'잠시 후 다시 열어 주세요.'));}
   }
 
   // 데스크탑/모바일
@@ -155,6 +155,7 @@
 
   async function sendToServer(text,files){
     if(BUSY||filePending)return;
+    var generation=guard.current();
     // 진단 재시도도 마지막 사용자 입력을 중복해서 쌓지 않습니다.
     if(convo.length&&convo[convo.length-1].role==='user')convo.pop();
     convo.push({role:'user',content:text});setBusy(true);LASTREQ={text:text,files:files};
@@ -163,16 +164,18 @@
     var stT=setInterval(function(){si=Math.min(si+1,stg.length-1);var el=t.querySelector('.tstage');if(el)el.textContent=stg[si];},6000);
     if(MODE!=='diagnostic'){kchat.appendChild(t);down();}else{document.getElementById('diagSubmit').textContent='진단 중…';}
     try{
-      var res=await api('callClaude',{req:{mode:MODE,messages:convo,sessionId:SESSION,files:files}});
-      if(!ME)return;
+      var res=await api('callClaude',{req:{mode:MODE,messages:convo,sessionId:SESSION,files:files}},generation);
+      if(!ME||generation!==guard.current())return;
+      if(!validResult(MODE,res.data))throw new Error('답변을 완성하지 못했습니다. 다시 받아 주세요.');
       convo.push({role:'assistant',content:JSON.stringify(res.data||{})});
       (MODE==='coach'?renderCoach:(MODE==='roleplay'?renderRole:renderDiagnostic))(res.data||{});
       if(MODE==='diagnostic')document.getElementById('diagSubmit').textContent='다시 진단하기';
     }catch(err){
+      if(generation!==guard.current())return;
       if(MODE==='diagnostic'){document.getElementById('diagSubmit').textContent='다시 시도';toast(err.message||'통신 오류');}
       else{addBubble('sys','⚠ '+(err.message||'통신 오류'));addRetry();}
       if(err.code==='unauthorized'||err.code==='forbidden'){showGate(esc(err.message)+' <a href="/members/#login">로그인하기</a>');}
-    }finally{clearInterval(stT);t.remove();setBusy(false);if(ME&&!app.hidden)(MODE==='diagnostic'?document.getElementById('diagSubmit'):input).focus({preventScroll:true});}
+    }finally{clearInterval(stT);t.remove();if(generation===guard.current())setBusy(false);if(ME&&!app.hidden)(MODE==='diagnostic'?document.getElementById('diagSubmit'):input).focus({preventScroll:true});}
   }
 
   // v32: 실패 시 같은 질문으로 다시 받기(입력 다시 칠 필요 없음)
@@ -181,8 +184,25 @@
     b.onclick=function(){ if(send.disabled) return; b.remove(); if(convo.length&&convo[convo.length-1].role==='user') convo.pop(); sendToServer(LASTREQ.text, LASTREQ.files||[]); };
     kchat.appendChild(b); down(); }
 
+  function validResult(mode,d) {
+    const text=(v)=>typeof v==='string'&&v.trim().length>0;
+    const strings=(v)=>Array.isArray(v)&&v.length>0&&v.every(text);
+    if(!d||typeof d!=='object'||Array.isArray(d)||d._parseFail)return false;
+    if(mode==='coach')return Array.isArray(d.scripts)&&text(d.analysis)&&(d.scripts.length ? d.scripts.every((s)=>text(s)||(s&&text(s.text))) : /(?:도와드릴 수 없|답변할 수 없|제공할 수 없|상담.*관련|보험.*관련|안내할 수 없)/.test(d.analysis));
+    if(mode==='roleplay') {
+      if(d.feedback==null)return text(d.customer);
+      const f=d.feedback, scripts=f.model_script||f.scripts;
+      const score=typeof f.score==='number'?f.score:(typeof f.score==='string'&&/^\d{1,3}(?:\/100)?$/.test(f.score)?Number(f.score.split('/')[0]):NaN);
+      return f&&typeof f==='object'&&Number.isFinite(score)&&score>=0&&score<=100&&text(f.strengths)&&text(f.weaknesses)&&strings(scripts);
+    }
+    if(d.status==='questions')return text(d.message)&&strings(d.questions);
+    if(!Number.isFinite(d.score)||d.score<0||d.score>100||!text(d.grade)||!Array.isArray(d.scores)||!d.scores.length)return false;
+    if(!d.scores.every((s)=>s&&text(s.name)&&Number.isFinite(s.score)&&Number.isFinite(s.max)&&s.max>0&&s.score>=0&&s.score<=s.max&&text(s.reason)))return false;
+    return Math.abs(d.scores.reduce((n,s)=>n+s.score,0)-d.score)<0.01&&strings(d.strengths)&&strings(d.gaps)&&strings(d.actions);
+  }
+
   // 렌더: 화법
-  function normScripts(arr){ if(!arr) return []; return arr.map(function(x){ return (typeof x==='string')?{len:'',label:'',text:x}:{len:(x.len||''),label:(x.label||''),text:(x.text||'')}; }).filter(function(o){return o.text;}); }
+  function normScripts(arr){ if(!Array.isArray(arr)) return []; return arr.map(function(x){ return (typeof x==='string')?{len:'',label:'',text:x}:{len:(x&&x.len||''),label:(x&&x.label||''),text:(x&&typeof x.text==='string'?x.text:'')}; }).filter(function(o){return o.text;}); }
   function addScriptBubble(o){
     if(o.len||o.label){ var l=document.createElement('div'); l.className='klabel mine'; l.textContent=(o.len?'['+o.len+'] ':'')+(o.label||''); kchat.appendChild(l); }
     var b=document.createElement('div'); b.className='kb me'; var sp=document.createElement('span'); sp.textContent=o.text; b.appendChild(sp);
@@ -190,7 +210,7 @@
     kchat.appendChild(b); down();
   }
   function renderCoach(d){
-    if(d._parseFail){ addBubble('sys','답변을 받지 못했습니다. 아래 "다시 받기"를 눌러 주세요.'); addRetry(); setPanel('<div class="rempty">원문 내용은 노출하지 않았습니다. 서버가 구조 복구를 1회 시도한 뒤에도 결과가 부족한 경우에만 표시됩니다.</div>'); return; }
+    if(d._parseFail){ addBubble('sys','답변을 받지 못했습니다. 아래 "다시 받기"를 눌러 주세요.'); addRetry(); setPanel('<div class="rempty">답변을 완성하지 못했습니다. 다시 받아 주세요.</div>'); return; }
     var sc=normScripts(d.scripts);
     if(sc.length) sc.forEach(addScriptBubble);
     else if(d.analysis) addBubble('sys', d.analysis);
@@ -208,7 +228,7 @@
 
   // 렌더: 상담연습
   function renderRole(d){
-    if(d._parseFail){ addBubble('sys','답변을 받지 못했습니다. 아래 "다시 받기"를 눌러 주세요.'); addRetry(); setPanel('<div class="rempty">서버가 구조 복구를 1회 시도한 뒤에도 결과가 부족한 경우에만 표시됩니다.</div>'); return; }
+    if(d._parseFail){ addBubble('sys','답변을 받지 못했습니다. 아래 "다시 받기"를 눌러 주세요.'); addRetry(); setPanel('<div class="rempty">답변을 완성하지 못했습니다. 다시 받아 주세요.</div>'); return; }
     if(d.stage){ document.getElementById('stage').textContent='🎬 '+d.stage; addBubble('sys','🎬 '+d.stage); }
     var fb=d.feedback;
     if(fb){ var ms=fb.model_script||fb.scripts||[];
@@ -252,10 +272,10 @@
   left.addEventListener('dragleave',function(e){ if(!left.contains(e.relatedTarget)) left.classList.remove('drag'); });
   left.addEventListener('drop',function(e){e.preventDefault();left.classList.remove('drag');if(MODE!=='coach'||BUSY)return;var fs=e.dataTransfer.files;for(var i=0;i<fs.length;i++)handleFile(fs[i]);});
   function handleFile(file){
-    if(BUSY||MODE!=='coach')return;
+    if(BUSY||MODE!=='coach'||!ME)return;
     if(attachedFiles.length+filePending>=10){toast('파일은 최대 10개까지 가능합니다');return;}
     var generation=fileGeneration;filePending++;setBusy(BUSY);
-    readFile(file).then(function(f){if(generation===fileGeneration){attachedFiles.push(f);renderAttach();}}).catch(function(m){toast(m);}).finally(function(){filePending--;setBusy(BUSY);});
+    readFile(file).then(function(f){if(generation===fileGeneration){attachedFiles.push(f);renderAttach();}}).catch(function(m){if(generation===fileGeneration)toast(m);}).finally(function(){filePending=Math.max(0,filePending-1);setBusy(BUSY);});
   }
   function renderAttach(){
     var a=document.getElementById('attach');
@@ -295,7 +315,8 @@
     if(!ME||!ME.user||!ME.user.admin)return;
     modal.innerHTML='<h2 id="adminTitle">관리자 모드</h2><p role="status">불러오는 중…</p><button class="ghost" id="adminClose">닫기</button>';
     document.getElementById('adminClose').onclick=function(){overlay.close();};overlay.showModal();
-    try{renderStats(await api('adminData'));}catch(e){modal.innerHTML='<h2 id="adminTitle">관리자 모드</h2><p role="alert">'+esc(e.message)+'</p><button class="ghost" id="adminClose">닫기</button>';document.getElementById('adminClose').onclick=function(){overlay.close();};}
+    var generation=guard.current();
+    try{var stats=await api('adminData',{},generation);guard.check(generation);renderStats(stats);}catch(e){if(generation!==guard.current())return;modal.innerHTML='<h2 id="adminTitle">관리자 모드</h2><p role="alert">'+esc(e.message)+'</p><button class="ghost" id="adminClose">닫기</button>';document.getElementById('adminClose').onclick=function(){overlay.close();};}
   }
   function renderStats(s){
     var daily=Array.isArray(s.daily)?s.daily:[],agents=Array.isArray(s.agents)?s.agents:[],keywords=Array.isArray(s.keywords)?s.keywords:[],recent=Array.isArray(s.recent)?s.recent:[];
@@ -324,6 +345,7 @@
     };
   }
   function card(n,l){return '<div class="card"><div class="n">'+esc(n==null?0:n)+'</div><div class="l">'+esc(l)+'</div></div>';}
+  window.paToolReady=window.paToolReady||{};window.paToolReady.coach=true;
   boot();
 
 })();

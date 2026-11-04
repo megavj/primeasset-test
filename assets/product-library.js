@@ -168,7 +168,7 @@
     lines.push('', '원문 ' + (response.pages || 0) + '쪽 · 정리 ' + (response.lines || 0) + '줄');
     if (response.generatedAt) lines.push('생성 ' + response.generatedAt);
     if (list(summary.docs).length) lines.push('문서: ' + summary.docs.join(', '));
-    lines.push('보험사 소식지를 Mac 내부검색에서 조회해 정리한 내용입니다. 실제 설계·고지 전에 원문과 전산을 확인하세요.');
+    lines.push('등록된 보험사 소식지 자료를 정리한 내용입니다. 실제 설계·고지 전에 원문과 전산을 확인하세요.');
     return lines.join('\n');
   }
   function factText(item) {
@@ -233,7 +233,7 @@
       excerpt.id = 'px-excerpt-' + (++excerptSequence);
       excerpt.setAttribute('role', 'status');
       excerpt.setAttribute('aria-live', 'polite');
-      excerpt.textContent = 'Mac에서 원문을 조회하는 중입니다…';
+      excerpt.textContent = '원문을 불러오고 있습니다…';
       host.append(excerpt);
       lookup.setAttribute('aria-controls', excerpt.id);
       lookup.setAttribute('aria-expanded', 'true');
@@ -258,7 +258,7 @@
         processor(response);
         if (!response || !response.ok) throw new Error(response && response.msg || '원문 조회를 시작하지 못했습니다.');
         if (response.processor && !response.processor.online) {
-          finish('Mac 처리기가 응답하지 않아요. 잠시 후 다시 시도해 주세요.', true);
+          finish('자료 조회가 지연되고 있습니다. 잠시 후 다시 시도해 주세요.', true);
           return;
         }
         if (!response.id) throw new Error('조회 번호를 받지 못했습니다. 다시 시도해 주세요.');

@@ -15,41 +15,34 @@
   function gate(html) { $('it-gate').hidden = false; $('it-gate-msg').innerHTML = html; $('it-app').hidden = true; }
   function formMsg(t) { $('it-form-msg').textContent = t || ''; }
 
-  async function token() {
-    const { data } = await S.sb.auth.getSession();
-    return data && data.session ? data.session.access_token : '';
+  function clearSession() {
+    S.me = null; S.answer = ''; setBusy(false);
+    $('it-q').value = ''; $('it-result').hidden = true;
+    ['it-answer', 'it-admin-body', 'it-originals', 'it-sources', 'it-cases', 'it-followups'].forEach((id) => { if ($(id)) $(id).replaceChildren(); });
+    $('it-admin').hidden = true; $('it-admin').open = false;
+    $('it-legacy-wrap').hidden = true; $('it-legacy').removeAttribute('href');
+    S.lastQuestion = ''; S.lastInsurer = ''; S.lastTask = '';
+    ['notice','case-badge','manual-badge','sources-count','answer-meta','answer-notes','manuals','links','clarification','progress-text'].forEach((suffix) => { const el = $('it-' + suffix); if (el) el.replaceChildren(); });
+    formMsg(''); gate('로그인 정보가 바뀌어 입력과 답변을 지웠습니다. <a href="">화면 다시 열기</a>');
   }
-  async function api(action, payload) {
-    const t = await token();
-    if (!t) { const e = new Error('로그인이 만료됐어요. 다시 로그인해 주세요.'); e.code = 'unauthorized'; throw e; }
-    let res;
-    try {
-      res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(Object.assign({ action, token: t, screen: innerWidth < 700 ? 'mobile' : 'desktop' }, payload || {})), credentials: 'omit', redirect: 'follow' });
-    } catch (e) {
-      const err = new Error('답변기 서버에 연결하지 못했어요. 관리자 설정(최초 권한 허용)이 끝나지 않았거나 연결이 잠시 불안정합니다.'); err.code = 'network'; throw err;
-    }
-    let j = null;
-    try { j = await res.json(); } catch (e) { j = null; }
-    if (!res.ok || !j) { const err = new Error('답변기 서버가 아직 준비되지 않았어요(관리자 설정 전). 잠시 후 다시 시도해 주세요.'); err.code = 'server'; throw err; }
-    if (!j.ok) { const err = new Error(j.message || '처리하지 못했어요. 잠시 후 다시 시도해 주세요.'); err.code = j.error; err.sub = j.code; throw err; }
-    return j;
-  }
+  function api(action, payload, generation) { return S.guard.request(GAS_URL, action, payload, generation); }
 
   /* ---------- 시작: 로그인·승인 확인 ---------- */
   async function boot() {
-    try { S.sb = await window.paClient(); } catch (e) { return gate('잠시 후 다시 열어 주세요.'); }
+    try { S.sb = await window.paClient(); S.guard = window.paToolSession(S.sb, clearSession); } catch (e) { return gate('화면을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.'); }
     let session = null;
-    try { session = (await S.sb.auth.getSession()).data.session; } catch (e) { session = null; }
+    try { session = await S.guard.initialize(); } catch (e) { session = null; }
     if (!session) return gate('설계사 로그인 후 쓸 수 있어요. <a href="/members/#login">로그인하기</a>');
+    const generation = S.guard.current();
     let prof = null;
-    try { const r = await S.sb.rpc('my_profile'); if (r.error) throw r.error; prof = r.data && r.data[0]; }
-    catch (e) { return gate('회원 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.'); }
+    try { const r = await S.sb.rpc('my_profile'); if (r.error) throw r.error; S.guard.check(generation); prof = r.data && r.data[0]; }
+    catch (e) { if (generation === S.guard.current()) gate('회원 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
     if (!prof || prof.status !== 'active') {
       return gate(prof && prof.status === 'pending' ? '가입 승인 대기 중이에요. 관리자가 승인하면 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>' : '가입 승인된 설계사만 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>');
     }
-    legacyLink();
-    try { S.me = await api('whoami'); }
-    catch (e) { return gate(esc(e.message)); }
+    legacyLink(generation);
+    try { const me = await api('whoami', {}, generation); S.guard.check(generation); S.me = me; }
+    catch (e) { if (e.code !== 'stale_session') gate(esc(e.message)); return; }
     $('it-gate').hidden = true;
     $('it-app').hidden = false;
     renderStatus(S.me);
@@ -59,18 +52,19 @@
   function renderStatus(me) {
     const mac = $('it-st-mac'), ai = $('it-st-ai'), p = me.processor || {};
     mac.className = p.online ? 'is-ok' : 'is-bad';
-    mac.lastElementChild.textContent = p.online ? '전산 매뉴얼 검색 연결됨(맥 자료창고)' : '전산 매뉴얼 검색 꺼짐 — 기존 전산 자료로만 답변';
+    mac.lastElementChild.textContent = p.online ? '전산 매뉴얼 검색 연결됨' : '전산 매뉴얼 검색 꺼짐 — 기존 전산 자료로만 답변';
     ai.className = me.ai && me.ai.ready ? 'is-ok' : 'is-warn';
-    ai.lastElementChild.textContent = me.ai && me.ai.ready ? 'AI 답변 준비됨' : 'AI 키 등록 전 — 근거만 표시';
+    ai.lastElementChild.textContent = me.ai && me.ai.ready ? 'AI 답변 준비됨' : '답변 서비스 준비 중 · 확인된 근거만 표시';
   }
   /* 승인 회원에게 기존 메뉴 주소를 우선 제공하고, 메뉴가 바뀌었으면 확인한 원본 배포를 쓴다. */
-  async function legacyLink() {
+  async function legacyLink(generation) {
     let url = 'https://script.google.com/macros/s/' + LEGACY_IDS[0] + '/exec';
     try {
-      const r = await S.sb.rpc('my_menu');
+      const r = await S.sb.rpc('my_menu'); S.guard.check(generation);
       const item = items(r.data).find((x) => (/전산\s*답변/.test(x.name || '') || LEGACY_IDS.some((id) => String(x.url || '').includes(id))) && x.unlocked && x.url && !/\/members\/it/.test(x.url));
       if (item && safeUrl(item.url)) url = item.url;
     } catch (e) { /* 확인된 원본 링크 사용 */ }
+    if (generation !== S.guard.current()) return;
     $('it-legacy').href = url; $('it-legacy-wrap').hidden = false;
   }
 
@@ -101,33 +95,36 @@
     if (!q) { formMsg('막힌 내용을 입력해 주세요.'); $('it-q').focus(); return; }
     if (q.length > 800) { formMsg('질문은 800자 이내로 적어 주세요.'); $('it-q').focus(); return; }
     S.lastQuestion = q; S.lastInsurer = $('it-insurer').value; S.lastTask = $('it-task').value;
+    const generation = S.guard.current();
     setBusy(true);
     try {
-      const res = await askText(q, S.lastInsurer, S.lastTask);
+      const res = await askText(q, S.lastInsurer, S.lastTask, generation);
+      S.guard.check(generation);
       setBusy(false);
       showResult(res);
     } catch (e) {
+      if (generation !== S.guard.current()) return;
       setBusy(false);
       formMsg(e.message || '처리하지 못했어요. 잠시 후 다시 시도해 주세요.');
       if (e.code === 'unauthorized') gate(esc(e.message) + ' <a href="/members/#login">로그인하기</a>');
     }
   }
-  async function askText(q, insurer, task) {
+  async function askText(q, insurer, task, generation) {
     step(0, '질문을 보내는 중…');
-    const sub = await api('submit', { question: q, insurer, task });
+    const sub = await api('submit', { question: q, insurer, task }, generation);
     step(1, sub.processor && !sub.processor.online ? '매뉴얼 검색이 연결되지 않았어요. 최대 25초 기다린 뒤 기존 전산 자료로 확인합니다.' : '전산 매뉴얼을 찾는 중…');
     const t0 = Date.now();
     while (Date.now() - t0 < 27000) {
-      await sleep(2000);
+      await sleep(2000); S.guard.check(generation);
       let st;
-      try { st = await api('status', { id: sub.id }); } catch (e) { if (e.code === 'unauthorized' || e.code === 'forbidden') throw e; break; }
+      try { st = await api('status', { id: sub.id }, generation); } catch (e) { if (e.code === 'stale_session' || e.code === 'unauthorized' || e.code === 'forbidden') throw e; break; }
       if (st.status === '근거완료') { progress('전산 매뉴얼 근거 ' + st.evidenceCount + '건을 찾았어요(검색 ' + st.searchSec + '초).'); break; }
       if (st.status === '오류') { progress('전산 매뉴얼 검색이 되지 않았어요. 기존 전산 자료로 답합니다.'); break; }
       progress('전산 매뉴얼을 찾는 중… ' + Math.min(Number(st.waitedSec) || 0, 25) + '초 / 최대 25초');
     }
     step(2, '기존 전산 자료와 매뉴얼을 대조하는 중…');
-    const later = setTimeout(() => { if (S.busy && S.step === 2) step(3, '답변을 쓰고 검수하는 중… (보통 1~3분)'); }, 4000);
-    try { return await api('answer', { id: sub.id }); } finally { clearTimeout(later); }
+    const later = setTimeout(() => { if (generation === S.guard.current() && S.busy && S.step === 2) step(3, '답변을 쓰고 검수하는 중… (보통 1~3분)'); }, 4000);
+    try { return await api('answer', { id: sub.id }, generation); } finally { clearTimeout(later); }
   }
   /* ---------- 결과 ---------- */
   function showResult(res) {
@@ -185,7 +182,7 @@
         const head = line.replace(/^\||\|$/g, '').split('|').map((x) => x.trim());
         i += 2; const rows = [];
         while (i < lines.length && lines[i].includes('|')) { rows.push(lines[i].trim().replace(/^\||\|$/g, '').split('|').map((x) => x.trim())); i++; }
-        html += '<div class="it-table"><table><thead><tr>' + head.map((x) => '<th>' + inline(x) + '</th>').join('') + '</tr></thead><tbody>' + rows.map((r) => '<tr>' + head.map((_, j) => '<td>' + inline(r[j] || '') + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+        html += '<div class="it-table" role="region" tabindex="0" aria-label="답변 표 · 좌우로 스크롤하여 확인"><table><thead><tr>' + head.map((x) => '<th>' + inline(x) + '</th>').join('') + '</tr></thead><tbody>' + rows.map((r) => '<tr>' + head.map((_, j) => '<td>' + inline(r[j] || '') + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
         continue;
       }
       let m = line.match(/^(#{1,4})\s+(.+)$/);
@@ -209,10 +206,11 @@
   /* ---------- 관리자 ---------- */
   const yes = (v) => (v ? '있음' : '없음');
   async function loadAdmin() {
+    const generation = S.guard.current();
     const box = $('it-admin-body');
     box.innerHTML = '<p class="it-hint">불러오는 중…</p>';
     try {
-      const r = await api('adminData');
+      const r = await api('adminData', {}, generation); S.guard.check(generation);
       const s = r.settings || {}, c = r.copy || {}, p = c.processor || {}, q = c.queue || {}, st = r.stats || {};
       let last = ''; try { const L = JSON.parse(c.retention && c.retention.last || '{}'); last = L.at ? L.at + ' · 가린 행 ' + (L.masked || 0) : ''; } catch (e) { last = ''; }
       box.innerHTML = '<dl>' +
@@ -227,7 +225,7 @@
         ((s.modelOptions || []).length ? '<label for="it-model">답변 모델 바꾸기</label><select id="it-model">' + s.modelOptions.map((o) => '<option value="' + esc(o.value) + '"' + (o.value === s.answerModel ? ' selected' : '') + '>' + esc(o.label) + '</option>').join('') + '</select>' : '<p class="it-hint">AI 키를 등록하면 모델을 고를 수 있어요(키 등록은 사본 GAS 편집기의 스크립트 속성에서).</p>') +
         '<div class="it-actions">' + ((s.modelOptions || []).length ? '<button type="button" class="g-btn g-btn--ghost it-btn-sm" id="it-model-save">모델 저장</button>' : '') + '</div>' +
         '<p class="it-hint" id="it-admin-msg" role="status"></p>';
-    } catch (e) { box.innerHTML = '<p class="it-hint">' + esc(e.message) + '</p>'; }
+    } catch (e) { if (generation !== S.guard.current()) return; box.innerHTML = '<p class="it-hint">' + esc(e.message) + '</p>'; }
   }
   async function adminAction(id) {
     const out = $('it-admin-msg');
@@ -257,5 +255,6 @@
   });
   $('it-admin').addEventListener('toggle', () => { if ($('it-admin').open) loadAdmin(); });
   $('it-admin-body').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) adminAction(b.id); });
+  window.paToolReady = window.paToolReady || {}; window.paToolReady.it = true;
   boot();
 })();

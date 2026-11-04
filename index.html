@@ -59,7 +59,7 @@
     <div class="g-hero-grid">
       <div class="g-hero-text">
         <p class="g-kicker">프라임에셋 프리미엄사업부</p>
-        <h1 id="hero-title">19개 본부, 1,200명 설계사가 <span class="g-nowrap">함께 성장하는 곳</span></h1>
+        <h1 id="hero-title"><span data-hero-branches>19개 본부</span>, <span data-hero-agents>1,200명</span> 설계사가 <span class="g-nowrap">함께 성장하는 곳</span></h1>
         <div class="g-actions">
           <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#F5D76E" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.78 1.9 5.22 4.74 6.59l-1.2 4.39a.28.28 0 0 0 .43.31l5.2-3.53c.27.02.55.03.83.03 5.52 0 10-3.48 10-7.79S17.52 3 12 3Z"/><path fill="#201B11" d="M7 9h10v1.5H7zm0 3h6v1.5H7z"/></svg>합류문의</a>
         </div>
@@ -69,8 +69,8 @@
       </div>
     </div>
     <div class="g-stats" id="numbers">
-      <div class="g-stat"><b data-count>19개 본부</b><small>함께하는 본부</small></div>
-      <div class="g-stat"><b data-count>1,200명</b><small>함께하는 설계사</small></div>
+      <div class="g-stat"><b data-count data-hero-branches>19개 본부</b><small>함께하는 본부</small></div>
+      <div class="g-stat"><b data-count data-hero-agents>1,200명</b><small>함께하는 설계사</small></div>
       <div class="g-stat"><b data-count>50억 2,332만 원</b><small>연간 총 월납보험료</small></div>
       <div class="g-stat"><b>프리미엄사업부</b><small>프라임에셋 1등사업부</small></div>
     </div>
@@ -376,6 +376,7 @@
 <!-- 휴대폰 아래 고정 합류 문의 막대: 첫 화면(숫자 타일 포함)이 지나간 뒤에만 보임 -->
 <script src="assets/home-layout.js?v=2" defer></script>
 <!-- 스크롤 연출: 숫자 카운트업 + scroll-driven animation 미지원 시 카드 등장 대체(IntersectionObserver). 움직임 줄이기면 아무것도 안 함 -->
+<script src="assets/home-stats.js?v=20261104-t10" defer></script>
 <script src="assets/home-motion.js?v=1" defer></script>
 <!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) + 메뉴 안 조용한 설치 버튼 -->
 <script src="/assets/site-nav.js?v=20261103-audit" defer></script>

@@ -1,4 +1,4 @@
-/* 보험보상답변기(/members/claim/) — 인트라넷·위키와 같은 어두운 바탕 + 금색 포인트. 사진 없음. */
+/* 업무 도구 전용 구조. 밝은 색상·접근성 토큰은 intranet-light.css에서 공통 관리. */
 .cl-wrap{max-width:880px}
 .cl-hero{margin:8px 0 20px}
 .cl-eyebrow{margin:0 0 6px;font-size:var(--fs-cap);color:var(--gold);letter-spacing:.02em}
@@ -10,18 +10,18 @@
 .cl-gate a{color:var(--gold-hi)}
 .cl-status{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .cl-status li{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line-2);border-radius:999px;font-size:var(--fs-cap);color:var(--text-2);background:var(--bg-1)}
-.cl-dot{width:8px;height:8px;border-radius:50%;background:#7d8696;flex:none}
-.cl-status li.is-ok .cl-dot{background:#7fd09a}
+.cl-dot{width:8px;height:8px;border-radius:50%;background:var(--text-3);flex:none}
+.cl-status li.is-ok .cl-dot{background:var(--success)}
 .cl-status li.is-warn .cl-dot{background:var(--gold)}
-.cl-status li.is-bad .cl-dot{background:#ff8f86}
+.cl-status li.is-bad .cl-dot{background:var(--danger)}
 .cl-form .pa-h3 label{cursor:pointer}
 .cl-hint{margin:4px 0 8px;font-size:15px;color:var(--text-3)}
 .cl-q{min-height:140px;resize:vertical;line-height:1.6;font-size:17px}
 .cl-examples{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
 .cl-chip{min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid var(--line-2);background:transparent;color:var(--text-2);font-size:15px;cursor:pointer}
-.cl-chip:hover{border-color:rgba(214,185,126,.5);color:var(--text)}
+.cl-chip:hover{border-color:var(--accent);color:var(--text)}
 .cl-upload{margin:0 0 18px}
-.cl-drop{display:block;padding:16px 18px;border:1px dashed rgba(214,185,126,.45);border-radius:var(--r-tile);background:var(--gold-soft);cursor:pointer}
+.cl-drop{display:block;padding:16px 18px;border:1px dashed var(--accent);border-radius:var(--r-tile);background:var(--gold-soft);cursor:pointer}
 .cl-drop strong{display:block;color:var(--text);margin:0 0 4px}
 .cl-drop span{display:block;color:var(--text-2);font-size:15px;line-height:1.55}
 .cl-drop.is-drag{border-style:solid;border-color:var(--gold)}
@@ -32,7 +32,7 @@
 .cl-files li span{min-width:0;color:var(--text-2);font-size:15px}
 .cl-files li b{color:var(--text);font-weight:600}
 .cl-actions{display:flex;flex-wrap:wrap;gap:10px}
-.cl-form-msg{margin:10px 0 0;color:#ffb3ab;font-size:15px}
+.cl-form-msg{margin:10px 0 0;color:var(--danger);font-size:15px}
 .cl-form-msg:empty{display:none}
 .cl-btn-sm{min-height:40px;padding:8px 16px;font-size:15px}
 .cl-progress .pa-h3{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
@@ -41,26 +41,26 @@
 .cl-steps li{position:relative;padding:10px 12px 10px 40px;border:1px solid var(--line);border-radius:var(--r-tile);color:var(--text-3);background:var(--bg-2);counter-increment:clstep}
 .cl-steps{counter-reset:clstep}
 .cl-steps li::before{content:counter(clstep);position:absolute;left:12px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;border:1px solid var(--line-2);color:var(--text-3)}
-.cl-steps li.is-active{color:var(--text);border-color:rgba(214,185,126,.45)}
+.cl-steps li.is-active{color:var(--text);border-color:var(--accent)}
 .cl-steps li.is-active::before{border-color:var(--gold);color:var(--gold)}
 .cl-steps li.is-done{color:var(--text-2)}
 .cl-steps li.is-done::before{content:'✓';background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
 .cl-progress-text{margin:6px 0 0;color:var(--text-2);font-size:15px}
 .cl-result-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 6px}
 .cl-result-head .pa-h3{margin:0}
-.cl-badge{display:inline-block;margin:4px 0 10px;padding:5px 12px;border-radius:999px;font-size:var(--fs-cap);border:1px solid rgba(127,208,154,.45);color:#a9e5bd;background:rgba(127,208,154,.08)}
-.cl-badge.is-miss{border-color:rgba(255,143,134,.45);color:#ffb3ab;background:rgba(255,143,134,.08)}
+.cl-badge{display:inline-block;margin:4px 0 10px;padding:5px 12px;border-radius:999px;font-size:var(--fs-cap);border:1px solid var(--success);color:var(--success);background:var(--success-soft)}
+.cl-badge.is-miss{border-color:var(--danger);color:var(--danger);background:var(--danger-soft)}
 .cl-badge:empty{display:none}
-.cl-notice{margin:0 0 10px;padding:10px 14px;border-radius:var(--r-tile);background:var(--gold-soft);border:1px solid rgba(214,185,126,.3);color:var(--text);font-size:15px}
+.cl-notice{margin:0 0 10px;padding:10px 14px;border-radius:var(--r-tile);background:var(--gold-soft);border:1px solid var(--line-2);color:var(--text);font-size:15px}
 .cl-answer{color:var(--text);line-height:1.75}
 .cl-answer h2,.cl-answer h3{font-size:18px;margin:20px 0 8px;color:var(--gold-hi);letter-spacing:-.01em}
 .cl-answer h2:first-child,.cl-answer h3:first-child{margin-top:4px}
 .cl-answer p{margin:6px 0;color:var(--text)}
 .cl-answer ul,.cl-answer ol{margin:6px 0 10px;padding-left:22px}
 .cl-answer li{margin:4px 0}
-.cl-answer strong{color:#fff}
-.cl-answer .cl-risk{color:#ff9d94;font-weight:600}
-.cl-answer .cl-good{color:#8fdcaa;font-weight:600}
+.cl-answer strong{color:var(--text)}
+.cl-answer .cl-risk{color:var(--danger);font-weight:600}
+.cl-answer .cl-good{color:var(--success);font-weight:600}
 .cl-answer .cl-doc{color:var(--gold-hi);font-weight:600}
 .cl-answer .cl-code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;background:var(--bg-2);padding:1px 6px;border-radius:6px}
 .cl-answer .cl-table{overflow-x:auto;margin:8px 0}
@@ -73,7 +73,7 @@
 .cl-case-title{display:block;color:var(--text);font-weight:600;line-height:1.5}
 .cl-case-meta{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 .cl-case-meta span{font-size:13px;padding:2px 10px;border-radius:999px;border:1px solid var(--line-2);color:var(--text-2)}
-.cl-case-meta .cl-no{border-color:rgba(214,185,126,.45);color:var(--gold-hi)}
+.cl-case-meta .cl-no{border-color:var(--accent);color:var(--gold-hi)}
 .cl-case-sum{margin:4px 0 0;color:var(--text-2);font-size:15px;line-height:1.65}
 .cl-empty{color:var(--text-3);font-size:15px;margin:6px 0 0}
 .cl-more summary{cursor:pointer;font-weight:600}
@@ -82,7 +82,7 @@
 .cl-sources small{color:var(--text-3)}
 .cl-orig{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line)}
 .cl-orig a{color:var(--gold-hi)}
-.cl-caution{border-color:rgba(214,185,126,.3)}
+.cl-caution{border-color:var(--line-2)}
 .cl-caution p{margin:0;color:var(--text-2)}
 .cl-admin summary{cursor:pointer;font-weight:600}
 .cl-admin dl{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:6px 14px;margin:12px 0;font-size:15px}

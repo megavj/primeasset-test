@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#070a12">
+<meta name="theme-color" content="#f5f7fa">
 <meta name="robots" content="noindex,nofollow">
 <title>보험보상답변기 · 설계사 전용 | 프라임에셋 프리미엄 (테스트)</title>
 <meta name="description" content="승인된 설계사 전용 보험보상 답변 도구">
@@ -13,9 +13,10 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="/assets/glass.css?v=16">
-<link rel="stylesheet" href="/assets/claim.css?v=20261104-claim">
+<link rel="stylesheet" href="/assets/claim.css?v=20261104-t10">
+<link rel="stylesheet" href="/assets/intranet-light.css?v=20261104-t10">
 </head>
-<body class="g-members g-claim">
+<body class="g-members g-claim intranet-light">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
 <div class="g-bg" aria-hidden="true"></div>
 <div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
@@ -33,6 +34,9 @@
   <section id="cl-gate" class="pa-card cl-gate" aria-live="polite">
     <p id="cl-gate-msg">로그인 상태를 확인하는 중…</p>
   </section>
+
+  <noscript><p class="pa-card intranet-load-note">답변기를 사용하려면 브라우저에서 자바스크립트를 켜 주세요. <a href="/members/#login">로그인 화면으로 이동</a></p></noscript>
+  <p id="cl-load-error" class="pa-card intranet-load-note" role="alert" hidden>화면을 불러오지 못했습니다. 연결을 확인한 뒤 <a href="">새로고침</a>해 주세요. <a href="/members/#home">인트라넷으로 돌아가기</a></p>
 
   <div id="cl-app" hidden>
     <ul class="cl-status" aria-label="연결 상태">
@@ -57,7 +61,7 @@
         </label>
         <input id="cl-file" class="cl-file" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.heic,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.hwp,.hwpx,.txt">
         <ul id="cl-files" class="cl-files" aria-label="첨부한 파일"></ul>
-        <p class="cl-hint">첨부 서류는 분석이 끝나면 바로 지웁니다. 주민번호·주소·연락처가 보이는 면은 가리고 올려 주세요.</p>
+        <p class="cl-hint">분석 후 임시 파일을 휴지통으로 이동합니다. 주민번호·주소·연락처가 보이는 면은 가리고 올려 주세요.</p>
       </div>
 
       <div class="cl-actions">
@@ -71,7 +75,7 @@
       <h2 id="cl-progress-title" class="pa-h3">답변을 만드는 중 <span id="cl-elapsed" class="cl-elapsed">00:00</span></h2>
       <ol class="cl-steps">
         <li data-step="0">질문 접수</li>
-        <li data-step="1">판례·분쟁조정 검색(맥 자료창고)</li>
+        <li data-step="1">판례·분쟁조정 검색</li>
         <li data-step="2">기준 문서·사례 대조</li>
         <li data-step="3">답변 작성·검수</li>
       </ol>
@@ -90,7 +94,7 @@
       </div>
       <div class="pa-card">
         <h2 class="pa-h3">근거 판례·분쟁조정</h2>
-        <p class="cl-hint">맥 자료창고에서 지금 찾은 유사 사례입니다. 현재 사안의 결론을 확정하는 자료가 아닙니다.</p>
+        <p class="cl-hint">조회한 판례·분쟁조정 중 유사 사례입니다. 현재 사안의 결론을 확정하는 자료가 아닙니다.</p>
         <ol id="cl-cases" class="cl-cases"></ol>
       </div>
       <details class="pa-card cl-more" id="cl-sources-box">
@@ -110,13 +114,14 @@
     </details>
   </div>
 
-  <p class="cl-legacy" id="cl-legacy-wrap" hidden><a id="cl-legacy" href="/members/#home" target="_blank" rel="noopener noreferrer">이전 답변기(구글 앱) 열기 ↗</a></p>
+  <p class="cl-legacy" id="cl-legacy-wrap" hidden><a id="cl-legacy" href="/members/#home" target="_blank" rel="noopener noreferrer">이전 답변기 열기 ↗</a></p>
 </main>
 <footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="/privacy/">개인정보처리방침</a></footer>
 <script src="/assets/auth-config.js?v=2" defer></script>
 <script src="/assets/site-nav.js?v=20261103-audit" defer></script>
 <script src="/assets/pwa.js?v=1" defer></script>
 <script src="/assets/pa-client.js?v=1" defer></script>
-<script src="/assets/claim.js?v=20261104-claim" defer></script>
+<script src="/assets/tool-session.js?v=20261104-t10" defer></script>
+<script src="/assets/claim.js?v=20261104-t10" defer></script>
 </body>
 </html>

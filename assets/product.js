@@ -69,9 +69,9 @@
     if (!p) return;
     const online = p.online === true;
     document.querySelector('.px-connection').dataset.state = online ? 'online' : 'offline';
-    byId('processor-state').textContent = online ? '자료 조회 연결됨' : '처리기 응답 없음';
+    byId('processor-state').textContent = online ? '자료 조회 연결됨' : '자료 조회 연결 지연';
     byId('connection-notice').hidden = online;
-    byId('connection-notice').textContent = online ? '' : '자료 처리기가 응답하지 않습니다. 질문은 접수되며 처리기가 다시 연결되면 이어서 처리됩니다.';
+    byId('connection-notice').textContent = online ? '' : '자료 조회가 지연되고 있습니다. 잠시 후 답변을 다시 확인해 주세요.';
   }
   const fallbackExamples = [
     '메리츠화재와 KB손보 암보험의 가입조건과 주의점을 비교해줘',
@@ -259,7 +259,7 @@
         byId('progress-message').textContent='자료 처리 중 오류가 발생했습니다. 질문을 수정한 뒤 다시 보내 주세요.';
         byId('stop-waiting').hidden=true; byId('resume-waiting').hidden=true; return;
       }
-      if(r.status==='대기') { setStep(1); byId('progress-title').textContent='접수 완료 · 처리 차례 대기'; byId('progress-message').textContent=(r.ahead?'앞에 '+r.ahead+'건 대기 중. ':'')+(r.notice||'자료 처리기가 질문을 가져갈 때까지 기다립니다.'); rememberStatus(job,'대기 중'); }
+      if(r.status==='대기') { setStep(1); byId('progress-title').textContent='접수 완료 · 처리 차례 대기'; byId('progress-message').textContent=(r.ahead?'앞에 '+r.ahead+'건 대기 중. ':'')+(r.notice||'접수 순서대로 자료를 찾고 있습니다.'); rememberStatus(job,'대기 중'); }
       else if(r.status==='처리중') { setStep(2); byId('progress-title').textContent='자료를 조회하고 있습니다'; byId('progress-message').textContent=r.notice||'접수된 질문에 맞는 내부 자료를 찾고 있습니다.'; rememberStatus(job,'자료 조회 중'); }
       else if(r.status==='근거완료'||r.status==='답변중') { setStep(3); byId('progress-title').textContent='근거를 바탕으로 답변 작성 중'; byId('progress-message').textContent=r.notice||'조회한 자료를 상담에 활용할 수 있도록 정리하고 있습니다.'; rememberStatus(job,'답변 작성 중'); }
       else { byId('progress-title').textContent='답변 상태를 확인하고 있습니다'; byId('progress-message').textContent='처리 상태가 확인되면 이곳에 표시합니다.'; }
@@ -282,7 +282,7 @@
     if(sourceList(a).length) lines.push('\n■ 출처',...sourceList(a).map(s=>'['+str(s.n)+'] '+sourceText(s)));
     else lines.push('\n■ 출처\n제공된 출처가 없습니다. 근거를 추가 확인해 주세요.');
     if(a.noData) lines.push('\n관련 자료가 부족합니다.');
-    lines.push('\n상품 통합 분석기 · 내부검색 자료 기준 자동 생성 답변입니다. 실제 설계·고지 전 원문과 전산을 확인하세요.');
+    lines.push('\n상품 통합 분석기 · 등록된 자료를 바탕으로 작성한 답변입니다. 실제 설계·고지 전 원문과 전산을 확인하세요.');
     return lines.join('\n');
   }
   function citeText(host,text,sources) {
@@ -320,7 +320,7 @@
     const src=el('section','px-sources');src.append(el('h3','','답변의 근거'),el('p','px-small','문서명 · 쪽 · 기준월을 확인하세요. 출처 번호는 아래 근거로 이동합니다.'));
     sources.forEach(s=>{const div=el('div','px-source','['+str(s.n)+'] '+sourceText(s));if(/^\d{1,2}$/.test(str(s.n)))div.id='source-'+s.n;div.tabIndex=-1;src.append(div);});
     if(!sources.length)src.append(el('p','px-small','제공된 출처가 없습니다.'));host.append(src);
-    host.append(el('p','px-small','내부검색 자료 기준 자동 생성 답변입니다. 실제 설계·고지 전 원문과 전산을 확인하세요.'));
+    host.append(el('p','px-small','등록된 자료를 바탕으로 작성한 답변입니다. 실제 설계·고지 전 원문과 전산을 확인하세요.'));
     scroll(host);title.focus({preventScroll:true});announce(arrived?'답변이 도착했습니다. 근거를 함께 확인하세요.':'최근 답변을 열었습니다.');
   }
   function showTab(name,focus) {

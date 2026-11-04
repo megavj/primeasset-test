@@ -1,5 +1,5 @@
-/* Product workspace only. Shared dark palette lives in glass.css. */
-.product-page { --px-border:#657186; font-size:16px; }
+/* 업무 도구 전용 구조. 밝은 색상·접근성 토큰은 intranet-light.css에서 공통 관리. */
+.product-page { --px-border:var(--control-border); font-size:16px; }
 .product-page button,.product-page textarea,.product-page select { font:inherit; }
 .product-page button { cursor:pointer; }
 .product-page button:disabled { cursor:wait; color:var(--text-2); background:var(--bg-2); }
@@ -101,7 +101,7 @@
 .px-footer p { margin:0; }
 .px-toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); max-width:calc(100% - 32px); padding:14px 20px; border:1px solid var(--gold); border-radius:12px; background:var(--bg-2); color:var(--text); z-index:100; font-size:14px; }
 .px-copy-dialog { background:var(--bg-1); color:var(--text); border:1px solid var(--px-border); border-radius:16px; width:600px; max-width:calc(100% - 32px); padding:24px; }
-.px-copy-dialog::backdrop { background:rgba(0,0,0,.7); }
+.px-copy-dialog::backdrop { background:var(--dialog-backdrop); }
 .px-copy-dialog form { margin-top:16px; text-align:right; }
 .px-noscript { max-width:800px; margin:24px auto; padding:24px; }
 .px-noscript a { display:inline-flex; align-items:center; }

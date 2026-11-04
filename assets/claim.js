@@ -14,41 +14,34 @@
   function gate(html) { $('cl-gate').hidden = false; $('cl-gate-msg').innerHTML = html; $('cl-app').hidden = true; }
   function formMsg(t) { $('cl-form-msg').textContent = t || ''; }
 
-  async function token() {
-    const { data } = await S.sb.auth.getSession();
-    return data && data.session ? data.session.access_token : '';
+  function clearSession() {
+    S.me = null; S.answer = ''; setBusy(false);
+    $('cl-q').value = ''; $('cl-result').hidden = true;
+    ['cl-answer', 'cl-admin-body', 'cl-originals', 'cl-sources', 'cl-cases', 'cl-followups'].forEach((id) => { if ($(id)) $(id).replaceChildren(); });
+    $('cl-admin').hidden = true; $('cl-admin').open = false;
+    $('cl-legacy-wrap').hidden = true; $('cl-legacy').removeAttribute('href');
+    S.files = []; renderFiles(); $('cl-file').value = '';
+    ['notice','case-badge','manual-badge','sources-count','answer-meta','answer-notes','manuals','links','clarification','progress-text'].forEach((suffix) => { const el = $('cl-' + suffix); if (el) el.replaceChildren(); });
+    formMsg(''); gate('로그인 정보가 바뀌어 입력과 답변을 지웠습니다. <a href="">화면 다시 열기</a>');
   }
-  async function api(action, payload) {
-    const t = await token();
-    if (!t) { const e = new Error('로그인이 만료됐어요. 다시 로그인해 주세요.'); e.code = 'unauthorized'; throw e; }
-    let res;
-    try {
-      res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(Object.assign({ action, token: t, screen: innerWidth < 700 ? 'mobile' : 'desktop' }, payload || {})), credentials: 'omit', redirect: 'follow' });
-    } catch (e) {
-      const err = new Error('답변기 서버에 연결하지 못했어요. 관리자 설정(최초 권한 허용)이 끝나지 않았거나 연결이 잠시 불안정합니다.'); err.code = 'network'; throw err;
-    }
-    let j = null;
-    try { j = await res.json(); } catch (e) { j = null; }
-    if (!res.ok || !j) { const err = new Error('답변기 서버가 아직 준비되지 않았어요(관리자 설정 전). 잠시 후 다시 시도해 주세요.'); err.code = 'server'; throw err; }
-    if (!j.ok) { const err = new Error(j.message || '처리하지 못했어요. 잠시 후 다시 시도해 주세요.'); err.code = j.error; err.sub = j.code; throw err; }
-    return j;
-  }
+  function api(action, payload, generation) { return S.guard.request(GAS_URL, action, payload, generation); }
 
   /* ---------- 시작: 로그인·승인 확인 ---------- */
   async function boot() {
-    try { S.sb = await window.paClient(); } catch (e) { return gate('잠시 후 다시 열어 주세요.'); }
+    try { S.sb = await window.paClient(); S.guard = window.paToolSession(S.sb, clearSession); } catch (e) { return gate('화면을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.'); }
     let session = null;
-    try { session = (await S.sb.auth.getSession()).data.session; } catch (e) { session = null; }
+    try { session = await S.guard.initialize(); } catch (e) { session = null; }
     if (!session) return gate('설계사 로그인 후 쓸 수 있어요. <a href="/members/#login">로그인하기</a>');
+    const generation = S.guard.current();
     let prof = null;
-    try { const r = await S.sb.rpc('my_profile'); if (r.error) throw r.error; prof = r.data && r.data[0]; }
-    catch (e) { return gate('회원 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.'); }
+    try { const r = await S.sb.rpc('my_profile'); if (r.error) throw r.error; S.guard.check(generation); prof = r.data && r.data[0]; }
+    catch (e) { if (generation === S.guard.current()) gate('회원 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
     if (!prof || prof.status !== 'active') {
       return gate(prof && prof.status === 'pending' ? '가입 승인 대기 중이에요. 관리자가 승인하면 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>' : '가입 승인된 설계사만 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>');
     }
-    legacyLink();
-    try { S.me = await api('whoami'); }
-    catch (e) { return gate(esc(e.message)); }
+    legacyLink(generation);
+    try { const me = await api('whoami', {}, generation); S.guard.check(generation); S.me = me; }
+    catch (e) { if (e.code !== 'stale_session') gate(esc(e.message)); return; }
     $('cl-gate').hidden = true;
     $('cl-app').hidden = false;
     renderStatus(S.me);
@@ -58,14 +51,14 @@
   function renderStatus(me) {
     const mac = $('cl-st-mac'), ai = $('cl-st-ai'), p = me.processor || {};
     mac.className = p.online ? 'is-ok' : 'is-bad';
-    mac.lastElementChild.textContent = p.online ? '판례 검색 연결됨(맥 자료창고)' : '판례 검색 꺼짐 — 기준 문서로만 답변';
+    mac.lastElementChild.textContent = p.online ? '판례 검색 연결됨' : '판례 검색 꺼짐 — 기준 문서로만 답변';
     ai.className = me.ai && me.ai.ready ? 'is-ok' : 'is-warn';
-    ai.lastElementChild.textContent = me.ai && me.ai.ready ? 'AI 답변 준비됨' : 'AI 키 등록 전 — 근거만 표시';
+    ai.lastElementChild.textContent = me.ai && me.ai.ready ? 'AI 답변 준비됨' : '답변 서비스 준비 중 · 확인된 근거만 표시';
   }
   /* 이전 답변기(기존 GAS) 링크: 인트라넷 메뉴에 등록된 주소를 그대로 쓴다(권한 있는 회원만 보임) */
-  async function legacyLink() {
+  async function legacyLink(generation) {
     try {
-      const r = await S.sb.rpc('my_menu');
+      const r = await S.sb.rpc('my_menu'); S.guard.check(generation);
       const item = (r.data || []).find((x) => /보상\s*답변/.test(x.name || '') && x.unlocked && x.url && !/\/members\/claim/.test(x.url));
       if (item && /^https:\/\//.test(item.url)) { $('cl-legacy').href = item.url; $('cl-legacy-wrap').hidden = false; }
     } catch (e) { /* 링크만 숨김 */ }
@@ -75,6 +68,9 @@
   function tick() { const s = Math.floor((Date.now() - S.started) / 1000); $('cl-elapsed').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }
   function setBusy(on) {
     S.busy = on;
+    ['cl-q', 'cl-file', 'cl-clear'].forEach((id) => { $(id).disabled = on; });
+    document.querySelectorAll('[data-remove], [data-example]').forEach((b) => { b.disabled = on; });
+    $('cl-drop').setAttribute('aria-disabled', String(on));
     $('cl-ask').disabled = on; $('cl-ask').setAttribute('aria-disabled', String(on));
     $('cl-app').setAttribute('aria-busy', String(on));
     if (on) { S.started = Date.now(); S.step = -1; tick(); clearInterval(S.timer); S.timer = setInterval(tick, 1000); $('cl-progress').hidden = false; $('cl-result').hidden = true; }
@@ -95,59 +91,64 @@
     formMsg('');
     if (!S.files.length && !q) { formMsg('질문을 입력하거나 서류를 첨부해 주세요.'); $('cl-q').focus(); return; }
     if (S.files.length && !(S.me && S.me.ai && S.me.ai.ready)) { formMsg('서류 분석은 AI 키 등록 후 쓸 수 있어요. 지금은 첨부를 빼고 질문만 보내 주세요.'); return; }
+    const generation = S.guard.current();
     setBusy(true);
     try {
       const isDoc = !!S.files.length;
-      const res = isDoc ? await askDocs(q) : await askText(q);
+      const res = isDoc ? await askDocs(q, generation) : await askText(q, generation);
+      S.guard.check(generation);
       setBusy(false);
       showResult(res, isDoc);
     } catch (e) {
+      if (generation !== S.guard.current()) return;
       setBusy(false);
       formMsg(e.message || '처리하지 못했어요. 잠시 후 다시 시도해 주세요.');
       if (e.code === 'unauthorized') gate(esc(e.message) + ' <a href="/members/#login">로그인하기</a>');
     }
   }
-  async function askText(q) {
+  async function askText(q, generation) {
     step(0, '질문을 보내는 중…');
-    const sub = await api('submit', { question: q });
-    step(1, sub.processor && !sub.processor.online ? '맥 판례 처리기가 응답하지 않아요. 최대 25초 기다린 뒤 기준 문서로 답합니다.' : '맥 자료창고에서 판례·분쟁조정 사례를 찾는 중…');
+    const sub = await api('submit', { question: q }, generation);
+    step(1, sub.processor && !sub.processor.online ? '판례 조회가 지연되고 있습니다. 최대 25초 후 기준 문서로 답변합니다.' : '판례·분쟁조정 사례를 찾는 중…');
     const t0 = Date.now();
     while (Date.now() - t0 < 27000) {
-      await sleep(2000);
+      await sleep(2000); S.guard.check(generation);
       let st;
-      try { st = await api('status', { id: sub.id }); } catch (e) { break; }
+      try { st = await api('status', { id: sub.id }, generation); } catch (e) { if (e.code === 'stale_session' || e.code === 'unauthorized' || e.code === 'forbidden') throw e; break; }
       if (st.status === '근거완료') { progress('판례·분쟁조정 근거 ' + st.evidenceCount + '건을 찾았어요(검색 ' + st.searchSec + '초).'); break; }
       if (st.status === '오류') { progress('판례 검색이 되지 않았어요. 기준 문서로 답합니다.'); break; }
       progress('판례·분쟁조정 사례를 찾는 중… ' + Math.min(st.waitedSec, 25) + '초 / 최대 25초');
     }
     step(2, '기준 문서와 판례를 대조하는 중…');
-    const later = setTimeout(() => { if (S.busy && S.step === 2) step(3, '답변을 쓰고 검수하는 중… (보통 1~3분)'); }, 4000);
-    try { return await api('answer', { id: sub.id, question: q }); } finally { clearTimeout(later); }
+    const later = setTimeout(() => { if (generation === S.guard.current() && S.busy && S.step === 2) step(3, '답변을 쓰고 검수하는 중… (보통 1~3분)'); }, 4000);
+    try { return await api('answer', { id: sub.id, question: q }, generation); } finally { clearTimeout(later); }
   }
   function b64(buf) { let bin = ''; const bytes = new Uint8Array(buf); for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); }
-  async function askDocs(q) {
+  async function askDocs(q, generation) {
+    const files = S.files.slice();
     step(0, '파일을 안전하게 보내는 중…');
-    const meta = S.files.map((f) => ({ name: f.name, mime: f.type || 'application/octet-stream', size: f.size, chunks: Math.ceil(f.size / CHUNK) }));
-    const job = await api('upStart', { files: meta });
+    const meta = files.map((f) => ({ name: f.name, mime: f.type || 'application/octet-stream', size: f.size, chunks: Math.ceil(f.size / CHUNK) }));
+    const job = await api('upStart', { files: meta }, generation);
     const total = meta.reduce((a, m) => a + m.chunks, 0);
     let sent = 0;
-    for (let fi = 0; fi < S.files.length; fi++) {
-      const f = S.files[fi];
+    for (let fi = 0; fi < files.length; fi++) {
+      const f = files[fi];
       for (let ci = 0; ci < meta[fi].chunks; ci++) {
         const buf = await f.slice(ci * CHUNK, Math.min(f.size, (ci + 1) * CHUNK)).arrayBuffer();
-        await api('upChunk', { jobId: job.jobId, fileIndex: fi, chunkIndex: ci, data: b64(buf) });
+        await api('upChunk', { jobId: job.jobId, fileIndex: fi, chunkIndex: ci, data: b64(buf) }, generation);
         sent++; progress('파일 보내는 중 ' + sent + '/' + total);
       }
     }
-    await api('upFinish', { jobId: job.jobId });
+    await api('upFinish', { jobId: job.jobId }, generation);
     step(1, '문서를 읽으면서 판례·분쟁조정 사례를 함께 찾는 중… (파일 수에 따라 1~4분)');
-    const later = setTimeout(() => { if (S.busy && S.step === 1) step(3, '사실관계와 근거를 대조해 답변을 쓰는 중…'); }, 40000);
-    try { return await api('docAnswer', { jobId: job.jobId, question: q }); } finally { clearTimeout(later); }
+    const later = setTimeout(() => { if (generation === S.guard.current() && S.busy && S.step === 1) step(3, '사실관계와 근거를 대조해 답변을 쓰는 중…'); }, 40000);
+    try { return await api('docAnswer', { jobId: job.jobId, question: q }, generation); } finally { clearTimeout(later); }
   }
 
   /* ---------- 결과 ---------- */
   function showResult(res, isDoc) {
-    S.answer = res.answer || '';
+    if (!res || typeof res.answer !== 'string' || (!res.answer.trim() && res.noKey !== true)) throw new Error('답변을 완성하지 못했습니다. 잠시 후 다시 이용해 주세요.');
+    S.answer = res.answer;
     const cs = res.caseSearch || {};
     const badge = $('cl-case-badge');
     badge.className = 'cl-badge' + (cs.ok ? '' : ' is-miss');
@@ -158,14 +159,14 @@
     $('cl-notice').hidden = !notes.length; $('cl-notice').textContent = notes.join(' ');
     $('cl-answer').innerHTML = S.answer ? (isDoc ? renderStructured(S.answer) : renderAnswer(S.answer)) : '<p class="cl-empty">답변 문장이 없습니다. 아래 근거를 먼저 확인해 주세요.</p>';
     $('cl-copy').hidden = !S.answer;
-    const cases = res.cases || [];
+    const cases = Array.isArray(res.cases) ? res.cases.filter((x) => x && typeof x === 'object') : [];
     $('cl-cases').innerHTML = cases.length ? cases.map((c) => '<li><span class="cl-case-title">' + esc(c.title) + '</span><div class="cl-case-meta">' +
-      (c.caseNo ? '<span class="cl-no">' + esc(c.caseNo) + '</span>' : '<span>사건·결정번호 표기 없음</span>') + (c.date ? '<span>' + esc(c.date) + '</span>' : '') + (c.page ? '<span>' + esc(c.page.split(',').map((p) => p + '쪽').join(' · ')) + '</span>' : '') +
+      (c.caseNo ? '<span class="cl-no">' + esc(c.caseNo) + '</span>' : '<span>사건·결정번호 표기 없음</span>') + (c.date ? '<span>' + esc(c.date) + '</span>' : '') + (c.page ? '<span>' + esc(String(c.page).split(',').map((p) => p + '쪽').join(' · ')) + '</span>' : '') +
       '</div>' + (c.summary ? '<p class="cl-case-sum">' + esc(c.summary) + '</p>' : '') + '</li>').join('') : '<li class="cl-empty">' + (cs.ok ? '화면에 보여 줄 수 있는 판례가 없습니다(비공개 출처 자료는 답변 참고에만 사용).' : '이번 질문은 판례 검색이 되지 않았습니다. 기준 문서와 기존 자료로만 답했습니다.') + '</li>';
-    const src = res.sources || [];
+    const src = Array.isArray(res.sources) ? res.sources.filter((x) => x && typeof x === 'object') : [];
     $('cl-sources-count').textContent = src.length ? '(' + src.length + ')' : '';
     $('cl-sources').innerHTML = src.map((s) => '<li>' + esc(s.title) + ' <small>' + esc(s.sourceType || '') + '</small></li>').join('') || '<li>표시할 자료가 없습니다.</li>';
-    $('cl-originals').innerHTML = (res.originals || []).filter((x) => x && /^https:\/\//.test(x.viewUrl || x.downloadUrl || '')).map((x) => '<div class="cl-orig"><span>' + esc(x.name) + ' <small>' + esc(x.type || '') + '</small></span><span><a href="' + esc(x.viewUrl || x.downloadUrl) + '" target="_blank" rel="noopener noreferrer">원문 보기 ↗</a></span></div>').join('');
+    $('cl-originals').innerHTML = (Array.isArray(res.originals) ? res.originals : []).filter((x) => x && /^https:\/\//.test(x.viewUrl || x.downloadUrl || '')).map((x) => '<div class="cl-orig"><span>' + esc(x.name) + ' <small>' + esc(x.type || '') + '</small></span><span><a href="' + esc(x.viewUrl || x.downloadUrl) + '" target="_blank" rel="noopener noreferrer">원문 보기 ↗</a></span></div>').join('');
     if (res.caution) $('cl-caution').textContent = res.caution;
     $('cl-result').hidden = false;
     const h = $('cl-result-title'); h.focus({ preventScroll: true }); h.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -189,7 +190,7 @@
         const head = line.replace(/^\||\|$/g, '').split('|').map((x) => x.trim());
         i += 2; const rows = [];
         while (i < lines.length && lines[i].includes('|')) { rows.push(lines[i].trim().replace(/^\||\|$/g, '').split('|').map((x) => x.trim())); i++; }
-        html += '<div class="cl-table"><table><thead><tr>' + head.map((x) => '<th>' + inline(x) + '</th>').join('') + '</tr></thead><tbody>' + rows.map((r) => '<tr>' + head.map((_, j) => '<td>' + inline(r[j] || '') + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+        html += '<div class="cl-table" role="region" tabindex="0" aria-label="답변 표 · 좌우로 스크롤하여 확인"><table><thead><tr>' + head.map((x) => '<th>' + inline(x) + '</th>').join('') + '</tr></thead><tbody>' + rows.map((r) => '<tr>' + head.map((_, j) => '<td>' + inline(r[j] || '') + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
         continue;
       }
       let m = line.match(/^(#{1,4})\s+(.+)$/);
@@ -217,14 +218,16 @@
 
   /* ---------- 서류(원본과 같은 제한) ---------- */
   function addFiles(list) {
+    if (S.busy) return;
     const incoming = Array.from(list || []); const msgs = [];
+    const previousLength = S.files.length;
     for (const f of incoming) {
       if (S.files.length >= MAX_FILES) { msgs.push('최대 10개까지 첨부할 수 있어요.'); break; }
       if (f.size > FILE_MAX) { msgs.push(f.name + ': 파일당 40MB를 넘었어요.'); continue; }
       if (!OK_EXT.test(f.name)) { msgs.push(f.name + ': 지원하지 않는 형식이에요.'); continue; }
       S.files.push(f);
     }
-    if (S.files.reduce((a, f) => a + f.size, 0) > TOTAL_MAX) { S.files.splice(-incoming.length); msgs.push('전체 첨부 용량은 120MB까지예요.'); }
+    if (S.files.reduce((a, f) => a + f.size, 0) > TOTAL_MAX) { S.files.splice(previousLength); msgs.push('전체 첨부 용량은 120MB까지예요.'); }
     formMsg(msgs.join(' '));
     renderFiles();
   }
@@ -236,10 +239,11 @@
   /* ---------- 관리자 ---------- */
   const yes = (v) => (v ? '있음' : '없음');
   async function loadAdmin() {
+    const generation = S.guard.current();
     const box = $('cl-admin-body');
     box.innerHTML = '<p class="cl-hint">불러오는 중…</p>';
     try {
-      const r = await api('adminData');
+      const r = await api('adminData', {}, generation); S.guard.check(generation);
       const s = r.settings || {}, c = r.copy || {}, p = c.processor || {}, q = c.queue || {}, st = r.stats || {};
       let last = ''; try { const L = JSON.parse(c.retention && c.retention.last || '{}'); last = L.at ? L.at + ' · 가린 행 ' + (L.masked || 0) : ''; } catch (e) { last = ''; }
       box.innerHTML = '<dl>' +
@@ -254,7 +258,7 @@
         ((s.modelOptions || []).length ? '<label for="cl-model">답변 모델 바꾸기</label><select id="cl-model">' + s.modelOptions.map((o) => '<option value="' + esc(o.value) + '"' + (o.value === s.answerModel ? ' selected' : '') + '>' + esc(o.label) + '</option>').join('') + '</select>' : '<p class="cl-hint">AI 키를 등록하면 모델을 고를 수 있어요(키 등록은 사본 GAS 편집기의 스크립트 속성에서).</p>') +
         '<div class="cl-actions">' + ((s.modelOptions || []).length ? '<button type="button" class="g-btn g-btn--ghost cl-btn-sm" id="cl-model-save">모델 저장</button>' : '') + (c.docIdSet ? '<button type="button" class="g-btn g-btn--ghost cl-btn-sm" id="cl-doc-refresh">기준 문서 다시 읽기</button>' : '') + '</div>' +
         '<p class="cl-hint" id="cl-admin-msg" role="status"></p>';
-    } catch (e) { box.innerHTML = '<p class="cl-hint">' + esc(e.message) + '</p>'; }
+    } catch (e) { if (generation !== S.guard.current()) return; box.innerHTML = '<p class="cl-hint">' + esc(e.message) + '</p>'; }
   }
   async function adminAction(id) {
     const out = $('cl-admin-msg');
@@ -269,7 +273,7 @@
   $('cl-clear').addEventListener('click', () => { if (S.busy) return; $('cl-q').value = ''; S.files = []; renderFiles(); $('cl-file').value = ''; formMsg(''); $('cl-result').hidden = true; $('cl-q').focus(); });
   document.querySelectorAll('[data-example]').forEach((b) => b.addEventListener('click', () => { $('cl-q').value = b.dataset.example; $('cl-q').focus(); }));
   $('cl-file').addEventListener('change', (e) => addFiles(e.target.files));
-  $('cl-files').addEventListener('click', (e) => { const b = e.target.closest('[data-remove]'); if (b) { S.files.splice(Number(b.dataset.remove), 1); renderFiles(); $('cl-file').focus(); } });
+  $('cl-files').addEventListener('click', (e) => { const b = e.target.closest('[data-remove]'); if (b && !S.busy) { S.files.splice(Number(b.dataset.remove), 1); renderFiles(); $('cl-file').focus(); } });
   const drop = $('cl-drop');
   ['dragenter', 'dragover'].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.add('is-drag'); }));
   ['dragleave', 'drop'].forEach((n) => drop.addEventListener(n, (e) => { e.preventDefault(); drop.classList.remove('is-drag'); }));
@@ -277,5 +281,6 @@
   $('cl-copy').addEventListener('click', copyAnswer);
   $('cl-admin').addEventListener('toggle', () => { if ($('cl-admin').open) loadAdmin(); });
   $('cl-admin-body').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) adminAction(b.id); });
+  window.paToolReady = window.paToolReady || {}; window.paToolReady.claim = true;
   boot();
 })();

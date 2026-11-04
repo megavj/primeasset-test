@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#070a12">
+<meta name="theme-color" content="#f5f7fa">
 <meta name="robots" content="noindex,nofollow">
 <title>전산답변기 · 설계사 전용 | 프라임에셋 프리미엄 (테스트)</title>
 <meta name="description" content="승인된 설계사 전용 보험사 전산 업무 답변 도구">
@@ -13,9 +13,10 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="/assets/glass.css?v=16">
-<link rel="stylesheet" href="/assets/it.css?v=20261104-it">
+<link rel="stylesheet" href="/assets/it.css?v=20261104-t10">
+<link rel="stylesheet" href="/assets/intranet-light.css?v=20261104-t10">
 </head>
-<body class="g-members g-it">
+<body class="g-members g-it intranet-light">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
 <div class="g-bg" aria-hidden="true"></div>
 <div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
@@ -33,6 +34,9 @@
   <section id="it-gate" class="pa-card it-gate" aria-live="polite">
     <p id="it-gate-msg">로그인 상태를 확인하는 중…</p>
   </section>
+
+  <noscript><p class="pa-card intranet-load-note">답변기를 사용하려면 브라우저에서 자바스크립트를 켜 주세요. <a href="/members/#login">로그인 화면으로 이동</a></p></noscript>
+  <p id="it-load-error" class="pa-card intranet-load-note" role="alert" hidden>화면을 불러오지 못했습니다. 연결을 확인한 뒤 <a href="">새로고침</a>해 주세요. <a href="/members/#home">인트라넷으로 돌아가기</a></p>
 
   <div id="it-app" hidden>
     <ul class="it-status" aria-label="연결 상태">
@@ -140,6 +144,7 @@
 <script src="/assets/site-nav.js?v=20261103-audit" defer></script>
 <script src="/assets/pwa.js?v=1" defer></script>
 <script src="/assets/pa-client.js?v=1" defer></script>
-<script src="/assets/it.js?v=20261104-it" defer></script>
+<script src="/assets/tool-session.js?v=20261104-t10" defer></script>
+<script src="/assets/it.js?v=20261104-t10" defer></script>
 </body>
 </html>

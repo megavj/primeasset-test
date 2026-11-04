@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#070a12">
+<meta name="theme-color" content="#f5f7fa">
 <meta name="robots" content="noindex,nofollow">
 <title>프리미엄 실전상담 통합코치 · 설계사 전용 | 프라임에셋 프리미엄 (테스트)</title>
 <meta name="description" content="승인된 설계사 전용 화법 코치·상담연습·영업능력 진단">
@@ -13,9 +13,10 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="/assets/glass.css?v=16">
-<link rel="stylesheet" href="/assets/coach.css?v=20261104-coach">
+<link rel="stylesheet" href="/assets/coach.css?v=20261104-t10">
+<link rel="stylesheet" href="/assets/intranet-light.css?v=20261104-t10">
 </head>
-<body class="g-members g-coach">
+<body class="g-members g-coach intranet-light">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
 <div class="g-bg" aria-hidden="true"></div>
 <div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
@@ -31,8 +32,10 @@
   </header>
   <section id="coach-gate" class="pa-card coach-gate" aria-live="polite"><p id="coach-gate-msg">로그인 상태를 확인하는 중…</p></section>
   <noscript><p class="pa-card">자바스크립트를 켜고 설계사 로그인 후 사용할 수 있습니다. <a href="/members/#login">로그인하기</a></p></noscript>
+  <p id="coach-load-error" class="pa-card intranet-load-note" role="alert" hidden>화면을 불러오지 못했습니다. 연결을 확인한 뒤 <a href="">새로고침</a>해 주세요. <a href="/members/#home">인트라넷으로 돌아가기</a></p>
   <div class="app coach-app" id="app" hidden>
     <div class="coach-status-row"><span id="coach-status" role="status">연결 확인 중</span><span id="coach-limit">회원별 1시간 30회</span></div>
+    <p class="coach-data-note">입력 내용과 첨부 자료는 답변 작성을 위해 외부 AI 서비스로 전송됩니다. 고객 이름·주민번호·연락처는 제외해 주세요.</p>
     <div class="credit">제작 · <b>프라임에셋 이사 김상현</b> · 010-8714-9262</div>
     <header class="coach-toolbar">
       <div class="seg" role="group" aria-label="코치 모드"><button id="mCoach" class="act" aria-pressed="true">화법도우미</button><button id="mRole" aria-pressed="false">상담연습</button><button id="mDiag" aria-pressed="false">영업능력 진단</button></div>
@@ -56,7 +59,7 @@
         <div class="drop">📎 PDF · 이미지 · TXT 를 놓으세요</div>
         <div class="kchat" id="kchat" role="log" aria-label="상담 대화" aria-live="polite" aria-relevant="additions"></div>
         <section class="diagform" id="diagform" aria-label="영업능력 진단 6문항">
-          <div class="diagintro"><b>나의 영업능력 진단</b><span>잘 보이기 위한 답보다 실제 숫자와 행동을 적을수록 정확합니다. 작성 내용은 진단에만 사용하고 질문 원문은 운영 로그에 저장하지 않습니다.</span></div>
+          <div class="diagintro"><b>나의 영업능력 진단</b><span>잘 보이기 위한 답보다 실제 숫자와 행동을 적을수록 정확합니다. 작성 내용은 진단에만 사용하고 입력한 상담 원문은 이용 기록에 저장하지 않습니다.</span></div>
           <div class="diagprogress"><span>작성 현황</span><b id="diagCount" aria-live="polite">0 / 6</b></div>
           <div class="dq"><label for="diagAnswer1"><span>1</span>최근 1개월 동안 실제 영업활동을 얼마나 했나요?</label><div class="ex" id="diagExample1">예: 연락한 고객 수, 상담 수, 제안 수, 하루·주간 활동 습관</div><textarea class="diaganswer" id="diagAnswer1" data-n="1" aria-describedby="diagExample1" placeholder="구체적인 횟수와 반복 습관을 적어주세요"></textarea></div>
           <div class="dq"><label for="diagAnswer2"><span>2</span>신규고객은 어떻게 찾고 첫 상담 약속까지 연결하나요?</label><div class="ex" id="diagExample2">예: 소개·DB·온라인·지인, 첫 연락 방식, 약속 성공 정도</div><textarea class="diaganswer" id="diagAnswer2" data-n="2" aria-describedby="diagExample2" placeholder="주요 고객발굴 경로와 실제 결과를 적어주세요"></textarea></div>
@@ -88,13 +91,14 @@
   <dialog class="overlay" id="overlay" aria-labelledby="adminTitle"><div class="modal" id="modal"><h2 id="adminTitle">관리자 모드</h2></div></dialog>
   <div class="toast" id="toast" role="alert"></div>
 
-  <p class="coach-legacy" id="coach-legacy-wrap" hidden><a id="coach-legacy" href="https://script.google.com/macros/s/AKfycbyKIz_hvVDlcVscBdGbJ1VCZIHRSz6yrLqRxyAH8WzJfqfQwdVMC-emgg2mPTxVPIk/exec" target="_blank" rel="noopener noreferrer">이전 코치(구글 앱) ↗</a></p>
+  <p class="coach-legacy" id="coach-legacy-wrap" hidden><a id="coach-legacy" href="https://script.google.com/macros/s/AKfycbyKIz_hvVDlcVscBdGbJ1VCZIHRSz6yrLqRxyAH8WzJfqfQwdVMC-emgg2mPTxVPIk/exec" target="_blank" rel="noopener noreferrer">이전 코치 열기 ↗</a></p>
 </main>
 <footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="/privacy/">개인정보처리방침</a></footer>
 <script src="/assets/auth-config.js?v=2" defer></script>
 <script src="/assets/site-nav.js?v=20261103-audit" defer></script>
 <script src="/assets/pwa.js?v=1" defer></script>
 <script src="/assets/pa-client.js?v=1" defer></script>
-<script src="/assets/coach.js?v=20261104-coach" defer></script>
+<script src="/assets/tool-session.js?v=20261104-t10" defer></script>
+<script src="/assets/coach.js?v=20261104-t10" defer></script>
 </body>
 </html>
