@@ -79,6 +79,36 @@
 
   <!-- 프리미엄사업부 실적보드(MAIN-V3-01): 188 홈(188.primeasset.info/#performance)의 '프리미엄사업부 실적보드'를 마크업 그대로 이식.
        S5-20261102: 월별 월보험료·계약건수 10개월은 이사님 제공 팜스 본부별 마감(사업부 본부 합계, 원 → 천원 사사오입) — 저장소 밖 harness/s5perf.py 가 계산·생성(/performance/ 와 같은 자료, perf-data JSON 은 아래). 막대는 전부 단색(생보·손보 구분 없음), 본부별 자료는 넣지 않음. 연출은 assets/perf-board.js(188 원본, 툴팁 생보·손보 줄만 뺌). 디자인만 test 유리 톤(assets/home-board.css) -->
+  <!-- 왜 프리미엄사업부인가: 수수료·승격·교육 -->
+  <section class="g-sec" id="why">
+    <h2>왜 프리미엄사업부인가</h2>
+    <p class="g-lead">경력자에겐 우대를, 신입에게는 성장할 수 있는 환경을!</p>
+    <div class="g-cq">
+      <div class="g-bento g-bento--why">
+        <div class="g-card g-reveal g-bento-item">
+          <h3>수수료가 투명합니다</h3>
+          <p>본사가 설계사에게 직접 지급하고, 매달 수수료표·시책·영업규정을 공개합니다.</p>
+        </div>
+        <div class="g-card g-reveal g-bento-item">
+          <h3>규정대로 승격됩니다</h3>
+          <p>규정을 채우면 설계사 → 팀장 → 지사장 → 본부장으로 자동 승격됩니다.</p>
+        </div>
+        <div class="g-card g-reveal g-bento-item">
+          <h3>교육과 도구가 준비돼 있습니다</h3>
+          <p>영업플랫폼과 수많은 교육과 자료를 지원합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 함께하는 본부: 성장스토리(/story/#branches)와 같은 목록 — assets/branches.js 하나로 연동(관리자 모드에서 바꾸면 두 곳 같이 바뀜) -->
+  <section class="g-sec" id="branches" aria-labelledby="branches-title">
+    <h2 id="branches-title">함께하는 <span data-branch-count>19</span>개 본부</h2>
+    <p class="g-lead">188본부에서 이어진 성장입니다.</p>
+    <div class="g-branches branches g-reveal" id="branch-list"></div>
+    <p class="g-note g-note--sec"><a class="g-link" href="story/#branches">성장 스토리에서 보기</a></p>
+  </section>
+
   <section class="g-sec g-board pb" id="performance" aria-labelledby="board-title">
     <h2 id="board-title">프리미엄사업부 실적보드</h2>
     <div class="pb pb-home">
@@ -123,28 +153,6 @@
         </ul>
       </article>
       <a class="g-link g-link--arrow pb-home__more" href="performance/">실적보드 전체 보기 <span class="g-btn__arrow" aria-hidden="true">→</span></a>
-    </div>
-  </section>
-
-  <!-- 왜 프리미엄사업부인가: 수수료·승격·교육 -->
-  <section class="g-sec" id="why">
-    <h2>왜 프리미엄사업부인가</h2>
-    <p class="g-lead">경력자에겐 우대를, 신입에게는 성장할 수 있는 환경을!</p>
-    <div class="g-cq">
-      <div class="g-bento g-bento--why">
-        <div class="g-card g-reveal g-bento-item">
-          <h3>수수료가 투명합니다</h3>
-          <p>본사가 설계사에게 직접 지급하고, 매달 수수료표·시책·영업규정을 공개합니다.</p>
-        </div>
-        <div class="g-card g-reveal g-bento-item">
-          <h3>규정대로 승격됩니다</h3>
-          <p>규정을 채우면 설계사 → 팀장 → 지사장 → 본부장으로 자동 승격됩니다.</p>
-        </div>
-        <div class="g-card g-reveal g-bento-item">
-          <h3>교육과 도구가 준비돼 있습니다</h3>
-          <p>영업플랫폼과 수많은 교육과 자료를 지원합니다.</p>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -237,24 +245,6 @@
     </div>
   </section>
 
-  <!-- 김상현 이사 -->
-  <section class="g-sec" id="ceo">
-    <h2>김상현 이사</h2>
-    <p class="g-lead">프라임에셋 이사 · 프리미엄사업부 대표</p>
-    <div class="g-card g-reveal g-ceo g-ceo--v3">
-      <p class="g-quote">말보다 데이터와 시스템으로 일하는 보험영업가</p>
-      <a class="g-link" href="/story/">성장 스토리 보기</a>
-    </div>
-  </section>
-
-  <!-- 함께하는 본부: 성장스토리(/story/#branches)와 같은 목록 — assets/branches.js 하나로 연동(관리자 모드에서 바꾸면 두 곳 같이 바뀜) -->
-  <section class="g-sec" id="branches" aria-labelledby="branches-title">
-    <h2 id="branches-title">함께하는 <span data-branch-count>19</span>개 본부</h2>
-    <p class="g-lead">188본부에서 이어진 성장입니다.</p>
-    <div class="g-branches branches g-reveal" id="branch-list"></div>
-    <p class="g-note g-note--sec"><a class="g-link" href="story/#branches">성장 스토리에서 보기</a></p>
-  </section>
-
   <!-- 자주 묻는 질문: 질문 5개를 같은 목록에 표시, 각 답변만 접기 유지 -->
   <section class="g-sec" id="faq">
     <h2>자주 묻는 질문</h2>
@@ -264,6 +254,16 @@
     <details class="g-faq g-reveal"><summary>Q. 보험영업을 제대로 배우고 싶습니다.</summary><p>A. 영업방식·공부자료·보상교육, 필요한 건 말씀만 주세요.</p></details>
     <details class="g-faq g-reveal"><summary>Q. 함께 일하려면 무엇이 필요한가요?</summary><p>A. 의지와 노력. 그 외에는 저희가 준비합니다. — 프라임에셋 이사 김상현</p></details>
     <p class="g-note g-note--sec"><a class="g-link" href="story/#faq">전체 질문 보기</a></p>
+  </section>
+
+  <!-- 김상현 이사 -->
+  <section class="g-sec" id="ceo">
+    <h2>김상현 이사</h2>
+    <p class="g-lead">프라임에셋 이사 · 프리미엄사업부 대표</p>
+    <div class="g-card g-reveal g-ceo g-ceo--v3">
+      <p class="g-quote">말보다 데이터와 시스템으로 일하는 보험영업가</p>
+      <a class="g-link" href="/story/">성장 스토리 보기</a>
+    </div>
   </section>
 
   <!-- 합류 문의 -->
