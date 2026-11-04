@@ -247,6 +247,14 @@
     </div>
   </section>
 
+  <!-- 함께하는 본부: 성장스토리(/story/#branches)와 같은 목록 — assets/branches.js 하나로 연동(관리자 모드에서 바꾸면 두 곳 같이 바뀜) -->
+  <section class="g-sec" id="branches" aria-labelledby="branches-title">
+    <h2 id="branches-title">함께하는 <span data-branch-count>19</span>개 본부</h2>
+    <p class="g-lead">188본부에서 이어진 성장입니다.</p>
+    <div class="g-branches branches g-reveal" id="branch-list"></div>
+    <p class="g-note g-note--sec"><a class="g-link" href="story/#branches">성장 스토리에서 보기</a></p>
+  </section>
+
   <!-- 자주 묻는 질문: 질문 5개를 같은 목록에 표시, 각 답변만 접기 유지 -->
   <section class="g-sec" id="faq">
     <h2>자주 묻는 질문</h2>
@@ -362,6 +370,7 @@
 }
 </script>
 <script src="assets/auth-config.js?v=2" defer></script>
+<script src="assets/branches.js?v=4" defer></script>
 <script src="assets/stats-beacon.js?v=1" data-page="/" defer></script>
 <script src="assets/perf-board.js?v=4" defer></script>
 <!-- 휴대폰 아래 고정 합류 문의 막대: 첫 화면(숫자 타일 포함)이 지나간 뒤에만 보임 -->
