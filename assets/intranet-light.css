@@ -158,6 +158,10 @@ body.intranet-light.intranet-decision .btn.reject { background:var(--danger); }
 @media (prefers-reduced-motion:reduce) {
   body.intranet-light *,body.intranet-light *::before,body.intranet-light *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
 }
+/* 팀쿡 화면검수 보완: 표 첫 칸 한 글자씩 꺾임 방지, 한글 단어 단위 줄바꿈(도구 이름 끝 글자 홀로 남음 방지) */
+body.intranet-light :is(.cl-answer,.it-answer,.px-table-wrap,.coach-table) :is(th,td):first-child { min-width:6.5em; word-break:keep-all; }
+body.intranet-light :is(.cl-answer,.it-answer,.px-table-wrap,.coach-table) th { word-break:keep-all; }
+body.intranet-light :is(.g-tile,.pa-tool,.g-tool) :is(b,strong,h3,span) { word-break:keep-all; }
 @media print {
   body.intranet-light { background:#fff; color:#17283d; padding:0; }
   body.intranet-light :is(.g-nav,.g-strip,.g-tabbar,.g-foot,.cl-hero,.it-hero,.coach-hero,.cl-status,.it-status,.cl-form,.it-form,.cl-progress,.it-progress,.cl-admin,.it-admin,.cl-legacy,.it-legacy,.coach-legacy,.coach-status-row,.coach-toolbar,.coach-app .subbar,.coach-app .inwrap,.px-header,.px-tabs,.px-composer,.px-sidebar,.px-examples,.px-footer,.px-progress,.toast,.px-toast,button) { display:none!important; }
