@@ -4,7 +4,7 @@
    FUNC-FIX B1(v3): 오프라인 안내 /offline.html 한 장만 설치 때 저장 → 페이지 이동·새로고침(navigate)이 네트워크 오류로 실패할 때만 그 자리에 보여 줌.
      페이지 HTML 은 여전히 저장하지 않음(항상 네트워크, 탐색 미리 받기(navigation preload)로 서비스워커 때문에 늦어지지 않게). /product/ 는 그대로 통과. */
 // FIX-V2: 오프라인 화면의 개선된 보조 글자 대비를 기존 설치 사용자에게도 갱신. 캐시 정책은 유지.
-var VERSION = 'pa-static-v6-t10';
+var VERSION = 'pa-static-v7-gt1';
 var OFFLINE_URL = '/offline.html';
 var STATIC = /\.(css|js|mjs|woff2?|ttf|otf|png|jpe?g|webp|gif|svg|ico|webmanifest)$/i;
 

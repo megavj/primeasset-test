@@ -1,9 +1,13 @@
 /* 성장 나무 — '함께하는 N개 본부' (독립 부품 · 외부 라이브러리·CDN 없음: SVG·CSS·JS 직접 작성)
-   사용법: <link rel="stylesheet" href="growth-tree.css"> + <div data-growth-tree></div> + <script src="growth-tree.js" defer></script>
+   사용법: <link rel="stylesheet" href="/assets/growth-tree.css?v=…"> + <div data-growth-tree></div> + <script src="/assets/growth-tree.js?v=…" defer></script>
      본부 홈페이지 주소를 DB에서 읽으려면 이 파일보다 먼저 assets/auth-config.js(window.PA_AUTH)를 넣는다.
+     쓰는 곳(이 파일 하나를 같이 씀): 메인 index.html·성장스토리 story/index.html 의 #branches, 시안 lab/branches/tree-v2/
+     인라인 스크립트·eval 없음(CSP script-src 'self' 로 충분). 스타일은 CSSOM(el.style)·Web Animations 만 씀
    · 배치: 가운데(188)에서의 거리 = 세대, 방향 = 계보(같은 상위의 하위는 상위 방향 부채꼴 안). 폭 640px 이하는 위→아래 세로 나무
-   · 색: 가문(1대 본부)별 보석 톤, 하위는 같은 계열에서 밝기·채도만 조금씩 → 모두 조금씩 다른 색. 가지는 부모→자식 색 그라데이션
-   · 가지: 베지어 가운데선을 따라 굵기가 줄어드는 붓 획(채운 경로). 자랄 때는 붓으로 그리듯 앞부분까지만 그림
+   · 색: 가문(1대 본부)별 보석 톤, 하위는 같은 계열 안에서 밝기·채도·색상(±12° 안)을 함께 벌림 → 19개가 서로 다른 색. 가지는 부모→자식 색 그라데이션
+   · 원: 평평한 면 + 얇은 테두리(광택·내부 그라데이션 없음 — 편집 디자인·인포그래픽 느낌). 빛 번짐은 아주 옅게
+   · 가지: 베지어 가운데선을 따라 굵기가 줄어드는 붓 획(채운 경로). 자랄 때는 붓으로 그리듯 앞부분까지만 그림.
+     형제 가지는 윗대 원 둘레의 서로 다른 자리(포트)에서 떠나고, 가지 끝과 원 테두리 사이 틈은 어디서나 같다(GAP)
    · 움직임: 화면에 들어오면 1회 — 승격 년월 순서로 가지가 뻗고 원이 핌(2024년부터 간격 촘촘, 같은 달은 동시에).
      다 자란 뒤에는 수액(한 번에 한 계보)·숨쉬기. 화면 밖·탭 숨김이면 멈춤. PC는 마우스, 휴대폰은 스크롤에 따라 살짝 기울어짐
    · prefers-reduced-motion: 다 자란 그림만(반복·기울기 없음)
@@ -48,9 +52,12 @@
     '345': [0.77, 0.066, 302]  // 라벤더
   };
   const EXTRA_TONES = [[0.8, 0.03, 250], [0.79, 0.05, 112], [0.77, 0.05, 332], [0.79, 0.04, 222]]; // 기본 데이터에 없는 새 1대 본부
-  // 가문 안 순서(세대 → 형제)대로 [밝기 차, 채도 배율] — 색상각은 그대로 두고 밝기·채도만 조금씩
-  const VARIANTS = [[0, 1], [0.05, 0.84], [-0.05, 1.1], [0.09, 0.74], [-0.085, 1.16], [0.025, 0.7], [-0.03, 1.24], [0.12, 0.64], [-0.11, 1.04]];
-  const CARD = '#0d1220', CORE = '#0e1422'; // 카드 바탕 · 원 속(남색, 색은 아주 조금만 — 테두리와 가장자리 빛이 색을 맡음)
+  // 가문 안 순서(세대 → 계보)대로 [밝기 차, 채도 배율, 색상 차(°)] — 밝기·채도·색상을 함께 벌려 이웃 본부끼리도 한눈에 다른 색.
+  //   색상 차는 ±12° 안이라 가문은 그대로 알아본다. + 방향은 가문마다 '가장 가까운 다른 가문 색'의 반대쪽(이웃 가문과 섞여 보이지 않게).
+  //   표는 19개 전체에서 비슷한 두 색의 차이(OKLab)가 가장 커지도록 고른 값 — 나란히 놓이는 형제·부모자식 사이를 더 엄격하게(밝고 어두움·색상 쪽이 번갈아)
+  const VARIANTS = [[0, 1, 0], [-0.12, 1, 8], [0.12, 1, 8], [0.03, 1.3, -12], [-0.03, 1.3, 10], [0.06, 1, 8], [-0.06, 1, -8], [0.09, 0.85, -12], [-0.09, 1.15, 12]];
+  const L_RANGE = [0.63, 0.875], C_MIN = 0.05, cMax = L => 0.11 - 0.17 * Math.max(0, L - 0.72); // 밝을수록 채도 상한을 낮춤(파스텔 사탕색·형광 방지)
+  const ROOT_FACE = '#151b2b'; // 188 원의 면: 카드보다 한 단계 밝은 남색 — 금색 테두리만으로 '시작점'이 드러나게
 
   /* ── 3. 시간(ms) ── */
   const TIME = {
@@ -123,19 +130,27 @@
       const n = order[k]; n.counts = new Map([[n.depth, 1]]);
       n.children.forEach(c => c.counts.forEach((v, d) => n.counts.set(d, (n.counts.get(d) || 0) + v)));
     }
-    // 색: 1대 본부별 기준 톤 → 가문 안 순서대로 밝기·채도 변형
+    // 색: 1대 본부별 기준 톤 → 가문 안 순서대로 밝기·채도·색상 변형
     let extra = 0;
     root.lch = TONES[ROOT];
+    const toneHues = Object.values(TONES).map(t => t[2]);
     root.children.forEach(f => {
       const tone = TONES[f.no] || EXTRA_TONES[extra++ % EXTRA_TONES.length];
+      let near = 180; // 가장 가까운 다른 가문 색상각까지의 차(부호 있음)
+      toneHues.forEach(h => { const d = ((h - tone[2] + 540) % 360) - 180; if (d && Math.abs(d) < Math.abs(near)) near = d; });
+      const away = near > 0 ? -1 : 1;
       const fam = order.filter(n => n.family === f).sort((a, b) => a.depth - b.depth || order.indexOf(a) - order.indexOf(b));
-      fam.forEach((n, j) => { const v = VARIANTS[j % VARIANTS.length]; n.lch = [clamp(tone[0] + v[0], 0.6, 0.9), clamp(tone[1] * v[1], 0.03, 0.12), tone[2]]; });
+      fam.forEach((n, j) => {
+        if (!j) { n.lch = tone; return; }
+        const v = VARIANTS[1 + ((j - 1) % (VARIANTS.length - 1))], L = clamp(tone[0] + v[0], L_RANGE[0], L_RANGE[1]);
+        n.lch = [L, clamp(tone[1] * v[1], Math.min(C_MIN, tone[1]), cMax(L)), tone[2] + away * v[2]];
+      });
     });
     nodes.forEach(n => {
-      const lab = lchToLab(n.lch), isRoot = n === root;
-      n.color = hex(lab);
-      n.fill = hex(mixLab(hexToLab(CORE), lab, isRoot ? 0.07 : 0.05));
-      n.label = hex(lchToLab([isRoot ? 0.9 : 0.95, isRoot ? 0.055 : Math.min(0.022, n.lch[1] * 0.3), n.lch[2]]));
+      const isRoot = n === root, [L, C, h] = n.lch;
+      n.color = hex(lchToLab(n.lch));
+      n.face = isRoot ? ROOT_FACE : hex(lchToLab([0.24 + (L - 0.75) * 0.2, Math.min(0.055, C * 0.55), h])); // 원의 면: 같은 색의 깊은 톤 한 가지(평평하게 — 광택·그라데이션 없음)
+      n.label = hex(lchToLab([isRoot ? 0.93 : 0.96, isRoot ? 0.05 : Math.min(0.02, C * 0.25), h]));
       n.sap = hex(lchToLab([Math.min(0.97, n.lch[0] + 0.13), n.lch[1] * 0.55, n.lch[2]]));
       n.rel = new Set([n.i]); // 강조할 본부: 188까지 이어지는 윗대 + 자신 + 산하
       for (let p = n.parent; p; p = p.parent) n.rel.add(p.i);
@@ -147,38 +162,16 @@
 
   /* ── 5. 색 계산(OKLab) ── */
   function lchToLab([L, C, h]) { const a = (h * Math.PI) / 180; return [L, C * Math.cos(a), C * Math.sin(a)]; }
-  function hexToLab(h) {
-    const [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(v => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
-    const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
-    const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
-    const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
-    return [0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s, 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s];
-  }
   function hex([L, a, b]) {
     const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3, m = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3, s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
     return '#' + [4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s]
       .map(v => { v = clamp(v, 0, 1); return Math.round(255 * (v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055)).toString(16).padStart(2, '0'); }).join('');
   }
-  const mixLab = (p, q, t) => p.map((v, k) => v + (q[k] - v) * t);
 
   /* ── 6. 곡선(3차 베지어)·붓 획 ── */
-  const lerp = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
   const dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
   function bez(P, t) { const u = 1 - t; return [u * u * u * P[0][0] + 3 * u * u * t * P[1][0] + 3 * u * t * t * P[2][0] + t * t * t * P[3][0], u * u * u * P[0][1] + 3 * u * u * t * P[1][1] + 3 * u * t * t * P[2][1] + t * t * t * P[3][1]]; }
   function bezD(P, t) { const u = 1 - t; return [0, 1].map(k => 3 * u * u * (P[1][k] - P[0][k]) + 6 * u * t * (P[2][k] - P[1][k]) + 3 * t * t * (P[3][k] - P[2][k])); }
-  function split(P, t) {
-    const ab = lerp(P[0], P[1], t), bc = lerp(P[1], P[2], t), cd = lerp(P[2], P[3], t), abc = lerp(ab, bc, t), bcd = lerp(bc, cd, t), m = lerp(abc, bcd, t);
-    return [[P[0], ab, abc, m], [m, bcd, cd, P[3]]];
-  }
-  function trim(P, r0, r1) { // 양 끝 원 둘레(+틈)에서 자름
-    let lo = 0, hi = 1;
-    for (let k = 0; k < 32; k++) { const m = (lo + hi) / 2; if (dist(bez(P, m), P[0]) < r0) lo = m; else hi = m; }
-    const t0 = hi; lo = 0; hi = 1;
-    for (let k = 0; k < 32; k++) { const m = (lo + hi) / 2; if (dist(bez(P, m), P[3]) < r1) hi = m; else lo = m; }
-    const t1 = lo;
-    if (t1 <= t0 + 0.01) return null;
-    return split(split(P, t0)[1], (t1 - t0) / (1 - t0))[0];
-  }
   const f1 = v => Math.round(v * 10) / 10;
   const pathD = P => `M${f1(P[0][0])} ${f1(P[0][1])}C${f1(P[1][0])} ${f1(P[1][1])} ${f1(P[2][0])} ${f1(P[2][1])} ${f1(P[3][0])} ${f1(P[3][1])}`;
   function sample(P, n) { // 가운데선 표본: [x, y, 법선x, 법선y, 누적 길이]
@@ -282,111 +275,229 @@
       const th = best.ang[n.i] + best.rot, R0 = best.R(n.depth);
       return { x: cx + R0 * Math.cos(th), y: cy + R0 * Math.sin(th), rad: n === root ? rr : r, th, R: R0 };
     });
-    const polar = (R0, th) => [cx + R0 * Math.cos(th), cy + R0 * Math.sin(th)];
-    // 가지 곡선 후보: 첫째가 기본, 나머지는 다른 원을 비켜 가야 할 때
-    const VR = [[0.36, 0.42, 0.5, 0]];
-    [0.2, 0.5, 0, -0.25].forEach(sw => [0.42, 0.3, 0.56].forEach(k => VR.push([sw, k, 0.5, 0])));
-    [0.5, 0.36, 0.64].forEach(m => [0, 0.12, -0.12].forEach(o => VR.push([0.36, 0.42, m, o])));
-    const curve = (p, c, v = 0) => {
-      const P = pos[p.i], C = pos[c.i], [sw, k, m, o] = VR[v];
-      if (p === root) // 188에서 나가는 가지: 시계 방향으로 살짝 휘감아 나감
-        return [[cx, cy], polar(C.R * k, C.th - sw), polar(C.R * 0.7, C.th - sw * 0.22), [C.x, C.y]];
-      const rm = P.R + (C.R - P.R) * m; // 윗대에서 바깥으로 나가 자식 쪽으로 휘어 들어감
-      return [[P.x, P.y], polar(rm, P.th + o), polar(rm, C.th - o), [C.x, C.y]];
-    };
     const rings = [];
     for (let d = 1; d <= model.maxDepth; d++) rings.push(best.R(d));
     // 붓 획 굵기(세대별 시작 → 끝): 윗대 끝 굵기 = 아랫대 시작 굵기라 마디를 지나도 자연스럽게 이어짐
-    return { mode: 'radial', W, H, pos, curve, variants: VR.length, cx, cy, rings, w0: [0, 3, 1.9, 1.4, 1.1, 0.95], w1: [0, 1.9, 1.4, 1.1, 0.95, 0.85] };
+    return { mode: 'radial', W, H, pos, cx, cy, rings, w0: [0, 3, 1.9, 1.4, 1.1, 0.95], w1: [0, 1.9, 1.4, 1.1, 0.95, 0.85] };
   }
 
   // 7-2. 세로 나무(휴대폰): 188이 위, 세대가 아래로. 같은 세대는 계보 순서로 가로에 놓고(188 둘레 고리처럼 양옆이 살짝 높은 호),
-  //      좁으면 두 줄로 엇갈림. 가지는 윗대 원 아래쪽에서 부채처럼 갈라져 내려감
+  //      좁으면 위·아래 두 줄로 나눔. 줄 나누기는 경우를 모두 따져(한 세대 10개 이상이면 한 원씩 바꿔 보며) 고름:
+  //      형제 가지가 부채처럼 고르게 벌어지고, 가지가 다른 원·형제 가지를 비켜 가고(실제 그릴 곡선으로 확인),
+  //      하위가 있는 본부는 아래 줄(그 가지가 막힘없이 내려가게), 원래 자리(윗대 바로 아래)에서 덜 벗어나게
   function packRow(ideal, u, lo, hi) { // 순서 유지 · 최소 간격 u · [lo, hi] 안에서 이상 위치에 가장 가깝게(PAVA)
-    const n = ideal.length, z = ideal.map((v, k) => v - k * u), blocks = [];
-    z.forEach(v => {
-      blocks.push({ s: v, c: 1 });
+    return packMixed(ideal, ideal.map(() => 0), u, u, 0, lo, hi) || ideal.map((v, k) => lo + k * u);
+  }
+  // 두 줄일 때 j < k 두 원 사이에 필요한 가로 간격: 같은 줄 s, 다른 줄 dxo.
+  // 위 줄 두 원 사이로 아래 줄 원의 가지가 내려가면 그 둘은 lane 만큼 더 벌림(가지가 지나갈 길)
+  function needGap(rows, s, dxo, lane, j, k) {
+    if (rows[j] !== rows[k]) return dxo;
+    if (lane && !rows[j]) for (let q = j + 1; q < k; q++) if (rows[q]) return s + lane;
+    return s;
+  }
+  function packMixed(ideal, rows, s, dxo, lane, lo, hi) { // packRow 의 두 줄판(순서 유지 · 간격 needGap). 못 들어가면 null
+    const n = ideal.length, off = new Array(n).fill(0);
+    for (let k = 1; k < n; k++) for (let j = 0; j < k; j++) off[k] = Math.max(off[k], off[j] + needGap(rows, s, dxo, lane, j, k));
+    if (off[n - 1] > hi - lo + 1e-6) return null;
+    const blocks = [];
+    ideal.forEach((v, k) => {
+      blocks.push({ s: v - off[k], c: 1 });
       while (blocks.length > 1 && blocks[blocks.length - 2].s / blocks[blocks.length - 2].c > blocks[blocks.length - 1].s / blocks[blocks.length - 1].c) {
         const b = blocks.pop(); blocks[blocks.length - 1].s += b.s; blocks[blocks.length - 1].c += b.c;
       }
     });
     const out = []; blocks.forEach(b => { for (let k = 0; k < b.c; k++) out.push(b.s / b.c); });
-    const zHi = hi - (n - 1) * u;
-    return out.map((v, k) => clamp(v, lo, Math.max(lo, zHi)) + k * u);
+    return out.map((v, k) => clamp(v, lo, hi - off[n - 1]) + off[k]);
   }
 
   function layoutVertical(model, W) {
-    const r = 23, rr = 28, gap = 8, s = 2 * r + gap; // 지름 46px(터치 44px 이상)
+    const tiny = W < 274; // 320px 보다 좁은 화면: 원을 터치 최소 크기(44px)로, 간격도 조금 좁게
+    const r = tiny ? 22 : 23, rr = tiny ? 27 : 28, gap = tiny ? 6 : 8, s = 2 * r + gap; // 지름 46px(아주 좁으면 44px) — 터치 44px 이상
     const side = 8, lo = side + r, hi = W - side - r, span = hi - lo, cx = W / 2;
+    const dy = 0.9 * s, dxo = Math.sqrt(s * s - dy * dy) + 1; // 두 줄일 때 아래 줄 내림 · 위아래로 엇갈린 이웃끼리 가로 간격
+    const W0 = [0, 2.6, 1.75, 1.3, 1.05, 0.9], W1 = [0, 1.75, 1.3, 1.05, 0.9, 0.8]; // 붓 획 굵기(세대별 시작 → 끝)
     const N = model.nodes, root = model.root, pos = new Array(N.length);
-    const bands = [];
-    model.order.forEach(n => (bands[n.depth] = bands[n.depth] || []).push(n));
+    // 1대 순서: 승격 순서 그대로 두되 하위 없는 본부는 가까운 쪽 끝으로(순서 유지) → 하위가 많은 본부(227)가 가장자리에 붙지 않아
+    //   가지가 양쪽으로 펼쳐짐. 새 본부(맨 끝 순서)는 그대로 오른쪽 끝
+    const G1 = model.gen1, half = (G1.length - 1) / 2, leaf = c => !c.children.length;
+    const g1 = G1.filter((c, k) => leaf(c) && k < half).concat(G1.filter(c => !leaf(c)), G1.filter((c, k) => leaf(c) && k >= half));
     const top = rr + 24;
     pos[root.i] = { x: cx, y: top, rad: rr };
-    let base = top + rr + r + 74; // 1대 줄(가운데 높이)
-    for (let d = 1; d < bands.length; d++) {
-      const band = bands[d], n = band.length;
-      const u = n < 2 ? s : Math.min(s, span / (n - 1));
+    let base = top + rr + r + 74, band = g1; // 1대 줄(가운데 높이)
+    for (let d = 1; band.length; d++) {
+      const n = band.length, A = d === 1 ? 30 : 16; // A: 188 둘레 고리처럼 양옆이 살짝 높은 호
       let ideal;
-      const inset = d === 1 && n > 1 ? Math.min(16, Math.max(0, (span - (n - 1) * s) / 2)) : 0; // 1대는 양끝을 살짝 안으로(가장자리 계보도 양쪽으로 갈라지게)
-      if (d === 1) ideal = band.map((c, k) => (n === 1 ? cx : lo + inset + ((span - 2 * inset) * k) / (n - 1)));
-      else {
+      if (d === 1) { // 고르게 펼치되 양끝을 살짝 안으로(가장자리 계보도 양쪽으로 갈라지게)
+        const inset = n > 1 ? Math.min(16, Math.max(0, (span - (n - 1) * s) / 2)) : 0;
+        ideal = band.map((c, k) => (n === 1 ? cx : lo + inset + ((span - 2 * inset) * k) / (n - 1)));
+      } else { // 같은 상위의 하위끼리 상위 아래에 모아서(하나뿐이면 살짝 비켜 곡선이 살아나게)
         ideal = [];
-        let k = 0;
-        while (k < n) { // 같은 상위의 하위끼리: 상위 아래에 모아서
+        for (let k = 0; k < n;) {
           const p = band[k].parent; let m = 0;
           while (k + m < n && band[k + m].parent === p) m++;
-          for (let j = 0; j < m; j++) ideal.push(pos[p.i].x + (m === 1 ? (d % 2 ? 14 : -14) : (j - (m - 1) / 2) * u));
+          for (let j = 0; j < m; j++) ideal.push(pos[p.i].x + (m === 1 ? (d % 2 ? 14 : -14) : (j - (m - 1) / 2) * s * 0.95));
           k += m;
         }
       }
-      const xs = packRow(ideal, u, lo, hi);
-      const zig = u < s - 0.5, dy = zig ? Math.max(0.82 * s, Math.sqrt(Math.max(0, s * s - u * u)) + 2) : 0;
-      // 엇갈림: 붙어 있는(간격 < s) 묶음마다 위·아래 번갈아 — 하위가 있는 본부를 아래 줄에 두어 그 가지가 막힘없이 내려가게
-      const rows = new Array(n).fill(0);
-      for (let k = 0; k < n;) {
-        let e = k;
-        while (e + 1 < n && xs[e + 1] - xs[e] < s - 0.5) e++;
-        if (e > k) {
-          const score = ph => band.slice(k, e + 1).reduce((t, c, j) => t + (c.children.length ? ((j + ph) % 2 ? 1 : -1) : 0), 0);
-          const ph = score(1) > score(0) ? 1 : 0;
-          for (let j = k; j <= e; j++) rows[j] = (j - k + ph) % 2;
+      const prev = band.map(c => c.parent).filter((p, k, a) => a.indexOf(p) === k);
+      // 한 배치(가로 위치 xs · 줄 rows · 호 arc · 길 lane)의 점수(낮을수록 좋음). 규칙을 어기면 null.
+      // exact: 그릴 때와 같은 곡선 고르기(route)까지 — 느려서 추린 후보에만
+      const score = (xs, rows, arc, lane, exact) => {
+        for (let k = 0; k < n; k++) {
+          if (xs[k] < lo - 1e-6 || xs[k] > hi + 1e-6) return null;
+          for (let j = 0; j < k; j++) if (xs[k] - xs[j] < needGap(rows, s, dxo, lane, j, k) - 1e-6) return null;
         }
-        k = e + 1;
+        const two = rows.some(v => v);
+        const P = band.map((c, k) => { const q = (xs[k] - cx) / (span / 2); return { x: xs[k], y: base - arc * q * q + rows[k] * dy }; });
+        for (let k = 0; k < n; k++) for (let j = 0; j < k; j++) if (Math.hypot(P[j].x - P[k].x, P[j].y - P[k].y) < s - 0.01) return null; // 호 때문에 줄 사이가 줄어든 곳까지 실제 간격으로
+        // 실제로 그릴 가지(포트·곡선)로 따짐: 다른 원을 넉넉히 비켜 가는지, 형제 가지끼리 붙지 않는지
+        const tmp = pos.slice();
+        band.forEach((c, k) => { tmp[c.i] = { x: P[k].x, y: P[k].y, rad: r }; });
+        const Lt = { mode: 'vertical', pos: tmp, w0: W0, w1: W1 }, ports = new Map();
+        prev.forEach(p => portsOf(Lt, p, ports));
+        const curves = band.map(c => (exact ? route(Lt, c.parent, c, ports.get(c.i)) : edgeCurve(Lt, c.parent, c, ports.get(c.i), 0)));
+        let sc = 0, near = Infinity; // near: 가지와 다른 원·형제 가지 사이 가장 가까운 거리
+        band.forEach((c, k) => {
+          sc += ((xs[k] - ideal[k]) / s) ** 2;
+          if (rows[k] && !c.children.length) sc += 0.15; // 필요 없으면 한 줄로
+          const clr = clearance(curves[k], tmp, c.parent.i, c.i, exact ? 36 : 18);
+          near = Math.min(near, clr);
+          if (clr < 12) sc += 3 * ((12 - clr) / 5) ** 2 + (clr < 6 ? 60 + 10 * (6 - clr) : 0); // 6px 보다 가까우면 사실상 쓰지 않음
+          for (let j = k + 1; j < n; j++) if (band[j].parent === c.parent) { // 형제 가지 사이(윗대 원 가까이 빼고) 가장 가까운 거리
+            let m2 = Infinity;
+            const st = exact ? 1 : 2;
+            for (let u = 6; u <= 24; u += st) { const q = bez(curves[k], u / 24); for (let v = 6; v <= 24; v += st) { const w = bez(curves[j], v / 24); m2 = Math.min(m2, Math.hypot(q[0] - w[0], q[1] - w[1])); } }
+            if (m2 < 10) sc += 2 * ((10 - m2) / 4) ** 2;
+            near = Math.min(near, m2);
+          }
+        });
+        prev.forEach(p => { // 형제 가지가 부채처럼 고르게: 윗대에서 본 방향이 20°보다 가까우면 벌점
+          const ang = band.map((c, k) => (c.parent === p ? Math.atan2(P[k].y - pos[p.i].y, P[k].x - pos[p.i].x) : null)).filter(v => v != null).sort((x, y) => x - y);
+          for (let j = 1; j < ang.length; j++) { const g = ((ang[j] - ang[j - 1]) * 180) / Math.PI; if (g < 20) sc += 0.02 * (20 - g) ** 2; }
+        });
+        const kidsDown = !two || band.every((c, k) => rows[k] || !c.children.length); // 하위가 있는 본부는 아래 줄(그 가지가 위 줄에 막히지 않게)
+        return { sc, near, P, extra: two ? dy : 0, xs, rows, arc, lane, kidsDown };
+      };
+      let best = null, soft = null; // best: 하위가 있는 본부가 모두 아래 줄(두 줄일 때) · soft: 그렇지 못한 것(달리 방법이 없을 때만)
+      const pick = c => { if (c) { if (c.kidsDown) { if (!best || c.sc < best.sc - 1e-9) best = c; } else if (!soft || c.sc < soft.sc - 1e-9) soft = c; } };
+      // 좋은 배치가 없을 때만 차례로 양보: 호를 낮춤(위아래 줄 간격이 줄지 않게) → 가지가 지나갈 길(lane)을 좁힘
+      const fine = c => c && c.near >= 8; // 가지가 원·형제 가지와 8px 이상 떨어짐
+      for (const [arc, lane] of [[A, 26], [A / 2, 26], [0, 26], [0, 12], [0, 0]]) {
+        if (fine(best)) break;
+        const found = [];
+        const consider = rows => {
+          const xs = packMixed(ideal, rows, s, dxo, lane, lo, hi), c = xs && score(xs, rows, arc, lane, false);
+          if (c) found.push(c);
+          return c ? c.sc + (c.kidsDown ? 0 : 1000) : Infinity;
+        };
+        if (n <= 9) for (let mask = 0; mask < 1 << n; mask++) consider(band.map((_, k) => (mask >> k) & 1)); // 모든 경우
+        else for (const start of [band.map((_, k) => k % 2), band.map((_, k) => (k + 1) % 2), band.map(() => 0)]) { // 많으면: 출발점에서 한 원씩 줄을 바꿔 가며 나아질 때까지
+          let cur = start, cs = consider(cur);
+          for (let it = 0, up = true; up && it < 3 * n; it++) {
+            up = false;
+            for (let k = 0; k < n; k++) { const t = cur.slice(); t[k] ^= 1; const v = consider(t); if (v < cs - 1e-9) { cur = t; cs = v; up = true; } }
+          }
+        }
+        found.sort((a, b) => (a.kidsDown === b.kidsDown ? a.sc - b.sc : a.kidsDown ? -1 : 1)); // 빠른 점수로 추린 앞 6개만 정밀하게
+        found.slice(0, 6).forEach(c => pick(score(c.xs, c.rows, arc, lane, true)));
       }
-      const A = d === 1 ? 30 : 16; // 188 둘레 고리처럼 양옆이 살짝 높은 호
-      band.forEach((c, k) => {
-        const q = (xs[k] - cx) / (span / 2);
-        pos[c.i] = { x: xs[k], y: base - A * q * q + rows[k] * dy, rad: r };
-      });
-      base += (zig ? dy : 0) + s + 54;
+      best = best || soft;
+      // 아직 아쉬우면(가지가 원에 가깝거나 형제 가지가 붙음) 가로 위치를 몇 px씩 옮겨 보며 다듬음(한 원 · 오른쪽 묶음 · 왼쪽 묶음)
+      for (let pass = 0; best && !fine(best) && pass < 4; pass++) {
+        let moved = false;
+        for (let k = 0; k < n; k++) for (const dl of [-12, -6, -3, 3, 6, 12]) for (let mode = 0; mode < 3; mode++) {
+          const xs = best.xs.map((x, j) => ((mode === 0 ? j === k : mode === 1 ? j >= k : j <= k) ? x + dl : x));
+          const c = score(xs, best.rows, best.arc, best.lane, true);
+          if (c && c.sc < best.sc - 0.01) { best = c; moved = true; }
+        }
+        if (!moved) break;
+      }
+      if (!best) { // 너무 좁음: 줄을 늘려 고르게 엇갈림(원끼리는 언제나 s 이상 · 하위가 있는 본부가 맨 아래 줄에 많이 오게)
+        const u = n > 1 ? Math.min(s, span / (n - 1)) : 0, R = Math.max(2, Math.ceil(s / Math.max(u, 1))), dR = Math.max(dy, Math.sqrt(Math.max(0, s * s - u * u)) + 1);
+        let ph = 0, bestN = -1;
+        for (let q = 0; q < R; q++) { const k2 = band.filter((c, k) => c.children.length && (k + q) % R === R - 1).length; if (k2 > bestN) { bestN = k2; ph = q; } }
+        best = { extra: (R - 1) * dR, P: band.map((c, k) => ({ x: n > 1 ? lo + k * u : cx, y: base + ((k + ph) % R) * dR })) };
+      }
+      band.forEach((c, k) => { pos[c.i] = { x: best.P[k].x, y: best.P[k].y, rad: r }; });
+      base += best.extra + s + 54;
+      band = band.flatMap(c => c.children);
     }
     const H = Math.round(Math.max(...pos.map(p => p.y + p.rad)) + 30);
-    // 가지 곡선 후보: 첫째가 기본(윗대 원 아래에서 부채처럼 갈라져 내려감), 나머지는 다른 원을 비켜 가야 할 때
-    const VV = [[null, 0.42, 0.52, 0]];
-    [0.3, 0, 0.75, 0.9].forEach(a => [0.42, 0.25, 0.62].forEach(b => [0.52, 0.3, 0.72].forEach(e => [0, 0.3, -0.3].forEach(c2 => VV.push([a, b, e, c2])))));
-    const curve = (p, c, v = 0) => {
-      const P = pos[p.i], C = pos[c.i], dy = C.y - P.y, dx = C.x - P.x, [a, b, e, c2] = VV[v];
-      const sway = Math.abs(dx) < 12 ? (c.depth % 2 ? 11 : -11) : 0; // 바로 아래면 곧은 선 대신 살짝 S자
-      return [[P.x, P.y], [P.x + dx * (a == null ? (p === root ? 0.46 : 0.56) : a) + sway, P.y + dy * b], [C.x - dx * c2 - sway, C.y - dy * e], [C.x, C.y]];
-    };
-    return { mode: 'vertical', W, H, pos, curve, variants: VV.length, cx, cy: top, rings: null, w0: [0, 2.6, 1.75, 1.3, 1.05, 0.9], w1: [0, 1.75, 1.3, 1.05, 0.9, 0.8] };
+    return { mode: 'vertical', W, H, pos, cx, cy: top, rings: null, w0: W0, w1: W1 };
+  }
+
+  // 7-3. 가지가 원에 붙는 자리(포트)와 곡선
+  //   · 형제 가지는 윗대 원 둘레의 서로 다른 자리에서 떠난다(한 점에 몰려 빗자루처럼 보이지 않게). 자리 순서 = 자식 방향 순서라 서로 엇갈리지 않음
+  //   · 가지는 원에 수직으로 나가고 들어온다 → 가지 끝(둥근 마개 포함)과 원 테두리 사이 틈이 어디서나 GAP 으로 같다
+  const GAP = 4;
+  const SWIRL = 0.3, SWIRL_IN = 0.18; // 원형: 188에서 시계 방향으로 살짝 휘감아 나가는 정도
+  const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
+  // 곡선 후보 [출발 쪽 손잡이 배율, 도착 쪽 손잡이 배율, 도착 자리 비틀기(rad)]: 첫째가 기본, 나머지는 다른 원을 비켜 가야 할 때
+  const EDGE_VARIANTS = [[1, 1, 0], [0.7, 1, 0], [1, 0.7, 0], [1.3, 1.2, 0], [1, 1, 0.3], [1, 1, -0.3], [0.6, 1.3, 0.2], [0.6, 1.3, -0.2], [1.4, 0.6, 0], [1, 1, 0.55], [1, 1, -0.55], [0.5, 0.5, 0]];
+
+  function edgePorts(L, model) { // 자식 i → 윗대 원에서 떠나는 각도
+    const out = new Map();
+    model.order.forEach(p => portsOf(L, p, out));
+    return out;
+  }
+  function portsOf(L, p, out) { // 윗대 p 의 자식들 → out(자식 i → p 원에서 떠나는 각도)
+    const pos = L.pos, radial = L.mode === 'radial', kids = p.children;
+    if (!kids.length) return out;
+    const P = pos[p.i], isRoot = !p.parent;
+    const base = radial ? (isRoot ? 0 : P.th) : Math.PI / 2; // 기준 방향: 원형은 바깥, 세로는 아래
+    const items = kids.map(c => {
+      const C = pos[c.i];
+      if (radial && isRoot) return { c, rel: C.th - SWIRL }; // 188: 자식 방향보다 조금 앞에서 떠나 시계 방향으로 휘감아 감
+      let rel = wrapA(Math.atan2(C.y - P.y, C.x - P.x) - base) * (radial ? 0.6 : isRoot ? 0.9 : 0.5); // 바깥(아래)쪽으로 기울여 떠남(세로: 윗대 원 아래쪽에 고르게)
+      if (!radial && kids.length === 1 && Math.abs(C.x - P.x) < 12) rel = c.depth % 2 ? 0.22 : -0.22; // 바로 아래 하나면 곧은 선 대신 살짝 S자
+      return { c, rel };
+    });
+    if (!(radial && isRoot)) { // 형제끼리 최소 간격(각도)을 두고 원하는 방향에 가장 가깝게
+      items.sort((x, y) => x.rel - y.rel);
+      const lim = radial ? 1.2 : isRoot ? 1.25 : 1.05, sep = radial ? 0.42 : isRoot ? 0.36 : 0.38;
+      const n = items.length, u = n > 1 ? Math.min(sep, (2 * lim) / (n - 1)) : 0;
+      const r = n > 1 ? packRow(items.map(x => x.rel), u, -lim, lim) : [clamp(items[0].rel, -lim, lim)];
+      items.forEach((x, k) => { x.rel = r[k]; });
+    }
+    items.forEach(({ c, rel }) => out.set(c.i, base + rel));
+    return out;
+  }
+
+  function edgeCurve(L, p, c, a, v) { // 윗대 p 의 각도 a 자리에서 떠나 자식 c 로 들어가는 3차 베지어(양 끝은 이미 틈만큼 떨어져 있음)
+    const P = L.pos[p.i], C = L.pos[c.i], d = Math.min(c.depth, 5), [ka, kb, db] = EDGE_VARIANTS[v];
+    const r0 = P.rad + GAP + L.w0[d] / 2, r1 = C.rad + GAP + L.w1[d] / 2;
+    const S = [P.x + r0 * Math.cos(a), P.y + r0 * Math.sin(a)];
+    const toS = Math.atan2(S[1] - C.y, S[0] - C.x);
+    let b, k0a, k0b;
+    if (L.mode === 'radial') {
+      const inward = C.th + Math.PI;
+      if (!p.parent) { b = inward + SWIRL_IN; k0a = 0.42; k0b = 0.36; } // 188 가지: 바깥으로 뻗으며 자식에 닿음
+      else { b = inward + 0.5 * wrapA(toS - inward); k0a = 0.4; k0b = 0.4; } // 윗대에서 바깥으로 나가 자식 쪽으로 휘어 들어감
+    } else {
+      const up = -Math.PI / 2;
+      b = up + clamp(0.45 * wrapA(toS - up), -0.7, 0.7); // 위에서 내려와 자식 원 윗부분에 닿음
+      k0a = 0.36; k0b = 0.45;
+    }
+    b += db;
+    const E = [C.x + r1 * Math.cos(b), C.y + r1 * Math.sin(b)], D = dist(S, E);
+    const la = Math.min(ka * k0a * D, 64), lb = Math.min(kb * k0b * D, 90); // 손잡이가 너무 길면 옆으로 크게 휘어 다른 원 쪽으로 감
+    return [S, [S[0] + la * Math.cos(a), S[1] + la * Math.sin(a)], [E[0] + lb * Math.cos(b), E[1] + lb * Math.sin(b)], E];
   }
 
   // 곡선이 다른 원(양 끝 원 제외)에서 떨어진 가장 가까운 거리 — 가지가 원을 지나가지 않게
-  function clearance(P, pos, ia, ib) {
+  function clearance(P, pos, ia, ib, steps = 36) {
     let m = Infinity;
-    for (let k = 1; k < 36; k++) {
-      const q = bez(P, k / 36);
-      for (let j = 0; j < pos.length; j++) if (j !== ia && j !== ib) m = Math.min(m, Math.hypot(q[0] - pos[j].x, q[1] - pos[j].y) - pos[j].rad);
+    for (let k = 1; k < steps; k++) {
+      const q = bez(P, k / steps);
+      for (let j = 0; j < pos.length; j++) if (j !== ia && j !== ib && pos[j]) m = Math.min(m, Math.hypot(q[0] - pos[j].x, q[1] - pos[j].y) - pos[j].rad);
     }
     return m;
   }
-  function route(L, p, c) { // 기본 곡선이 다른 원에 너무 가까우면 후보 중 가장 멀리 비켜 가는 곡선
-    const need = 7;
-    let best = L.curve(p, c, 0), bc = clearance(best, L.pos, p.i, c.i);
-    for (let v = 1; v < (L.variants || 1) && bc < need; v++) {
-      const P = L.curve(p, c, v), k = clearance(P, L.pos, p.i, c.i);
+  function route(L, p, c, a) { // 기본 곡선이 다른 원에 너무 가까우면 후보 중 가장 멀리 비켜 가는 곡선
+    const need = 8;
+    let best = edgeCurve(L, p, c, a, 0), bc = clearance(best, L.pos, p.i, c.i);
+    for (let v = 1; v < EDGE_VARIANTS.length && bc < need; v++) {
+      const P = edgeCurve(L, p, c, a, v), k = clearance(P, L.pos, p.i, c.i);
       if (k > bc + 0.5) { best = P; bc = k; }
     }
     return best;
@@ -557,12 +668,10 @@
       // 가지(붓 획) — 부모→자식 색 그라데이션
       const gE = el('g', { class: 'gt-edges', 'aria-hidden': 'true' }, svg);
       this.edges = [];
-      const cuts = new Map();
+      const cuts = new Map(), ports = edgePorts(L, m);
       m.order.forEach(c => {
         if (!c.parent) return;
-        const p = c.parent, P = pos[p.i], C = pos[c.i];
-        const cut = trim(route(L, p, c), P.rad + 3, C.rad + 3);
-        if (!cut) return;
+        const p = c.parent, cut = route(L, p, c, ports.get(c.i));
         cuts.set(c.i, cut);
         const d = Math.min(c.depth, 5), w0 = L.w0[d], w1 = L.w1[d], S = sample(cut, 40);
         const gid = `${id}-e${c.i}`;
@@ -584,29 +693,27 @@
         this.bridges.set(i, { el: path, len });
       });
       this.sapLayer = el('g', { class: 'gt-sap', 'aria-hidden': 'true' }, svg);
-      // 본부 원
+      // 본부 원: 평평한 면(깊은 톤 한 가지) + 얇은 테두리. 광택·내부 그라데이션 없음
       const gN = el('g', { class: 'gt-nodes', 'aria-hidden': 'true' }, svg);
       const auraId = `${id}-aura`;
-      const ag = el('radialGradient', { id: auraId }, defs);
-      el('stop', { offset: 0, 'stop-color': m.root.color, 'stop-opacity': 0.2 }, ag);
-      el('stop', { offset: 0.45, 'stop-color': m.root.color, 'stop-opacity': 0.06 }, ag);
+      const ag = el('radialGradient', { id: auraId }, defs); // 188 둘레 빛 번짐(아주 옅게)
+      el('stop', { offset: 0, 'stop-color': m.root.color, 'stop-opacity': 0.07 }, ag);
+      el('stop', { offset: 0.5, 'stop-color': m.root.color, 'stop-opacity': 0.022 }, ag);
       el('stop', { offset: 1, 'stop-color': m.root.color, 'stop-opacity': 0 }, ag);
       this.nodeEls = [];
       m.nodes.forEach(n => {
         const P = pos[n.i], isRoot = n === m.root;
-        const lid = `${id}-l${n.i}`, hid = `${id}-h${n.i}`;
-        const lg = el('radialGradient', { id: lid }, defs); // 가장자리로 갈수록 빛나는 유리구슬 느낌
-        [[0, 0.05], [0.62, isRoot ? 0.12 : 0.1], [1, isRoot ? 0.38 : 0.34]].forEach(([o, a]) => el('stop', { offset: o, 'stop-color': n.color, 'stop-opacity': a }, lg));
-        const hg = el('radialGradient', { id: hid }, defs);
+        const hid = `${id}-h${n.i}`;
+        const hg = el('radialGradient', { id: hid }, defs); // 필 때·수액이 닿을 때만 잠깐 보이는 빛 번짐
         el('stop', { offset: 0.35, 'stop-color': n.color, 'stop-opacity': 0.5 }, hg);
         el('stop', { offset: 1, 'stop-color': n.color, 'stop-opacity': 0 }, hg);
         const g = el('g', { class: 'gt-node' + (isRoot ? ' is-root' : ''), transform: `translate(${f1(P.x)} ${f1(P.y)})`, 'data-no': n.no, 'data-x': f1(P.x), 'data-y': f1(P.y), 'data-r': P.rad }, gN);
-        if (isRoot) el('circle', { class: 'gt-aura', r: P.rad * 3.4, fill: `url(#${auraId})` }, g);
+        if (isRoot) el('circle', { class: 'gt-aura', r: P.rad * 3.2, fill: `url(#${auraId})` }, g);
         const halo = el('circle', { class: 'gt-halo', r: P.rad * 1.15, fill: `url(#${hid})` }, g);
         const bud = el('g', { class: 'gt-bud' }, g);
-        el('circle', { class: 'gt-base', r: P.rad, fill: n.fill }, bud);
-        const lume = el('circle', { class: 'gt-lume', r: P.rad, fill: `url(#${lid})` }, bud);
-        el('circle', { class: 'gt-ring', r: P.rad - 0.7, stroke: n.color }, bud);
+        el('circle', { class: 'gt-base', r: P.rad, fill: n.face }, bud);
+        const lume = el('circle', { class: 'gt-lume', r: P.rad, fill: n.color }, bud); // 숨쉬기: 면 전체가 고르게 아주 조금 밝아짐(평평함 유지)
+        el('circle', { class: 'gt-ring', r: P.rad - 0.5, stroke: n.color }, bud);
         const t = el('text', { class: 'gt-label', fill: n.label, dy: '0.04em' }, bud);
         t.textContent = n.no;
         if (n.no.length > 3) t.style.fontSize = '12px';
@@ -687,7 +794,7 @@
         if (n === this.model.root) return;
         const b = S.bloom.get(n.i), E = this.nodeEls[n.i];
         add(E.bud, [{ opacity: 0, transform: 'scale(.3)' }, { opacity: 1, transform: 'scale(1.07)', offset: 0.55 }, { opacity: 1, transform: 'scale(1)' }], { delay: b - 90, duration: T.bloom, easing: 'cubic-bezier(.2,.7,.25,1)' });
-        add(E.halo, [{ opacity: 0, transform: 'scale(.7)' }, { opacity: 0.9, transform: 'scale(1.25)', offset: 0.2 }, { opacity: 0, transform: 'scale(2.5)' }], { delay: b - 40, duration: T.halo, easing: 'cubic-bezier(.25,.6,.35,1)' });
+        add(E.halo, [{ opacity: 0, transform: 'scale(.7)' }, { opacity: 0.34, transform: 'scale(1.25)', offset: 0.2 }, { opacity: 0, transform: 'scale(2.3)' }], { delay: b - 40, duration: T.halo, easing: 'cubic-bezier(.25,.6,.35,1)' });
         add(this.hits[n.i], [{ visibility: 'hidden' }, { visibility: 'visible' }], { delay: b - 90, duration: 1 });
       });
       const spans = this.year.children;
@@ -770,7 +877,7 @@
         });
         if (!e.c.children.length) { // 끝 본부에 닿으면 아주 옅게 한 번 밝아짐
           const halo = this.nodeEls[e.c.i].halo;
-          anims.push(halo.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 0.32, transform: 'scale(1.25)', offset: 0.35 }, { opacity: 0, transform: 'scale(1.6)' }], { delay: t0 + (e.len + pad) / T.sapSpeed, duration: 1000, easing: 'ease-out' }));
+          anims.push(halo.animate([{ opacity: 0, transform: 'scale(.9)' }, { opacity: 0.16, transform: 'scale(1.25)', offset: 0.35 }, { opacity: 0, transform: 'scale(1.6)' }], { delay: t0 + (e.len + pad) / T.sapSpeed, duration: 1000, easing: 'ease-out' }));
         }
       });
       this.sapAnims = anims;

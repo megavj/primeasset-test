@@ -34,6 +34,7 @@
 <link rel="stylesheet" href="assets/tool-hub.css?v=6">
 <link rel="stylesheet" href="assets/home-motion.css?v=6">
 <link rel="stylesheet" href="assets/home-dark.css?v=4">
+<link rel="stylesheet" href="assets/growth-tree.css?v=20261104-gt1">
 <script>document.documentElement.classList.add('js');if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
 <style>
 /* 한글 금액은 기존 소수 억 표기와 같은 값을 유지하며 작은 화면에서 줄바꿈한다. */
@@ -101,11 +102,12 @@
     </div>
   </section>
 
-  <!-- 함께하는 본부: 성장스토리(/story/#branches)와 같은 목록 — assets/branches.js 하나로 연동(관리자 모드에서 바꾸면 두 곳 같이 바뀜) -->
+  <!-- 함께하는 본부: 성장 나무(assets/growth-tree.js·css — 성장스토리 /story/#branches 와 같은 부품). 본부 목록·홈페이지 주소는 관리자 모드(Supabase branches) 값을 읽고,
+       개수([data-branch-count])는 branches.js·growth-tree.js 가 같은 값으로 바꿈(관리자 모드에서 바꾸면 두 곳 같이 바뀜) -->
   <section class="g-sec" id="branches" aria-labelledby="branches-title">
     <h2 id="branches-title">함께하는 <span data-branch-count>19</span>개 본부</h2>
     <p class="g-lead">188본부에서 이어진 성장입니다.</p>
-    <div class="g-branches branches g-reveal" id="branch-list"></div>
+    <div data-growth-tree></div>
     <p class="g-note g-note--sec"><a class="g-link" href="story/#branches">성장 스토리에서 보기</a></p>
   </section>
 
@@ -370,7 +372,8 @@
 }
 </script>
 <script src="assets/auth-config.js?v=2" defer></script>
-<script src="assets/branches.js?v=4" defer></script>
+<script src="assets/branches.js?v=5" defer></script>
+<script src="assets/growth-tree.js?v=20261104-gt1" defer></script>
 <script src="assets/stats-beacon.js?v=1" data-page="/" defer></script>
 <script src="assets/perf-board.js?v=4" defer></script>
 <!-- 휴대폰 아래 고정 합류 문의 막대: 첫 화면(숫자 타일 포함)이 지나간 뒤에만 보임 -->

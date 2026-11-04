@@ -1,5 +1,7 @@
 /* 성장 나무 — growth-tree.js 짝 스타일(독립 부품). 메인 토큰(assets/glass.css)이 있으면 따르고, 없으면 같은 값으로
-   · 카드: 메인 카드 계열(#0d1220) · 얇은 선 · 모서리 24(휴대폰 16). 효과는 188 둘레 옅은 빛 하나 + 아주 옅은 세대 고리(나이테)
+   쓰는 곳: 메인 index.html·성장스토리 story/index.html 의 #branches, 시안 lab/branches/tree-v2/ (같은 파일 하나)
+   · 카드: 메인 카드 계열(#0d1220) · 얇은 선 · 모서리 24(휴대폰 16). 효과는 188 둘레 아주 옅은 빛 하나 + 아주 옅은 세대 고리(나이테)
+   · 원: 평평한 면 + 얇은 테두리(광택·내부 그라데이션 없음 — 편집 디자인·인포그래픽 느낌)
    · 휴대폰 기울기는 스크롤 연동 CSS(animation-timeline), PC 기울기는 JS(마우스)
    · prefers-reduced-motion 이면 움직임 전부 끔(다 자란 그림만) */
 .gt{
@@ -10,7 +12,7 @@
   overflow:hidden;overflow:clip; /* clip: 스크롤 상자가 아니라 스크롤 연동 타임라인을 막지 않음 */
   border:1px solid var(--gt-line);border-radius:var(--r-panel,24px);
   background:
-    radial-gradient(560px 440px at var(--gt-cx,50%) var(--gt-cy,50%),rgba(58,86,150,.14),rgba(58,86,150,0) 72%),
+    radial-gradient(560px 440px at var(--gt-cx,50%) var(--gt-cy,50%),rgba(58,86,150,.07),rgba(58,86,150,0) 72%),
     linear-gradient(180deg,#0d1220 0%,#0a0e19 100%);
   color:var(--gt-text);
   -webkit-tap-highlight-color:transparent;
@@ -34,14 +36,14 @@
 .gt-sap-glow{stroke-opacity:.2}
 .gt-sap-core{stroke-opacity:.9}
 
-/* 본부 원 */
+/* 본부 원: 평평한 면(.gt-base, 깊은 톤 한 가지) + 얇은 테두리(.gt-ring). 빛 번짐(.gt-halo)은 필 때·수액이 닿을 때만 아주 옅게 */
 .gt-node{transition:opacity .35s ease}
 .gt-bud,.gt-halo{transform-box:fill-box;transform-origin:50% 50%}
 .gt-halo,.gt-aura{pointer-events:none}
 .gt-halo{opacity:0}
-.gt-lume{opacity:.8}
-.gt-ring{fill:none;stroke-width:1.3;stroke-opacity:.9}
-.gt-node.is-root .gt-ring{stroke-width:1.6}
+.gt-lume{fill-opacity:.075;opacity:.65} /* 숨쉬기용: 면 전체에 같은 색을 아주 조금 — 고르게(평평하게) 밝아졌다 돌아옴 */
+.gt-ring{fill:none;stroke-width:1}
+.gt-node.is-root .gt-ring{stroke-width:1.25}
 .gt-label{font-size:14.5px;font-weight:500;letter-spacing:.01em;text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums;pointer-events:none}
 .gt-node.is-root .gt-label{font-size:16px;font-weight:600}
 
@@ -59,7 +61,7 @@
 .gt-idle .gt-hit:not(.is-root){visibility:hidden}
 
 /* 다 자란 뒤: 숨쉬듯 밝기(위상은 본부마다 다르게 — JS 가 --gt-bd·--gt-ph) */
-@keyframes gt-breathe{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes gt-breathe{0%,100%{opacity:.3}50%{opacity:1}}
 @keyframes gt-aura{0%,100%{opacity:.7}50%{opacity:1}}
 .gt-breathe .gt-lume{animation:gt-breathe var(--gt-bd,8s) ease-in-out var(--gt-ph,0s) infinite}
 .gt-breathe .gt-aura{animation:gt-aura 11s ease-in-out infinite}

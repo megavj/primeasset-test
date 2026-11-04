@@ -2,6 +2,7 @@
    ① 아래 기본 목록을 먼저 그림 → ② 관리자 모드(Supabase branches, visible·sort)에 값이 있으면 그것으로 바꿈.
    본부를 추가·변경할 때는 관리자 모드에서 바꾸면 두 페이지가 같이 바뀜(기본 목록은 서버를 못 읽을 때만 쓰임).
    [data-branch-count] 숫자도 같이 바뀜. 번호·주소만 공개(이름·전화 없음). 주소는 http(s)만 링크.
+   2026-11-04 성장 나무: 메인·성장스토리는 목록(#branch-list) 대신 assets/growth-tree.js 가 그림 → 목록 칸이 없어도 개수는 여기서 계속 갱신.
    AUDIT-20261103: SDK 없이 REST 1건(같은 anon 키, 쿠키·세션 안 보냄). */
 (function () {
   const FALLBACK = [
@@ -10,6 +11,7 @@
     { no: "345" }, { no: "346" }, { no: "350" }, { no: "364" }, { no: "375" }, { no: "379" }, { no: "384" }
   ];
   function render(list) {
+    document.querySelectorAll("[data-branch-count]").forEach(el => { el.textContent = String(list.length); }); // 목록 칸이 없어도 개수는 갱신
     const box = document.getElementById("branch-list");
     if (!box) return;
     box.replaceChildren(...list.map(b => {
@@ -20,7 +22,6 @@
       const n = document.createElement("b"); n.textContent = b.no; e.append(n, "본부");
       return e;
     }));
-    document.querySelectorAll("[data-branch-count]").forEach(el => { el.textContent = String(list.length); });
   }
   async function load() {
     render(FALLBACK);
