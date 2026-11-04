@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>프리미엄 실전상담 통합코치 · 설계사 전용 | 프라임에셋 프리미엄 (테스트)</title>
+<meta name="description" content="승인된 설계사 전용 화법 코치·상담연습·영업능력 진단">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="/assets/glass.css?v=16">
+<link rel="stylesheet" href="/assets/coach.css?v=20261104-coach">
+</head>
+<body class="g-members g-coach">
+<a class="g-skip" href="#main">본문으로 건너뛰기</a>
+<div class="g-bg" aria-hidden="true"></div>
+<div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
+<header class="g-nav pa-site-nav" data-site-nav>
+  <div class="g-bar"><a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
+  <noscript><nav aria-label="주요 메뉴"><a href="/">홈</a> · <a href="/members/#home">설계사 인트라넷</a> · <a href="/members/#login">로그인</a></nav></noscript></div>
+</header>
+<main class="g-sec g-sec--app coach-wrap" id="main" tabindex="-1">
+  <header class="coach-hero">
+    <p class="coach-eyebrow"><a href="/members/#home">설계사 인트라넷</a> · AI영업비서</p>
+    <h1>프리미엄 실전상담 통합코치</h1>
+    <p class="coach-lead">프라임에셋 · 프리미엄사업부 전용</p>
+  </header>
+  <section id="coach-gate" class="pa-card coach-gate" aria-live="polite"><p id="coach-gate-msg">로그인 상태를 확인하는 중…</p></section>
+  <noscript><p class="pa-card">자바스크립트를 켜고 설계사 로그인 후 사용할 수 있습니다. <a href="/members/#login">로그인하기</a></p></noscript>
+  <div class="app coach-app" id="app" hidden>
+    <div class="coach-status-row"><span id="coach-status" role="status">연결 확인 중</span><span id="coach-limit">회원별 1시간 30회</span></div>
+    <div class="credit">제작 · <b>프라임에셋 이사 김상현</b> · 010-8714-9262</div>
+    <header class="coach-toolbar">
+      <div class="seg" role="group" aria-label="코치 모드"><button id="mCoach" class="act" aria-pressed="true">화법도우미</button><button id="mRole" aria-pressed="false">상담연습</button><button id="mDiag" aria-pressed="false">영업능력 진단</button></div>
+      <div class="acts">
+        <button class="ghost" id="modeBtn">📱 모바일</button>
+        <button class="ghost" id="newChat">새로 시작</button>
+        <button class="ghost" id="adminBtn" hidden>관리자</button>
+      </div>
+    </header>
+
+    <div class="subbar">
+      <div class="chips" id="chips"></div>
+      <div class="rolebar" id="rolebar"><button class="startbtn" id="startBtn">🎲 상담시작</button><span class="stage" id="stage">버튼을 누르면 무작위 고객이 카톡을 보냅니다</span></div>
+      <div class="rolebar" id="diagbar"><span class="stage">핵심 6문항 · 최근 1개월 실제 활동 기준 · 약 3분</span></div>
+    </div>
+
+    <div class="mobtabs" hidden><button id="tabChat" class="act">💬 대화</button><button id="tabPanel">📋 분석</button></div>
+
+    <div class="main coach-main">
+      <div class="left" id="left">
+        <div class="drop">📎 PDF · 이미지 · TXT 를 놓으세요</div>
+        <div class="kchat" id="kchat" role="log" aria-label="상담 대화" aria-live="polite" aria-relevant="additions"></div>
+        <section class="diagform" id="diagform" aria-label="영업능력 진단 6문항">
+          <div class="diagintro"><b>나의 영업능력 진단</b><span>잘 보이기 위한 답보다 실제 숫자와 행동을 적을수록 정확합니다. 작성 내용은 진단에만 사용하고 질문 원문은 운영 로그에 저장하지 않습니다.</span></div>
+          <div class="diagprogress"><span>작성 현황</span><b id="diagCount" aria-live="polite">0 / 6</b></div>
+          <div class="dq"><label for="diagAnswer1"><span>1</span>최근 1개월 동안 실제 영업활동을 얼마나 했나요?</label><div class="ex" id="diagExample1">예: 연락한 고객 수, 상담 수, 제안 수, 하루·주간 활동 습관</div><textarea class="diaganswer" id="diagAnswer1" data-n="1" aria-describedby="diagExample1" placeholder="구체적인 횟수와 반복 습관을 적어주세요"></textarea></div>
+          <div class="dq"><label for="diagAnswer2"><span>2</span>신규고객은 어떻게 찾고 첫 상담 약속까지 연결하나요?</label><div class="ex" id="diagExample2">예: 소개·DB·온라인·지인, 첫 연락 방식, 약속 성공 정도</div><textarea class="diaganswer" id="diagAnswer2" data-n="2" aria-describedby="diagExample2" placeholder="주요 고객발굴 경로와 실제 결과를 적어주세요"></textarea></div>
+          <div class="dq"><label for="diagAnswer3"><span>3</span>상담에서 고객 상황과 필요를 어떻게 파악하나요?</label><div class="ex" id="diagExample3">예: 자주 묻는 질문, 정보수집 방식, 고객이 필요성을 느끼게 하는 과정</div><textarea class="diaganswer" id="diagAnswer3" data-n="3" aria-describedby="diagExample3" placeholder="실제 질문이나 상담 흐름을 적어주세요"></textarea></div>
+          <div class="dq"><label for="diagAnswer4"><span>4</span>상품을 설명하고 고객의 거절을 처리하는 방식은 무엇인가요?</label><div class="ex" id="diagExample4">예: 비교·설명 방식, 비싸다·생각해본다 등 거절에 대한 대응</div><textarea class="diaganswer" id="diagAnswer4" data-n="4" aria-describedby="diagExample4" placeholder="자주 쓰는 설명과 거절처리 방식을 적어주세요"></textarea></div>
+          <div class="dq"><label for="diagAnswer5"><span>5</span>상담을 계약·다음 행동·소개로 어떻게 이어가나요?</label><div class="ex" id="diagExample5">예: 클로징, 재연락 일정, 미결고객 관리, 소개 요청과 기존고객 관리</div><textarea class="diaganswer" id="diagAnswer5" data-n="5" aria-describedby="diagExample5" placeholder="실제 후속관리와 성과를 적어주세요"></textarea></div>
+          <div class="dq"><label for="diagAnswer6"><span>6</span>현재 가장 부족한 점과 앞으로 1개월간 바꾸고 싶은 행동은 무엇인가요?</label><div class="ex" id="diagExample6">준법·고지·설명 정확성에서 지키는 원칙도 함께 적어주세요</div><textarea class="diaganswer" id="diagAnswer6" data-n="6" aria-describedby="diagExample6" placeholder="부족한 점, 목표, 바꿀 행동을 솔직하게 적어주세요"></textarea></div>
+          <div class="diagerr" id="diagErr" role="alert">6개 문항을 모두 작성해 주세요.</div>
+          <div class="diagactions"><button class="diagsubmit" id="diagSubmit">진단 결과 보기</button></div>
+        </section>
+        <div class="inwrap">
+          <div class="attach" id="attach"></div>
+          <div class="box">
+            <button class="iconbtn" id="fileBtn" title="파일 첨부" aria-label="파일 첨부">📎</button>
+            <label class="sr-only" for="input">상담 내용</label><textarea id="input" rows="1" aria-describedby="hint"></textarea>
+            <button id="send">전송</button>
+          </div>
+          <div class="hint" id="hint"></div>
+          <input type="file" id="fileInput" aria-label="PDF·이미지·텍스트 첨부" accept=".pdf,.txt,.csv,.md,image/*" multiple style="display:none">
+        </div>
+      </div>
+      <div class="right" id="right">
+        <h2 class="rhead" id="rhead">📋 분석 · 코칭</h2>
+        <div class="rwrap" id="rwrap" role="region" aria-labelledby="rhead" aria-live="polite" tabindex="-1"><div class="rempty">질문하면 분석·코칭이 여기에 표시됩니다.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="overlay" id="overlay" aria-labelledby="adminTitle"><div class="modal" id="modal"><h2 id="adminTitle">관리자 모드</h2></div></dialog>
+  <div class="toast" id="toast" role="alert"></div>
+
+  <p class="coach-legacy" id="coach-legacy-wrap" hidden><a id="coach-legacy" href="https://script.google.com/macros/s/AKfycbyKIz_hvVDlcVscBdGbJ1VCZIHRSz6yrLqRxyAH8WzJfqfQwdVMC-emgg2mPTxVPIk/exec" target="_blank" rel="noopener noreferrer">이전 코치(구글 앱) ↗</a></p>
+</main>
+<footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="/privacy/">개인정보처리방침</a></footer>
+<script src="/assets/auth-config.js?v=2" defer></script>
+<script src="/assets/site-nav.js?v=20261103-audit" defer></script>
+<script src="/assets/pwa.js?v=1" defer></script>
+<script src="/assets/pa-client.js?v=1" defer></script>
+<script src="/assets/coach.js?v=20261104-coach" defer></script>
+</body>
+</html>

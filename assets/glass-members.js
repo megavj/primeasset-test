@@ -375,8 +375,10 @@
         const claim = /보상\s*답변|보상\s*AI|보험금\s*청구\s*답변/i.test(r.name || "") || /AKfycbzNrEdi_|AKfycbz4WjJLM6OR|1ZyOPAVHmWW65aRKq05QFk/.test(r.url || ""); // 이름이 달라도 원본 보상답변기 주소면 새 화면으로
         // 전산답변기도 새 홈페이지 화면으로 연결하고, 확인한 원본 배포 3개를 모두 인식한다.
         const it = /전산\s*답변/.test(r.name || "") || /AKfycbzVbO8_XxSq8_WZhvNBXSi0myH22g0igqhAwkz7Kf9QtDUchxIds-E7fgTi06xGSP6lvg|AKfycbxWVCohTpOA3rZUK1hpuOqq_cfarzo57S2dlKL1g3CcTevVq1h-9oG28wBUvv_tzPb8tw|AKfycbzfFExpXscK87c2F54p17YDJwdDmpk7MAZ3NQAsWJtjqAFBXSaVJ1JC52H2czeaPPDNiw/.test(r.url || "");
+        // 실전상담 통합코치는 보상·전산 규칙 다음에 홈페이지 새 화면으로 연결합니다.
+        const coach = /통합\s*코치|실전\s*상담|영업\s*비서/.test(r.name || "") || /AKfycbyKIz|AKfycbw6JIh|AKfycbz8vba3|1rIZRrzlYTgq5g0omTg_02q73sUi83Fp8US200QeoXQc4iPC5Wef6FHZQ/.test(r.url || "");
         return { ...r, key: "menu:" + r.id, work: workFor(r),
-          url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : it ? "/members/it/" : r.url) : null, internal: product || claim || it };
+          url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : it ? "/members/it/" : coach ? "/members/coach/" : r.url) : null, internal: product || claim || it || coach };
       }),
       ...SITE_LINKS.map(r => ({ ...r, unlocked: true, work: WORK[4] }))
     ];

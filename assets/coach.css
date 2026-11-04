@@ -1,0 +1,152 @@
+/* /members/coach/: 인트라넷의 어두운 면·금색·자체 호스팅 글꼴을 공유합니다. 사진 없음. */
+.coach-wrap{max-width:1180px}
+.coach-hero{margin:8px 0 24px}
+.coach-eyebrow{margin:0 0 8px;color:var(--gold);font-size:var(--fs-cap)}
+.coach-eyebrow a{color:inherit}
+.coach-hero h1{font-size:clamp(28px,3.6vw,40px);letter-spacing:-.03em}
+.coach-lead{margin:12px 0 0;color:var(--text-2)}
+.coach-gate p{margin:0;color:var(--text-2)}
+.coach-gate a,.coach-legacy a{color:var(--gold-hi)}
+.coach-legacy{font-size:var(--fs-cap);margin:24px 0}
+.g-coach [hidden]{display:none!important}
+.g-coach .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.coach-app{border:1px solid var(--line-2);border-radius:var(--r-card);background:var(--bg-1);overflow:hidden;box-shadow:var(--shadow-1)}
+.coach-status-row{display:flex;flex-wrap:wrap;gap:8px 20px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--text-2)}
+#coach-status{color:var(--gold)}
+#coach-status.is-ready{color:#a6d6b3}
+.coach-app .credit{padding:8px 16px;font-size:14px;color:var(--text-3)}
+.coach-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:12px 16px 16px;border-bottom:1px solid var(--line)}
+.g-coach button,.g-coach input,.g-coach textarea,.g-coach select{font-family:inherit}
+.coach-app button,.g-coach .overlay button{cursor:pointer;font-size:14px;line-height:1.4}
+.coach-app button:disabled,.g-coach .overlay button:disabled{cursor:wait;opacity:.55}
+.coach-app button:focus-visible,.coach-app textarea:focus-visible,.g-coach .overlay :is(button,input,select,a):focus-visible{outline:3px solid var(--gold-hi);outline-offset:3px}
+.coach-app .seg{display:flex;gap:4px;flex-wrap:wrap;padding:4px;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-0)}
+.coach-app .seg button{min-height:44px;border:0;border-radius:8px;padding:8px 14px;color:var(--text-2);background:transparent;font-weight:600}
+.coach-app .seg button.act{color:var(--on-gold);background:var(--gold)}
+.coach-app .acts{display:flex;flex-wrap:wrap;gap:8px}
+.g-coach :is(.ghost,.retrybtn,.scopy,.suse,.copyrec,.copyfollow){min-height:44px;border:1px solid var(--line-2);border-radius:9px;padding:8px 12px;color:var(--text-2);background:transparent}
+.g-coach :is(.ghost,.retrybtn,.scopy,.suse,.copyrec,.copyfollow):hover{border-color:var(--gold);color:var(--gold-hi)}
+.coach-app .subbar{border-bottom:1px solid var(--line);background:var(--bg-1)}
+.coach-app .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:thin}
+.coach-app .chip{flex:0 0 auto;min-height:44px;padding:8px 14px;border:1px solid var(--line-2);border-radius:24px;color:var(--text-2);background:var(--bg-2);white-space:nowrap}
+.coach-app .chip:hover{border-color:var(--gold);color:var(--gold-hi)}
+.coach-app .rolebar{display:none;align-items:center;flex-wrap:wrap;gap:12px;padding:16px}
+.coach-app .stage{color:var(--text-2);font-size:14px;line-height:1.6}
+.g-coach :is(.startbtn,.copyall,.diagsubmit,.btn),.coach-app #send{min-height:48px;padding:10px 18px;border:1px solid var(--gold);border-radius:10px;background:var(--gold);color:var(--on-gold);font-weight:700}
+.g-coach :is(.startbtn,.copyall,.diagsubmit,.btn):hover,.coach-app #send:hover{background:var(--gold-hi)}
+.coach-main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);align-items:stretch;min-height:590px}
+.coach-app .left{display:flex;flex-direction:column;min-width:0;position:relative;border-right:1px solid var(--line)}
+.coach-app .right{min-width:0;background:var(--bg-1);display:flex;flex-direction:column}
+.coach-app .kchat{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;min-height:340px;max-height:650px;padding:20px 16px;background:var(--bg-0);scrollbar-width:thin}
+.coach-app .klabel{font-size:14px;color:var(--text-2);font-weight:600;margin:12px 4px 0}
+.coach-app .klabel.mine{align-self:flex-end;text-align:right;color:var(--gold)}
+.coach-app .kb{max-width:88%;padding:12px 14px;line-height:1.7;font-size:16px;white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--line-2);border-radius:15px}
+.coach-app .kb.you,.coach-app .kb.ai{align-self:flex-start;background:var(--bg-2);color:var(--text);border-top-left-radius:4px}
+.coach-app .kb.me{align-self:flex-end;background:var(--gold-soft);color:var(--text);border-color:rgba(214,185,126,.32);border-top-right-radius:4px}
+.coach-app .kb.sys{align-self:center;max-width:100%;background:var(--bg-1);color:var(--text-2);border-radius:12px;font-size:14px;text-align:center;margin:8px 0}
+.coach-app .kc{display:block;min-height:44px;width:max-content;max-width:100%;margin:8px 0 -4px auto;padding:4px 8px;border:0;border-radius:6px;background:transparent;color:var(--gold-hi);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.coach-app .req{align-self:center;font-size:14px;color:var(--text-2);border:1px solid var(--line);border-radius:12px;max-width:100%;text-align:center;padding:8px 12px;margin:8px 0;background:var(--bg-1)}
+.coach-app .typing{display:flex;gap:5px;align-items:center;align-self:flex-start;border-radius:12px;padding:12px;background:var(--bg-2);color:var(--text-2)}
+.coach-app .typing i{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:coach-pulse 1.4s infinite}
+.coach-app .typing i:nth-child(2){animation-delay:.2s}.coach-app .typing i:nth-child(3){animation-delay:.4s}
+.coach-app .typing .tstage{font-size:14px;font-weight:500;margin-left:6px}
+@keyframes coach-pulse{0%,70%,100%{opacity:.4}35%{opacity:1}}
+.coach-app .retrybtn{align-self:center;margin:8px 0;color:var(--gold-hi)}
+.coach-app .drop{position:absolute;inset:12px;display:none;align-items:center;justify-content:center;z-index:5;border:2px dashed var(--gold);border-radius:12px;background:rgba(12,17,28,.96);color:var(--gold-hi);pointer-events:none;padding:16px;text-align:center}
+.coach-app .left.drag .drop{display:flex}
+.coach-app .inwrap{border-top:1px solid var(--line);padding:16px;background:var(--bg-1)}
+.coach-app .box{display:flex;gap:8px;align-items:flex-end}
+.coach-app .iconbtn{width:48px;height:48px;flex-shrink:0;border:1px solid var(--line-2);border-radius:10px;background:var(--bg-2);color:var(--text);font-size:20px}
+.coach-app textarea{min-width:0;flex:1;min-height:48px;max-height:160px;resize:vertical;border:1px solid var(--line-2);border-radius:10px;padding:12px;color:var(--text);background:var(--bg-2);font-size:16px;line-height:1.6}
+.coach-app textarea::placeholder{color:var(--text-3);opacity:1}
+.coach-app #send{flex-shrink:0;height:48px;padding:8px 16px}
+.coach-app .hint{margin-top:8px;font-size:14px;color:var(--text-3);line-height:1.6}
+.coach-app .attach{display:none;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.coach-app .attach.on{display:flex}
+.coach-app .achip{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:0 8px 0 12px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg-2);color:var(--text-2);font-size:14px}
+.coach-app .achip .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:210px}
+.coach-app .achip .x{min-width:44px;min-height:44px;border:0;border-radius:8px;background:transparent;color:var(--text-2);padding:8px}
+.coach-app .rhead{font-size:18px;line-height:1.5;font-weight:600;color:var(--gold);border-bottom:1px solid var(--line);padding:18px 20px;margin:0}
+.coach-app .rwrap{overflow-y:auto;max-height:780px;padding:20px;scrollbar-width:thin}
+.g-coach .sec{color:var(--text-2);font-size:14px;font-weight:600;margin:24px 0 8px}
+.g-coach .sec:first-child{margin-top:0}
+.coach-app .ptext,.coach-app .stext{font-size:16px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--text)}
+.coach-app .score{font-size:36px;font-weight:600;color:var(--gold);line-height:1.3}
+.coach-app .scard,.coach-app .qsum{background:var(--bg-2);border:1px solid var(--line-2);border-left:3px solid var(--gold);border-radius:10px;padding:14px;margin-bottom:12px;line-height:1.7}
+.coach-app .scard :is(.scopy,.suse,.copyrec,.copyfollow){margin:12px 6px 0 0}
+.coach-app .copyall{width:100%;margin-top:8px}
+.coach-app .rempty{font-size:15px;line-height:1.8;color:var(--text-3)}
+.coach-app .qsum{color:var(--text-2);font-size:15px}
+.coach-app .compl{margin-top:24px;background:var(--gold-soft);border:1px solid rgba(214,185,126,.25);border-radius:10px;padding:14px;font-size:15px;line-height:1.7;color:var(--text-2)}
+.coach-app .compl b{color:var(--gold-hi)}
+.coach-app .diagform{display:none;padding:20px;overflow-y:auto;max-height:800px;background:var(--bg-0)}
+.coach-app .diagintro{padding:16px;margin-bottom:16px;border:1px solid var(--line-2);border-left:3px solid var(--gold);border-radius:12px;background:var(--bg-1)}
+.coach-app .diagintro b{display:block;color:var(--gold);font-size:18px;margin-bottom:8px}
+.coach-app .diagintro span{font-size:14px;color:var(--text-2);line-height:1.7}
+.coach-app .diagprogress{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px;color:var(--text-2);margin:16px 0}
+.coach-app .diagprogress b{color:var(--gold)}
+.coach-app .dq{background:var(--bg-1);border:1px solid var(--line-2);border-radius:12px;padding:16px;margin-bottom:12px}
+.coach-app .dq label{display:block;font-size:16px;line-height:1.6;font-weight:600;margin-bottom:8px}
+.coach-app .dq label span{color:var(--gold);margin-right:8px}
+.coach-app .dq .ex{font-size:14px;color:var(--text-3);margin-bottom:12px;line-height:1.7}
+.coach-app .dq textarea{display:block;width:100%;min-height:100px;resize:vertical}
+.coach-app .dq.missing,.coach-app .dq.missing textarea{border-color:#f5a19a}
+.coach-app .diagerr{display:none;color:#ffb8b1;font-size:14px;text-align:center;margin:12px 0}
+.coach-app .diagactions{padding:8px 0 0}
+.coach-app .diagsubmit{width:100%;font-size:16px}
+.g-coach .overlay{width:min(720px,calc(100% - 32px));max-height:88vh;margin:auto;padding:0;border:1px solid var(--line-2);border-radius:16px;background:var(--bg-1);color:var(--text);box-shadow:var(--shadow-2)}
+.g-coach .overlay::backdrop{background:rgba(0,0,0,.75)}
+.g-coach .modal{padding:24px;overflow-wrap:anywhere}
+.g-coach .modal h2{margin:0 0 20px;font-size:22px;color:var(--gold)}
+.g-coach .modal h2 small{font-size:14px;color:var(--text-3);display:inline-block;font-weight:400}
+.g-coach .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-bottom:20px}
+.g-coach .card{padding:12px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px}
+.g-coach .card .n{font-size:24px;font-weight:500;color:var(--gold)}
+.g-coach .card .l{font-size:14px;color:var(--text-3);margin-top:4px}
+.g-coach .cfgrow{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.g-coach .field{flex:1;min-width:170px}
+.g-coach .field label{display:block;font-size:14px;color:var(--text-2);margin-bottom:8px}
+.g-coach .field :is(input,select){width:100%;min-height:48px;padding:10px 12px;border:1px solid var(--line-2);border-radius:9px;background:var(--bg-2);color:var(--text);font-size:16px}
+.g-coach #cfgOk{min-height:1.5em;margin:8px 0;font-size:14px;color:var(--gold-hi)}
+.g-coach .budget{font-size:15px;color:var(--text-2)}
+.g-coach .bbar{height:10px;margin-top:8px;border:1px solid var(--line-2);border-radius:6px;overflow:hidden;background:var(--bg-0)}
+.g-coach .bfill{height:100%;background:var(--gold)}
+.g-coach .bfill.over{background:#f5a19a}
+.g-coach .bars{display:flex;align-items:flex-end;gap:6px;height:128px;overflow-x:auto;padding-bottom:4px}
+.g-coach .bar{flex:1;min-width:26px;display:flex;height:100%;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+.g-coach .bar .fill{width:100%;min-height:2px;max-height:80px;background:var(--gold);border-radius:3px 3px 0 0}
+.g-coach .bar .d{font-size:14px;color:var(--text-3)}
+.g-coach .kw{display:flex;flex-wrap:wrap;gap:8px}
+.g-coach .kw span{padding:8px 12px;background:var(--bg-2);border:1px solid var(--line);border-radius:12px;font-size:14px}
+.g-coach .kw b{color:var(--gold)}
+.g-coach .coach-table{overflow:auto}
+.g-coach .coach-table table{width:100%;border-collapse:collapse;font-size:14px}
+.g-coach .coach-table td,.g-coach .coach-table th{padding:10px;border-bottom:1px solid var(--line-2);text-align:left;vertical-align:top}
+.g-coach .coach-table th{color:var(--text-2);font-weight:600;white-space:nowrap}
+.g-coach .foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:24px}
+.g-coach .foot a{color:var(--gold-hi);font-size:14px}
+.g-coach .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;max-width:calc(100vw - 32px);padding:12px 20px;border:1px solid var(--line-2);border-radius:14px;background:var(--bg-2);color:var(--text);box-shadow:var(--shadow-2);font-size:15px;opacity:0;pointer-events:none}
+.g-coach .toast.on{opacity:1}
+.coach-app.mob .coach-main{grid-template-columns:minmax(0,1fr)}
+.coach-app.mob .left{border-right:0;border-bottom:1px solid var(--line)}
+.coach-app.mob .kchat{min-height:360px;max-height:65vh}
+.coach-app.mob .rwrap,.coach-app.mob .diagform{max-height:none}
+@media(max-width:760px){
+  .coach-wrap{padding-left:16px;padding-right:16px}
+  .coach-toolbar{padding:12px;gap:12px}
+  .coach-app .seg{width:100%;gap:2px;flex-wrap:nowrap}
+  .coach-app .seg button{flex:1;padding:8px 6px;font-size:14px;white-space:normal}
+  .coach-app .acts{gap:6px}
+  .coach-app .ghost{padding:8px 10px}
+  .coach-main{grid-template-columns:minmax(0,1fr)}
+  .coach-app .left{border-right:0;border-bottom:1px solid var(--line)}
+  .coach-app .rwrap,.coach-app .diagform{max-height:none;padding:16px}
+  .coach-app .kchat{padding:16px 12px}
+  .coach-app .kb{max-width:96%}
+  .coach-app .inwrap{padding:12px}
+  .coach-app .box{gap:6px}
+  .coach-app #send{padding:8px 10px}
+  .coach-app .iconbtn{width:44px}
+  .g-coach .modal{padding:20px 16px}
+}
+@media(prefers-reduced-motion:reduce){.coach-app *,.g-coach .toast{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
