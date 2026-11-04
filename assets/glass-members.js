@@ -372,7 +372,7 @@
       ...data.map(r => {
         const product = r.name === "상품통합분석기";
         // 이사 승인 2026-11-04: 보험보상답변기는 홈페이지 새 화면(/members/claim/)으로. 기존 GAS 주소는 그 화면 아래 '이전 답변기'로 남김.
-        const claim = /보상\s*답변/.test(r.name || "");
+        const claim = /보상\s*답변|보상\s*AI|보험금\s*청구\s*답변/i.test(r.name || "") || /AKfycbzNrEdi_|AKfycbz4WjJLM6OR|1ZyOPAVHmWW65aRKq05QFk/.test(r.url || ""); // 이름이 달라도 원본 보상답변기 주소면 새 화면으로
         return { ...r, key: "menu:" + r.id, work: workFor(r),
           url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : r.url) : null, internal: product || claim };
       }),
