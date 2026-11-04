@@ -1,0 +1,118 @@
+/* 성장 나무 — growth-tree.js 짝 스타일(독립 부품). 메인 토큰(assets/glass.css)이 있으면 따르고, 없으면 같은 값으로
+   · 카드: 메인 카드 계열(#0d1220) · 얇은 선 · 모서리 24(휴대폰 16). 효과는 188 둘레 옅은 빛 하나 + 아주 옅은 세대 고리(나이테)
+   · 휴대폰 기울기는 스크롤 연동 CSS(animation-timeline), PC 기울기는 JS(마우스)
+   · prefers-reduced-motion 이면 움직임 전부 끔(다 자란 그림만) */
+.gt{
+  --gt-text:var(--text,#f2eee6);
+  --gt-line:var(--line,rgba(255,255,255,.08));
+  --gt-gold:var(--gold,#d6b97e);
+  position:relative;isolation:isolate;
+  overflow:hidden;overflow:clip; /* clip: 스크롤 상자가 아니라 스크롤 연동 타임라인을 막지 않음 */
+  border:1px solid var(--gt-line);border-radius:var(--r-panel,24px);
+  background:
+    radial-gradient(560px 440px at var(--gt-cx,50%) var(--gt-cy,50%),rgba(58,86,150,.14),rgba(58,86,150,0) 72%),
+    linear-gradient(180deg,#0d1220 0%,#0a0e19 100%);
+  color:var(--gt-text);
+  -webkit-tap-highlight-color:transparent;
+  view-timeline:--gt-view block;
+}
+.gt-scene{position:relative;z-index:1}
+.gt-plane{position:relative;transform-origin:50% 50%}
+.gt-tilt{transform-origin:50% 50%}
+.gt-svg{display:block;max-width:none;overflow:visible;-webkit-user-select:none;user-select:none}
+.gt-svg:focus{outline:none}
+
+/* 세대 고리(나이테): 가운데에서의 거리 = 세대를 아주 옅게 */
+.gt-rings circle{fill:none;stroke:rgba(214,185,126,.14);stroke-width:1;stroke-dasharray:1 7;stroke-linecap:round;transition:opacity .35s ease}
+
+/* 가지: 굵기가 줄어드는 붓 획(채운 경로, 부모→자식 색 그라데이션 fill 은 JS). 겹치는 부분이 진해지지 않게 묶음째 투명도 */
+.gt-edges{opacity:.8;transition:opacity .35s ease}
+.gt-edge{stroke:none;transition:opacity .35s ease}
+.gt-bridge{fill:none;stroke-linecap:butt;opacity:0}
+.gt-sap{mix-blend-mode:screen;transition:opacity .35s ease}
+.gt-sap path{fill:none;stroke-linecap:round}
+.gt-sap-glow{stroke-opacity:.2}
+.gt-sap-core{stroke-opacity:.9}
+
+/* 본부 원 */
+.gt-node{transition:opacity .35s ease}
+.gt-bud,.gt-halo{transform-box:fill-box;transform-origin:50% 50%}
+.gt-halo,.gt-aura{pointer-events:none}
+.gt-halo{opacity:0}
+.gt-lume{opacity:.8}
+.gt-ring{fill:none;stroke-width:1.3;stroke-opacity:.9}
+.gt-node.is-root .gt-ring{stroke-width:1.6}
+.gt-label{font-size:14.5px;font-weight:500;letter-spacing:.01em;text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums;pointer-events:none}
+.gt-node.is-root .gt-label{font-size:16px;font-weight:600}
+
+/* 누르기·포커스 층 */
+.gt-hit{cursor:default;outline:none}
+.gt-hit[href]{cursor:pointer}
+.gt-hit:focus,.gt-hit:focus-visible{outline:none}
+.gt-hit-area{fill:transparent}
+.gt-focus{fill:none;stroke:transparent;stroke-width:1.5}
+.gt-hit:focus-visible .gt-focus{stroke:var(--gt-gold)}
+
+/* 자라기 전: 188만 은은하게 */
+.gt-idle .gt-edge{visibility:hidden}
+.gt-idle .gt-node:not(.is-root) .gt-bud{opacity:0}
+.gt-idle .gt-hit:not(.is-root){visibility:hidden}
+
+/* 다 자란 뒤: 숨쉬듯 밝기(위상은 본부마다 다르게 — JS 가 --gt-bd·--gt-ph) */
+@keyframes gt-breathe{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes gt-aura{0%,100%{opacity:.7}50%{opacity:1}}
+.gt-breathe .gt-lume{animation:gt-breathe var(--gt-bd,8s) ease-in-out var(--gt-ph,0s) infinite}
+.gt-breathe .gt-aura{animation:gt-aura 11s ease-in-out infinite}
+.gt-paused .gt-lume,.gt-paused .gt-aura{animation-play-state:paused}
+
+/* 마우스·포커스: 188까지 이어지는 가지 + 산하만 밝게, 나머지 흐리게 */
+.gt.is-hl .gt-edges{opacity:1}
+.gt.is-hl .gt-edge:not(.is-on),.gt.is-hl .gt-node:not(.is-on){opacity:.25}
+.gt.is-hl .gt-rings circle,.gt.is-hl .gt-sap{opacity:.4}
+
+/* 말풍선: 승격 년월만 */
+.gt-tip{position:absolute;left:0;top:0;z-index:3;pointer-events:none;
+  padding:6px 10px;border-radius:9px;background:#0b0f19;border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 12px 28px -14px rgba(0,0,0,.9);
+  color:var(--gt-text);font-size:13px;line-height:1.2;font-weight:500;letter-spacing:.04em;font-variant-numeric:tabular-nums;white-space:nowrap;
+  opacity:0;transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,-100%) translateY(4px);
+  transition:opacity .18s ease,transform .24s cubic-bezier(.2,.7,.3,1)}
+.gt-tip.is-on{opacity:1;transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,-100%)}
+.gt-tip.is-below{transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,0) translateY(-4px)}
+.gt-tip.is-below.is-on{transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,0)}
+.gt-tip::after{content:"";position:absolute;left:calc(50% + var(--ax,0px));top:100%;width:8px;height:8px;margin:-4px 0 0 -4px;
+  background:#0b0f19;border:1px solid rgba(255,255,255,.14);border-width:0 1px 1px 0;transform:rotate(45deg)}
+.gt-tip.is-below::after{top:0;border-width:1px 0 0 1px}
+
+/* 흐린 연도(장식): 아주 낮은 대비 */
+.gt-year{position:absolute;z-index:0;pointer-events:none;-webkit-user-select:none;user-select:none;
+  line-height:1;font-weight:200;letter-spacing:-.03em;color:rgba(242,238,230,.058);font-variant-numeric:tabular-nums}
+.gt-year span{position:absolute;left:0;top:0;opacity:0;white-space:nowrap}
+.gt-year span.is-cur{opacity:1}
+
+/* 화면 읽기용 숨은 목록 */
+.gt-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* 휴대폰: 세로 나무 · 스크롤에 따라 살짝 기울기 */
+@media (max-width:640px){
+  .gt{border-radius:var(--r-card,16px)}
+  .gt-label{font-size:13.5px}
+  .gt-node.is-root .gt-label{font-size:15px}
+}
+@keyframes gt-tilt-scroll{from{transform:perspective(1300px) rotateX(3.5deg)}to{transform:perspective(1300px) rotateX(-3.5deg)}}
+@supports (animation-timeline:view()){
+  @media (hover:none),(pointer:coarse){
+    .gt-motion .gt-tilt{animation:gt-tilt-scroll linear both;animation-timeline:--gt-view;animation-range:cover 0% cover 100%}
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .gt *,.gt *::before,.gt *::after{animation:none!important;transition:none!important}
+  .gt-tilt,.gt-plane{transform:none!important}
+}
+@media (forced-colors:active){
+  .gt-ring{stroke:CanvasText}.gt-label{fill:CanvasText}.gt-hit:focus-visible .gt-focus{stroke:Highlight}
+}
+@media print{ /* 자라기 전에 인쇄해도 다 자란 그림 */
+  .gt-idle .gt-edge{visibility:visible}.gt-idle .gt-node:not(.is-root) .gt-bud{opacity:1}
+}

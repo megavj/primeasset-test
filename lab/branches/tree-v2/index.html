@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>시안 — 성장 나무 v2 · 함께하는 본부</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="/assets/glass.css?v=16">
+<link rel="stylesheet" href="./growth-tree.css">
+<style>
+/* 시안 페이지 머리줄만(부품 밖). 섹션은 메인과 같은 .g-sec */
+.lab-bar{max-width:var(--wrap);margin:0 auto;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:13px;line-height:1.4;color:var(--text-3);border-bottom:1px solid var(--line)}
+.lab-bar a{display:inline-flex;align-items:center;min-height:44px;color:var(--text-2);text-decoration:none}
+.lab-bar a:hover{color:var(--text)}
+.g-main>main{overflow-x:clip;padding-bottom:28vh}
+</style>
+</head>
+<body class="g-main">
+<div class="g-bg" aria-hidden="true"></div>
+<div class="lab-bar"><span>시안 — 성장 나무 v2</span><a href="../">← 시안 목록</a></div>
+<main id="main">
+  <!-- 메인 '함께하는 본부' 섹션과 같은 모양. 목록(#branch-list) 자리에 성장 나무 부품 하나 -->
+  <section class="g-sec" id="branches" aria-labelledby="branches-title">
+    <h2 id="branches-title">함께하는 <span data-branch-count>19</span>개 본부</h2>
+    <p class="g-lead">188본부에서 이어진 성장입니다.</p>
+    <div data-growth-tree></div>
+    <p class="g-note g-note--sec"><a class="g-link" href="/story/#branches">성장 스토리에서 보기</a></p>
+  </section>
+</main>
+<script src="/assets/auth-config.js?v=2" defer></script>
+<script src="./growth-tree.js" defer></script>
+</body>
+</html>
