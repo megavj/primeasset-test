@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>전산답변기 · 설계사 전용 | 프라임에셋 프리미엄 (테스트)</title>
+<meta name="description" content="승인된 설계사 전용 보험사 전산 업무 답변 도구">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="/assets/glass.css?v=16">
+<link rel="stylesheet" href="/assets/it.css?v=20261104-it">
+</head>
+<body class="g-members g-it">
+<a class="g-skip" href="#main">본문으로 건너뛰기</a>
+<div class="g-bg" aria-hidden="true"></div>
+<div class="g-strip">테스트 페이지 — 정식 오픈 전 확인용</div>
+<header class="g-nav pa-site-nav" data-site-nav>
+  <div class="g-bar"><a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
+  <noscript><nav aria-label="주요 메뉴"><a href="/">홈</a> · <a href="/members/#home">설계사 인트라넷</a> · <a href="/members/#login">로그인</a></nav></noscript></div>
+</header>
+<main class="g-sec g-sec--app it-wrap" id="main" tabindex="-1">
+  <header class="it-hero">
+    <p class="it-eyebrow"><a href="/members/#home">설계사 인트라넷</a> · 전산·청약</p>
+    <h1>전산답변기</h1>
+    <p class="it-lead">보험사 전산에서 막힌 내용을 적으면 관련 매뉴얼을 찾아 메뉴 경로와 처리 순서를 안내합니다.</p>
+  </header>
+
+  <section id="it-gate" class="pa-card it-gate" aria-live="polite">
+    <p id="it-gate-msg">로그인 상태를 확인하는 중…</p>
+  </section>
+
+  <div id="it-app" hidden>
+    <ul class="it-status" aria-label="연결 상태">
+      <li id="it-st-mac"><span class="it-dot" aria-hidden="true"></span><span>전산 매뉴얼 검색 확인 중</span></li>
+      <li id="it-st-ai"><span class="it-dot" aria-hidden="true"></span><span>AI 답변 확인 중</span></li>
+    </ul>
+
+    <form id="it-form" class="pa-card it-form" novalidate>
+      <h2 class="pa-h3">전산 업무 질문</h2>
+      <div class="it-filters">
+        <div><label for="it-insurer">보험사</label>
+          <select class="it-select" id="it-insurer" aria-label="보험사 선택">
+          <option value="">보험사 자동판별</option>
+          <optgroup label="손해보험"><option>메리츠화재</option><option>한화손해보험</option><option>롯데손해보험</option><option>MG손해보험</option><option>흥국화재</option><option>삼성화재</option><option>현대해상</option><option>KB손해보험</option><option>DB손해보험</option><option>AXA손해보험</option><option>AIG손해보험</option><option>하나손해보험</option><option>캐롯손해보험</option><option>농협손해보험</option><option>신한EZ손해보험</option><option>카카오페이손해보험</option><option>서울보증보험</option></optgroup>
+          <optgroup label="생명보험"><option>삼성생명</option><option>한화생명</option><option>교보생명</option><option>신한라이프</option><option>NH농협생명</option><option>흥국생명</option><option>DB생명</option><option>KB라이프생명</option><option>미래에셋생명</option><option>동양생명</option><option>ABL생명</option><option>KDB생명</option><option>메트라이프생명</option><option>라이나생명</option><option>AIA생명</option><option>푸본현대생명</option><option>처브라이프생명</option><option>BNP파리바카디프생명</option><option>하나생명</option><option>iM라이프</option><option>교보라이프플래닛생명</option></optgroup>
+        </select>
+        </div>
+        <div><label for="it-task">업무</label>
+          <select class="it-select" id="it-task" aria-label="업무 선택">
+          <option value="">업무 자동판별</option><option>전산 접속·최초 로그인</option><option>아이디·비밀번호</option><option>공동인증서 등록·갱신</option><option>고객등록·조회</option><option>본인인증</option><option>동의서·개인정보동의</option><option>가입설계·가설계</option><option>설계 저장·불러오기</option><option>상품 비교·특약 구성</option><option>인수기준·사전심사</option><option>청약서 작성</option><option>모바일청약</option><option>전자서명</option><option>서류 첨부·보완</option><option>계약 전 알릴의무</option><option>초회보험료 수납</option><option>청약 철회·취소</option><option>계약 조회</option><option>계약 변경·배서</option><option>계약자·수익자 변경</option><option>보험료 납입·부활</option><option>보험금 청구</option><option>증명서·청약서 출력</option><option>수수료·실적 조회</option><option>오류 조치·프로그램 설치</option>
+        </select>
+        </div>
+      </div>
+      <p class="it-hint" id="it-q-hint">보험사와 업무는 질문에서 자동으로 찾습니다. 직접 선택하면 해당 조건으로 확인합니다. 고객 이름·주민번호·연락처와 비밀번호는 적지 마세요.</p>
+      <label class="it-q-label" for="it-q">막힌 내용</label>
+      <textarea id="it-q" class="pa-in it-q" rows="5" maxlength="800" aria-describedby="it-q-hint it-q-limit" placeholder="예) 삼성화재 가입설계를 저장했는데 모바일청약으로 보내는 메뉴를 찾지 못하겠습니다. 처리 순서를 알려 주세요."></textarea>
+      <p class="it-hint" id="it-q-limit">최대 800자 · Enter로 질문, Shift+Enter로 줄바꿈</p>
+      <details class="it-examples-box">
+        <summary>자주 묻는 질문</summary>
+        <div class="it-examples" role="group" aria-label="예시 질문">
+          <button type="button" class="it-chip" data-example="메리츠화재에서 신규 고객을 등록하고 본인인증까지 진행하는 순서를 알려줘">메리츠 고객등록</button>
+          <button type="button" class="it-chip" data-example="삼성화재 가입설계를 저장한 뒤 모바일청약으로 보내는 방법을 알려줘">삼성화재 모바일청약</button>
+          <button type="button" class="it-chip" data-example="DB손해보험에서 기존 설계를 불러와 특약을 수정하고 다시 저장하는 방법을 알려줘">DB손해 설계 수정</button>
+          <button type="button" class="it-chip" data-example="현대해상 계약자 또는 수익자를 변경할 때 메뉴 경로와 필요한 서류를 알려줘">현대해상 계약변경</button>
+          <button type="button" class="it-chip" data-example="KB손해보험에서 청약서와 상품설명서를 출력하는 방법을 알려줘">KB 청약서 출력</button>
+          <button type="button" class="it-chip" data-example="한화생명에서 초회보험료를 수납하고 처리 결과를 확인하는 방법을 알려줘">한화생명 수납</button>
+          <button type="button" class="it-chip" data-example="교보생명 전산에 처음 접속할 때 아이디 신청부터 공동인증서 등록까지 알려줘">교보생명 최초 접속</button>
+          <button type="button" class="it-chip" data-example="보험금 청구서류를 전산에 첨부하고 접수 결과를 확인하는 방법을 알려줘">보험금 청구 접수</button>
+          <button type="button" class="it-chip" data-example="고객 동의서를 받은 뒤 가입설계를 시작하는 전체 순서를 알려줘">고객등록→가입설계</button>
+          <button type="button" class="it-chip" data-example="전자서명 요청을 다시 보내고 서명 완료 여부를 확인하는 방법을 알려줘">전자서명 재발송·확인</button>
+          <button type="button" class="it-chip" data-example="보험사별 수수료와 실적을 조회하는 메뉴와 확인 방법을 알려줘">수수료·실적 조회</button>
+          <button type="button" class="it-chip" data-example="계약 부활을 신청할 때 전산 처리 순서와 준비서류를 알려줘">계약 부활 처리</button>
+        </div>
+      </details>
+
+      <div class="it-actions">
+        <button type="submit" id="it-ask" class="g-btn g-btn--pri">답변 받기</button>
+        <button type="button" id="it-clear" class="g-btn g-btn--ghost">새 질문</button>
+      </div>
+      <p id="it-form-msg" class="it-form-msg" role="alert"></p>
+    </form>
+
+    <section id="it-progress" class="pa-card it-progress" hidden aria-labelledby="it-progress-title">
+      <h2 id="it-progress-title" class="pa-h3">답변을 만드는 중 <span id="it-elapsed" class="it-elapsed">00:00</span></h2>
+      <ol class="it-steps">
+        <li data-step="0">질문 접수</li>
+        <li data-step="1">전산 매뉴얼 검색</li>
+        <li data-step="2">매뉴얼·메뉴 경로 확인</li>
+        <li data-step="3">답변 작성·검수</li>
+      </ol>
+      <p id="it-progress-text" class="it-progress-text" role="status" aria-live="polite">질문을 보내는 중…</p>
+    </section>
+
+    <section id="it-result" class="it-result" hidden aria-labelledby="it-result-title">
+      <div class="pa-card it-answer-card">
+        <div class="it-result-head">
+          <h2 id="it-result-title" class="pa-h3" tabindex="-1">처리 방법</h2>
+          <button type="button" id="it-copy" class="g-btn g-btn--ghost it-btn-sm">답변 복사</button>
+        </div>
+        <p id="it-manual-badge" class="it-badge"></p>
+        <p id="it-notice" class="it-notice" hidden></p>
+        <p id="it-answer-meta" class="it-answer-meta"></p>
+        <div id="it-answer" class="it-answer"></div>
+        <div id="it-answer-notes" class="it-answer-notes" hidden></div>
+        <div id="it-links" class="it-followups" aria-label="전산 관련 링크"></div>
+        <div id="it-clarification" class="it-followups" role="group" aria-label="보험사 확인"></div>
+        <div id="it-followups" class="it-followups" role="group" aria-label="이어서 묻기"></div>
+      </div>
+      <div class="pa-card">
+        <h2 class="pa-h3">검색한 전산 매뉴얼</h2>
+        <p class="it-hint">현재 질문에 맞춰 찾은 업무 자료입니다. 실제 화면과 다르면 보험사의 최신 안내도 확인해 주세요.</p>
+        <ol id="it-manuals" class="it-manuals"></ol>
+      </div>
+      <details class="pa-card it-more" id="it-sources-box">
+        <summary>관련 매뉴얼·원문 <span id="it-sources-count"></span></summary>
+        <ul id="it-sources" class="it-sources"></ul>
+        <div id="it-originals"></div>
+      </details>
+      <aside class="pa-card it-caution" aria-label="주의">
+        <h2 class="pa-h3">주의</h2>
+        <p id="it-caution">보험사 전산 화면과 업무 기준은 변경될 수 있습니다. 실제 화면과 다르거나 처리가 되지 않으면 보험사 담당자에게 확인해 주세요.</p>
+      </aside>
+    </section>
+
+    <details id="it-admin" class="pa-card it-admin" hidden>
+      <summary>관리자 설정·상태</summary>
+      <div id="it-admin-body"><p class="it-hint">불러오는 중…</p></div>
+    </details>
+  </div>
+
+  <p class="it-legacy" id="it-legacy-wrap" hidden><a id="it-legacy" href="/members/#home" target="_blank" rel="noopener noreferrer">이전 답변기(구글 앱) 열기 ↗</a></p>
+</main>
+<footer class="g-foot">프라임에셋 프리미엄사업부 · <a href="/privacy/">개인정보처리방침</a></footer>
+<script src="/assets/auth-config.js?v=2" defer></script>
+<script src="/assets/site-nav.js?v=20261103-audit" defer></script>
+<script src="/assets/pwa.js?v=1" defer></script>
+<script src="/assets/pa-client.js?v=1" defer></script>
+<script src="/assets/it.js?v=20261104-it" defer></script>
+</body>
+</html>

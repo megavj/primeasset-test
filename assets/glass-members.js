@@ -373,8 +373,10 @@
         const product = r.name === "상품통합분석기";
         // 이사 승인 2026-11-04: 보험보상답변기는 홈페이지 새 화면(/members/claim/)으로. 기존 GAS 주소는 그 화면 아래 '이전 답변기'로 남김.
         const claim = /보상\s*답변|보상\s*AI|보험금\s*청구\s*답변/i.test(r.name || "") || /AKfycbzNrEdi_|AKfycbz4WjJLM6OR|1ZyOPAVHmWW65aRKq05QFk/.test(r.url || ""); // 이름이 달라도 원본 보상답변기 주소면 새 화면으로
+        // 전산답변기도 새 홈페이지 화면으로 연결하고, 확인한 원본 배포 3개를 모두 인식한다.
+        const it = /전산\s*답변/.test(r.name || "") || /AKfycbzVbO8_XxSq8_WZhvNBXSi0myH22g0igqhAwkz7Kf9QtDUchxIds-E7fgTi06xGSP6lvg|AKfycbxWVCohTpOA3rZUK1hpuOqq_cfarzo57S2dlKL1g3CcTevVq1h-9oG28wBUvv_tzPb8tw|AKfycbzfFExpXscK87c2F54p17YDJwdDmpk7MAZ3NQAsWJtjqAFBXSaVJ1JC52H2czeaPPDNiw/.test(r.url || "");
         return { ...r, key: "menu:" + r.id, work: workFor(r),
-          url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : r.url) : null, internal: product || claim };
+          url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : it ? "/members/it/" : r.url) : null, internal: product || claim || it };
       }),
       ...SITE_LINKS.map(r => ({ ...r, unlocked: true, work: WORK[4] }))
     ];
