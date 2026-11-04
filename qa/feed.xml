@@ -6,7 +6,15 @@
     <description>보험설계사를 위한 매일 질문과 답변</description>
     <language>ko-kr</language>
     <atom:link href="https://test.primeasset.info/qa/feed.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Wed, 04 Nov 2026 09:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2026 18:00:00 +0900</lastBuildDate>
+    <item>
+      <title>진단서 발급비가 지급되지 않은 분쟁사례는 내 실손보험 청구에도 그대로 적용되나요?</title>
+      <link>https://test.primeasset.info/qa/2026-11-04-medical-certificate-fee-claim-disputes/</link>
+      <guid isPermaLink="true">https://test.primeasset.info/qa/2026-11-04-medical-certificate-fee-claim-disputes/</guid>
+      <pubDate>Wed, 04 Nov 2026 18:00:00 +0900</pubDate>
+      <category>분쟁사례</category>
+      <description>진단서 발급비가 지급되지 않은 사례는 해당 약관과 비용 지출 목적을 함께 살펴 이해해야 합니다. 보험사의 요청으로 진단서를 제출했다는 사실만으로 발급비가 보상된다고 단정하기는 어렵습니다. 공개된 분쟁사례는 청구 유의사항을 이해하는 참고가 되지만 자신의 청구 결과를 확정하지는 않습니다.</description>
+    </item>
     <item>
       <title>보험약관 해석이 서로 다르면 고객에게 유리하게 해석하나요?</title>
       <link>https://test.primeasset.info/qa/2026-11-04-insurance-policy-ambiguity-customer-interpretation/</link>
