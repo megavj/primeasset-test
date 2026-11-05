@@ -36,6 +36,7 @@
 <link rel="stylesheet" href="assets/home-dark.css?v=4">
 <link rel="stylesheet" href="assets/growth-tree.css?v=20261104-gt1">
 <link rel="stylesheet" href="assets/sales-system.css?v=20261105-a1">
+<link rel="stylesheet" href="assets/faq.css?v=20261105-f1">
 <script>document.documentElement.classList.add('js');if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
 <style>
 /* 한글 금액은 기존 소수 억 표기와 같은 값을 유지하며 작은 화면에서 줄바꿈한다. */
@@ -540,14 +541,68 @@
   </section>
 
   <!-- 자주 묻는 질문: 질문 5개를 같은 목록에 표시, 각 답변만 접기 유지 -->
-  <section class="g-sec" id="faq">
-    <h2>자주 묻는 질문</h2>
-    <details class="g-faq g-reveal"><summary>Q. 원수사나 대리점이나 똑같지 않나요?</summary><p>A. 다릅니다. 대리점마다, 프라임에셋 안에서도 모두 다릅니다.</p></details>
-    <details class="g-faq g-reveal"><summary>Q. 정착지원금 주시나요?</summary><p>A. 몸값 선지급 대신 공개된 규정과 환경으로 대우합니다.</p></details>
-    <details class="g-faq g-reveal"><summary>Q. 디비 지급해 주나요?</summary><p>A. 디비를 받는 대신 수당이 낮아지는 구조를 권하지 않습니다. 온라인·디비·지인·개척 등 가망고객 확보는 함께 진행합니다.</p></details>
-    <details class="g-faq g-reveal"><summary>Q. 보험영업을 제대로 배우고 싶습니다.</summary><p>A. 영업방식·공부자료·보상교육, 필요한 건 말씀만 주세요.</p></details>
-    <details class="g-faq g-reveal"><summary>Q. 함께 일하려면 무엇이 필요한가요?</summary><p>A. 의지와 노력. 그 외에는 저희가 준비합니다. — 프라임에셋 이사 김상현</p></details>
-    <p class="g-note g-note--sec"><a class="g-link" href="story/#faq">전체 질문 보기</a></p>
+  <section class="g-sec fq" id="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">자주 묻는 질문</h2>
+    <p class="g-lead fq-sub">합류 전에 확인하실 것들, 결론부터 답합니다.</p>
+
+    <div class="fq-list">
+      <details class="g-faq fq-item" id="faq-commission" data-fq open>
+        <summary><span class="fq-q">수수료와 시책은 어떻게 확인하나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">미팅 때 직접 보여 드립니다.</p>
+          <p><span class="fq-s">수수료표와 시책은 매달 프라임에셋 내부 인트라넷 <span class="g-nowrap">‘팜스’에</span> 공개됩니다.</span> <span class="fq-s">설계사부터 본부장까지, 모두 같은 자료를 봅니다.</span></p>
+          <p class="fq-go"><a href="/#contact">미팅 신청하기<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+
+      <details class="g-faq fq-item" id="faq-settlement" data-fq>
+        <summary><span class="fq-q">정착지원금이 있나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">드리지 않습니다.</p>
+          <p><span class="fq-s">대신 수수료와 시책으로 장난치지 않습니다.</span> <span class="fq-s">매달 전부 공개하고, 공개된 기준대로 우대합니다.</span></p>
+          <p class="fq-go"><a href="#faq-commission">수수료와 시책 확인 방법<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+
+      <details class="g-faq fq-item" id="faq-db" data-fq>
+        <summary><span class="fq-q">DB(가망고객 정보)를 주나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">드리지 않습니다.</p>
+          <p><span class="fq-s">대신 그보다 중요한 고객 확보 방법과 가망고객 확보 플랫폼을 공유합니다.</span> <span class="fq-s">물고기를 드리는 게 아니라, 낚시하는 법을 알려 드립니다.</span></p>
+          <p class="fq-go"><a href="/#sales-system">영업지원시스템에서 고객 확보 방법 보기<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+
+      <details class="g-faq fq-item" id="faq-training" data-fq>
+        <summary><span class="fq-q">처음 시작해도 배울 수 있나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">네, 배울 수 있습니다.</p>
+          <p><span class="fq-s"><span class="g-nowrap">매뉴얼·가이드·시스템·자료가</span> 모두 준비되어 있으니, 필요한 건 당신의 의지입니다.</span> <span class="fq-s">처음엔 배울 게 많지만, 모두 설계사의 능력을 올리는 데 집중되어 있습니다.</span></p>
+          <p class="fq-go"><a href="/#tools">설계사 성장 시스템 보기<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+
+      <details class="g-faq fq-item" id="faq-process" data-fq>
+        <summary><span class="fq-q">합류는 어떻게 진행되나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">상담 신청부터 위촉까지, 네 단계입니다.</p>
+          <ol class="fq-flow" aria-label="합류 절차">
+            <li><span class="fq-flow__no" aria-hidden="true">1</span><b>상담 신청</b><span class="sr"> — </span><span class="fq-flow__d">합류 문의·전화로</span></li>
+            <li><span class="fq-flow__no" aria-hidden="true">2</span><b>담당자 배정</b><span class="sr"> — </span><span class="fq-flow__d"><span class="g-nowrap">신입·경력,</span> 지역, 원하는 영업 <span class="g-nowrap">방식·환경에</span> 맞춰</span></li>
+            <li><span class="fq-flow__no" aria-hidden="true">3</span><b>미팅</b><span class="sr"> — </span><span class="fq-flow__d">수수료표와 시책을 직접 확인</span></li>
+            <li><span class="fq-flow__no" aria-hidden="true">4</span><b>위촉 진행</b><span class="sr"> — </span><span class="fq-flow__d">절차에 따라 위촉</span></li>
+          </ol>
+          <p class="fq-go"><a href="/#contact">상담 신청하기<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+    </div>
+
+    <p class="fq-all"><a class="fq-all__link" href="/faq/">전체 질문 보기<span class="fq-arr" aria-hidden="true">→</span></a><span class="fq-all__d">보상·비용 · 교육·활동 · 소속 이동·합류</span></p>
+
+    <figure class="fq-word">
+      <blockquote><p><span>의지와 노력.</span> <span>그 외에는 저희가 준비합니다.</span></p></blockquote>
+      <figcaption>— 프라임에셋 이사 김상현</figcaption>
+    </figure>
   </section>
 
   <!-- 김상현 이사 -->
@@ -671,6 +726,7 @@
 <!-- 휴대폰 아래 고정 합류 문의 막대: 첫 화면(숫자 타일 포함)이 지나간 뒤에만 보임 -->
 <script src="assets/home-layout.js?v=2" defer></script>
 <script src="assets/sales-system.js?v=20261105-a1" defer></script>
+<script src="assets/faq.js?v=20261105-f1" defer></script>
 <!-- 스크롤 연출: 숫자 카운트업 + scroll-driven animation 미지원 시 카드 등장 대체(IntersectionObserver). 움직임 줄이기면 아무것도 안 함 -->
 <script src="assets/home-stats.js?v=20261104-t10" defer></script>
 <script src="assets/home-motion.js?v=1" defer></script>
