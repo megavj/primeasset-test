@@ -9,7 +9,7 @@
 
 /* ---------- 편지(#ceo) ---------- */
 .cl-ceo{padding-top:calc(var(--sec-y) + var(--s5))} /* FAQ 끝 금빛 인용과 편지 사이에 한 박자 쉼 */
-.cl-letter{max-width:640px;margin:0 auto} /* 글은 왼쪽 정렬, 글 묶음은 가운데(아래 합류 패널과 같은 축) */
+.cl-letter{max-width:640px;margin:0} /* 글·글 묶음 모두 왼쪽 정렬(2026-11-05 이사님 지시) */
 .cl-kicker{margin:0 0 var(--s3);font-size:var(--fs-cap);font-weight:var(--fw-label);line-height:var(--lh-cap);letter-spacing:.08em;color:var(--text-3)}
 .cl-title{margin:0;text-wrap:wrap}
 .cl-title__pre{display:block;font-size:clamp(18px,.6vw + 14px,22px);font-weight:500;line-height:1.6;letter-spacing:-.02em;color:var(--text-2)}
