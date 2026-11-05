@@ -1,120 +1,217 @@
-/* 성장 나무 — growth-tree.js 짝 스타일(독립 부품). 메인 토큰(assets/glass.css)이 있으면 따르고, 없으면 같은 값으로
-   쓰는 곳: 메인 index.html·성장스토리 story/index.html 의 #branches, 시안 lab/branches/tree-v2/ (같은 파일 하나)
-   · 카드: 메인 카드 계열(#0d1220) · 얇은 선 · 모서리 24(휴대폰 16). 효과는 188 둘레 아주 옅은 빛 하나 + 아주 옅은 세대 고리(나이테)
-   · 원: 평평한 면 + 얇은 테두리(광택·내부 그라데이션 없음 — 편집 디자인·인포그래픽 느낌)
-   · 휴대폰 기울기는 스크롤 연동 CSS(animation-timeline), PC 기울기는 JS(마우스)
+/* 성장 나무 v4(시안) — growth-tree-v4.js 짝 스타일(독립 부품). v3(lab/branches/tree-v3/growth-tree-v3.css)를 복사해 고친 것
+   메인 토큰(assets/glass.css)이 있으면 따르고, 없으면 같은 값으로. 내부 이름은 gt4-(같은 페이지의 v3·v2 와 섞이지 않게)
+   · 카드·빛 안개·원·말풍선은 v3 그대로(빛 안개는 이사님 지시로 그대로 유지)
+   · v4 에서 더한 층: 금빛 먼지(빛 안개 안) · 마우스를 따르는 빛 · 가지 빛 층 · 188 금빛 고리 · 효과 canvas · 금빛 연도(+빛줄기·빛 점)
+     움직임은 transform·opacity 위주(흐림 필터를 매 프레임 계산하지 않음). 빛 점은 canvas 한 장
    · prefers-reduced-motion 이면 움직임 전부 끔(다 자란 그림만) */
-.gt{
-  --gt-text:var(--text,#f2eee6);
-  --gt-line:var(--line,rgba(255,255,255,.08));
-  --gt-gold:var(--gold,#d6b97e);
-  position:relative;isolation:isolate;
-  overflow:hidden;overflow:clip; /* clip: 스크롤 상자가 아니라 스크롤 연동 타임라인을 막지 않음 */
-  border:1px solid var(--gt-line);border-radius:var(--r-panel,24px);
-  background:
-    radial-gradient(560px 440px at var(--gt-cx,50%) var(--gt-cy,50%),rgba(58,86,150,.07),rgba(58,86,150,0) 72%),
-    linear-gradient(180deg,#0d1220 0%,#0a0e19 100%);
-  color:var(--gt-text);
+.gt4{
+  --gt4-text:var(--text,#f2eee6);
+  --gt4-line:var(--line,rgba(255,255,255,.08));
+  --gt4-gold:var(--gold,#d6b97e);
+  --gt4-year:#d3b680; /* 금빛 그라데이션을 못 쓰는 브라우저용 한 가지 색 */
+  display:block;position:relative;color:var(--gt4-text);
   -webkit-tap-highlight-color:transparent;
-  view-timeline:--gt-view block;
 }
-.gt-scene{position:relative;z-index:1}
-.gt-plane{position:relative;transform-origin:50% 50%}
-.gt-tilt{transform-origin:50% 50%}
-.gt-svg{display:block;max-width:none;overflow:visible;-webkit-user-select:none;user-select:none}
-.gt-svg:focus{outline:none}
+/* 제목 바로 아래(한 줄 문구 없이) 올 때 제목과 카드 사이: PC 28px · 휴대폰 20px(제목 아래 여백 16px 과 겹쳐지므로 큰 값이 그대로 간격) */
+h2+.gt4{margin-top:28px}
+.gt4-card{
+  position:relative;isolation:isolate;
+  overflow:hidden;overflow:clip;
+  border:1px solid var(--gt4-line);border-radius:var(--r-panel,24px);
+  background:linear-gradient(180deg,#0d1220 0%,#0a0e19 100%);
+}
 
-/* 세대 고리(나이테): 가운데에서의 거리 = 세대를 아주 옅게 */
-.gt-rings circle{fill:none;stroke:rgba(214,185,126,.14);stroke-width:1;stroke-dasharray:1 7;stroke-linecap:round;transition:opacity .35s ease}
+/* 빛 안개(v3 그대로): 미리 그린 방사형 그라데이션 2겹 + 188 뒤 후광. 움직임은 transform 만(흐림 필터 없음) */
+.gt4-fog{position:absolute;inset:0;z-index:0;pointer-events:none}
+.gt4-fog>div{position:absolute;border-radius:50%}
+.gt4-fog-a{left:-12%;top:-28%;width:66%;height:124%;
+  background:radial-gradient(closest-side,rgba(46,150,170,.21),rgba(46,150,170,.09) 50%,rgba(46,150,170,0));
+  animation:gt4-drift-a 12s ease-in-out infinite alternate;will-change:transform}
+.gt4-fog-b{right:-14%;bottom:-30%;width:70%;height:128%;
+  background:radial-gradient(closest-side,rgba(86,104,220,.21),rgba(86,104,220,.09) 50%,rgba(86,104,220,0));
+  animation:gt4-drift-b 13s ease-in-out infinite alternate;will-change:transform}
+.gt4-glow{left:var(--gt4-cx,50%);top:var(--gt4-cy,50%);width:250px;height:250px;margin:-125px 0 0 -125px;
+  background:radial-gradient(closest-side,rgba(226,196,140,.13),rgba(226,196,140,.05) 55%,rgba(226,196,140,0))}
+/* 가장자리를 살짝 어둡게(깊이감 · 모서리 연도 뒤 대비 유지) */
+.gt4-card::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(120% 95% at 50% 46%,rgba(5,7,13,0) 58%,rgba(5,7,13,.42) 100%)}
+@keyframes gt4-drift-a{from{transform:translate(0,0) scale(1)}to{transform:translate(9%,6%) scale(1.03)}}
+@keyframes gt4-drift-b{from{transform:translate(0,0) scale(1.03)}to{transform:translate(-8%,-7%) scale(1)}}
+.gt4-idle .gt4-fog{opacity:.35} /* 자라기 전: 조명이 낮게 → 자라기 시작하면 올라옴 */
+/* 휴대폰(세로 나무): 움직이는 번짐 1겹만, 후광은 작게·정적으로 */
+.gt4-v .gt4-fog-b{display:none}
+.gt4-v .gt4-fog-a{left:-45%;top:4%;width:190%;height:78%;animation-duration:14s;
+  background:radial-gradient(closest-side,rgba(52,140,178,.16),rgba(64,96,200,.07) 55%,rgba(64,96,200,0))}
+.gt4-v .gt4-glow{width:130px;height:130px;margin:-65px 0 0 -65px}
+
+/* 금빛 먼지(소량, v4): 빛 안개 안에서 본부·연도를 비켜 천천히 떠오르며 나타났다 사라짐. 위치·속도는 JS(CSSOM) */
+.gt4-dust{position:absolute;inset:0;display:block;pointer-events:none}
+.gt4-dust i{position:absolute;border-radius:50%;opacity:0;
+  background:radial-gradient(closest-side,rgba(255,247,226,.95),rgba(232,210,160,.55) 45%,rgba(232,210,160,0));
+  animation:gt4-mote 12s ease-in-out infinite;will-change:transform,opacity}
+@keyframes gt4-mote{0%{transform:translate(0,0);opacity:0}30%{opacity:var(--a,.5)}70%{opacity:var(--a,.5)}100%{transform:translate(var(--dx,0px),var(--dy,-40px));opacity:0}}
+
+/* 마우스를 따르는 아주 은은한 빛(v4, PC): 배경만 밝힘(번호·가지는 그대로) */
+.gt4-lamp{position:absolute;left:0;top:0;z-index:0;width:460px;height:460px;margin:-230px 0 0 -230px;border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(closest-side,rgba(255,234,196,.075),rgba(255,234,196,.03) 45%,rgba(255,234,196,0));
+  transition:opacity .7s ease;will-change:transform}
+.gt4-lamp.is-on{opacity:1}
+.gt4-v .gt4-lamp{display:none}
+
+.gt4-scene{position:relative;z-index:1;transform-origin:var(--gt4-cx,50%) var(--gt4-cy,50%)}
+.gt4-plane{position:relative;isolation:isolate;transform-origin:50% 50%}
+.gt4-tilt{transform-origin:50% 50%}
+/* 장면 안 겹침 순서: 가지 빛 층(1) → 188 금빛 고리(2) → 나무 SVG(3) → 효과 canvas(4) → 누르기·포커스 SVG(5) → 말풍선(6) */
+.gt4-svg{position:relative;z-index:3;display:block;max-width:none;overflow:visible;-webkit-user-select:none;user-select:none}
+.gt4-fxc{position:absolute;left:0;top:0;z-index:4;display:block;pointer-events:none}
+.gt4-hsvg{position:absolute;left:0;top:0;z-index:5;display:block;max-width:none;overflow:visible;-webkit-user-select:none;user-select:none}
+.gt4-hsvg:focus{outline:none}
+
+/* 가지 빛 층(v4): 가지마다 부드러운 번짐을 미리 그려 둔 canvas. 완성 파동 때 켜지고 천천히 숨쉼. 마우스를 대면 고른 계보만 또렷하게 */
+.gt4-bglow{position:absolute;left:0;top:0;z-index:1;pointer-events:none;transition:opacity .35s ease}
+.gt4-bglow-all{display:block;opacity:0}
+.gt4-bglow-sel{position:absolute;left:0;top:0;z-index:1;display:block;pointer-events:none;opacity:0;transition:opacity .35s ease}
+.gt4-done .gt4-bglow-all{opacity:1}
+.gt4-breathe .gt4-bglow-all{animation:gt4-gbreathe 9s ease-in-out infinite}
+@keyframes gt4-gbreathe{0%,100%{opacity:1}50%{opacity:.62}}
+.gt4.is-hl .gt4-bglow{opacity:.2}
+.gt4.is-hl .gt4-bglow-sel{opacity:1}
+
+/* 188 둘레 금빛 미세 입자 고리(v4): 미리 그린 두 겹이 서로 반대로 천천히 돎(transform 만) */
+.gt4-orbit{position:absolute;z-index:2;pointer-events:none;opacity:0}
+.gt4-done .gt4-orbit{opacity:1}
+.gt4-orbit canvas{position:absolute;left:0;top:0;display:block;animation:gt4-spin 70s linear infinite;will-change:transform}
+.gt4-orbit canvas+canvas{animation-duration:110s;animation-direction:reverse}
+@keyframes gt4-spin{to{transform:rotate(360deg)}}
+
+/* 세대 고리(나이테): 가운데에서의 거리 = 세대를 아주 옅게(반복 파동 없음) */
+.gt4-rings circle{fill:none;stroke:rgba(214,185,126,.14);stroke-width:1;stroke-dasharray:1 7;stroke-linecap:round;transition:opacity .35s ease}
 
 /* 가지: 굵기가 줄어드는 붓 획(채운 경로, 부모→자식 색 그라데이션 fill 은 JS). 겹치는 부분이 진해지지 않게 묶음째 투명도 */
-.gt-edges{opacity:.8;transition:opacity .35s ease}
-.gt-edge{stroke:none;transition:opacity .35s ease}
-.gt-bridge{fill:none;stroke-linecap:butt;opacity:0}
-.gt-sap{mix-blend-mode:screen;transition:opacity .35s ease}
-.gt-sap path{fill:none;stroke-linecap:round}
-.gt-sap-glow{stroke-opacity:.2}
-.gt-sap-core{stroke-opacity:.9}
+.gt4-edges{opacity:.8}
+.gt4-edge{stroke:none;transition:opacity .35s ease}
+.gt4-bridge{fill:none;stroke-linecap:butt;opacity:0}
 
-/* 본부 원: 평평한 면(.gt-base, 깊은 톤 한 가지) + 얇은 테두리(.gt-ring). 빛 번짐(.gt-halo)은 필 때·수액이 닿을 때만 아주 옅게 */
-.gt-node{transition:opacity .35s ease}
-.gt-bud,.gt-halo{transform-box:fill-box;transform-origin:50% 50%}
-.gt-halo,.gt-aura{pointer-events:none}
-.gt-halo{opacity:0}
-.gt-lume{fill-opacity:.075;opacity:.65} /* 숨쉬기용: 면 전체에 같은 색을 아주 조금 — 고르게(평평하게) 밝아졌다 돌아옴 */
-.gt-ring{fill:none;stroke-width:1}
-.gt-node.is-root .gt-ring{stroke-width:1.25}
-.gt-label{font-size:14.5px;font-weight:500;letter-spacing:.01em;text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums;pointer-events:none}
-.gt-node.is-root .gt-label{font-size:16px;font-weight:600}
+/* 완성 파동(2겹) */
+.gt4-wave{pointer-events:none}
+.gt4-wave-line{fill:none;stroke:#ecd6a6;stroke-width:1.2;stroke-opacity:.7}
+
+/* 본부 원: 평평한 면(.gt4-base, 깊은 톤 한 가지) + 얇은 테두리(.gt4-ring). 빛 번짐(.gt4-halo)은 필 때·빛이 닿을 때·반짝일 때만 */
+.gt4-node{transition:opacity .35s ease}
+.gt4-bud,.gt4-halo{transform-box:fill-box;transform-origin:50% 50%}
+.gt4-halo,.gt4-aura{pointer-events:none}
+.gt4-halo{opacity:0}
+.gt4-lume{fill-opacity:.075;opacity:.65} /* 숨쉬기용: 면 전체에 같은 색을 아주 조금 — 고르게(평평하게) 밝아졌다 돌아옴 */
+.gt4-ring{fill:none;stroke-width:1;transition:stroke-width .2s ease}
+.gt4-node.is-root .gt4-ring{stroke-width:1.25}
+.gt4-node.is-sel .gt4-ring{stroke-width:1.4} /* 고른 본부: 테두리 1 → 1.4px */
+.gt4-node.is-root.is-sel .gt4-ring{stroke-width:1.6}
+.gt4-label{font-size:14.5px;font-weight:500;letter-spacing:.01em;text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums;pointer-events:none}
+.gt4-node.is-root .gt4-label{font-size:16px;font-weight:600}
+
+/* 테두리 빛 조각(고른 본부·무작위 반짝임): 입력을 가로채지 않음 */
+.gt4-glint{pointer-events:none}
+.gt4-glint circle{fill:none;stroke-linecap:round;opacity:0}
+.gt4-glint-glow{stroke-width:6;stroke-opacity:.28}
+.gt4-glint-core{stroke-width:2.2}
 
 /* 누르기·포커스 층 */
-.gt-hit{cursor:default;outline:none}
-.gt-hit[href]{cursor:pointer}
-.gt-hit:focus,.gt-hit:focus-visible{outline:none}
-.gt-hit-area{fill:transparent}
-.gt-focus{fill:none;stroke:transparent;stroke-width:1.5}
-.gt-hit:focus-visible .gt-focus{stroke:var(--gt-gold)}
+.gt4-hit{cursor:default;outline:none}
+.gt4-hit[href]{cursor:pointer}
+.gt4-hit:focus,.gt4-hit:focus-visible{outline:none}
+.gt4-hit-area{fill:transparent}
+.gt4-focus{fill:none;stroke:transparent;stroke-width:1.5}
+.gt4-hit:focus-visible .gt4-focus{stroke:var(--gt4-gold)}
 
 /* 자라기 전: 188만 은은하게 */
-.gt-idle .gt-edge{visibility:hidden}
-.gt-idle .gt-node:not(.is-root) .gt-bud{opacity:0}
-.gt-idle .gt-hit:not(.is-root){visibility:hidden}
+.gt4-idle .gt4-edge{visibility:hidden}
+.gt4-idle .gt4-node:not(.is-root) .gt4-bud{opacity:0}
+.gt4-idle .gt4-hit:not(.is-root){visibility:hidden}
 
-/* 다 자란 뒤: 숨쉬듯 밝기(위상은 본부마다 다르게 — JS 가 --gt-bd·--gt-ph) */
-@keyframes gt-breathe{0%,100%{opacity:.3}50%{opacity:1}}
-@keyframes gt-aura{0%,100%{opacity:.7}50%{opacity:1}}
-.gt-breathe .gt-lume{animation:gt-breathe var(--gt-bd,8s) ease-in-out var(--gt-ph,0s) infinite}
-.gt-breathe .gt-aura{animation:gt-aura 11s ease-in-out infinite}
-.gt-paused .gt-lume,.gt-paused .gt-aura{animation-play-state:paused}
+/* 다 자란 뒤: 숨쉬듯 밝기(위상은 본부마다 다르게 — JS 가 --gt4-bd·--gt4-ph) */
+@keyframes gt4-breathe{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes gt4-aura{0%,100%{opacity:.7}50%{opacity:1}}
+.gt4-breathe .gt4-lume{animation:gt4-breathe var(--gt4-bd,8s) ease-in-out var(--gt4-ph,0s) infinite}
+.gt4-breathe .gt4-aura{animation:gt4-aura 11s ease-in-out infinite}
+/* 화면 밖·탭 숨김(paused) · 움직임 멈춤 버튼(still) · 휴대폰 조작 없음(calm, 배경만) — 모든 효과가 함께 멈춤 */
+.gt4-paused .gt4-fog>div,.gt4-paused .gt4-lume,.gt4-paused .gt4-aura,.gt4-paused .gt4-dust i,.gt4-paused .gt4-orbit canvas,.gt4-paused .gt4-bglow-all,
+.gt4-still .gt4-fog>div,.gt4-still .gt4-lume,.gt4-still .gt4-aura,.gt4-still .gt4-bglow-all,
+.gt4-calm .gt4-fog>div,.gt4-calm .gt4-dust i{animation-play-state:paused}
+.gt4-still .gt4-dust,.gt4-still .gt4-orbit,.gt4-still .gt4-lamp,.gt4-still .gt4-ypop,.gt4-still .gt4-fxc{display:none} /* 멈춤: 움직이는 입자 효과는 걷고 다 자란 정지 그림만 */
+.gt4-still *,.gt4-still *::before,.gt4-still *::after{transition:none!important} /* 멈춤·움직임 줄이기: 마우스를 대도 강조가 바로(서서히 바뀌는 움직임 없이) */
 
 /* 마우스·포커스: 188까지 이어지는 가지 + 산하만 밝게, 나머지 흐리게 */
-.gt.is-hl .gt-edges{opacity:1}
-.gt.is-hl .gt-edge:not(.is-on),.gt.is-hl .gt-node:not(.is-on){opacity:.25}
-.gt.is-hl .gt-rings circle,.gt.is-hl .gt-sap{opacity:.4}
+.gt4.is-hl .gt4-edges{opacity:1}
+.gt4.is-hl .gt4-edge:not(.is-on),.gt4.is-hl .gt4-node:not(.is-on){opacity:.25}
+.gt4.is-hl .gt4-rings circle{opacity:.4}
 
 /* 말풍선: 승격 년월만 */
-.gt-tip{position:absolute;left:0;top:0;z-index:3;pointer-events:none;
+.gt4-tip{position:absolute;left:0;top:0;z-index:6;pointer-events:none;
   padding:6px 10px;border-radius:9px;background:#0b0f19;border:1px solid rgba(255,255,255,.14);
   box-shadow:0 12px 28px -14px rgba(0,0,0,.9);
-  color:var(--gt-text);font-size:13px;line-height:1.2;font-weight:500;letter-spacing:.04em;font-variant-numeric:tabular-nums;white-space:nowrap;
+  color:var(--gt4-text);font-size:13px;line-height:1.2;font-weight:500;letter-spacing:.04em;font-variant-numeric:tabular-nums;white-space:nowrap;
   opacity:0;transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,-100%) translateY(4px);
   transition:opacity .18s ease,transform .24s cubic-bezier(.2,.7,.3,1)}
-.gt-tip.is-on{opacity:1;transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,-100%)}
-.gt-tip.is-below{transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,0) translateY(-4px)}
-.gt-tip.is-below.is-on{transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,0)}
-.gt-tip::after{content:"";position:absolute;left:calc(50% + var(--ax,0px));top:100%;width:8px;height:8px;margin:-4px 0 0 -4px;
+.gt4-tip.is-on{opacity:1;transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,-100%)}
+.gt4-tip.is-below{transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,0) translateY(-4px)}
+.gt4-tip.is-below.is-on{transform:translate(var(--tx,0),var(--ty,0)) translate(-50%,0)}
+.gt4-tip::after{content:"";position:absolute;left:calc(50% + var(--ax,0px));top:100%;width:8px;height:8px;margin:-4px 0 0 -4px;
   background:#0b0f19;border:1px solid rgba(255,255,255,.14);border-width:0 1px 1px 0;transform:rotate(45deg)}
-.gt-tip.is-below::after{top:0;border-width:1px 0 0 1px}
+.gt4-tip.is-below::after{top:0;border-width:1px 0 0 1px}
 
-/* 흐린 연도(장식): 아주 낮은 대비 */
-.gt-year{position:absolute;z-index:0;pointer-events:none;-webkit-user-select:none;user-select:none;
-  line-height:1;font-weight:200;letter-spacing:-.03em;color:rgba(242,238,230,.058);font-variant-numeric:tabular-nums}
-.gt-year span{position:absolute;left:0;top:0;opacity:0;white-space:nowrap}
-.gt-year span.is-cur{opacity:1}
+/* 연도: 성장의 시간을 알려 주는 보조 정보. v4 는 금빛 그라데이션 글자(위가 밝고 아래가 깊은 샴페인 금) + 빛줄기 한 겹(평소엔 글자 밖에 있다가 JS 가 지나가게)
+   가장 어두운 금색 #bf9e63 도 카드 바탕과 대비 4.5:1 이상. 빛줄기는 더 밝게만 하므로 대비가 낮아지지 않음 */
+.gt4-year{position:absolute;z-index:1;pointer-events:none;-webkit-user-select:none;user-select:none;
+  line-height:1;font-weight:450;letter-spacing:-.02em;color:var(--gt4-year);font-variant-numeric:tabular-nums}
+.gt4-year span{position:absolute;left:0;top:0;opacity:0;white-space:nowrap;padding:.06em;margin:-.06em} /* 여백: 글자 끝이 빛 칠하기 영역 밖으로 나가 잘리지 않게(자리는 그대로) */
+.gt4-year.is-right span{left:auto;right:0}
+.gt4-year span.is-cur{opacity:1}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .gt4-year span{
+    background-image:linear-gradient(100deg,rgba(255,251,240,0) 40%,rgba(255,251,240,.95) 50%,rgba(255,251,240,0) 60%),
+                     linear-gradient(180deg,#eedcb2 10%,#d8bb81 52%,#bf9e63 90%);
+    background-size:280% 100%,100% 100%;background-position:110% 0,0 0;background-repeat:no-repeat;
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+}
+/* 연도가 바뀔 때·빛줄기가 지날 때 튀는 작은 빛 점(위치·움직임은 JS — transform·opacity 만) */
+.gt4-ypop{position:absolute;left:0;top:0}
+.gt4-ypop i{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;opacity:0;
+  background:radial-gradient(closest-side,#fffaf0 0,#fffaf0 16%,rgba(240,222,180,.88) 36%,rgba(232,210,160,.22) 64%,rgba(232,210,160,0))}
+
+/* 움직임 멈춤/켜기: 카드 아래 오른쪽. 자리를 차지하지 않아(아래 '성장 스토리에서 보기' 줄과 같은 높이) 섹션 간격은 그대로 */
+.gt4-ctl{position:relative;z-index:2;display:flex;justify-content:flex-end;margin:4px 0 -48px;pointer-events:none}
+.gt4-ctl[hidden]{display:none}
+.gt4-toggle{pointer-events:auto;display:inline-flex;align-items:center;gap:9px;min-height:44px;margin:0 -8px 0 0;padding:0 8px 0 12px;
+  border:0;border-radius:999px;background:none;color:var(--text-3,#8a96a9);font:inherit;font-size:14px;font-weight:500;line-height:1;letter-spacing:.01em;
+  cursor:pointer;transition:color .2s ease}
+.gt4-toggle:hover{color:var(--gt4-text)}
+.gt4-toggle:focus-visible{outline:2px solid var(--gt4-gold);outline-offset:0}
+.gt4-toggle::before{content:"";flex:none;box-sizing:border-box;width:9px;height:11px;border-left:3px solid currentColor;border-right:3px solid currentColor} /* 멈춤 표시(두 막대) */
+.gt4-toggle[data-still="1"]::before{width:0;height:0;border-left:9px solid currentColor;border-right:0;border-top:5.5px solid transparent;border-bottom:5.5px solid transparent} /* 켜기 표시(삼각형) */
 
 /* 화면 읽기용 숨은 목록 */
-.gt-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+.gt4-sr{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
 
-/* 휴대폰: 세로 나무 · 스크롤에 따라 살짝 기울기 */
+/* 휴대폰: 세로 나무 */
+@media (max-width:720px){h2+.gt4{margin-top:20px}}
 @media (max-width:640px){
-  .gt{border-radius:var(--r-card,16px)}
-  .gt-label{font-size:13.5px}
-  .gt-node.is-root .gt-label{font-size:15px}
-}
-@keyframes gt-tilt-scroll{from{transform:perspective(1300px) rotateX(3.5deg)}to{transform:perspective(1300px) rotateX(-3.5deg)}}
-@supports (animation-timeline:view()){
-  @media (hover:none),(pointer:coarse){
-    .gt-motion .gt-tilt{animation:gt-tilt-scroll linear both;animation-timeline:--gt-view;animation-range:cover 0% cover 100%}
-  }
+  .gt4-card{border-radius:var(--r-card,16px)}
+  .gt4-label{font-size:13.5px}
+  .gt4-node.is-root .gt4-label{font-size:15px}
 }
 
 @media (prefers-reduced-motion:reduce){
-  .gt *,.gt *::before,.gt *::after{animation:none!important;transition:none!important}
-  .gt-tilt,.gt-plane{transform:none!important}
+  .gt4 *,.gt4 *::before,.gt4 *::after{animation:none!important;transition:none!important}
+  .gt4-tilt,.gt4-plane,.gt4-scene{transform:none!important}
+  .gt4-dust,.gt4-orbit,.gt4-lamp,.gt4-ypop,.gt4-fxc{display:none!important}
 }
 @media (forced-colors:active){
-  .gt-ring{stroke:CanvasText}.gt-label{fill:CanvasText}.gt-hit:focus-visible .gt-focus{stroke:Highlight}
+  .gt4-ring{stroke:CanvasText}.gt4-label{fill:CanvasText}.gt4-hit:focus-visible .gt4-focus{stroke:Highlight}
+  .gt4-fog,.gt4-lamp,.gt4-fxc,.gt4-bglow,.gt4-bglow-sel,.gt4-orbit,.gt4-ypop{display:none}
+  .gt4-year span{background:none;-webkit-text-fill-color:CanvasText;color:CanvasText}
 }
 @media print{ /* 자라기 전에 인쇄해도 다 자란 그림 */
-  .gt-idle .gt-edge{visibility:visible}.gt-idle .gt-node:not(.is-root) .gt-bud{opacity:1}
+  .gt4-idle .gt4-edge{visibility:visible}.gt4-idle .gt4-node:not(.is-root) .gt4-bud{opacity:1}
+  .gt4-ctl,.gt4-fxc,.gt4-dust,.gt4-lamp,.gt4-ypop{display:none}
+  .gt4-year span{background:none;-webkit-text-fill-color:#9aa4b8;color:#9aa4b8}
 }
