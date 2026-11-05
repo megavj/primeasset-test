@@ -6,7 +6,15 @@
     <description>보험설계사를 위한 매일 질문과 답변</description>
     <language>ko-kr</language>
     <atom:link href="https://test.primeasset.info/qa/feed.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Thu, 05 Nov 2026 09:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 05 Nov 2026 18:00:00 +0900</lastBuildDate>
+    <item>
+      <title>보험 가입나이는 보험기간과 보험료 납입기간에 따라 달라지나요?</title>
+      <link>https://test.primeasset.info/qa/2026-11-05-insurance-entry-age-payment-period/</link>
+      <guid isPermaLink="true">https://test.primeasset.info/qa/2026-11-05-insurance-entry-age-payment-period/</guid>
+      <pubDate>Thu, 05 Nov 2026 18:00:00 +0900</pubDate>
+      <category>사업방법서</category>
+      <description>보험 가입나이는 보험기간과 보험료 납입기간에 따라 달라질 수 있어, 선택한 조건을 함께 확인해야 합니다. 보험기간이 같더라도 납입기간별 가입나이가 다를 수 있으므로, 나이의 상한만 따로 전달하지 않도록 주의하세요. 기본계약과 의무가입 특약의 조건은 각각 살피고, 특정 계약의 기간별 조건을 모든 계약에 일반화하지 마세요.</description>
+    </item>
     <item>
       <title>수술비 청구할 때 치료가 필요해서 받은 수술도 약관상 정의를 확인해야 하나요?</title>
       <link>https://test.primeasset.info/qa/2026-11-05-surgery-benefit-definition-treatment/</link>
