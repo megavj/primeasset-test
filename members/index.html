@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-1C1OF9fxOMv9doZjU7y125Pbj0e4Z4Q6y47sjDA54/U='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5f7fa">
@@ -24,31 +24,13 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="프라임에셋 프리미엄 — 설계사 인트라넷">
 <meta name="twitter:card" content="summary_large_image">
-<script>
-/* FUNC-FIX B7: CSS 를 받기 전에(그래서 아무것도 그려지기 전에) 이 기기의 로그인 세션 유무로 처음 모양을 정함 — 나중에 바뀌며 흔들리지 않게.
-   세션 있음(또는 메일 링크로 막 돌아온 주소) → html.pa-in(불러오는 틀 = 인트라넷 모양, 로그인 화면 소개 한 줄 숨김) + body 가 생기는 즉시 body.pa-logged(메뉴 막대·탭바 = 인트라넷 모양).
-   1초 뒤 html.pa-sk-show → 불러오는 틀의 회색 막대 표시(그 전에 화면이 그려지면 안 보임). 판정은 tool-hub.js 와 같은 저장 키(sb-*-auth-token) */
-(function () {
-  var h = document.documentElement, inside = /access_token=/.test(location.hash);
-  try {
-    for (var i = 0; i < localStorage.length && !inside; i += 1) {
-      var k = localStorage.key(i);
-      if (!/^sb-[a-z0-9]+-auth-token$/.test(k)) continue;
-      var v = JSON.parse(localStorage.getItem(k) || 'null');
-      inside = !!(v && v.access_token && v.refresh_token);
-    }
-  } catch (e) { inside = false; }
-  if (inside) {
-    h.classList.add('pa-in');
-    new MutationObserver(function (ms, o) { if (document.body) { document.body.classList.add('pa-logged'); o.disconnect(); } }).observe(h, { childList: true });
-  }
-  setTimeout(function () { h.classList.add('pa-sk-show'); }, 1000);
-})();
-</script>
+<script src="/assets/members-preload.js?v=20261105-aiqa"></script>
 <link rel="stylesheet" href="../assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="../assets/glass.css?v=16">
-<link rel="stylesheet" href="../assets/members-ux.css?v=14">
-<link rel="stylesheet" href="/assets/intranet-light.css?v=20261104-t10b">
+<link rel="stylesheet" href="../assets/members-ux.css?v=20261105-aiqa">
+<link rel="stylesheet" href="/assets/intranet-light.css?v=20261105-aiqa">
+<link rel="stylesheet" href="/assets/members-aiqa.css?v=20261105-aiqa">
+<link rel="stylesheet" href="/assets/members-pwa.css?v=20261105-aiqa">
 </head>
 <body class="g-members intranet-light">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -93,12 +75,15 @@
 <nav class="g-tabbar pa-site-tabs" data-site-tabs aria-label="회원 빠른 메뉴" hidden></nav>
 
 <!-- 익명 합계: 페이지 경로·종류만 보냄(로그인 전/후 모두, 이름·이메일·식별자 없음) -->
-<!-- 앱처럼 설치(PWA): 서비스워커 등록(정적 자산만 캐시, HTML·Supabase·/product/ 제외) -->
+<!-- AI 질문 화면은 외부 스크립트와 스타일만 사용합니다. -->
 <script src="../assets/vendor/supabase-2.118.0.js" defer></script>
 <script src="../assets/auth-config.js?v=2" defer></script>
-<script src="../assets/glass-members.js?v=27" defer></script>
+<script src="/assets/ask-config.js?v=20261105-aiqa" defer></script>
+<script src="/assets/ask-client.js?v=20261105-aiqa" defer></script>
+<script src="/assets/ask-home.js?v=20261105-aiqa" defer></script>
+<script src="../assets/glass-members.js?v=20261105-aiqa" defer></script>
 <script src="../assets/stats-beacon.js?v=1" data-page="/members/" defer></script>
-<script src="/assets/site-nav.js?v=20261103-audit" defer></script>
-<script src="../assets/pwa.js?v=1" defer></script>
+<script src="/assets/site-nav.js?v=20261105-aiqa" defer></script>
+<script src="/assets/members-pwa.js?v=20261105-aiqa" defer></script>
 </body>
 </html>
