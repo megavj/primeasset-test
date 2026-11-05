@@ -1,0 +1,109 @@
+/* 시안 — 김상현 이사 편지 + 합류 (lab/closing). 메인 assets/glass.css 의 색·글씨·여백 토큰만 쓴다(새 색 없음).
+   · 편지(#ceo): 사진·상자·큰 따옴표 없이 왼쪽 정렬, 글 폭 640px. 제목 3줄(앞 두 줄 작고 옅게 · 셋째 줄 크게, '같이하면 성장할 수 있는지'만 금색)
+     → 가는 금색 선 → 본문 세 덩어리(17px, 줄 간격 넉넉히) → 서명(이름만 한 단계 크고 굵게) → 걸어온 길
+   · 합류(#contact): 가운데 정렬 유리 패널 하나(.g-panel), 제목이 가장 큼. 카카오(금색 56px) · 전화(테두리 52px), PC 나란히 · 휴대폰 위아래 꽉 차게, 간격 12px
+   · 금빛 한 번 스침(.g-btn--shine): 버튼 안 비스듬한 밝은 띠가 0.9초 동안 한 번 지나감. 띠는 글자 아래층이라 글자색·대비는 그대로. 움직임 줄이기면 끔
+   · 휴대폰 고정 막대: 모양·숨김 전환은 메인 glass.css · home-layout.css 그대로. 언제 숨길지와 inert 는 closing.js */
+
+/* ---------- 시안 머리줄 · 시안 비교 ---------- */
+.lab-bar{max-width:var(--wrap);margin:0 auto;padding:4px 16px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 16px;font-size:14px;line-height:1.4;color:var(--text-3);border-bottom:1px solid var(--line)}
+.lab-bar__links{display:flex;flex-wrap:wrap;align-items:center;gap:0 18px}
+.lab-bar a{display:inline-flex;align-items:center;min-height:44px;color:var(--text-2);text-decoration:none;white-space:nowrap}
+.lab-bar a:hover{color:var(--text);text-decoration:underline;text-underline-offset:4px}
+.lab-bar__switch{display:inline-flex;flex-wrap:wrap;gap:4px}
+.lab-bar__switch[hidden]{display:none}
+.lab-bar__switch button{display:inline-flex;align-items:center;min-height:40px;padding:4px 12px;border:1px solid var(--line-2);border-radius:999px;background:transparent;color:var(--text-2);font:inherit;font-size:14px;line-height:1.3;cursor:pointer;transition:border-color .2s ease,color .2s ease}
+.lab-bar__switch button:hover{border-color:rgba(255,255,255,.3);color:var(--text)}
+.lab-bar__switch button[aria-pressed="true"]{border-color:rgba(214,185,126,.55);color:var(--gold-hi)}
+.lab-bar__switch button:focus-visible{outline-offset:2px;border-radius:999px}
+.cl-compare{max-width:var(--wrap);margin:0 auto;padding:var(--s3) 16px var(--s5);border-top:1px dashed var(--line-2);font-size:14px;line-height:1.55;color:var(--text-3)}
+.cl-compare p{margin:0 0 var(--s1)}
+.cl-compare__t{font-weight:600;color:var(--text-2)}
+.cl-compare__more{margin:var(--s1) 0 0}
+.cl-compare__more a{display:inline-flex;align-items:center;min-height:44px;color:var(--text-2);text-decoration:none}
+.cl-compare__more a:hover{color:var(--text);text-decoration:underline;text-underline-offset:4px}
+
+/* ---------- 앞 섹션 자리표시: FAQ 끝부분 ---------- */
+.cl-faq{padding-top:var(--s5)}
+.cl-ctx{opacity:.36;filter:blur(1.4px) saturate(.7);pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.35) 0,#000 75%);mask-image:linear-gradient(to bottom,rgba(0,0,0,.35) 0,#000 75%)}
+.cl-ctx summary{cursor:default}
+
+/* ---------- 편지(#ceo) ---------- */
+.cl-ceo{padding-top:calc(var(--sec-y) + var(--s5))} /* FAQ 끝 금빛 인용과 편지 사이에 한 박자 쉼 */
+.cl-letter{max-width:640px;margin:0 auto} /* 글은 왼쪽 정렬, 글 묶음은 가운데(아래 합류 패널과 같은 축) */
+.cl-kicker{margin:0 0 var(--s3);font-size:var(--fs-cap);font-weight:var(--fw-label);line-height:var(--lh-cap);letter-spacing:.08em;color:var(--text-3)}
+.cl-title{margin:0;text-wrap:wrap}
+.cl-title__pre{display:block;font-size:clamp(18px,.6vw + 14px,22px);font-weight:500;line-height:1.6;letter-spacing:-.02em;color:var(--text-2)}
+.cl-title__main{display:block;margin-top:var(--s3);font-size:clamp(28px,2.4vw + 18px,48px);font-weight:600;line-height:1.3;letter-spacing:-.035em;color:var(--text)}
+.cl-title em{font-style:normal;color:var(--gold)}
+.cl-br-m{display:none}
+.cl-rule{width:56px;height:1px;margin:var(--s5) 0;background:var(--gold)}
+.cl-body p{margin:0;font-size:var(--fs-body);line-height:1.75;color:var(--text-2);text-wrap:pretty}
+.cl-body p+p{margin-top:var(--s4)}
+.cl-s{display:block}
+.cl-s+.cl-s{margin-top:.4em} /* 문장 사이를 줄바꿈 사이보다 조금 더 띄워, 휴대폰에서 긴 문장이 접혀도 한 문장으로 읽힘 */
+.cl-body .cl-last{color:var(--text);font-weight:500}
+/* 대안: 편지 안 금빛 인용(FAQ 끝 인용과 같은 문장, 서명이 이름을 대신함) */
+.cl-body .cl-word{margin-top:var(--s4);font-size:clamp(22px,1vw + 14px,28px);font-weight:400;line-height:1.45;letter-spacing:-.03em;color:var(--gold)}
+.cl-word span{display:inline-block}
+.cl-word span:first-child{font-weight:600;color:var(--gold-hi)}
+.cl-sign{margin:var(--s5) 0 0;font-size:var(--fs-body);line-height:1.5;color:var(--text-2)}
+.cl-sign b{margin:0 .12em;font-size:calc(var(--fs-body) + 5px);font-weight:600;letter-spacing:.04em;color:var(--text)}
+.cl-role{margin:6px 0 0;font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3)}
+.cl-path{margin:var(--s3) 0 0}
+.cl-path .g-link{font-size:15px;color:var(--text-2)}
+.cl-path .g-link:hover{color:var(--gold-hi)}
+
+/* ---------- 합류(#contact): 편지와 한 흐름(구분선 없이 가깝게) ---------- */
+.cl-contact{padding-top:var(--s5)}
+.g-sec.cl-contact::before{content:none}
+.cl-panel{max-width:880px;margin:0 auto;padding:var(--s6) var(--s5)}
+/* 패널 위 테두리 가운데에 짧은 금빛 선(편지의 금색 선과 같은 결) */
+.cl-panel::before{content:"";position:absolute;top:-1px;left:50%;width:160px;height:1px;transform:translateX(-50%);background:linear-gradient(90deg,rgba(214,185,126,0),var(--gold),rgba(214,185,126,0))}
+.cl-contact .cl-contact__title{margin:0 auto var(--s2);max-width:16em;font-size:clamp(24px,1.9vw + 18px,40px);font-weight:600;line-height:1.28;letter-spacing:-.03em}
+.cl-line{display:inline-block}
+.cl-contact__lead{margin:0 auto;text-wrap:pretty}
+.cl-actions{margin-top:var(--s5);gap:12px}
+.cl-actions .g-btn{min-height:56px}
+.cl-actions .cl-tel{min-height:52px;padding-top:13px;padding-bottom:13px}
+.cl-tel:hover{background:transparent;border-color:var(--gold)}
+.cl-note{margin:var(--s3) 0 0;font-size:var(--fs-cap);line-height:1.6;color:var(--text-3)}
+.cl-note__a,.cl-note__b{display:inline-block}
+
+/* ---------- 금빛 한 번 스침 ----------
+   띠는 버튼 너비의 30~70% 자리(가운데가 가장 밝음)에 있고, 글자 아래층(z-index:-1 + isolation)으로 지나간다.
+   이동 -72%→72%·0.9초: 띠가 버튼 밖에서 들어와 약 0.45초 동안 천천히 지나가고 끝에서 사라짐.
+   (RECOMMEND22 구현 메모의 -130%→130% · cubic-bezier(.2,.6,.2,1)은 실측 결과 띠가 버튼 위에 약 0.1초만 보여 '번쩍'에 가까웠음) */
+.g-btn--shine{position:relative;overflow:hidden;isolation:isolate}
+.g-btn--shine::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.5) 50%,transparent 70%);transform:translateX(-72%) skewX(-18deg);opacity:0}
+.g-btn--shine.is-shine::after{animation:cl-shine .9s cubic-bezier(.45,.05,.35,1) 1}
+@keyframes cl-shine{from{transform:translateX(-72%) skewX(-18deg);opacity:1}to{transform:translateX(72%) skewX(-18deg);opacity:1}}
+.g-btn--shine:focus-visible{background:var(--gold-hi)}
+
+/* ---------- 반응형 ---------- */
+@media (max-width:720px){
+  .cl-br-m{display:inline}
+  .cl-ceo{padding-top:calc(var(--sec-y) + var(--s3))}
+  .cl-rule{margin:var(--s4) 0}
+  .cl-body p+p{margin-top:var(--s3)}
+  .cl-contact{padding-top:var(--s3)}
+  .cl-panel{padding:var(--s5) var(--s3)}
+  .cl-actions{flex-direction:column;align-items:stretch}
+  .cl-actions .g-btn{width:100%}
+  /* 안내문: 두 줄로(가운데 점은 줄바꿈 자리. 화면 읽기에서는 그대로 읽힘) */
+  .cl-note>span{display:block}
+  .cl-note__sep{height:0;overflow:hidden}
+}
+@media (max-width:360px){
+  .cl-panel{padding-left:var(--s2);padding-right:var(--s2)}
+}
+
+/* 움직임 줄이기: 스침 없음(색만 조금 밝아지는 마우스 올림·포커스는 그대로) */
+@media (prefers-reduced-motion:reduce){
+  .g-btn--shine::after{display:none}
+}
+@media (forced-colors:active){
+  .g-btn--shine::after{display:none}
+  .cl-rule{background:CanvasText}
+  .cl-title em{text-decoration:underline}
+}
