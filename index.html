@@ -31,7 +31,6 @@
 <link rel="stylesheet" href="assets/perf-board.css?v=7">
 <link rel="stylesheet" href="assets/home-board.css?v=4">
 <link rel="stylesheet" href="assets/home-layout.css?v=7">
-<link rel="stylesheet" href="assets/tool-hub.css?v=6">
 <link rel="stylesheet" href="assets/home-motion.css?v=6">
 <link rel="stylesheet" href="assets/home-dark.css?v=4">
 <link rel="stylesheet" href="assets/growth-tree.css?v=20261105-gt4">
@@ -39,6 +38,7 @@
 <link rel="stylesheet" href="assets/faq.css?v=20261105-f1">
 <link rel="stylesheet" href="assets/why.css?v=20261105-cw1">
 <link rel="stylesheet" href="assets/closing.css?v=20261105-cw1">
+<link rel="stylesheet" href="assets/growth-sys.css?v=20261105-gs1">
 <script>document.documentElement.classList.add('js');if(window.matchMedia&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches&&'IntersectionObserver' in window)document.documentElement.classList.add('pb-anim');</script>
 <style>
 /* 한글 금액은 기존 소수 억 표기와 같은 값을 유지하며 작은 화면에서 줄바꿈한다. */
@@ -181,15 +181,175 @@
     </div>
   </section>
 
-  <!-- 설계사 성장 시스템 -->
-  <section class="g-sec g-hub" id="tools" aria-labelledby="tools-title">
-    <h2 id="tools-title">설계사 성장 시스템</h2>
-    <div class="g-growth-grid">
-      <article class="g-card g-reveal g-growth-card"><h3>전문화된 자체 AI 플랫폼</h3><p>카톡으로 바로 답변을 받으세요. 상품/보상/화법/전산 등 전용카톡AI지원</p></article>
-      <article class="g-card g-reveal g-growth-card"><h3>상담·화법 지원</h3><p>계약확률을 높이는 온라인/오프라인 화법 매뉴얼을 제공합니다.</p></article>
-      <article class="g-card g-reveal g-growth-card"><h3>각종 영업지원툴</h3><p>가망고객확보부터 고객관리까지. 준비된 영업지원을 활용하세요.</p></article>
-      <article class="g-card g-reveal g-growth-card"><h3>자료·교육</h3><p>수천개의 실시간 업데이트 되는 자료를 공유합니다.</p></article>
+  <!-- ===== 설계사 성장 시스템(#tools) — TASK31: lab/growth/ 적용(이사님 승인 2026-11-05). 스타일 assets/growth-sys.css, 크게 보기 assets/growth-sys.js, 이미지 assets/img/growth/
+       '무엇을 배우고 어떻게 올라가는가'(도구 설명은 아래 영업지원시스템)
+       ① 배우는 순서(PC 가로 5단계 · 휴대폰 세로) → ② 실제 자료 미리보기(성공가이드 3쪽 + 보험노트, 누르면 크게 보기 dialog)
+       → ③ 신입도 경력도, 전국 어디서나 → ④ 승격 경로(정적, 조건은 미팅에서 · 13쪽 가린 판) → ⑤ 도구 보기 연결
+       사실 범위: 이사님 답변(2026-11-05)과 성공가이드 문구만. 숫자 조건·소득·보장 표현·실명 없음. 섹션 id 는 tools 그대로(FAQ·전체 질문의 /#tools) ===== -->
+  <section class="g-sec gr" id="tools" aria-labelledby="gr-name">
+    <h2 class="gr-title"><span class="gr-kicker" id="gr-name">설계사 성장 시스템</span> <span class="gr-title__line">배울 것은 많습니다.</span> <span class="gr-title__line">그래서 전부 자료로 만들어 두었습니다.</span></h2>
+    <p class="gr-lead">옆에서 한 명씩 붙어 가르치는 방식이 아닙니다. <span class="g-nowrap">매뉴얼·자료·시스템으로,</span> 원하는 만큼 빠르게 배웁니다. <b>필요한 건 당신의 의지입니다.</b></p>
+
+    <!-- ① 배우는 순서 -->
+    <div class="gr-block gr-learn">
+      <div class="gr-head">
+        <h3 class="gr-h3" id="gr-learn-t">배우는 순서</h3>
+        <p class="gr-note">처음엔 이 순서로 익힙니다. 단계마다 무엇으로 배우는지 적었습니다.</p>
+      </div>
+      <ol class="gr-steps" aria-labelledby="gr-learn-t">
+        <li class="gr-step">
+          <span class="gr-step__no" aria-hidden="true">01</span>
+          <h4 class="gr-step__t">보험판매 프로세스</h4>
+          <p class="gr-step__with"><span class="gr-step__k">무엇으로</span><span class="gr-step__tool">온라인영업 표준매뉴얼북</span><span class="gr-step__d">유입부터 계약·사후 관리까지</span></p>
+        </li>
+        <li class="gr-step">
+          <span class="gr-step__no" aria-hidden="true">02</span>
+          <h4 class="gr-step__t">상품과 기준점</h4>
+          <p class="gr-step__with"><span class="gr-step__k">무엇으로</span><span class="gr-step__tool">프리미엄 상품저장소</span><span class="gr-step__d">이슈 상품 분석, 핵심 요약, 오디오북</span></p>
+        </li>
+        <li class="gr-step">
+          <span class="gr-step__no" aria-hidden="true">03</span>
+          <h4 class="gr-step__t">설계안 공부</h4>
+          <p class="gr-step__with"><span class="gr-step__k">무엇으로</span><span class="gr-step__tool">상품저장소 상품 아카이브</span><span class="gr-step__d"><span class="g-nowrap">보장·보험료·납입 조건을</span> 비교한 제안서</span></p>
+        </li>
+        <li class="gr-step">
+          <span class="gr-step__no" aria-hidden="true">04</span>
+          <h4 class="gr-step__t">전산 실습</h4>
+          <p class="gr-step__with"><span class="gr-step__k">무엇으로</span><span class="gr-step__tool">AI 전산매뉴얼</span><span class="gr-step__d">배서·전산 처리 메뉴와 순서</span></p>
+        </li>
+        <li class="gr-step">
+          <span class="gr-step__no" aria-hidden="true">05</span>
+          <h4 class="gr-step__t">화법 연습</h4>
+          <p class="gr-step__with"><span class="gr-step__k">무엇으로</span><span class="gr-step__tool">AI 영업비서, 실전상담 통합코치</span><span class="gr-step__d">상황별 화법 찾기와 상담 연습</span></p>
+        </li>
+      </ol>
     </div>
+
+    <!-- ② 실제 자료 미리보기: 링크는 자료 원본 크기 이미지(스크립트가 없으면 그대로 열림), 스크립트가 있으면 크게 보기 dialog -->
+    <div class="gr-block gr-docs">
+      <div class="gr-head">
+        <h3 class="gr-h3" id="gr-docs-t">실제 자료 미리보기</h3>
+        <p class="gr-note">합류 안내에 쓰는 ‘188본부 성공가이드’의 실제 페이지와, 운영 중인 보험노트 화면입니다. 숫자 조건과 다른 사람의 개인 정보는 가렸고, 가린 곳은 자료마다 적었습니다.</p>
+      </div>
+      <ul class="gr-docs__grid" aria-labelledby="gr-docs-t">
+        <li class="gr-doc">
+          <a class="gr-doc__open" href="assets/img/growth/guide-17.webp?v=20261105-gs1" aria-haspopup="dialog" data-gr-open
+             data-gr-w="1555" data-gr-h="1240"
+             data-gr-src="188본부 성공가이드 · 17쪽"
+             data-gr-title="스탠다드 캠퍼스 — 신입 및 기초교육"
+             data-gr-note="강의 사진·인용 문구와 끝이 잘린 영문 부제는 뺐습니다."
+             data-gr-alt="성공가이드 17쪽, 스탠다드 캠퍼스(신입 및 기초교육). 01 신인 정착 교육: 기초 상품 지식부터 스크립트 숙지, 전산 활용법까지 AI툴 구현 및 자료화. 02 테마별 전문 스터디: 화재보험, 보상 실무 등 시장 변화에 맞춘 테마별 교육. 03 교육 후 복습 시스템: 스탠다드 캠퍼스 교육 후 복습할 수 있는 성다(성공을 위한 다음 단계). 04 온라인/오프라인 교육: 언제 어디서나 학습할 수 있는 사내 교육 자료 및 최신 상품 비교 자료 상시 제공.">
+            <span class="gr-doc__frame">
+              <span class="gr-doc__bar" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg>성공가이드 · 17쪽<span class="gr-doc__zoom"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>크게 보기</span></span>
+              <img src="assets/img/growth/guide-17-1040.webp?v=20261105-gs1" srcset="assets/img/growth/guide-17-560.webp?v=20261105-gs1 560w, assets/img/growth/guide-17-1040.webp?v=20261105-gs1 1040w" sizes="(max-width: 720px) calc(100vw - 48px), 516px" width="1040" height="650" alt="" loading="lazy" decoding="async">
+            </span>
+            <span class="sr">성공가이드 17쪽, 스탠다드 캠퍼스 크게 보기</span>
+          </a>
+          <h4 class="gr-doc__t">스탠다드 캠퍼스 <span class="gr-doc__tag">신입 및 기초교육</span></h4>
+          <p class="gr-doc__d">신인 정착 교육 · 테마별 전문 스터디 · 교육 후 복습 시스템 <span class="g-nowrap">‘성다’</span></p>
+        </li>
+        <li class="gr-doc">
+          <a class="gr-doc__open" href="assets/img/growth/guide-21.webp?v=20261105-gs1" aria-haspopup="dialog" data-gr-open
+             data-gr-w="1800" data-gr-h="1087"
+             data-gr-src="188본부 성공가이드 · 21쪽"
+             data-gr-title="프리미엄 온라인영업 표준매뉴얼 — PDF 제공"
+             data-gr-note="오른쪽 목차 띠와 끝이 잘린 부제 한 줄만 뺐습니다."
+             data-gr-alt="성공가이드 21쪽, 프리미엄 온라인영업 표준매뉴얼(PDF 제공). 유입부터 계약까지, 전 과정 프로세스 표준화. 완벽한 유입 시나리오: SNS 콘텐츠 기획부터 타겟팅 광고 집행, 유망 고객 리스트 추출까지 온라인 유입의 전 과정을 단계별로 정의했습니다. 상황별 상담 최적화 스크립트 및 자료: 상황별 대처할 수 있는 AI화법도우미 및 자료화된 카페 게시글을 제공합니다. 사후 관리 및 리텐션 전략: 계약 이후 고객 만족도를 높이고 추가 소개를 이끌어내는 전문적인 고객관리를 교육합니다. 오른쪽에 188본부가 만든 ‘프리미엄 온라인영업 표준 매뉴얼북’ 표지.">
+            <span class="gr-doc__frame">
+              <span class="gr-doc__bar" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg>성공가이드 · 21쪽<span class="gr-doc__zoom"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>크게 보기</span></span>
+              <img src="assets/img/growth/guide-21-1040.webp?v=20261105-gs1" srcset="assets/img/growth/guide-21-560.webp?v=20261105-gs1 560w, assets/img/growth/guide-21-1040.webp?v=20261105-gs1 1040w" sizes="(max-width: 720px) calc(100vw - 48px), 516px" width="1040" height="650" alt="" loading="lazy" decoding="async">
+            </span>
+            <span class="sr">성공가이드 21쪽, 온라인영업 표준매뉴얼 크게 보기</span>
+          </a>
+          <h4 class="gr-doc__t">온라인영업 표준매뉴얼 <span class="gr-doc__tag">PDF</span></h4>
+          <p class="gr-doc__d">유입부터 계약, 사후 관리까지 영업의 전 과정을 한 권에</p>
+        </li>
+        <li class="gr-doc">
+          <a class="gr-doc__open" href="assets/img/growth/guide-20.webp?v=20261105-gs1" aria-haspopup="dialog" data-gr-open
+             data-gr-w="1338" data-gr-h="1350"
+             data-gr-src="188본부 성공가이드 · 20쪽"
+             data-gr-title="프리미엄 상품 저장소 — 네이버 카페"
+             data-gr-note="카페 화면 부분만 남겼습니다. 카페 회원 수·글 수와 다른 설계사 이름은 가렸습니다."
+             data-gr-alt="성공가이드 20쪽, 프리미엄 상품 저장소(네이버 카페) 메인화면. 배너 ‘프리미엄 상품저장소’와 ‘상품의 모든 정보와 교육을 한번에’ 문구, 전체글보기 목록과 추천 영업화법자료 목록(작성자 김상현, 2026년 3월 글). 카페 회원 수, 글 수, 다른 설계사 이름은 회색 막대로 가림.">
+            <span class="gr-doc__frame">
+              <span class="gr-doc__bar" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/></svg>성공가이드 · 20쪽<span class="gr-doc__zoom"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>크게 보기</span></span>
+              <img src="assets/img/growth/guide-20-1040.webp?v=20261105-gs1" srcset="assets/img/growth/guide-20-560.webp?v=20261105-gs1 560w, assets/img/growth/guide-20-1040.webp?v=20261105-gs1 1040w" sizes="(max-width: 720px) calc(100vw - 48px), 516px" width="1040" height="650" alt="" loading="lazy" decoding="async">
+            </span>
+            <span class="sr">성공가이드 20쪽, 프리미엄 상품저장소 크게 보기</span>
+          </a>
+          <h4 class="gr-doc__t">프리미엄 상품저장소 <span class="gr-doc__tag">네이버 카페</span></h4>
+          <p class="gr-doc__d">상품 분석과 상황별 영업화법 자료를 모아 둔 실제 카페 화면</p>
+        </li>
+        <li class="gr-doc gr-doc--web">
+          <a class="gr-doc__open" href="assets/img/growth/bohumnote.webp?v=20261105-gs1" aria-haspopup="dialog" data-gr-open
+             data-gr-w="1800" data-gr-h="1858"
+             data-gr-src="보험노트 · bohumnote.com"
+             data-gr-title="자기 이름으로 쌓는 보험노트"
+             data-gr-note="2026년 11월 5일 첫 화면입니다. 다른 설계사의 사진·이름·소개 글은 흐리게 처리했습니다."
+             data-gr-alt="보험노트(bohumnote.com) 첫 화면의 ‘추천·최신 보험노트’와 ‘인증 보험 전문가’ 부분. 노트 카드 제목: 폐결절 치료이력 있어도 수술비 보험 가입하는방법, 5대질병진단비 vs 3대질병진단비 비교, 필수보험 종류 연령대별로 먼저 채울 순서 정리, 부담보 조건 받았을 때 받아들여도 되는 경우와 해제 조건. 아래 인증 보험 전문가 카드마다 상담하기 버튼. 작성자 이름·사진·소개 글은 흐리게 처리.">
+            <span class="gr-doc__frame">
+              <span class="gr-doc__bar gr-doc__bar--web" aria-hidden="true"><i></i><i></i><i></i><span class="gr-doc__url">bohumnote.com</span><span class="gr-doc__zoom"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5M11 8.5v5M8.5 11h5"/></svg>크게 보기</span></span>
+              <img src="assets/img/growth/bohumnote-1040.webp?v=20261105-gs1" srcset="assets/img/growth/bohumnote-560.webp?v=20261105-gs1 560w, assets/img/growth/bohumnote-1040.webp?v=20261105-gs1 1040w" sizes="(max-width: 720px) calc(100vw - 48px), 516px" width="1040" height="650" alt="" loading="lazy" decoding="async">
+            </span>
+            <span class="sr">보험노트 화면 크게 보기</span>
+          </a>
+          <h4 class="gr-doc__t">보험노트 <span class="gr-doc__tag">고객이 읽는 보험 콘텐츠</span></h4>
+          <p class="gr-doc__d">‘인증 보험 전문가’인 설계사가 자기 이름으로 글을 쓰고, 글마다 프로필과 상담 버튼이 붙습니다. DB 대신 공유하는 가망고객 확보 플랫폼입니다.</p>
+          <p class="gr-doc__ext"><a href="https://bohumnote.com/" target="_blank" rel="noopener">bohumnote.com 열기<span class="sr"> (새 창)</span><span class="gr-arr" aria-hidden="true">↗</span></a></p>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ③ 신입도 경력도, 전국 어디서나 -->
+    <div class="gr-block gr-who">
+      <div class="gr-head">
+        <h3 class="gr-h3" id="gr-who-t">신입도 경력도, 전국 어디서나</h3>
+      </div>
+      <ul class="gr-who__list" aria-labelledby="gr-who-t">
+        <li class="gr-who__item">
+          <p class="gr-who__k">경력</p>
+          <p class="gr-who__v">자료와 시스템으로 바로 시작합니다.</p>
+          <p class="gr-who__d">경력자와 팀장 교육도 모두 <span class="g-nowrap">자료·매뉴얼·시스템으로</span> 준비돼 있습니다.</p>
+        </li>
+        <li class="gr-who__item">
+          <p class="gr-who__k">신입</p>
+          <p class="gr-who__v">상담을 신청하면, 가까운 지역의 <span class="g-nowrap">설계사·팀장과</span> 미팅을 연결해 드립니다.</p>
+          <p class="gr-who__d">배울 것은 위의 순서대로, 같은 자료로 익힙니다.</p>
+        </li>
+      </ul>
+      <p class="gr-who__all"><b>지역에 상관없이</b> 같은 자료로 배웁니다. <span class="g-nowrap">신입·경력</span> 모두 전국에서 함께합니다.</p>
+      <p class="gr-who__flow"><span class="gr-who__flow-k">합류 절차</span><span class="gr-who__flow-v"><span>상담 신청<i aria-hidden="true">→</i><span class="sr">,</span></span> <span>담당자 배정<i aria-hidden="true">→</i><span class="sr">,</span></span> <span>미팅<i aria-hidden="true">→</i><span class="sr">,</span></span> <span>위촉</span></span><a class="gr-go" href="#faq-process">자주 묻는 질문에서 보기<span class="gr-arr" aria-hidden="true">→</span></a></p>
+    </div>
+
+    <!-- ④ 승격 경로: 앞 '왜' 섹션과 겹치므로 짧고 정적으로(차오르는 효과 없음). 숫자 조건은 쓰지 않음 -->
+    <div class="gr-block gr-path">
+      <div class="gr-head">
+        <h3 class="gr-h3" id="gr-path-t">승격 경로</h3>
+      </div>
+      <div class="gr-path__body">
+        <ol class="gr-ranks" aria-labelledby="gr-path-t">
+          <li class="gr-rank"><b class="gr-rank__n">설계사</b><span class="gr-rank__r">성공의 시작점</span></li>
+          <li class="gr-rank"><b class="gr-rank__n">팀장</b><span class="gr-rank__r">매니지먼트 입문</span></li>
+          <li class="gr-rank"><b class="gr-rank__n">지사장</b><span class="gr-rank__r">조직 운영의 핵심</span></li>
+          <li class="gr-rank"><b class="gr-rank__n">본부장</b><span class="gr-rank__r">최고 관리자</span></li>
+        </ol>
+        <div class="gr-path__side">
+          <p class="gr-path__rule"><b>규정을 채우면 자동으로 승격됩니다.</b> <span>세부 규정은 미팅에서 그대로 보여 드립니다.</span></p>
+          <a class="gr-path__doc" href="assets/img/growth/guide-13.webp?v=20261105-gs1" aria-haspopup="dialog" data-gr-open
+             data-gr-w="1800" data-gr-h="885"
+             data-gr-src="188본부 성공가이드 · 13쪽"
+             data-gr-title="직급 승격 로드맵 — 조건은 가림"
+             data-gr-note="승격 조건과 부제 한 줄, 아래 안내 상자는 가렸습니다. 세부 규정은 미팅에서 원문 그대로 보여 드립니다."
+             data-gr-alt="성공가이드 13쪽, 투명하고 공정한 직급 승격 로드맵. 성공을 향한 4단계 승격 로드맵: 설계사(FC) 성공의 시작점, 팀장 매니지먼트 입문, 지사장 조직 운영의 핵심, 본부장 최고 관리자. 각 직급의 승격 조건은 회색 막대로 가림.">
+            <img src="assets/img/growth/guide-13-560.webp?v=20261105-gs1" width="560" height="211" alt="" loading="lazy" decoding="async">
+            <span class="gr-path__doc-t">성공가이드 13쪽 보기<small>승격 조건은 가린 판</small></span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ 연결: 도구 설명은 영업지원시스템이 맡음 -->
+    <p class="gr-next"><a class="gr-next__link" href="#sales-system">실제로 쓰는 도구 보기<span class="gr-arr" aria-hidden="true">→</span></a><span class="gr-next__d">AI 영업비서·AI 전산매뉴얼·상품통합분석기 등은 영업지원시스템에서 업무 순서대로 보여 드립니다.</span></p>
   </section>
 
   <!-- 영업지원시스템: 승인된 지원 항목, 휴대폰에서는 제목으로 펼치기 -->
@@ -665,6 +825,30 @@
   </section>
 </main>
 
+<!-- 설계사 성장 시스템 크게 보기: 기본 dialog(showModal) — 포커스 가둠·Esc 닫기는 브라우저 기본, 닫으면 누른 자리로 포커스 복귀(assets/growth-sys.js). ←/→ 로 이전·다음 -->
+<dialog class="gr-dlg" id="gr-dlg" aria-labelledby="gr-dlg-t" aria-describedby="gr-dlg-note">
+  <div class="gr-dlg__in">
+    <div class="gr-dlg__head">
+      <div class="gr-dlg__titles">
+        <p class="gr-dlg__src" data-gr-d="src"></p>
+        <h2 class="gr-dlg__t" id="gr-dlg-t" data-gr-d="title"></h2>
+      </div>
+      <button class="gr-dlg__x" type="button" data-gr-close autofocus><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg><span class="sr">닫기</span></button>
+    </div>
+    <figure class="gr-dlg__fig">
+      <div class="gr-dlg__view"><img class="gr-dlg__img" data-gr-d="img" alt="" decoding="async"></div>
+      <figcaption class="gr-dlg__note" id="gr-dlg-note" data-gr-d="note"></figcaption>
+    </figure>
+    <div class="gr-dlg__foot">
+      <button class="gr-dlg__nav" type="button" data-gr-prev><span aria-hidden="true">←</span> 이전 자료</button>
+      <p class="gr-dlg__count" aria-hidden="true"><span data-gr-d="i">1</span> / <span data-gr-d="n">5</span></p>
+      <a class="gr-dlg__raw" data-gr-d="raw" href="#" target="_blank" rel="noopener">이미지만 열기<span class="sr"> (새 창)</span></a>
+      <button class="gr-dlg__nav" type="button" data-gr-next>다음 자료 <span aria-hidden="true">→</span></button>
+    </div>
+    <p class="sr" aria-live="polite" data-gr-d="live"></p>
+  </div>
+</dialog>
+
 <!-- 바닥글: 로고 + 회사 정보(합류 카드에서 옮김) + 링크 (참고 3사이트 공통 배치) -->
 <footer class="g-foot g-foot--full">
   <p class="g-foot-brand"><img src="assets/logo.svg" alt="" width="22" height="24">프라임에셋 프리미엄사업부</p>
@@ -766,6 +950,8 @@
 <script src="assets/closing.js?v=20261105-cw1" defer></script>
 <script src="assets/sales-system.js?v=20261105-a1" defer></script>
 <script src="assets/faq.js?v=20261105-f1" defer></script>
+<!-- 설계사 성장 시스템 실제 자료 크게 보기(dialog) -->
+<script src="assets/growth-sys.js?v=20261105-gs1" defer></script>
 <!-- 스크롤 연출: 숫자 카운트업 + scroll-driven animation 미지원 시 카드 등장 대체(IntersectionObserver). 움직임 줄이기면 아무것도 안 함 -->
 <script src="assets/home-stats.js?v=20261104-t10" defer></script>
 <script src="assets/home-motion.js?v=1" defer></script>
