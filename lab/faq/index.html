@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<!-- 메인 CSP 규칙을 따르되 더 엄격하게: inline script·style 없음(이 폴더의 faq.js·css만), 외부 출처 없음 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>시안 — 자주 묻는 질문 A안 | 프라임에셋 프리미엄</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="/assets/glass.css?v=16">
+<link rel="stylesheet" href="/assets/sales-system.css?v=20261105-a1">
+<link rel="stylesheet" href="./faq.css?v=1">
+<script src="./faq.js?v=1" defer></script>
+</head>
+<body class="g-main">
+<a class="g-skip" href="#faq">본문으로 건너뛰기</a>
+<div class="g-bg" aria-hidden="true"></div>
+<div class="lab-bar"><span>시안 — 자주 묻는 질문 A안</span><span class="lab-bar__links"><a href="all/">전체 질문 예시</a><a href="/#faq">현재 메인 섹션</a></span></div>
+
+<!-- 메인 상단 메뉴의 정적 사본(메인 site-nav.js 는 세션 확인 요청이 있어 싣지 않음). 1100px 이하 '메뉴' 열기는 faq.js -->
+<header class="g-nav pa-site-nav" data-lab-nav>
+  <div class="g-bar pa-nav-bar">
+    <a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33"><span>프라임에셋 프리미엄</span></a>
+    <button id="pa-nav-toggle" type="button" aria-controls="pa-nav-menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>메뉴</span></button>
+    <nav id="pa-nav-menu" aria-label="주요 메뉴">
+      <a href="/">홈</a><a href="/performance/">실적보드</a><a href="/qa/">보험자료</a><a href="/wiki/">보험위키</a>
+      <a data-nav-key="join" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="#F5D75F" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.75 1.85 5.17 4.65 6.54l-1.02 3.76c-.09.33.29.59.57.4l4.48-2.98c.43.04.87.06 1.32.06 5.52 0 10-3.48 10-7.78S17.52 3 12 3Z"/></svg><span>합류문의</span></a>
+      <a data-nav-key="login" href="/members/#login">로그인</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <!-- 앞 섹션 자리표시(메인 '영업지원시스템'의 머리말과 끝부분, 흐리게·조작 불가) -->
+  <section class="g-sec ss fq-ctx fq-ctx--before" aria-hidden="true" inert>
+    <h2>영업지원시스템</h2>
+    <p class="ss-claim">영업의 각 단계에, 필요한 지원이 있습니다.</p>
+    <div class="ss-common">
+      <h3 class="ss-common__title">모든 단계에 함께하는 지원</h3>
+      <ul class="ss-common__list">
+        <li class="ss-common__item">
+          <svg class="ss-ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m2 8 10-5 10 5-10 5ZM6 10v7c4 3 8 3 12 0v-7M22 8v8"/></svg>
+          <h4>교육</h4>
+          <p>스탠다드캠퍼스 · 정기 오프라인 교육 · 교육 후 복습</p>
+        </li>
+        <li class="ss-common__item">
+          <svg class="ss-ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h12v9H9l-5 4zM20 9v10l-3.5-2.5H10"/></svg>
+          <h4>보험정보공유방</h4>
+          <p>리플렛·시책·비교자료를 나누는 방</p>
+        </li>
+        <li class="ss-common__item">
+          <svg class="ss-ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 6h7a3 3 0 0 1 0 6h-4a3 3 0 0 0 0 6h7"/></svg>
+          <h4>질문 경로</h4>
+          <ol class="ss-path"><li>자료</li><li>질문방</li><li>담당자</li></ol>
+        </li>
+      </ul>
+    </div>
+    <details class="ss-all"><summary><span class="ss-all__t">지원 전체 보기</span><span class="ss-all__d">업무별 도구·자료와 이용 조건</span></summary></details>
+  </section>
+
+  <!-- ===== 자주 묻는 질문 A안: 핵심 5개(첫 질문만 펼침) · 첫 문장 결론 → 이유·대신 드리는 것 → 근거·다음 행동 링크 · 이사님 한마디 · 전체 질문 =====
+       details/summary 그대로(여러 개 함께 펼침 가능, name 속성 없음). 펼침 애니메이션은 faq.css 에서 지원 브라우저만.
+       주소 #faq-질문id 로 오면 그 질문이 펼쳐짐(faq.js). 메인 반영 때 '/#…' 링크는 같은 페이지 앵커로 그대로 동작 -->
+  <section class="g-sec fq" id="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">자주 묻는 질문</h2>
+    <p class="g-lead fq-sub">합류 전에 확인하실 것들, 결론부터 답합니다.</p>
+
+    <div class="fq-list">
+      <details class="g-faq fq-item" id="faq-commission" data-fq open>
+        <summary><span class="fq-q">수수료와 시책은 어떻게 확인하나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">미팅 때 직접 보여 드립니다.</p>
+          <p><span class="fq-s">수수료표와 시책은 매달 프라임에셋 내부 인트라넷 <span class="g-nowrap">‘팜스’에</span> 공개됩니다.</span> <span class="fq-s">설계사부터 본부장까지, 모두 같은 자료를 봅니다.</span></p>
+          <p class="fq-go"><a href="/#contact">미팅 신청하기<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+
+      <details class="g-faq fq-item" id="faq-settlement" data-fq>
+        <summary><span class="fq-q">정착지원금이 있나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">드리지 않습니다.</p>
+          <p><span class="fq-s">대신 수수료와 시책으로 장난치지 않습니다.</span> <span class="fq-s">매달 전부 공개하고, 공개된 기준대로 우대합니다.</span></p>
+          <p class="fq-go"><a href="#faq-commission">수수료와 시책 확인 방법<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+
+      <details class="g-faq fq-item" id="faq-db" data-fq>
+        <summary><span class="fq-q">DB(가망고객 정보)를 주나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">드리지 않습니다.</p>
+          <p><span class="fq-s">대신 그보다 중요한 고객 확보 방법과 가망고객 확보 플랫폼을 공유합니다.</span> <span class="fq-s">물고기를 드리는 게 아니라, 낚시하는 법을 알려 드립니다.</span></p>
+          <p class="fq-go"><a href="/#sales-system">영업지원시스템에서 고객 확보 방법 보기<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+
+      <details class="g-faq fq-item" id="faq-training" data-fq>
+        <summary><span class="fq-q">처음 시작해도 배울 수 있나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">네, 배울 수 있습니다.</p>
+          <p><span class="fq-s"><span class="g-nowrap">매뉴얼·가이드·시스템·자료가</span> 모두 준비되어 있으니, 필요한 건 당신의 의지입니다.</span> <span class="fq-s">처음엔 배울 게 많지만, 모두 설계사의 능력을 올리는 데 집중되어 있습니다.</span></p>
+          <p class="fq-go"><a href="/#tools">설계사 성장 시스템 보기<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+
+      <details class="g-faq fq-item" id="faq-process" data-fq>
+        <summary><span class="fq-q">합류는 어떻게 진행되나요?</span></summary>
+        <div class="fq-a">
+          <p class="fq-lead">상담 신청부터 위촉까지, 네 단계입니다.</p>
+          <ol class="fq-flow" aria-label="합류 절차">
+            <li><span class="fq-flow__no" aria-hidden="true">1</span><b>상담 신청</b><span class="sr"> — </span><span class="fq-flow__d">합류 문의·전화로</span></li>
+            <li><span class="fq-flow__no" aria-hidden="true">2</span><b>담당자 배정</b><span class="sr"> — </span><span class="fq-flow__d"><span class="g-nowrap">신입·경력,</span> 지역, 원하는 영업 <span class="g-nowrap">방식·환경에</span> 맞춰</span></li>
+            <li><span class="fq-flow__no" aria-hidden="true">3</span><b>미팅</b><span class="sr"> — </span><span class="fq-flow__d">수수료표와 시책을 직접 확인</span></li>
+            <li><span class="fq-flow__no" aria-hidden="true">4</span><b>위촉 진행</b><span class="sr"> — </span><span class="fq-flow__d">절차에 따라 위촉</span></li>
+          </ol>
+          <p class="fq-go"><a href="/#contact">상담 신청하기<span class="fq-arr" aria-hidden="true">→</span></a></p>
+        </div>
+      </details>
+    </div>
+
+    <p class="fq-all"><a class="fq-all__link" href="all/">전체 질문 보기<span class="fq-arr" aria-hidden="true">→</span></a><span class="fq-all__d">보상·비용 · 교육·활동 · 소속 이동·합류</span></p>
+
+    <figure class="fq-word">
+      <blockquote><p><span>의지와 노력.</span> <span>그 외에는 저희가 준비합니다.</span></p></blockquote>
+      <figcaption>— 프라임에셋 이사 김상현</figcaption>
+    </figure>
+  </section>
+
+  <!-- 뒤 섹션 자리표시(메인 '김상현 이사' 그대로, 흐리게·조작 불가) -->
+  <section class="g-sec fq-ctx fq-ctx--after" aria-hidden="true" inert>
+    <h2>김상현 이사</h2>
+    <p class="g-lead">프라임에셋 이사 · 프리미엄사업부 대표</p>
+    <div class="g-card g-ceo g-ceo--v3">
+      <p class="g-quote">말보다 데이터와 시스템으로 일하는 보험영업가</p>
+      <a class="g-link" href="/story/">성장 스토리 보기</a>
+    </div>
+  </section>
+</main>
+</body>
+</html>

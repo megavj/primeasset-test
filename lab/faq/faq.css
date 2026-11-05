@@ -1,0 +1,171 @@
+/* 시안 — 자주 묻는 질문 A안 (lab/faq: 메인 예시 index.html · 전체 질문 all/index.html 공용). 메인 assets/glass.css 의 색·글씨·여백 토큰만 쓴다.
+   · 질문 줄은 기존 details.g-faq(얇은 선) 그대로. 펼친 질문만 위 선에 짧은 금색 + 펼침 화살표 금색
+   · 답: 첫 문장 결론(밝게·굵게) → 이유·대신 드리는 것(회청) → 근거·다음 행동 링크(금색 글자 + →)
+   · 합류 절차: 번호 원 + 점선(PC 가로 4칸, 560px 이하 세로). 금색은 시작 단계(상담 신청)에만
+   · 이사님 한마디: 금빛 인용 한 줄(짧은 금색 선 + 인용문 + 서명)
+   · 펼침 애니메이션: ::details-content + interpolate-size 를 지원할 때만(@supports). 미지원 브라우저는 기본 펼침 그대로
+   · 움직임 줄이기: 전환·등장 연출 모두 끔(glass.css 공통 규칙이 닿지 않는 가상요소 포함) */
+
+/* ---------- 시안 머리줄 · 앞뒤 자리표시 ---------- */
+.lab-bar{max-width:var(--wrap);margin:0 auto;padding:6px 16px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 16px;font-size:13px;line-height:1.4;color:var(--text-3);border-bottom:1px solid var(--line)}
+.lab-bar__links{display:flex;flex-wrap:wrap;gap:0 18px}
+.lab-bar a{display:inline-flex;align-items:center;min-height:40px;color:var(--text-2);text-decoration:none;white-space:nowrap}
+.lab-bar a:hover{color:var(--text)}
+.g-main>main{padding-bottom:var(--s5)}
+
+.fq-ctx{opacity:.36;filter:blur(1.4px) saturate(.7);pointer-events:none;user-select:none;-webkit-user-select:none}
+.fq-ctx--before{-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.55) 0,#000 42%);mask-image:linear-gradient(to bottom,rgba(0,0,0,.55) 0,#000 42%)}
+.fq-ctx--after{-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 88%);mask-image:linear-gradient(to bottom,#000 0,transparent 88%)}
+.fq-ctx .ss-common{margin-top:var(--s5)}
+.fq-ctx .ss-all{margin-top:var(--s5)}
+.fq-ctx .ss-all>summary{cursor:default}
+/* 김상현 이사 카드: 메인 home-layout.css 의 같은 세 줄 */
+.g-ceo--v3{grid-template-columns:1fr;gap:var(--s2)}
+.g-ceo--v3 .g-quote{margin:0}
+.g-ceo--v3 .g-link{justify-self:start}
+
+/* ---------- 머리말 ---------- */
+.fq>h2{margin-bottom:var(--s2)}
+.fq-sub{text-wrap:pretty}
+
+/* ---------- 질문 목록(details.g-faq 그대로) ---------- */
+.fq-list{border-bottom:1px solid var(--line)}
+.fq-item{scroll-margin-top:calc(var(--nav-h) + 40px)}
+.fq .fq-item>summary{padding:var(--s3) 56px var(--s3) 0;text-wrap:pretty}
+.fq .fq-item>summary:focus-visible{outline-offset:2px;border-radius:8px}
+.fq-q{min-width:0;text-wrap:balance} /* summary 는 flex(glass.css): 질문 글을 span 하나로 감싸야 안쪽 묶음(g-nowrap) 뒤 공백이 지워지지 않음. 두 줄이면 길이를 맞춤 */
+/* 펼친 질문: 위 선 왼쪽에 짧은 금색, 화살표 금색 */
+.fq .fq-item>summary::before{content:"";position:absolute;left:0;top:-1px;width:64px;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left center;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.fq .fq-item[open]>summary::before{transform:scaleX(1)}
+.fq .fq-item[open]>summary::after{border-color:var(--gold)}
+
+/* ---------- 답: 결론 → 이유 → 근거·다음 행동 ---------- */
+.fq-a{max-width:44em;padding:0 56px var(--s4) 0}
+.fq .fq-a>*{margin:0}
+.fq .fq-a>*+*{margin-top:10px}
+.fq .fq-a p{padding:0;font-size:var(--fs-body);line-height:1.75;color:var(--text-2);text-wrap:pretty}
+.fq .fq-a .fq-lead{font-size:calc(var(--fs-body) + 1px);font-weight:600;line-height:1.55;letter-spacing:-.01em;color:var(--text)}
+.fq .fq-a>.fq-lead+*{margin-top:4px}
+.fq .fq-a>.fq-go,.fq .fq-a>.fq-foot{margin-top:var(--s2)}
+.fq .fq-a>.fq-flow{margin-top:var(--s3)}
+.fq .fq-a>.fq-flow+*{margin-top:var(--s3)}
+/* PC: 이유·대신 드리는 것은 한 문장에 한 줄(어색한 자리에서 끊기지 않게). 휴대폰은 자연스럽게 이어 씀 */
+@media (min-width:721px){.fq-s{display:block}}
+
+/* 근거·다음 행동 링크: 금색 글자 + 화살표(색만으로 구분하지 않게 →) */
+.fq .fq-a .fq-go{font-size:15px;line-height:1.5}
+.fq-go a{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:-10px 0;color:var(--gold);font-weight:500;text-decoration:none;text-underline-offset:4px;text-decoration-thickness:1px}
+.fq-go a:hover{color:var(--gold-hi);text-decoration:underline}
+.fq-arr{display:inline-block;transition:transform .2s ease}
+a:hover>.fq-arr{transform:translateX(3px)}
+.fq-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 16px}
+.fq-copy{display:inline-flex;align-items:center;min-height:44px;margin:-10px 0;padding:0 2px;border:0;background:none;color:var(--text-3);font:inherit;font-size:14px;font-weight:500;line-height:1.4;cursor:pointer;transition:color .2s ease}
+.fq-copy:hover{color:var(--text)}
+.fq-copy.is-done{color:var(--text-2)}
+
+/* 비교 기준 목록(전체 질문 '원수사나 대리점이나') — 체크는 회청 */
+.fq-checks{list-style:none;padding:0}
+.fq .fq-a>.fq-checks{margin-top:var(--s2)}
+.fq .fq-a>.fq-checks+p{margin-top:var(--s2)}
+.fq-checks li{position:relative;padding-left:24px;font-size:16px;line-height:1.65;color:var(--text)}
+.fq-checks li+li{margin-top:6px}
+.fq-checks li::before{content:"";position:absolute;left:2px;top:.55em;width:10px;height:5px;border-left:1.5px solid var(--text-2);border-bottom:1.5px solid var(--text-2);transform:rotate(-45deg)}
+
+/* ---------- 합류 절차: 번호 원 + 점선 ---------- */
+.fq-flow{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 var(--s2)}
+.fq-flow>li{position:relative;min-width:0;padding-top:44px}
+.fq-flow__no{position:absolute;left:0;top:0;display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--line-2);border-radius:50%;background:var(--bg-0);font-size:14px;font-weight:600;line-height:1;color:var(--text-2);font-variant-numeric:tabular-nums}
+.fq-flow>li:first-child .fq-flow__no{border-color:rgba(214,185,126,.7);background:var(--gold-soft);color:var(--gold)}
+/* 점선: 지름 2px 점을 7px 간격으로(번호 원 사이에 10px 여백) */
+.fq-flow>li:not(:last-child)::after{content:"";position:absolute;top:13px;left:38px;right:-6px;height:2px;background:radial-gradient(circle,rgba(170,180,196,.55) 0 1px,transparent 1.3px) 0 50%/7px 2px repeat-x}
+.fq-flow b{display:block;font-size:16px;font-weight:600;line-height:1.4;color:var(--text)}
+.fq-flow__d{display:block;margin-top:4px;font-size:14px;line-height:1.55;color:var(--text-3);text-wrap:pretty}
+
+/* ---------- 전체 질문 보기 ---------- */
+.fq-all{display:flex;flex-wrap:wrap;align-items:center;gap:0 20px;margin:var(--s3) 0 0}
+.fq-all__link{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:17px;font-weight:600;color:var(--text);text-decoration:none;transition:color .2s ease}
+.fq-all__link:hover{color:var(--gold-hi)}
+.fq-all__d{font-size:14px;line-height:1.5;color:var(--text-3)}
+
+/* ---------- 이사님 한마디: 금빛 인용 한 줄 ---------- */
+.fq-word{margin:var(--s6) 0 0;padding:0}
+.fq-word::before{content:"";display:block;width:40px;height:1px;margin:0 0 var(--s3);background:var(--gold)}
+.fq-word blockquote{margin:0}
+.fq-word blockquote p{margin:0;font-size:clamp(26px,2.8vw,36px);font-weight:400;line-height:1.4;letter-spacing:-.03em;color:var(--gold);text-wrap:balance}
+.fq-word blockquote span{display:inline-block}
+.fq-word blockquote span:first-child{font-weight:600;color:var(--gold-hi)} /* '의지와 노력.'만 조금 더 굵고 밝게 */
+.fq-word figcaption{margin-top:var(--s2);font-size:15px;line-height:1.5;color:var(--text-3)}
+
+/* ---------- 전체 질문 페이지 ---------- */
+.fq-page{max-width:var(--wrap);margin:0 auto;padding:var(--s6) 16px var(--s5)}
+.fq-head{padding:0 0 var(--s5)}
+.fq-crumb{display:flex;flex-wrap:wrap;align-items:center;gap:0 10px;margin:0 0 var(--s2);font-size:14px;line-height:1.5;color:var(--text-3)}
+.fq-crumb a{display:inline-flex;align-items:center;min-height:44px;margin:-10px 0;color:var(--text-2);text-decoration:none}
+.fq-crumb a:hover{color:var(--text);text-decoration:underline;text-underline-offset:4px}
+.fq-head h1{margin:0 0 var(--s2);font-size:clamp(34px,4.2vw,52px);font-weight:600;line-height:1.15;letter-spacing:-.03em}
+.fq-head .fq-sub{margin-bottom:var(--s4)}
+.fq-chips{display:flex;flex-wrap:wrap;gap:8px}
+.fq-chips a{display:inline-flex;align-items:center;min-height:44px;padding:8px 18px;border:1px solid var(--line-2);border-radius:999px;font-size:15px;font-weight:500;line-height:1.3;color:var(--text);text-decoration:none;transition:border-color .2s ease,background-color .2s ease}
+.fq-chips a:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05)}
+.fq-chips a:focus-visible{outline-offset:2px;border-radius:999px}
+
+/* 분류: PC 는 분류 하나에 전체 폭 선 한 줄(왼쪽 분류 이름 · 오른쪽 질문). 분류 사이 선이 두 겹이 되지 않게 목록 위·아래 선은 뺌 */
+.fq-cat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.6fr);gap:0 var(--s5);margin-top:var(--s5);border-top:1px solid var(--line);scroll-margin-top:calc(var(--nav-h) + 24px)}
+.fq-head+.fq-cat{margin-top:0}
+.fq-cat .fq-list{border-bottom:0}
+.fq-cat .fq-item:first-child{border-top:0}
+.fq-cat__head{align-self:start;position:sticky;top:calc(var(--nav-h) + 40px);padding-top:var(--s3)}
+.fq-cat__head h2{margin:0;font-size:22px;font-weight:600;line-height:1.4;letter-spacing:-.015em}
+.fq-cat__head p{margin:6px 0 0;font-size:14px;line-height:1.55;color:var(--text-3)}
+.fq-end{margin-top:var(--s6)}
+.fq-end .g-lead{margin-bottom:0}
+
+/* ---------- 펼침 애니메이션: 지원 브라우저만 ---------- */
+@supports (interpolate-size:allow-keywords){
+  .fq-item{interpolate-size:allow-keywords}
+  .fq-item::details-content{block-size:0;opacity:0;overflow:clip;overflow-clip-margin:8px;transition:block-size .45s cubic-bezier(.16,1,.3,1),opacity .3s ease,content-visibility .45s allow-discrete}
+  .fq-item[open]::details-content{block-size:auto;opacity:1}
+  @keyframes fq-step{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .fq-item[open] .fq-flow>li{animation:fq-step .5s cubic-bezier(.16,1,.3,1) both}
+  .fq-item[open] .fq-flow>li:nth-child(2){animation-delay:.07s}
+  .fq-item[open] .fq-flow>li:nth-child(3){animation-delay:.14s}
+  .fq-item[open] .fq-flow>li:nth-child(4){animation-delay:.21s}
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width:860px){
+  /* 한 줄 배치: 분류 이름 아래에 질문. 선은 질문 사이에만 */
+  .fq-cat{grid-template-columns:1fr;border-top:0}
+  .fq-cat__head{position:static;padding:0 0 var(--s2)}
+  .fq-cat .fq-item:first-child{border-top:1px solid var(--line)}
+  .fq-cat .fq-list{border-bottom:1px solid var(--line)}
+}
+@media (max-width:720px){
+  .fq .fq-item>summary{padding:20px 40px 20px 0}
+  .fq-a{padding:0 0 var(--s3)}
+  .fq-word{margin-top:var(--s5)}
+  .fq-page{padding-top:var(--s5)}
+  .fq-cat__head h2{font-size:20px}
+}
+@media (max-width:640px){
+  .fq-ctx--before .ss-common__item:nth-child(n+2){display:none}
+}
+@media (max-width:560px){
+  .fq-flow{grid-template-columns:1fr;gap:0}
+  .fq-flow>li{padding:3px 0 20px 44px}
+  .fq-flow>li:last-child{padding-bottom:0}
+  .fq-flow>li:not(:last-child)::after{top:36px;bottom:4px;left:13px;right:auto;width:2px;height:auto;background:radial-gradient(circle,rgba(170,180,196,.55) 0 1px,transparent 1.3px) 50% 0/2px 7px repeat-y}
+  .fq-all{flex-direction:column;align-items:flex-start}
+}
+
+/* 움직임 줄이기: 전환·등장 연출(가상요소 포함) 끔 */
+@media (prefers-reduced-motion:reduce){
+  .fq .fq-item>summary::before,.fq .fq-item>summary::after{transition:none}
+  .fq-item::details-content{transition:none}
+  .fq-item[open] .fq-flow>li{animation:none}
+}
+@media (forced-colors:active){
+  .fq .fq-item[open]>summary{text-decoration:underline}
+  .fq-flow__no{border-color:CanvasText}
+  .fq-word::before{background:CanvasText}
+}
