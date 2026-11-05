@@ -44,7 +44,7 @@
     ['308', '2024-01', '254']
   ];
   const ROOT = '188';
-  const FALLBACK_URLS = { '188': 'https://188.primeasset.info/' }; // DB를 못 읽을 때만
+  const FALLBACK_URLS = { '188': 'https://188.primeasset.info/', '255': 'https://prime255.com/' }; // DB를 못 읽을 때만
   const REST = '/rest/v1/branches?select=no,url&visible=eq.true';
 
   /* ── 2. 색: OKLCH [밝기, 채도, 색상각]. 네이비 바탕에 맞춰 채도를 낮춤(원색·형광 없음) ── */
@@ -131,7 +131,7 @@
     let list = [];
     if (Array.isArray(rows) && rows.length) { // DB 목록 = 보이는 본부(메인 목록과 같은 개수)
       const seen = new Set();
-      rows.forEach(r => { const no = cleanNo(r && r.no); if (no && !seen.has(no)) { seen.add(no); list.push({ no, url: safeUrl(r.url) }); } });
+      rows.forEach(r => { const no = cleanNo(r && r.no); if (no && !seen.has(no)) { seen.add(no); list.push({ no, url: safeUrl(r.url) || safeUrl(FALLBACK_URLS[no]) }); } });
       if (!seen.has(ROOT)) list.unshift({ no: ROOT, url: safeUrl(FALLBACK_URLS[ROOT]) });
       const rank = new Map(BASE.map(([no], k) => [no, k])); // 번호 순서를 DB 정렬과 무관하게(기본 데이터 순 → 새 본부는 DB 순)
       list = list.map((b, k) => [b, rank.has(b.no) ? rank.get(b.no) : BASE.length + k]).sort((a, b) => a[1] - b[1]).map(x => x[0]);

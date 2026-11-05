@@ -7,7 +7,7 @@
 (function () {
   const FALLBACK = [
     { no: "188", url: "https://188.primeasset.info/" }, { no: "227" }, { no: "236" }, { no: "242" }, { no: "246" },
-    { no: "249" }, { no: "254" }, { no: "255" }, { no: "285" }, { no: "308" }, { no: "320" }, { no: "338" },
+    { no: "249" }, { no: "254" }, { no: "255", url: "https://prime255.com/" }, { no: "285" }, { no: "308" }, { no: "320" }, { no: "338" },
     { no: "345" }, { no: "346" }, { no: "350" }, { no: "364" }, { no: "375" }, { no: "379" }, { no: "384" }
   ];
   function render(list) {
@@ -32,7 +32,7 @@
         { headers: { apikey: C.anonKey, Authorization: "Bearer " + C.anonKey }, credentials: "omit" });
       if (!res.ok) return;
       const data = await res.json();
-      if (Array.isArray(data) && data.length) render(data);
+      if (Array.isArray(data) && data.length) render(data.map(b => (b && !b.url ? Object.assign({}, b, { url: (FALLBACK.find(f => f.no === String(b.no)) || {}).url }) : b)));
     } catch (e) { /* 기본 목록 유지 */ }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", load); else load();
