@@ -1,0 +1,21 @@
+/* TASK37: account overview and saved answers. */
+.ask-profile-quota { border:1px solid var(--line-2); border-radius:10px; background:var(--bg-2); padding:12px 16px; margin:0 0 24px; }
+.ask-profile-quota p { margin:0; color:var(--accent); font-weight:600; }
+.ask-profile-section-heading { display:flex; align-items:center; justify-content:space-between; gap:8px 16px; flex-wrap:wrap; }
+.ask-profile-section-heading h3 { margin:0; }
+.ask-profile-answer { margin:16px 0 0; border-top:1px solid var(--line-2); padding-top:16px; }
+.ask-profile-answer h4 { font-size:1rem; margin:16px 0 8px; }
+.ask-profile-answer-text { font-size:1rem; line-height:1.8; white-space:pre-wrap; overflow-wrap:anywhere; }
+.ask-profile-sources { margin:0; padding-left:24px; font-size:1rem; }
+.ask-profile-sources a { display:inline-block; min-height:44px; padding:8px 0; color:var(--accent); }
+.ask-profile-details { border-top:1px solid var(--line-2); margin-top:28px; padding-top:12px; }
+.ask-profile-details>summary { min-height:48px; padding:10px 4px; font-size:1rem; font-weight:600; color:var(--accent); cursor:pointer; }
+.ask-profile-details[open]>summary { margin-bottom:16px; }
+body.ask-account .ask-profile-details .ask-account-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.ask-profile-copy-field { position:fixed; left:-9999px; top:0; }
+.ask-account-questions>li>.ask-account-actions { margin-top:12px; }
+.ask-account-questions>li>.ask-account-status:empty { display:none; }
+@media (max-width:520px) {
+  body.ask-account .ask-profile-details .ask-account-metrics { grid-template-columns:minmax(0,1fr); }
+  .ask-profile-section-heading { align-items:flex-start; }
+}

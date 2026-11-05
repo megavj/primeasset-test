@@ -345,8 +345,8 @@
     { key: "site:0", name: "보험위키", description: "보장·용어·청구 가이드", url: "/wiki/" },
     { key: "site:2", name: "보험노트", description: "보험노트 공식 홈페이지", url: "https://bohumnote.com/" }
   ];
-  // 도구별 명시 분류. 새 도구는 이름의 단어로 추측하지 않고 기타에 둡니다.
-  const WORK = ["상품·상담", "보상·청구", "청약·전산", "자료·지식", "기타"];
+  // 4분류 고정. 확인된 이름과 기존 경로를 우선하며 미분류 메뉴도 자료·지식에서 이용할 수 있습니다. 등록·이름 변경 시 이 매핑을 함께 확인합니다.
+  const WORK = ["상품·상담", "보상·청구", "청약·전산", "자료·지식"];
   const TOOL_WORK = Object.freeze({
     "상품통합분석기": "상품·상담", "AI영업비서": "상품·상담",
     "질병정보·화법도우미": "상품·상담", "DB영업 화법도우미": "상품·상담",
@@ -354,7 +354,14 @@
     "고지의무 판독기": "청약·전산", "전산답변기": "청약·전산",
     "프리미엄 자료검색기": "자료·지식", "최신보험뉴스": "자료·지식", "보험위키": "자료·지식", "보험노트": "자료·지식"
   });
-  const workFor = r => Object.prototype.hasOwnProperty.call(TOOL_WORK, r.name) ? TOOL_WORK[r.name] : "기타";
+  const TOOL_PURPOSE = Object.freeze({
+    "상품통합분석기": "상품 보장과 조건 비교", "AI영업비서": "상담 준비와 화법 점검",
+    "질병정보·화법도우미": "질병 정보와 상담 화법", "DB영업 화법도우미": "DB 고객 상담 화법",
+    "보험보상답변기": "보상 기준과 청구 서류 확인", "N대·종수술 답변기": "질병·수술 보장 기준 확인", "실손의료비 답변기": "실손 보장과 청구 기준 확인",
+    "고지의무 판독기": "청약 전 고지 항목 확인", "전산답변기": "보험사 전산 업무 절차 확인",
+    "프리미엄 자료검색기": "업무 자료와 근거 검색", "최신보험뉴스": "보험업계 최신 소식"
+  });
+  const workFor = r => Object.prototype.hasOwnProperty.call(TOOL_WORK, r.name) ? TOOL_WORK[r.name] : WORK.includes(r.work || r.category) ? (r.work || r.category) : "자료·지식";
   let renderEpoch = 0;
   async function intranetView(p, banner, epoch, storageOwner) {
     const { data: raw, error } = await sb.rpc("my_menu");
@@ -375,7 +382,7 @@
         const it = /전산\s*답변/.test(r.name || "") || /AKfycbzVbO8_XxSq8_WZhvNBXSi0myH22g0igqhAwkz7Kf9QtDUchxIds-E7fgTi06xGSP6lvg|AKfycbxWVCohTpOA3rZUK1hpuOqq_cfarzo57S2dlKL1g3CcTevVq1h-9oG28wBUvv_tzPb8tw|AKfycbzfFExpXscK87c2F54p17YDJwdDmpk7MAZ3NQAsWJtjqAFBXSaVJ1JC52H2czeaPPDNiw/.test(r.url || "");
         // 실전상담 통합코치는 보상·전산 규칙 다음에 홈페이지 새 화면으로 연결합니다.
         const coach = /통합\s*코치|실전\s*상담|영업\s*비서/.test(r.name || "") || /AKfycbyKIz|AKfycbw6JIh|AKfycbz8vba3|1rIZRrzlYTgq5g0omTg_02q73sUi83Fp8US200QeoXQc4iPC5Wef6FHZQ/.test(r.url || "");
-        return { ...r, key: "menu:" + r.id, work: workFor(r),
+        return { ...r, key: "menu:" + r.id, work: product || coach ? "상품·상담" : claim ? "보상·청구" : it ? "청약·전산" : workFor(r), description: r.description || TOOL_PURPOSE[r.name] || "",
           url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : it ? "/members/it/" : coach ? "/members/coach/" : r.url) : null, internal: product || claim || it || coach };
       }),
       ...SITE_LINKS.filter(r => !data.some(m => m.name === r.name || m.url === r.url)).map(r => ({ ...r, unlocked: true, work: workFor(r), internal: r.url.startsWith("/") }))
@@ -384,19 +391,26 @@
     const seen = new Set(), seenKeys = new Set();
     const tools = catalog.filter(r => { const identity = r.name || r.key; if (seen.has(identity) || seenKeys.has(r.key)) return false; seen.add(identity); seenKeys.add(r.key); return true; });
     const available = r => r.unlocked && r.url;
-    const works = WORK.filter(w => tools.some(r => r.work === w));
+    const works = WORK;
     const tile = r => el("article", { class: "pa-work-card" + (!r.unlocked ? " is-locked" : ""), "data-resource-key": r.key },
-      available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, "aria-label": r.name + (r.internal ? "" : " (새 창)"), ...(r.internal ? {} : { target: "_blank", rel: "noopener noreferrer" }) }, el("b", {}, r.name), el("span", { class: "pa-open-label", "aria-hidden": "true" }, r.internal ? "→" : "↗")) : el("b", { class: "pa-locked-name" }, r.name),
+      available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, ...(r.internal ? {} : { target: "_blank", rel: "noopener noreferrer" }) }, el("b", {}, r.name), el("span", { class: "pa-open-label" }, r.internal ? el("span", { "aria-hidden": "true" }, "→") : "새 창 ↗")) : el("b", { class: "pa-locked-name" }, r.name),
+      r.description ? el("p", { class: "pa-tool-purpose" }, r.description) : null,
       !r.unlocked ? el("div", { class: "pa-lock-state" }, el("span", {}, pending ? "🔒 승인 후 열림" : "🔒 이용 권한 필요"), pending ? null : r.id != null ? reqBtn(r) : null) : !r.url ? N("주소 준비 중입니다.") : null);
     const directory = el("div", { id: "pa-directory" }, ...works.map(w => {
       const items = tools.filter(r => r.work === w);
-      return el("section", { class: "pa-work-group", "aria-label": w }, el("h3", {}, w), el("div", { class: "pa-work-grid" }, ...items.map(tile)));
+      return el("section", { class: "pa-work-group", "aria-label": w }, el("h3", {}, w), el("div", { class: "pa-work-grid" }, ...items.map(tile)), items.length ? null : N("등록된 도구가 없습니다."));
     }));
-    const ask = window.PA_ASK_HOME && window.PA_ASK ? window.PA_ASK_HOME.create({ sb, approved: p.status === "active", tools, choRx }) : { node: msg("AI 질문창을 불러오지 못했습니다", "화면을 새로고침해 주세요."), dispose: () => {} };
+    const ask = window.PA_ASK_HOME && window.PA_ASK ? window.PA_ASK_HOME.create({ sb, approved: p.status === "active", tools, choRx, owner: storageOwner,
+      onAuthFailure: () => {
+        if (!ask.node.isConnected) return;
+        mode(false); show(msg("로그인·이용 권한을 확인해 주세요", "이전 질문과 답변을 비웠습니다. 다시 확인하거나 로그인한 뒤 이용해 주세요."),
+          el("button", { type: "button", class: "g-btn g-btn--pri", onclick: boot }, "다시 확인"), logoutBtn());
+      }
+    }) : { node: msg("AI 질문창을 불러오지 못했습니다", "화면을 새로고침해 주세요."), dispose: () => {} };
     let alive = true;
     const noticeBody = el("div", { class: "pa-notice-body" }, N("보험자료를 불러오는 중…"));
     const noticeBox = el("section", { class: "pa-home-notice pa-home-block", id: "news", "aria-labelledby": "pa-news-title" },
-      el("div", { class: "pa-section-heading" }, el("h2", { id: "pa-news-title" }, "최근 등록 보험자료"), el("a", { href: "/qa/" }, "전체 보기 →")), noticeBody);
+      el("div", { class: "pa-section-heading" }, el("h2", { id: "pa-news-title", tabindex: "-1" }, "최근 등록 보험자료"), el("a", { href: "/qa/" }, "전체 보기 →")), noticeBody);
     const loadNotice = async () => {
       noticeBody.replaceChildren(N("보험자료를 불러오는 중…"));
       try {
@@ -418,9 +432,12 @@
       }
     };
     const head = el("header", { class: "pa-home-head" }, el("h2", { class: "pa-home-title" }, `${p.name || "회원"}님, 안녕하세요`));
-    const browse = el("section", { id: "directory", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", {}, `업무 도구 (${tools.length})`)),
+    const browse = el("section", { id: "directory", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", { id: "pa-directory-title", tabindex: "-1" }, `업무 도구 (${tools.length})`)),
       tools.length ? directory : N("등록된 업무 도구가 없습니다."));
-    show(el("section", { class: "pa-sec pa-aiqa-home", id: "home" }, head, pending ? pendingCard() : banner, ask.node, browse, noticeBox));
+    show(el("section", { class: "pa-sec pa-aiqa-home", id: "home" }, head, pending ? pendingCard() : banner,
+      el("nav", { class: "pa-home-shortcuts", "aria-label": "홈 바로 이동" },
+        el("a", { href: "#directory", onclick: e => { e.preventDefault(); jump("directory", true); } }, "업무 도구로 이동 ↓"),
+        el("a", { href: "#news", onclick: e => { e.preventDefault(); jump("news", true); } }, "보험자료 ↓")), ask.node, browse, noticeBox));
     disposeView = () => { alive = false; ask.dispose(); };
     viewKey = key;
     loadNotice();

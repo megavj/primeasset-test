@@ -54,10 +54,11 @@
   window.PA_SB = sb; // 공통 상단 메뉴도 기존 인증 클라이언트를 재사용합니다.
   const S = {grades:[],members:[],resources:[],branches:[],perms:new Set(),profile:null,requests:[],requestError:null,loadedAt:null};
   const gname = id => S.grades.find(g => g.id === id)?.name || '등급 없음';
+  let askClient = null, sessionOwner;
   let tab = 'tasks', busy = false, dirty = false, ready = false, loadVersion = 0;
   const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''}};
-  const TABS = {tasks:['처리할 일','승인 대기와 메뉴 요청부터 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['승인 요청','가입 승인 요청과 메뉴 이용 요청을 확인합니다.'],members:['회원 관리','회원 검색·등급·상태·메모 관리'],matrix:['메뉴 권한','등급별로 열어 줄 페이지와 도구를 선택합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['페이지·도구','인트라넷 메뉴의 이름·주소·표시 여부를 관리합니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
-  const groups = [['우선 처리',['tasks','pending','requests']],['회원과 접근 권한',['members','matrix','grades','admins']],['운영',['notice','hits','resources','branches']],['기록',['audit','backup']]];
+  const TABS = {tasks:['요약','이번 달 AI 이용 현황과 현재 처리할 일을 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['승인 요청','가입 승인 요청과 메뉴 이용 요청을 확인합니다.'],members:['회원 관리','회원 검색·등급·상태·메모 관리'],matrix:['메뉴 권한','등급별로 열어 줄 페이지와 도구를 선택합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['페이지·도구','인트라넷 메뉴의 이름·주소·표시 여부를 관리합니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
+
   const confirmAction = message => window.confirm(message);
   const discard = () => !dirty || confirmAction('저장하지 않은 변경이 있습니다. 변경을 버리고 이동할까요?');
   function go(next, values = {}) {
@@ -140,7 +141,10 @@
     S.loadedAt = new Date(); ready = true; render();
   }
   function gate(title, description, retry = false) {
+    if (askClient) { askClient.dispose(); askClient = null; }
     loadVersion++; ready = false; dirty = false; edited.clear(); S.profile = null;
+    Object.assign(S,{grades:[],members:[],resources:[],branches:[],perms:new Set(),requests:[],requestError:null});
+    document.getElementById('admin-feedback')?.replaceChildren();
     box.replaceChildren(el('section',{class:'adm-gate'},empty(title,description),el('div',{class:'adm-actions'},el('a',{class:'adm-button',href:'../'},'인트라넷으로'),retry ? button('다시 시도',boot,'primary') : null)));
   }
   async function boot() {
@@ -151,6 +155,7 @@
       const session = await sb.auth.getSession();
       if (attempt !== loadVersion) return;
       if (session.error) throw session.error;
+      sessionOwner = session.data?.session?.user?.id || null;
       if (!session.data?.session) { gate('로그인이 필요합니다','인트라넷에서 로그인한 뒤 관리자 화면을 열어 주세요.'); return; }
       const p = await sb.rpc('my_profile');
       if (attempt !== loadVersion) return;
@@ -168,11 +173,15 @@
   function render(focus = false) {
     const pending = pendingMembers().length;
     const count = key => key === 'pending' ? pending : key === 'requests' ? (S.requestError ? '—' : S.requests.length) : null;
-    const nav = el('nav',{class:'adm-sidebar','aria-label':'관리 업무'},...groups.map(([label,keys]) => el('div',{class:'adm-nav-group'},el('p',{class:'adm-nav-label'},label),...keys.map(key => button(el('span',{class:'adm-nav-text'},TABS[key][0],count(key) !== null ? badge(typeof count(key) === 'number' ? num(count(key)) : count(key)) : null),() => go(key),'nav',{'aria-current':key === tab ? 'page' : null,'data-tab':key})))));
+    const nav = window.PA_ADMIN_NAV.create(tab, go, {pending:count('pending'), requests:count('requests')});
     const view = (views[tab] || settings[tab])();
     const main = el('section',{class:'adm-content','aria-labelledby':'admin-view-title'},
       el('div',{class:'adm-section-head'},el('div',{},el('h2',{id:'admin-view-title',tabindex:'-1'},TABS[tab][0]),el('p',{class:'adm-note'},TABS[tab][1])),button('새로고침',() => { if (discard()) { dirty = false; edited.clear(); boot(); } },'secondary',{'aria-label':'관리 자료 새로고침'})),view);
-    box.replaceChildren(el('fieldset',{id:'admin-lock',class:'adm-lock',disabled:busy},el('legend',{class:'sr'},'관리자 업무'),el('div',{class:'adm-layout'},nav,main)));
+    box.replaceChildren(el('fieldset',{id:'admin-lock',class:'adm-lock',disabled:busy},el('legend',{class:'sr'},'관리자 업무'),nav,el('div',{class:'adm-layout'},main)));
+    if (tab === 'tasks' && window.PA_ADMIN_SUMMARY && window.PA_ASK) {
+      if (!askClient) askClient = window.PA_ASK.create(sb);
+      window.PA_ADMIN_SUMMARY.mount(document.getElementById('admin-ai-summary'), askClient);
+    }
     if (focus) document.getElementById('admin-view-title').focus({preventScroll:false});
     document.getElementById('admin-updated').textContent = S.loadedAt ? '마지막 확인 ' + S.loadedAt.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}) : '';
   }
@@ -207,7 +216,7 @@
       const stat = (label,value,next,detail) => button(el('span',{class:'adm-stat-inner'},el('span',{},label),el('strong',{},value),el('small',{},detail)),() => go(next),'stat');
       const featured = el('div',{class:'adm-task-panel'},el('div',{class:'adm-panel-heading'},el('div',{},el('p',{class:'adm-eyebrow'},'먼저 확인하세요'),el('h3',{},pending.length ? '가입을 기다리는 회원이 있습니다' : '가입 승인 대기를 모두 확인했습니다')),button('가입 승인 열기',() => go('pending'),'primary')),
         pending.length ? el('div',{},el('p',{class:'adm-note',role:'status'},`가입 승인 대기 전체 ${num(pending.length)}명 · 현재 ${num(preview.length)}명 표시${pending.length > preview.length ? ` · 나머지 ${num(pending.length - preview.length)}명은 가입 승인 전체 목록에서 확인할 수 있습니다(첫 화면 최대 20명).` : ''}`),el('div',{class:'adm-task-list'},...preview.map(m => el('div',{class:'adm-task-row'},person(m),el('div',{class:'adm-task-meta'},badge(m.consent_at ? '정보 입력 완료' : '정보 미입력'),el('span',{class:'adm-note'},fmt(m.created_at)),button('검토',() => go('pending',{q:m.email || m.name}))))))) : el('p',{class:'adm-note'},'새 가입 신청이 도착하면 이곳에서 확인할 수 있습니다.'));
-      return el('div',{class:'adm-stack'},el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보 확인 → 승인'),stat('확인된 승인 요청',S.requestError ? '—' : num(S.requests.length),'requests',S.requestError ? '목록 연결 확인 필요' : '최근 조회 · 최대 300건'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`)),featured,
+      return el('div',{class:'adm-stack'},el('section',{id:'admin-ai-summary',class:'adm-panel','aria-label':'이번 달 AI 이용 현황'}),el('div',{},el('h3',{},'현재 처리할 일'),el('p',{class:'adm-note'},'AI 조회 기간과 관계없는 현재 상태입니다. 가입 대기와 요청은 중복될 수 있어 합산하지 않습니다.')),el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보 확인 → 승인'),stat('확인된 승인 요청',S.requestError ? '조회 실패' : num(S.requests.length),'requests',S.requestError ? '목록 연결 확인 필요' : '최근 조회 · 최대 300건'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`)),featured,
         el('div',{class:'adm-two-col'},el('section',{class:'adm-panel'},el('div',{class:'adm-panel-heading'},el('h3',{},'승인 요청'),button('모두 보기',() => go('requests'))),S.requestError ? empty('요청 목록을 확인할 수 없습니다','승인 요청 화면에서 다시 불러올 수 있습니다.') : S.requests.length ? el('div',{class:'adm-task-list'},...S.requests.slice(0,3).map(r => el('div',{class:'adm-request-preview'},el('strong',{},r.member_name || '회원'),el('span',{},r.resource_name || '승인 요청'),el('small',{class:'adm-note'},r.resource_category || '가입')))) : empty('열린 요청이 없습니다','요청이 접수되면 여기에 표시됩니다.')),
         el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
     },
@@ -234,7 +243,7 @@
         body.replaceChildren(el('p',{class:'adm-note',role:'status'},countNote),list.length ? el('div',{class:'adm-select-page'},all,el('span',{},'현재 페이지 모두 선택')) : el('span'),list.length ? table(['선택','가입 정보','신청일·정보 입력','승인 등급','처리'],slice.map(m => {
           const gs = filter(gradeSelect(`${m.name || m.email} 승인 등급`,rowGrades.get(m.id) ?? defaultGrade()));
           gs.addEventListener('change',()=>rowGrades.set(m.id,gs.value));
-          return el('tr',{},el('td',{},check(`${m.name || m.email} 선택`,selected.has(m.id),e => {e.target.checked ? selected.add(m.id) : selected.delete(m.id);sync();all.querySelector('input').checked = slice.every(x => selected.has(x.id));})),el('td',{},person(m),el('small',{class:'adm-note'},m.phone || '연락처 미입력')),el('td',{},el('span',{},fmt(m.created_at)),el('br'),badge(m.consent_at ? '정보 입력 완료' : '정보 미입력')),el('td',{},gs),el('td',{},el('div',{class:'adm-actions'},button('승인',() => mutate(() => checkedUpdate(m.id,{status:'active',grade_id:+gs.value},true),'가입을 승인했습니다.'),'primary',{disabled:!S.grades.length}),button('거절',() => { if (confirmAction(`${m.name || m.email} 님의 가입을 거절하고 계정을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) mutate(() => sb.rpc('reject_member',{p_id:m.id}),'가입을 거절했습니다.'); },'danger'))));
+          return el('tr',{},el('td',{},check(`${m.name || m.email} 선택`,selected.has(m.id),e => {e.target.checked ? selected.add(m.id) : selected.delete(m.id);sync();all.querySelector('input').checked = slice.every(x => selected.has(x.id));})),el('td',{},person(m),el('small',{class:'adm-note'},m.phone || '연락처 미입력')),el('td',{},el('span',{},fmt(m.created_at)),el('br'),badge(m.consent_at ? '정보 입력 완료' : '정보 미입력')),el('td',{},gs),el('td',{},el('div',{class:'adm-actions'},button('승인',() => { if (confirmAction(`${m.name || m.email} (${m.email || m.id}) 님을 ${gname(+gs.value)} 등급으로 가입 승인할까요?\n변경 범위: 승인 대기 → 사용 중, 선택한 등급 적용`)) mutate(() => checkedUpdate(m.id,{status:'active',grade_id:+gs.value},true),'가입을 승인했습니다.'); },'primary',{disabled:!S.grades.length}),button('거절',() => { if (confirmAction(`${m.name || m.email} 님의 가입을 거절하고 계정을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) mutate(() => sb.rpc('reject_member',{p_id:m.id}),'가입을 거절했습니다.'); },'danger'))));
         }),'가입 승인 대기') : empty('조건에 맞는 대기 회원이 없습니다','검색어나 정보 입력 필터를 확인해 주세요.'),paging);
         sync();
       };
@@ -258,6 +267,7 @@
             if(gs.value!==initialGrade)patch.grade_id=+gs.value;
             if(memo.value!==(m.memo||''))patch.memo=memo.value;
             if(!Object.keys(patch).length)return toast('변경한 내용이 없습니다.');
+            if (!confirmAction(`${m.name || m.email} (${m.email || m.id}) 님의 변경을 저장할까요?\n${patch.grade_id !== undefined ? '등급: '+gname(m.grade_id)+' → '+gname(patch.grade_id) : ''}${patch.memo !== undefined ? '\n관리 메모 변경' : ''}`)) return;
             mutate(()=>checkedUpdate(m.id,patch),'회원 정보를 저장했습니다.');
           };
           const edit = el('details',{class:'adm-edit'},el('summary',{},'회원 관리'),el('div',{class:'adm-stack'},field('회원 등급',gs),field('관리 메모',memo),el('div',{class:'adm-actions'},button('변경 저장',saveMember,'primary'),m.status === 'pending' ? button('가입 승인으로',() => go('pending',{q:m.email || m.name})) : null,m.status === 'suspended' ? button('정지 해제',() => mutate(() => checkedUpdate(m.id,{status:'active'}),'회원 정지를 해제했습니다.')) : button('회원 정지',() => {const why = window.prompt(`${m.name || m.email} 님의 정지 사유를 입력해 주세요.`,'퇴사'); if (why !== null) mutate(() => checkedUpdate(m.id,{status:'suspended',suspend_reason:why}),'회원을 정지했습니다.');},'danger'))));
@@ -345,6 +355,6 @@
   box.addEventListener('change',trackDraft);
   window.addEventListener('beforeunload',e=>{if(dirty || busy){e.preventDefault();e.returnValue='';}});
   document.addEventListener('keydown',e=>{if(e.key==='/' && ready && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input,textarea,select,[contenteditable]')){const q=box.querySelector('input[type="search"]');if(q){e.preventDefault();q.focus();}}});
-  sb.auth.onAuthStateChange?.((event)=>{if(event==='SIGNED_OUT'){loadVersion++;setBusy(false);gate('로그아웃되었습니다','인트라넷에서 다시 로그인해 주세요.');}});
+  sb.auth.onAuthStateChange?.((event,session)=>{if(event==='SIGNED_OUT'||(event!=='INITIAL_SESSION'&&sessionOwner!==undefined&&(session?.user?.id||null)!==sessionOwner)){loadVersion++;setBusy(false);gate('로그인 정보가 바뀌었습니다','다른 계정의 관리 정보가 남지 않도록 화면을 비웠습니다. 인트라넷에서 다시 로그인해 주세요.');}});
   boot();
 })();

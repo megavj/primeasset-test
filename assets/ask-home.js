@@ -16,7 +16,7 @@
   };
   const uuid = () => typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : 'ask-' + Date.now() + '-' + Math.random().toString(36).slice(2);
   window.PA_ASK_HOME = Object.freeze({
-    create({ sb, approved, tools, choRx }) {
+    create({ sb, approved, tools, choRx, owner, onAuthFailure }) {
       const api = window.PA_ASK.create(sb);
       let alive = true, busy = false, last = null, timer = null, resumePause = null, length = 'normal', retryKind = '', quotaKnown = false, remaining = null;
       const q = el('textarea', { class: 'pa-in pa-ask-input', id: 'pa-q', rows: '3', maxlength: '1200', placeholder: '예) 실손의료비 통원 청구에 필요한 서류는 무엇인가요?', 'aria-describedby': 'pa-ask-help', 'aria-keyshortcuts': '/', autocomplete: 'off' });
@@ -29,6 +29,7 @@
       const steps = el('ol', { class: 'pa-ask-steps', 'aria-label': '답변 진행 단계' }, ...['접수', '찾는 중', '작성 중'].map(t => el('li', {}, t)));
       const progress = el('div', { class: 'pa-ask-progress', hidden: '' }, steps, status);
       const answer = el('section', { class: 'pa-ask-answer', hidden: '', 'aria-labelledby': 'pa-ask-answer-title' });
+      const retryNote = el('p', { class: 'pa-ask-help', hidden: '' });
       const retry = el('button', { class: 'g-btn g-btn--ghost', type: 'button', hidden: '', onclick: () => run(retryKind === 'new') }, '결과 다시 확인');
       const lengths = el('fieldset', { class: 'pa-ask-lengths' }, el('legend', {}, '답변 길이'));
       const radios = [];
@@ -44,8 +45,26 @@
       const node = el('section', { class: 'pa-ask', 'aria-labelledby': 'pa-ask-title' },
         el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, '업무가 막힐 때, AI에게 물어보세요'), quota),
         el('form', { class: 'pa-ask-form', onsubmit: event => { event.preventDefault(); run(true); } },
-          el('label', { class: 'sr', for: 'pa-q' }, 'AI에게 질문하거나 도구 이름 찾기'), q, hint, suggestions, examples,
-          el('div', { class: 'pa-ask-controls' }, lengths, submit), out, retry), progress, answer);
+          el('label', { class: 'pa-ask-label', for: 'pa-q' }, '업무 질문 또는 도구 찾기'), q, hint, suggestions, examples,
+          el('div', { class: 'pa-ask-controls' }, lengths, submit), out, retry, retryNote), progress, answer);
+      function invalidateAuth(error) {
+        if (!['unauthorized', 'forbidden', 'login_required', 'invalid_token', 'expired', 'not_active', 'stale_session'].includes(error.code)) return false;
+        if (!alive) return true;
+        alive = false; clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause();
+        api.dispose(); q.value = ''; last = null; q.disabled = true; submit.disabled = true;
+        answer.replaceChildren(); answer.hidden = true; progress.hidden = true; suggestions.replaceChildren(); suggestions.hidden = true;
+        retry.hidden = true; retryNote.hidden = true; quota.textContent = '로그인·이용 권한 확인 필요';
+        out.textContent = '이전 질문과 답변을 비웠습니다. 로그인·이용 권한을 확인한 뒤 다시 열어 주세요.';
+        radios.forEach(r => { r.disabled = true; }); examples.querySelectorAll('button').forEach(b => { b.disabled = true; });
+        if (onAuthFailure) onAuthFailure();
+        return true;
+      }
+      async function verifySession() {
+        const response = await sb.auth.getSession(), session = response.data && response.data.session;
+        if (response.error || !session || !session.user || (owner && session.user.id !== owner)) {
+          const error = new Error('로그인 정보가 바뀌었습니다. 화면을 다시 열어 주세요.'); error.code = 'stale_session'; throw error;
+        }
+      }
       function controls() {
         submit.disabled = busy || !approved || remaining === 0;
         q.disabled = busy; radios.forEach(r => { r.disabled = busy; });
@@ -54,18 +73,22 @@
       }
       function setQuota(value) {
         if (!value || !alive) return;
+        const parsed = Number(value.remaining);
+        if (value.remaining == null || value.remaining === '' || !Number.isFinite(parsed) || parsed < 0) {
+          quota.textContent = '남은 질문 수를 확인하지 못했습니다. 하루 20회 · 한국시간 자정 초기화';
+          return;
+        }
         quotaKnown = true;
-        remaining = value.exempt ? null : Math.max(0, Number(value.remaining) || 0);
-        quota.textContent = value.exempt ? '오늘 질문 제한 없음 · 관리자 예외' : `오늘 남은 질문 ${remaining}회`;
-        quota.title = `한국시간 자정에 새로 시작합니다. 하루 ${value.limit}회`;
-        if (remaining === 0) out.textContent = `오늘 질문 한도(${value.limit}회)를 모두 쓰셨습니다. 내일 다시 이용해 주세요.`;
+        remaining = Math.max(0, Math.floor(parsed));
+        quota.textContent = `오늘 남은 질문 ${remaining}/20회 · 한국시간 자정 초기화`;
+        if (remaining === 0) out.textContent = '오늘 질문 한도(20회)를 모두 쓰셨습니다. 업무 도구와 저장된 답변은 계속 이용할 수 있습니다.';
         else if (out.textContent.startsWith('오늘 질문 한도(')) out.textContent = '';
         controls();
       }
       async function loadQuota() {
         if (!approved) return;
-        try { const r = await api.request('askQuota'); if (alive) setQuota(r.quota); }
-        catch (e) { if (alive && !quotaKnown) quota.textContent = '남은 질문 수를 확인하지 못했습니다.'; }
+        try { await verifySession(); const r = await api.request('askQuota'); if (alive) setQuota(r.quota); }
+        catch (e) { if (invalidateAuth(e)) return; if (alive && !quotaKnown) quota.textContent = '남은 질문 수를 확인하지 못했습니다. 하루 20회 · 한국시간 자정 초기화'; }
       }
       function matchTools() {
         const text = q.value.trim().toLowerCase();
@@ -77,7 +100,7 @@
         }).slice(0, 5);
         suggestions.hidden = !found.length;
         suggestions.replaceChildren(...found.map(tool => tool.unlocked && tool.url
-          ? el('a', { href: tool.url, ...(tool.internal ? {} : { target: '_blank', rel: 'noopener noreferrer' }) }, el('b', {}, tool.name), el('span', {}, '이 도구 열기 ' + (tool.internal ? '→' : '↗')))
+          ? el('a', { href: tool.url, ...(tool.internal ? {} : { target: '_blank', rel: 'noopener noreferrer' }) }, el('b', {}, tool.name), el('span', {}, tool.internal ? '이 도구 열기 →' : '이 도구 열기 · 새 창 ↗'))
           : el('p', {}, tool.name, ' · 🔒 이용 권한 필요')));
       }
       q.addEventListener('input', matchTools);
@@ -107,18 +130,39 @@
             if (sendingFeedback) return;
             sendingFeedback = true; feedback.querySelectorAll('button').forEach(b => { b.disabled = true; }); feedNote.textContent = '';
             try {
-              await api.request('askFeedback', { id: last.id, rating });
+              await verifySession(); await api.request('askFeedback', { id: last.id, rating });
               if (!alive) return;
               feedback.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button))); feedNote.textContent = '의견을 기록했습니다.';
-            } catch (e) { if (alive) feedNote.textContent = e.message; }
+            } catch (e) { if (!invalidateAuth(e) && alive) feedNote.textContent = e.message; }
             finally { sendingFeedback = false; feedback.querySelectorAll('button').forEach(b => { b.disabled = false; }); }
           } }, label); feedback.append(button);
         });
-        const seconds = Math.max(0, Number(result.elapsedMs) || 0) / 1000;
-        answer.replaceChildren(el('h3', { id: 'pa-ask-answer-title', tabindex: '-1' }, 'AI 답변'), body,
+        const seconds = result.elapsedMs != null && result.elapsedMs !== '' && Number.isFinite(Number(result.elapsedMs)) ? Number(result.elapsedMs) / 1000 : null;
+        const copyNote = el('p', { class: 'pa-ask-help', role: 'status', 'aria-live': 'polite' });
+        const content = el('div', { id: 'pa-ask-answer-content' }, body,
           el('h4', {}, `근거 자료 (${sources.length})`), sources.length ? sourceList : el('p', { class: 'pa-ask-help' }, '자료에서 찾지 못했습니다. 확인할 수 있는 근거가 없습니다.'),
-          el('p', { class: 'pa-ask-help' }, seconds ? `응답 시간 ${seconds.toFixed(1)}초 · 세부 내용은 원문과 함께 확인해 주세요.` : '세부 내용은 원문과 함께 확인해 주세요.'), feedback, feedNote);
-        answer.hidden = false; progress.hidden = true; retry.hidden = true; retryKind = '';
+          el('p', { class: 'pa-ask-help' }, seconds !== null ? `응답 시간 ${seconds.toFixed(1)}초 · 세부 내용은 원문과 함께 확인해 주세요.` : '응답 시간 기록 없음 · 세부 내용은 원문과 함께 확인해 주세요.'), feedback, feedNote);
+        const copy = async includeSources => {
+          const refs = sources.map((source, i) => `${i + 1}. ${source.title || '참고 자료'}${source.page ? ' · ' + source.page + '쪽' : ''}${safeLink(source.url) ? '\n' + safeLink(source.url) : ''}`).join('\n');
+          const text = window.PA_ASK.maskResidentId(body.textContent + (includeSources ? '\n\n근거 자료\n' + (refs || '근거 자료 없음') : ''));
+          try {
+            await verifySession();
+            if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text);
+            else {
+              const focus = document.activeElement, field = el('textarea', { class: 'pa-copy-field', readonly: '' }, text); document.body.append(field); field.select();
+              const copied = document.execCommand('copy'); field.remove(); if (focus && focus.isConnected) focus.focus(); if (!copied) throw new Error('copy_failed');
+            }
+            if (alive) copyNote.textContent = includeSources ? '답변과 근거를 복사했습니다.' : '답변을 복사했습니다.';
+          } catch (error) { if (!invalidateAuth(error) && alive) copyNote.textContent = '복사하지 못했습니다. 답변을 선택하여 복사해 주세요.'; }
+        };
+        const collapse = el('button', { type: 'button', class: 'g-btn g-btn--ghost', 'aria-expanded': 'true', 'aria-controls': 'pa-ask-answer-content', onclick: () => {
+          content.hidden = !content.hidden; collapse.setAttribute('aria-expanded', String(!content.hidden)); collapse.textContent = content.hidden ? '답변 펼치기' : '답변 접기';
+        } }, '답변 접기');
+        answer.replaceChildren(el('h3', { id: 'pa-ask-answer-title', tabindex: '-1' }, 'AI 답변'),
+          el('div', { class: 'pa-ask-answer-actions' },
+            el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copy(false) }, '답변 복사'),
+            el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copy(true) }, '근거 포함 복사'), collapse), copyNote, content);
+        answer.hidden = false; progress.hidden = true; retry.hidden = true; retryNote.hidden = true; retryKind = '';
       }
       function pause(ms) { return new Promise(resolve => { resumePause = resolve; timer = setTimeout(() => { resumePause = null; resolve(); }, ms); }); }
       async function run(fresh) {
@@ -130,10 +174,11 @@
         if (fresh && last && retryKind === 'resume' && !retry.hidden && last.question === question && last.length === length) fresh = false;
         if (fresh) last = { question, length, requestId: uuid(), id: null };
         if (!last) return;
-        busy = true; controls(); out.textContent = ''; retry.hidden = true;
+        busy = true; controls(); out.textContent = ''; retry.hidden = true; retryNote.hidden = true;
         if (fresh) { answer.hidden = true; answer.replaceChildren(); }
         stage(last.id ? 'searching' : 'queued');
         try {
+          await verifySession();
           if (!last.id) {
             const submitted = await api.request('askSubmit', { question: last.question, length: last.length, requestId: last.requestId });
             if (!alive) return;
@@ -156,13 +201,15 @@
           }
           if (alive) { const timeout = new Error('아직 처리 중입니다. 결과 다시 확인을 눌러 이어서 확인해 주세요.'); timeout.code = 'timeout'; throw timeout; }
         } catch (e) {
-          if (!alive) return;
+          if (!alive || invalidateAuth(e)) return;
           progress.hidden = true; out.textContent = e.message;
           if (e.quota) setQuota(e.quota);
-          if (e.code === 'daily_limit') { remaining = 0; quota.textContent = '오늘 남은 질문 0회'; }
+          if (e.code === 'daily_limit') { remaining = 0; quota.textContent = '오늘 남은 질문 0/20회 · 한국시간 자정 초기화'; }
           retryKind = ['answer_failed', 'not_found', 'invalid_question'].includes(e.code) ? 'new' : 'resume';
-          retry.textContent = retryKind === 'new' ? '다시 묻기' : '결과 다시 확인';
+          retry.textContent = retryKind === 'new' ? '새 질문으로 접수' : last.id ? '기존 결과 확인' : '접수·결과 다시 확인';
+          retryNote.textContent = retryKind === 'new' ? '새 질문으로 접수하며 하루 질문 횟수를 사용합니다.' : last.id ? '새 질문 횟수 차감 없음. 기존 질문의 진행 상태와 결과를 확인합니다.' : '같은 접수 번호로 확인합니다. 이미 접수된 질문은 횟수를 다시 차감하지 않습니다.';
           retry.hidden = ['daily_limit', 'unauthorized', 'forbidden', 'stale_session'].includes(e.code);
+          retryNote.hidden = retry.hidden;
         } finally { busy = false; if (alive) { controls(); loadQuota(); } }
       }
       const refreshQuota = () => { if (alive && !busy && document.visibilityState !== 'hidden') loadQuota(); };

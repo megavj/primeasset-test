@@ -1,0 +1,11 @@
+.admin-navigation{margin:0 0 24px;border:1px solid #d9e0e8;background:#fff;border-radius:14px;color:#172b46;min-width:0}
+.admin-navigation>summary{padding:14px 16px;min-height:44px;font-size:16px;cursor:pointer;overflow-wrap:anywhere}
+.admin-navigation nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;padding:16px}
+.admin-navigation-group{min-width:0}
+.admin-navigation-group p{font-size:16px;font-weight:700;margin:0 0 8px;padding:0 8px;color:#172b46}
+.admin-navigation a{display:flex;align-items:center;min-height:44px;padding:8px;border-radius:8px;font-size:16px;line-height:1.5;color:#33465f;text-decoration:none;overflow-wrap:anywhere}
+.admin-navigation a:hover,.admin-navigation a[aria-current=page]{background:#edf2f8;color:#152c49}
+.admin-navigation :focus-visible{outline:3px solid #466995;outline-offset:2px}
+@media(min-width:801px){.admin-navigation>summary{display:none}.admin-navigation:not([open])>nav{display:grid}}
+@media(max-width:800px){.admin-navigation nav{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-navigation:not([open])>nav{display:none}}
+@media(max-width:360px){.admin-navigation nav{grid-template-columns:1fr}}

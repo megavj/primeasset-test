@@ -1,0 +1,104 @@
+/* ASK 관리자: 밝은 작업 공간, 본문 16px 및 최소 44px 조작. */
+body.ask-admin-page .g-sec--app { max-width:1440px; }
+body.ask-admin-page :is(button,input,select,summary) { font-size:16px; min-height:44px; }
+body.ask-admin-page :is(a,button,input,select,summary):focus-visible { outline:3px solid #355d98; outline-offset:3px; }
+body.ask-admin-page .ask-account-heading { margin-bottom:24px; }
+body.ask-admin-page .ask-admin-filter-form { display:grid; gap:18px; }
+body.ask-admin-page .ask-admin-filter-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; }
+body.ask-admin-page .ask-admin-date-range { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+body.ask-admin-page .ask-admin-filter-actions { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+body.ask-admin-page .ask-admin-filter-actions .ask-account-consent { margin:0 auto 0 0; }
+body.ask-admin-page .ask-admin-applied { padding:14px 16px; border-left:3px solid #243d5e; background:#f4f6f9; overflow-wrap:anywhere; }
+body.ask-admin-page .ask-admin-test-banner { border:1px solid #d2b66c; background:#fffae9; border-radius:9px; padding:12px 16px; color:#5f4512; }
+body.ask-admin-page .ask-admin-key-metrics { grid-template-columns:repeat(5,minmax(0,1fr)); margin-top:22px; }
+body.ask-admin-page .ask-admin-key-metrics>div { background:#f5f7fa; border:1px solid #e2e7ef; padding:18px 16px; }
+body.ask-admin-page .ask-admin-key-metrics dd { font-size:clamp(23px,2.2vw,31px); }
+body.ask-admin-page .ask-admin-key-metrics .ask-account-meta { line-height:1.55; margin-bottom:0; }
+body.ask-admin-page .ask-admin-metric-link { padding:0; background:transparent; border:0; color:inherit; font:inherit; text-align:left; cursor:pointer; overflow-wrap:anywhere; max-width:100%; }
+body.ask-admin-page .ask-admin-metric-link:hover { text-decoration:underline; text-underline-offset:5px; }
+body.ask-admin-page .ask-admin-cost { overflow-wrap:anywhere; }
+body.ask-admin-page .ask-admin-cost>span { display:block; }
+body.ask-admin-page .ask-admin-cost>span:first-child { font-weight:600; }
+body.ask-admin-page .ask-account-split>section { min-width:0; }
+body.ask-admin-page .ask-admin-chart-scroll { min-width:0; max-width:100%; overflow-x:auto; overscroll-behavior-inline:contain; }
+body.ask-admin-page .ask-admin-chart { display:block; width:600px; min-width:600px; max-width:none; height:250px; overflow:visible; }
+body.ask-admin-page .ask-chart-axis { stroke:#65758c; stroke-width:1; }
+body.ask-admin-page .ask-chart-grid { stroke:#e0e6ee; stroke-width:1; }
+body.ask-admin-page .ask-chart-label { fill:#40546d; font-size:16px; font-family:inherit; }
+body.ask-admin-page .ask-chart-value { fill:#243d5e; font-size:16px; font-family:inherit; font-weight:600; }
+body.ask-admin-page .ask-chart-bar { fill:#405d81; }
+body.ask-admin-page .ask-chart-line { fill:none; stroke:#2c527d; stroke-width:3; }
+body.ask-admin-page .ask-chart-dot { fill:#2c527d; }
+body.ask-admin-page .ask-chart-partial { fill:#fff; stroke:#9b681d; stroke-width:2; }
+body.ask-admin-page .ask-admin-category-bars { list-style:none; padding:0; display:grid; gap:14px; margin:18px 0; }
+body.ask-admin-page .ask-admin-category-bars li { display:grid; grid-template-columns:minmax(120px,1fr) auto minmax(100px,4fr); gap:14px; align-items:center; }
+body.ask-admin-page .ask-admin-category-bars meter { height:24px; }
+body.ask-admin-page .ask-admin-table-toggle { margin-top:18px; }
+body.ask-admin-page .ask-admin-table-toggle summary { padding:10px 0; font-weight:600; cursor:pointer; }
+body.ask-admin-page .ask-admin-table-toggle[open] summary { margin-bottom:12px; }
+body.ask-admin-page .ask-admin-table-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin:20px 0; }
+body.ask-admin-page .ask-admin-users th:first-child { width:21%; }
+body.ask-admin-page .ask-admin-users th:last-child { width:11%; }
+body.ask-admin-page .ask-admin-users th:nth-child(5) { width:20%; }
+body.ask-admin-page .ask-admin-users th:nth-child(6) { width:15%; }
+body.ask-admin-page .ask-admin-users :is(th,td) { padding:14px 10px; }
+body.ask-admin-page .ask-admin-users td .ask-account-meta { display:block; margin-top:5px; }
+body.ask-admin-page .ask-admin-users .g-btn { padding:8px 10px; white-space:normal; }
+body.ask-admin-page .ask-admin-pagination { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:22px; flex-wrap:wrap; }
+body.ask-admin-page .ask-admin-pagination button:disabled { opacity:.5; cursor:default; }
+body.ask-admin-page .ask-admin-question-list { gap:14px; }
+body.ask-admin-page .ask-admin-question { padding:20px 22px; }
+body.ask-admin-page .ask-admin-question-summary { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; overflow-wrap:anywhere; line-height:1.75; }
+body.ask-admin-page .ask-admin-question-bottom { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-top:14px; }
+body.ask-admin-page .ask-admin-result { display:inline-flex; align-items:center; border:1px solid #d5deea; border-radius:6px; padding:3px 9px; color:#304c6d; background:#f6f8fb; font-size:16px; }
+body.ask-admin-page .ask-admin-detail { width:min(760px,88vw); max-width:none; height:100dvh; max-height:none; margin:0 0 0 auto; padding:0; border:0; border-left:1px solid #cbd5e1; background:#fff; color:#162b46; box-shadow:-12px 0 40px #0b1c3629; overflow:auto; }
+body.ask-admin-page .ask-admin-detail::backdrop { background:#11203866; }
+body.ask-admin-page.ask-admin-detail-open { overflow:hidden; }
+body.ask-admin-page .ask-admin-detail-heading { position:sticky; top:0; z-index:1; background:#fff; border-bottom:1px solid #dce3ec; display:flex; justify-content:space-between; align-items:center; gap:16px; padding:20px 28px; }
+body.ask-admin-page .ask-admin-detail-heading h2 { margin:0; }
+body.ask-admin-page .ask-admin-detail-body { padding:6px 28px 40px; }
+body.ask-admin-page .ask-admin-fulltext { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.85; font-size:16px; }
+body.ask-admin-page .ask-admin-sources { padding-left:24px; }
+body.ask-admin-page .ask-admin-sources li { margin:14px 0; overflow-wrap:anywhere; }
+body.ask-admin-page .ask-admin-sources a { display:inline-flex; min-height:44px; align-items:center; text-decoration:underline; }
+body.ask-admin-page :is(#questions,#users,#pricing) { scroll-margin-top:24px; }
+@media (max-width:1100px) {
+  body.ask-admin-page .ask-admin-key-metrics { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  body.ask-admin-page .ask-admin-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  body.ask-admin-page .ask-admin-users-wrap { border:0; overflow:visible; }
+  body.ask-admin-page .ask-admin-users { display:block; }
+  body.ask-admin-page .ask-admin-users thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+  body.ask-admin-page .ask-admin-users tbody { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+  body.ask-admin-page .ask-admin-users tr { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:14px; border:1px solid #dce3ec; border-radius:10px; }
+  body.ask-admin-page .ask-admin-users tbody td { display:block; width:auto; border:0; padding:8px; }
+  body.ask-admin-page .ask-admin-users tbody td:first-child { grid-column:1/-1; }
+  body.ask-admin-page .ask-admin-users tbody td:last-child { grid-column:1/-1; }
+  body.ask-admin-page .ask-admin-users tbody td::before { content:attr(data-label); display:block; color:#506078; font-size:16px; font-weight:400; margin-bottom:5px; }
+}
+@media (max-width:760px) {
+  body.ask-admin-page .ask-account-split { grid-template-columns:minmax(0,1fr); }
+  body.ask-admin-page .ask-admin-key-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  body.ask-admin-page .ask-admin-users tbody { grid-template-columns:minmax(0,1fr); }
+  body.ask-admin-page .ask-admin-detail { width:100%; height:100dvh; border:0; }
+  body.ask-admin-page .ask-admin-detail-heading { padding:16px; }
+  body.ask-admin-page .ask-admin-detail-body { padding:4px 16px 32px; }
+}
+@media (max-width:480px) {
+  body.ask-admin-page :is(.ask-admin-filter-grid,.ask-admin-date-range,.ask-admin-table-controls) { grid-template-columns:minmax(0,1fr); }
+  body.ask-admin-page .ask-admin-filter-actions>* { width:100%; }
+  body.ask-admin-page .ask-admin-question { padding:16px; }
+  body.ask-admin-page .ask-admin-question-bottom { flex-wrap:wrap; }
+  body.ask-admin-page .ask-admin-category-bars li { grid-template-columns:minmax(0,1fr) auto; gap:6px 14px; }
+  body.ask-admin-page .ask-admin-category-bars meter { grid-column:1/-1; }
+  body.ask-admin-page .ask-admin-key-metrics { gap:12px; }
+}
+@media (max-width:380px) {
+  body.ask-admin-page .ask-admin-key-metrics { grid-template-columns:minmax(0,1fr); }
+  body.ask-admin-page .ask-admin-detail-heading { align-items:flex-start; }
+  body.ask-admin-page .ask-admin-users tr { grid-template-columns:minmax(0,1fr); }
+}
+@media (max-height:500px) {
+  body.ask-admin-page .g-tabbar { position:static; }
+  body.ask-admin-page .ask-admin-detail-heading { position:static; }
+}
+body.ask-admin-page .ask-admin-key-metrics dd .ask-account-meta { display:block; margin-top:6px; font-weight:400; }

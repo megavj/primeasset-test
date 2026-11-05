@@ -69,7 +69,7 @@ body.intranet-light .pa-notice-x:hover { background:var(--bg-2); }
 body.intranet-light .pa-chart .pa-grid { stroke:var(--line); }
 body.intranet-light .pa-chart .pa-axis { stroke:var(--control-border); }
 body.intranet-light .pa-toast.bad { background:var(--danger-soft); border-color:var(--danger); color:var(--danger); }
-body.intranet-light .intranet-back { margin:0 0 8px; font-size:14px; }
+body.intranet-light .intranet-back { margin:0 0 8px; font-size:16px; }
 body.intranet-light .intranet-back a { color:var(--text-2); display:inline-flex; align-items:center; min-height:44px; }
 body.intranet-light .intranet-load-note { color:var(--text-2); border-left:3px solid var(--accent); }
 body.intranet-light .intranet-load-note a { color:var(--accent); text-decoration:underline; }
@@ -191,3 +191,14 @@ body.intranet-light .pa-qa-all { display:inline-flex; align-items:center; min-he
 
 body.intranet-light .coach-data-note { margin:0; padding:12px 16px 0; color:var(--text-2); font-size:16px; line-height:1.7; }
 @media print { body.intranet-light .coach-data-note { display:none; } }
+
+/* TASK37: the same compact-height behavior on home, profile and administration. */
+@media (max-height:560px) {
+  body.intranet-light .g-nav { position:static; margin-top:8px; }
+  body.intranet-light .g-tabbar { position:static; margin:12px auto; padding-bottom:env(safe-area-inset-bottom); }
+  body.intranet-light .g-tabbar .g-bar { position:static; }
+  body.intranet-light { padding-bottom:0; }
+}
+body.intranet-light :is(.pa-ask-answer-actions,.ask-account-actions)>* { max-width:100%; }
+
+body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button,.pa-site-nav #pa-nav-toggle,.g-tabbar.pa-site-tabs a) { font-size:16px; }

@@ -83,3 +83,15 @@
 
 /* 보험자료 없음 안내 16px(팀쿡 QA 보완) */
 body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
+
+/* TASK37: visible navigation, answer actions and tool purposes. */
+.pa-home-shortcuts { display:flex; gap:8px 20px; flex-wrap:wrap; margin:8px 0 16px; }
+.pa-home-shortcuts a { display:inline-flex; align-items:center; min-height:44px; padding:8px 0; color:var(--accent,#193b60); font-size:1rem; font-weight:600; text-underline-offset:4px; }
+.pa-aiqa-home :is(#directory,#news) { scroll-margin-top:112px; }
+.pa-ask-label { display:block; margin-bottom:8px; font-size:1rem; font-weight:600; }
+.pa-ask-answer-actions { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
+.g-members .pa-aiqa-home .pa-tool-purpose { order:2; flex-basis:100%; margin:0 0 8px; font-size:1rem; line-height:1.55; color:var(--text-2,#40546d); }
+.g-members .pa-aiqa-home .pa-open-label { display:inline; flex-shrink:0; font-size:1rem; }
+.g-members .pa-aiqa-home .pa-work-link { flex-wrap:wrap; column-gap:8px; }
+.pa-copy-field { position:fixed; left:-9999px; top:0; }
+@media (max-width:390px) { .pa-ask-answer-actions .g-btn { flex:1 1 100%; } }
