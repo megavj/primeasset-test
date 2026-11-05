@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>시안 — 성장 나무 v3 · 함께하는 본부</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="/assets/glass.css?v=16">
+<link rel="stylesheet" href="./growth-tree-v3.css?v=20261105-v3">
+<link rel="stylesheet" href="/assets/growth-tree.css?v=20261104-gt1">
+<link rel="stylesheet" href="./lab-v3.css?v=20261105-v3">
+</head>
+<body class="g-main">
+<div class="g-bg" aria-hidden="true"></div>
+<div class="lab-bar"><span>시안 — 성장 나무 v3</span><a href="../">← 시안 목록</a></div>
+<main id="main">
+  <!-- 메인 '함께하는 본부' 섹션과 같은 모양(한 줄 문구 '188본부에서 이어진 성장입니다.'는 뺌). 성장 나무 v3 부품 하나 -->
+  <section class="g-sec" id="branches" aria-labelledby="branches-title">
+    <h2 id="branches-title">함께하는 <span data-branch-count>19</span>개 본부</h2>
+    <div data-growth-tree></div>
+    <p class="g-note g-note--sec"><a class="g-link" href="/story/#branches">성장 스토리에서 보기</a></p>
+  </section>
+  <!-- 비교용: 지금 메인·성장스토리가 쓰는 공용 부품(v2) 그대로. compare.js 가 v3 다음에 이 자리를 v2 부품에 넘겨 줌 -->
+  <section class="g-sec lab-now" id="now" aria-labelledby="now-title">
+    <p class="lab-kicker">비교</p>
+    <h2 id="now-title">지금 버전 (v2)</h2>
+    <p class="g-lead">지금 메인과 성장 스토리에 들어가 있는 성장 나무입니다(공용 부품 그대로). 따로 보기: <a class="lab-inline" href="../tree-v2/">성장 나무 v2 시안</a></p>
+    <div data-growth-tree-now></div>
+  </section>
+</main>
+<script src="/assets/auth-config.js?v=2" defer></script>
+<script src="./growth-tree-v3.js?v=20261105-v3" defer></script>
+<script src="./compare.js?v=20261105-v3" defer></script>
+<script src="/assets/growth-tree.js?v=20261104-gt1" defer></script>
+</body>
+</html>

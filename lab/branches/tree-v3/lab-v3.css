@@ -1,0 +1,10 @@
+/* 시안 페이지(tree-v3) 전용: 맨 위 머리줄과 '지금 버전' 비교 섹션만(부품 밖). 섹션은 메인과 같은 .g-sec
+   CSP 가 style-src 'self'(인라인 금지)라 페이지 안 <style> 대신 이 파일 */
+.lab-bar{max-width:var(--wrap);margin:0 auto;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:13px;line-height:1.4;color:var(--text-3);border-bottom:1px solid var(--line)}
+.lab-bar a{display:inline-flex;align-items:center;min-height:44px;color:var(--text-2);text-decoration:none}
+.lab-bar a:hover{color:var(--text)}
+.g-main>main{overflow-x:clip;padding-bottom:16vh}
+.lab-kicker{display:inline-block;margin:0 0 var(--s1);font-size:var(--fs-cap);font-weight:var(--fw-label);line-height:var(--lh-cap);letter-spacing:.08em;color:var(--text-3)}
+.lab-now .g-lead{margin-bottom:var(--s3);font-size:15px}
+.lab-inline{color:var(--text-2);text-underline-offset:3px}
+.lab-inline:hover{color:var(--text)}
