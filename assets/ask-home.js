@@ -20,7 +20,7 @@
       const api = window.PA_ASK.create(sb);
       let alive = true, busy = false, last = null, timer = null, resumePause = null, length = 'normal', retryKind = '', quotaKnown = false, remaining = null;
       const q = el('textarea', { class: 'pa-in pa-ask-input', id: 'pa-q', rows: '3', maxlength: '1200', placeholder: '예) 실손의료비 통원 청구에 필요한 서류는 무엇인가요?', 'aria-describedby': 'pa-ask-help', 'aria-keyshortcuts': '/', autocomplete: 'off' });
-      const hint = el('p', { class: 'pa-ask-help', id: 'pa-ask-help' }, '고객 이름·주민번호·전화번호는 빼고 입력해 주세요. 도구 이름이나 초성도 찾을 수 있어요.');
+      const hint = el('p', { class: 'pa-ask-help', id: 'pa-ask-help' }, '주민등록번호는 뒷자리 7자리만 가려 저장합니다. 도구 이름이나 초성도 찾을 수 있어요.');
       const quota = el('p', { class: 'pa-ask-quota', role: 'status' }, approved ? '오늘 남은 질문 확인 중…' : '승인 후 AI 질문을 이용할 수 있습니다.');
       const submit = el('button', { class: 'g-btn g-btn--pri', type: 'submit' }, '질문하기');
       const out = el('p', { class: 'pa-ask-message', role: 'alert' });
@@ -92,10 +92,10 @@
         status.textContent = value === 'queued' ? '질문을 접수했습니다. 자료 검색을 기다리고 있습니다.' : value === 'writing' ? '찾은 자료를 바탕으로 답변을 작성하고 있습니다.' : '업무 자료에서 관련 근거를 찾고 있습니다.';
       }
       function renderAnswer(result) {
-        const body = el('div', { class: 'pa-ask-answer-text' }, result.answer || '자료에서 찾지 못했습니다. 질문을 더 구체적으로 적어 주세요.');
+        const body = el('div', { class: 'pa-ask-answer-text' }, window.PA_ASK.maskResidentId(result.answer || '자료에서 찾지 못했습니다. 질문을 더 구체적으로 적어 주세요.'));
         const sources = Array.isArray(result.sources) ? result.sources : [];
         const sourceList = el('ol', { class: 'pa-ask-sources' }, ...sources.map(source => {
-          const title = String(source.title || '참고 자료') + (source.page ? ` · ${source.page}쪽` : '');
+          const title = window.PA_ASK.maskResidentId(String(source.title || '참고 자료') + (source.page ? ` · ${source.page}쪽` : ''));
           const url = safeLink(source.url);
           return el('li', {}, url ? el('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, title, ' ↗') : title);
         }));
@@ -123,7 +123,8 @@
       function pause(ms) { return new Promise(resolve => { resumePause = resolve; timer = setTimeout(() => { resumePause = null; resolve(); }, ms); }); }
       async function run(fresh) {
         if (busy || !approved || !alive) return;
-        const question = q.value.trim();
+        const question = window.PA_ASK.maskResidentId(q.value.trim());
+        q.value = question;
         if (fresh && (question.length < 3 || question.length > 1200)) { out.textContent = '질문을 3자 이상, 1,200자 이내로 적어 주세요.'; q.focus(); return; }
         // A second submit of an ambiguous request must also reuse its idempotency key.
         if (fresh && last && retryKind === 'resume' && !retry.hidden && last.question === question && last.length === length) fresh = false;
@@ -144,7 +145,7 @@
             if (!alive) return;
             setQuota(result.quota);
             if (result.status === 'done') { renderAnswer(result.result || result); return; }
-            if (result.status === 'error') { const failure = new Error(result.message || '답변을 완성하지 못했습니다. 다시 질문해 주세요.'); failure.code = 'answer_failed'; throw failure; }
+            if (result.status === 'error') { const failure = new Error(window.PA_ASK.maskResidentId(result.message || '답변을 완성하지 못했습니다. 다시 질문해 주세요.')); failure.code = 'answer_failed'; throw failure; }
             if (result.status === 'ready') {
               stage('writing');
               const written = await api.request('askAnswer', { id: last.id });

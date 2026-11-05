@@ -1,6 +1,7 @@
 /* Shared authenticated Ask API client. Never stores questions, answers, or tokens. */
 (function () {
   'use strict';
+  const maskResidentId = value => String(value == null ? '' : value).replace(/(^|[^\d])(\d{6})[\s.\-‐‑–—]*\d{7}(?!\d)/g, '$1$2-*******');
   const messages = {
     unauthorized: '로그인이 만료됐습니다. 다시 로그인해 주세요.',
     forbidden: '승인된 계정의 이용 권한을 확인해 주세요.',
@@ -10,10 +11,11 @@
     stale_session: '로그인 정보가 바뀌었습니다. 화면을 다시 열어 주세요.'
   };
   function error(code, message, quota) {
-    const e = new Error(message || messages[code] || '처리하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    const e = new Error(maskResidentId(message || messages[code] || '처리하지 못했습니다. 잠시 후 다시 시도해 주세요.'));
     e.code = code; if (quota) e.quota = quota; return e;
   }
   window.PA_ASK = Object.freeze({
+    maskResidentId,
     create(sb) {
       let owner, closed = false;
       const active = new Set();
@@ -33,13 +35,15 @@
           if (owner !== session.user.id) throw error('stale_session');
           const url = (window.PA_ASK_CONFIG || {}).url;
           if (!url) throw error('unavailable', 'AI 질문답변 연결을 준비하고 있습니다. 잠시 후 다시 이용해 주세요.');
+          const dataToSend = Object.assign({}, payload || {});
+          if (action === 'askSubmit' && typeof dataToSend.question === 'string') dataToSend.question = maskResidentId(dataToSend.question);
           const controller = new AbortController(); active.add(controller);
           let timedOut = false;
           const timer = setTimeout(() => { timedOut = true; controller.abort(); }, action === 'askAnswer' ? 360000 : 45000);
           try {
             const response = await fetch(url, {
               method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, credentials: 'omit', redirect: 'follow',
-              signal: controller.signal, body: JSON.stringify(Object.assign({}, payload || {}, { action, token: session.access_token }))
+              signal: controller.signal, body: JSON.stringify(Object.assign({}, dataToSend, { action, token: session.access_token }))
             });
             const result = await response.json();
             if (closed) throw error('stale_session');

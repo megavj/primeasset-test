@@ -103,13 +103,13 @@
       const labels = { pending: '접수', queued: '접수', searching: '찾는 중', ready: '자료 확인 완료', writing: '작성 중', processing: '작성 중', answering: '작성 중', completed: '완료', done: '완료', failed: '실패', error: '실패' };
       const list = recent.length ? el('ol', { class: 'ask-account-questions' }, recent.map(item => el('li', {},
         el('small', {}, date(item.createdAt) + ' · ' + (item.category || '기타') + ' · ' + (labels[item.status] || item.status || '처리 중')),
-        el('p', {}, item.question || '질문 내용 없음'),
+        el('p', {}, window.PA_ASK.maskResidentId(item.question || '질문 내용 없음')),
         el('small', {}, '응답 시간 ' + duration(item.elapsedMs) + (item.feedback === 'up' ? ' · 👍 도움 됨' : item.feedback === 'down' ? ' · 👎 아쉬움' : ''))))) : note('아직 질문 기록이 없습니다. 인트라넷에서 첫 질문을 남겨 보세요.');
       container.replaceChildren(
         metrics([['총 질문 수', count(stats.total) + '회'], ['이번 달', count(stats.month) + '회'], ['평균 응답 시간', duration(stats.avgResponseMs)]]),
         note(quota.exempt ? '오늘 질문 한도: 관리자 예외 적용 중' : '오늘 남은 질문 ' + count(quota.remaining) + '회 · 하루 ' + count(quota.limit || 20) + '회, 한국시간 자정에 초기화'),
         el('h3', {}, '분야별 질문'), U.categoryTable(stats), el('h3', {}, '최근 질문 10개'),
-        note('고객 이름·주민번호·전화번호 등 개인정보를 가린 질문만 표시합니다.'), list,
+        note('주민등록번호 뒷자리 7자리만 가려 표시합니다. 이름·전화번호·이메일 등은 그대로 표시됩니다.'), list,
         el('div', { class: 'ask-account-actions' }, button('통계 새로고침', () => loadStats(ctx, container)), el('a', { class: 'g-btn g-btn--pri', href: '/members/#home' }, 'AI 질문하기')));
     } catch (error) {
       if (error.code === 'stale_session') return;
