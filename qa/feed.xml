@@ -6,7 +6,15 @@
     <description>보험설계사를 위한 매일 질문과 답변</description>
     <language>ko-kr</language>
     <atom:link href="https://test.primeasset.info/qa/feed.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Wed, 04 Nov 2026 18:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 05 Nov 2026 09:00:00 +0900</lastBuildDate>
+    <item>
+      <title>수술비 청구할 때 치료가 필요해서 받은 수술도 약관상 정의를 확인해야 하나요?</title>
+      <link>https://test.primeasset.info/qa/2026-11-05-surgery-benefit-definition-treatment/</link>
+      <guid isPermaLink="true">https://test.primeasset.info/qa/2026-11-05-surgery-benefit-definition-treatment/</guid>
+      <pubDate>Thu, 05 Nov 2026 09:00:00 +0900</pubDate>
+      <category>보상</category>
+      <description>치료가 필요해서 받은 수술이라도 해당 약관의 수술 정의와 제외 내용을 함께 확인해야 합니다. 수술 명칭만으로 판단하지 말고 실제 시행한 행위와 직접적인 치료 목적을 살펴야 합니다. 제외 예시에 없는 행위도 정의 확인이 필요하며, 별도로 정한 보상 내용까지 함께 살펴야 합니다.</description>
+    </item>
     <item>
       <title>진단서 발급비가 지급되지 않은 분쟁사례는 내 실손보험 청구에도 그대로 적용되나요?</title>
       <link>https://test.primeasset.info/qa/2026-11-04-medical-certificate-fee-claim-disputes/</link>
