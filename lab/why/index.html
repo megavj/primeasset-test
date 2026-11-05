@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<!-- 메인 CSP 규칙을 따르되 더 엄격하게: inline script·style 없음(이 폴더의 why.css·why.js 와 메인 assets 파일만), 외부 라이브러리·CDN 없음.
+     connect-src 의 Supabase 주소 하나는 본부 수(branches.js 가 관리자 모드 값을 읽음) 때문 — 메인 CSP 와 같은 주소 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>시안 — 왜 프리미엄사업부인가 | 프라임에셋 프리미엄</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="/assets/glass.css?v=16">
+<link rel="stylesheet" href="/assets/home-layout.css?v=7">
+<link rel="stylesheet" href="/assets/home-dark.css?v=4">
+<link rel="stylesheet" href="./why.css?v=1">
+<!-- defer 없이 먼저: html.js 를 그리기 전에 붙여 휴대폰 고정 막대가 첫 화면에서 잠깐 보이지 않게(메인은 같은 일을 inline 으로 함) -->
+<script src="./why.js?v=1"></script>
+</head>
+<body class="g-main">
+<a class="g-skip" href="#why">본문으로 건너뛰기</a>
+<div class="g-bg" aria-hidden="true"></div>
+<div class="lab-bar"><h1 class="lab-bar__t">시안 — 왜 프리미엄사업부인가</h1><span class="lab-bar__links"><a href="#compare">현재 버전과 비교</a><a href="/#why">현재 메인 섹션</a></span></div>
+
+<!-- 메인 상단 메뉴의 정적 사본(메인 site-nav.js 는 세션 확인 요청이 있어 싣지 않음). 1100px 이하 '메뉴' 열기는 why.js -->
+<header class="g-nav pa-site-nav" data-lab-nav>
+  <div class="g-bar pa-nav-bar">
+    <a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33"><span>프라임에셋 프리미엄</span></a>
+    <button id="pa-nav-toggle" type="button" aria-controls="pa-nav-menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>메뉴</span></button>
+    <nav id="pa-nav-menu" aria-label="주요 메뉴">
+      <a href="/">홈</a><a href="/performance/">실적보드</a><a href="/qa/">보험자료</a><a href="/wiki/">보험위키</a>
+      <a data-nav-key="join" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="#F5D75F" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.75 1.85 5.17 4.65 6.54l-1.02 3.76c-.09.33.29.59.57.4l4.48-2.98c.43.04.87.06 1.32.06 5.52 0 10-3.48 10-7.78S17.52 3 12 3Z"/></svg><span>합류문의</span></a>
+      <a data-nav-key="login" href="/members/#login">로그인</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <!-- 앞 자리표시: 메인 첫 화면 + 숫자 띠(흐리게·조작 불가, 움직임 없음). 배치는 메인 home-dark.css 그대로.
+       숫자 띠 셋째 칸에 기준 표기(이사님 확정: 50억 2,332만 원 = 2025년 1~12월) — 메인 반영 때 이 <small> 한 줄만 바꾸면 됨 -->
+  <section class="g-hero g-hero--logo g-hero--dark why-ctx why-ctx--hero" id="hero" aria-hidden="true" inert>
+    <div class="g-hero-in">
+    <div class="g-hero-grid">
+      <div class="g-hero-text">
+        <p class="g-kicker">프라임에셋 프리미엄사업부</p>
+        <h1>19개 본부, 1,200명 설계사가 <span class="g-nowrap">함께 성장하는 곳</span></h1>
+        <div class="g-actions">
+          <a class="g-btn g-btn--pri g-btn--lg" href="https://open.kakao.com/o/sFMF26y"><svg class="g-kakao-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#F5D76E" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.78 1.9 5.22 4.74 6.59l-1.2 4.39a.28.28 0 0 0 .43.31l5.2-3.53c.27.02.55.03.83.03 5.52 0 10-3.48 10-7.79S17.52 3 12 3Z"/><path fill="#201B11" d="M7 9h10v1.5H7zm0 3h6v1.5H7z"/></svg>합류문의</a>
+        </div>
+      </div>
+      <div class="g-hero-logo">
+        <img src="/assets/logo3d-hero.webp" srcset="/assets/logo3d-hero-480.webp 480w, /assets/logo3d-hero.webp 960w" sizes="(max-width:720px) 150px, 400px" width="960" height="960" alt="" decoding="async">
+      </div>
+    </div>
+    <div class="g-stats" id="numbers">
+      <div class="g-stat"><b>19개 본부</b><small>함께하는 본부</small></div>
+      <div class="g-stat"><b>1,200명</b><small>함께하는 설계사</small></div>
+      <div class="g-stat"><b>50억 2,332만 원</b><small>연간 총 월납보험료<span class="why-basis"><span class="why-basis__dot"> · </span>2025년 1~12월</span></small></div>
+      <div class="g-stat"><b>프리미엄사업부</b><small>프라임에셋 1등사업부</small></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ===== 새 '왜 프리미엄사업부인가' (TASK26 · OPINION24 A안 + 팀쿡 수정 · 이사님 확정) =====
+       PC(861px~): 왼쪽 약 40% 큰 제목·보조 / 오른쪽 약 60% 근거 3줄. 번호 01·02·03 금색, 줄 사이 가는 선. 휴대폰: 한 열(제목 → 보조 → 01·02·03)
+       효과 하나: 스크롤하면 제목 아래 금색 선이 채워짐(CSS scroll-driven). 미지원·움직임 줄이기·인쇄 = 처음부터 채운 정적 선. 글자는 처음부터 보임
+       본부 수: [data-branch-count] — 메인 '함께하는 N개 본부'와 같은 assets/branches.js 가 관리자 모드 값으로 바꿈(JS 가 없으면 19)
+       링크: 시안에서는 메인으로(/#…). 메인 반영 때는 같은 페이지 앵커 #faq-commission · #branches · #sales-system 으로 바꿈 -->
+  <section class="g-sec why" id="why" aria-labelledby="why-kicker">
+    <div class="why-grid">
+      <div class="why-head">
+        <p class="g-kicker why-kicker" id="why-kicker">왜 프리미엄사업부인가</p>
+        <h2 class="why-title"><span class="why-title__l why-title__l--soft">말이 아니라,</span> <span class="why-title__l">조건과 시스템을</span> <span class="why-title__l">직접 확인하십시오.</span></h2>
+        <div class="why-rule" aria-hidden="true"><span class="why-rule__fill"></span></div>
+        <p class="why-sub"><span class="why-sub__l">수수료표와 시책은 미팅에서,</span> <span class="why-sub__l">승격과 지원은 아래에서 확인하실 수 있습니다.</span></p>
+      </div>
+
+      <ol class="why-list" role="list">
+        <li class="why-row">
+          <span class="why-no" aria-hidden="true">01</span>
+          <div class="why-body">
+            <h3 class="why-row__t">수수료표와 시책, 미팅에서 보여 드립니다.</h3>
+            <p class="why-row__d"><span class="why-s">매달 내부 인트라넷 <span class="g-nowrap">‘팜스’에</span> 공개되고,</span> <span class="why-s">설계사부터 본부장까지 같은 자료를 봅니다.</span></p>
+            <a class="why-go" href="/#faq-commission">수수료 확인 방법<span class="why-arr" aria-hidden="true">→</span></a>
+          </div>
+        </li>
+        <li class="why-row">
+          <span class="why-no" aria-hidden="true">02</span>
+          <div class="why-body">
+            <h3 class="why-row__t">규정을 채우면 자동으로 승격됩니다.</h3>
+            <p class="why-row__d"><span class="why-s">설계사 → 팀장 → 지사장 → 본부장.</span> <span class="why-s"><span class="g-nowrap">188본부에서</span> 시작해 지금 <span class="g-nowrap"><span data-branch-count>19</span>개 본부가</span> 되었습니다.</span></p>
+            <a class="why-go" href="/#branches">성장 나무 보기<span class="why-arr" aria-hidden="true">→</span></a>
+          </div>
+        </li>
+        <li class="why-row">
+          <span class="why-no" aria-hidden="true">03</span>
+          <div class="why-body">
+            <h3 class="why-row__t">고객을 찾는 방법과 교육을 함께 드립니다.</h3>
+            <p class="why-row__d"><span class="why-s">DB를 드리지는 않습니다.</span> <span class="why-s">고객 확보 방법과 가망고객 확보 플랫폼을 공유합니다.</span> <span class="why-s">신입교육은 <span class="g-nowrap">매뉴얼·가이드·시스템·자료로</span> 준비돼 있습니다.</span></p>
+            <a class="why-go" href="/#sales-system">영업지원 보기<span class="why-arr" aria-hidden="true">→</span></a>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 뒤 자리표시: 메인 '함께하는 N개 본부'(성장 나무, 흐리게·조작 불가). 실제 나무는 assets/growth-tree.js 가 그리는 움직이는 그림 —
+       여기서는 메인 1440px 화면의 배치를 옮긴 정지 그림 한 장(움직임 없음). 제목의 개수는 위 '왜'와 같은 branches.js 연동 -->
+  <section class="g-sec why-ctx why-ctx--tree" aria-hidden="true" inert>
+    <h2>함께하는 <span data-branch-count>19</span>개 본부</h2>
+    <svg class="why-tree" viewBox="0 0 1046 636" width="1046" height="636" focusable="false">
+      <defs>
+        <radialGradient id="whyTreeGlow" cx="0.41" cy="0.47" r="0.42"><stop offset="0" stop-color="#d6b97e" stop-opacity=".16"/><stop offset="1" stop-color="#d6b97e" stop-opacity="0"/></radialGradient>
+        <radialGradient id="whyTreeSky" cx="0.8" cy="0.5" r="0.4"><stop offset="0" stop-color="#3a5696" stop-opacity=".22"/><stop offset="1" stop-color="#3a5696" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect class="why-tree__card" x=".5" y=".5" width="1045" height="635" rx="16"/>
+      <rect x="0" y="0" width="1046" height="636" rx="16" fill="url(#whyTreeSky)"/>
+      <rect x="0" y="0" width="1046" height="636" rx="16" fill="url(#whyTreeGlow)"/>
+      <g class="why-tree__edges"><path d="M424 299C360 299 360 204 296 204" stroke="#86a2d6"/><path d="M424 299C444 299 444 145 465 145" stroke="#73c2b6"/><path d="M424 299C501 299 501 256 578 256" stroke="#7fc09b"/><path d="M424 299C482 299 482 409 539 409" stroke="#d2a25e"/><path d="M424 299C416 299 416 457 408 457" stroke="#d48c95"/><path d="M424 299C356 299 356 383 289 383" stroke="#a99bd5"/><path d="M296 204C224 204 224 229 151 229" stroke="#86a2d6"/><path d="M296 204C237 204 237 162 178 162" stroke="#86a2d6"/><path d="M296 204C258 204 258 104 221 104" stroke="#86a2d6"/><path d="M296 204C286 204 286 59 277 59" stroke="#86a2d6"/><path d="M578 256C638 256 638 237 698 237" stroke="#7fc09b"/><path d="M539 409C588 409 588 484 636 484" stroke="#d2a25e"/><path d="M408 457C394 457 394 577 381 577" stroke="#d48c95"/><path d="M698 237C739 237 739 109 780 109" stroke="#7fc09b"/><path d="M698 237C753 237 753 175 808 175" stroke="#7fc09b"/><path d="M698 237C761 237 761 245 824 245" stroke="#7fc09b"/><path d="M698 237C762 237 762 317 827 317" stroke="#7fc09b"/><path d="M780 109C837 109 837 64 894 64" stroke="#7fc09b"/></g>
+      <g class="why-tree__nodes"><circle cx="424" cy="299" r="32" fill="#17140d" stroke="#d9c08a"/><text x="424" y="304">188</text><circle cx="465" cy="145" r="24" fill="#0e2523" stroke="#73c2b6"/><text x="465" y="150">242</text><circle cx="296" cy="204" r="24" fill="#121a2e" stroke="#86a2d6"/><text x="296" y="209">227</text><circle cx="277" cy="59" r="24" fill="#121a2e" stroke="#86a2d6"/><text x="277" y="64">375</text><circle cx="221" cy="104" r="24" fill="#121a2e" stroke="#86a2d6"/><text x="221" y="109">350</text><circle cx="178" cy="162" r="24" fill="#121a2e" stroke="#86a2d6"/><text x="178" y="167">320</text><circle cx="151" cy="229" r="24" fill="#121a2e" stroke="#86a2d6"/><text x="151" y="234">246</text><circle cx="578" cy="256" r="24" fill="#0f2419" stroke="#7fc09b"/><text x="578" y="261">249</text><circle cx="698" cy="237" r="24" fill="#0f2419" stroke="#7fc09b"/><text x="698" y="242">236</text><circle cx="780" cy="109" r="24" fill="#0f2419" stroke="#7fc09b"/><text x="780" y="114">254</text><circle cx="894" cy="64" r="24" fill="#0f2419" stroke="#7fc09b"/><text x="894" y="69">308</text><circle cx="808" cy="175" r="24" fill="#0f2419" stroke="#7fc09b"/><text x="808" y="180">364</text><circle cx="824" cy="245" r="24" fill="#0f2419" stroke="#7fc09b"/><text x="824" y="250">379</text><circle cx="827" cy="317" r="24" fill="#0f2419" stroke="#7fc09b"/><text x="827" y="322">384</text><circle cx="289" cy="383" r="24" fill="#1b162d" stroke="#a99bd5"/><text x="289" y="388">345</text><circle cx="408" cy="457" r="24" fill="#271116" stroke="#d48c95"/><text x="408" y="462">338</text><circle cx="381" cy="577" r="24" fill="#271116" stroke="#d48c95"/><text x="381" y="582">346</text><circle cx="539" cy="409" r="24" fill="#271a0b" stroke="#d2a25e"/><text x="539" y="414">255</text><circle cx="636" cy="484" r="24" fill="#271a0b" stroke="#d2a25e"/><text x="636" y="489">285</text></g>
+      <text class="why-tree__year" x="32" y="604">2026</text>
+    </svg>
+  </section>
+
+  <!-- 비교: 지금 메인의 '왜' 섹션(카드 3개)을 글 그대로 작게. '본사 직접 지급'·'영업규정 공개'는 사실 확인 전이라 새 시안에서는 뺀 문구 -->
+  <section class="g-sec why-now" id="compare" aria-labelledby="compare-title">
+    <p class="why-now__kicker">비교</p>
+    <h2 class="why-now__title" id="compare-title">현재 메인 버전 — 카드 3개</h2>
+    <p class="why-now__note">지금 메인의 ‘왜 프리미엄사업부인가’를 글 그대로, 작게 옮겼습니다.</p>
+    <div class="why-now__frame">
+      <h3 class="why-now__h">왜 프리미엄사업부인가</h3>
+      <p class="why-now__lead">경력자에겐 우대를, 신입에게는 성장할 수 있는 환경을!</p>
+      <ul class="why-now__cards" role="list">
+        <li class="g-card why-now__card"><h4>수수료가 투명합니다</h4><p>본사가 설계사에게 직접 지급하고, 매달 수수료표·시책·영업규정을 공개합니다.</p></li>
+        <li class="g-card why-now__card"><h4>규정대로 승격됩니다</h4><p>규정을 채우면 설계사 → 팀장 → 지사장 → 본부장으로 자동 승격됩니다.</p></li>
+        <li class="g-card why-now__card"><h4>교육과 도구가 준비돼 있습니다</h4><p>영업플랫폼과 수많은 교육과 자료를 지원합니다.</p></li>
+      </ul>
+    </div>
+    <p class="why-now__go"><a class="g-link" href="/#why">현재 메인에서 보기</a></p>
+  </section>
+</main>
+
+<!-- 휴대폰: 아래 고정 합류 문의 막대(메인과 같은 마크업·CSS). 첫 화면이 지나간 뒤에만 보임 — 메인 assets/home-layout.js 그대로 -->
+<div class="g-cta-bar" role="region" aria-label="합류 문의">
+  <div class="g-bar">
+    <a class="g-btn g-btn--pri" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="#F5D76E" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.78 1.9 5.22 4.74 6.59l-1.2 4.39a.28.28 0 0 0 .43.31l5.2-3.53c.27.02.55.03.83.03 5.52 0 10-3.48 10-7.79S17.52 3 12 3Z"/><path fill="#201B11" d="M7 9h10v1.5H7zm0 3h6v1.5H7z"/></svg>합류문의</a>
+    <a class="g-btn g-btn--ghost" href="tel:010-8714-9262" aria-label="전화 010-8714-9262"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg></a>
+  </div>
+</div>
+
+<!-- 본부 수 연동: 메인과 같은 두 파일(auth-config → branches). 기본 목록(19)을 먼저 쓰고, 관리자 모드(Supabase branches)에 값이 있으면 그 개수로 -->
+<script src="/assets/auth-config.js?v=2" defer></script>
+<script src="/assets/branches.js?v=5" defer></script>
+<script src="/assets/home-layout.js?v=2" defer></script>
+</body>
+</html>
