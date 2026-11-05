@@ -1,0 +1,105 @@
+/* 메인 '왜 프리미엄사업부인가'(#why) — lab/why/why.css 의 새 섹션 부분을 옮김(TASK28, 이사님 승인 2026-11-05). 시안 머리줄·앞뒤 자리표시·비교 영역은 옮기지 않음.
+   메인 assets/glass.css 의 색·글씨·여백 토큰만 쓴다.
+   · PC(861px 이상): 왼쪽 약 40% 큰 제목·보조 / 오른쪽 약 60% 근거 3줄. 번호 01·02·03 금색, 줄 사이 가는 선
+     왼쪽 제목 칸은 스크롤할 때 따라 붙고(position:sticky), 오른쪽 근거 3줄이 끝나면 함께 멈춤. 휴대폰 한 열 배치에서는 쓰지 않음
+   · 효과 하나: 제목 아래 금색 선이 스크롤에 따라 채워짐(CSS scroll-driven, 지원 브라우저만).
+     미지원·움직임 줄이기·인쇄 = 처음부터 채운 정적 선. 글자는 처음부터 보임(숨겼다 보여 주는 연출 없음)
+   · 회색 글씨(TASK28): 이 섹션 안에서만 한 단계 밝게. --text-3(#8a96a9)과 --text-2(#aab4c4) 사이 · --text-2 와 하위 화면 --text-2(#bec8d7) 사이 값.
+     바탕 #070a12 대비 '말이 아니라,' 6.61→8.03:1, 설명 글 9.46→10.55:1
+   · 숫자 띠 셋째 칸 기준 표기(.why-basis): 칸이 좁을 때 기간을 다음 줄로 */
+
+/* ---------- 숫자 띠 셋째 칸 기준 표기 ----------
+   한 줄에 들어가면 "연간 총 월납보험료 · 2025년 1~12월", 칸이 좁은 폭(4칸 861~999px · 2칸 479px 이하)에서는 기간을 다음 줄로(가운뎃점은 숨김 — 낭독은 유지).
+   칸 안 숫자 줄 맞춤(home-dark.css 의 subgrid)은 그대로 — 그래서 container query 대신 화면 폭으로 나눔 */
+.why-basis{white-space:nowrap}
+@media (min-width:861px) and (max-width:999px),(max-width:479px){
+  .why-basis{display:block}
+  .why-basis__dot{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+}
+
+/* ---------- '왜' 섹션 ---------- */
+.why{--why-soft:#9aa6b8;--why-desc:#b4bece}
+.why-grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,6fr);gap:var(--s5) var(--s6);align-items:start}
+.why-head{padding-top:6px} /* PC: 머리말 글줄을 오른쪽 01 제목 글줄과 같은 높이에(기준선 6px 차이 보정) */
+.why-kicker{margin:0 0 var(--s3)}
+.why-title{margin:0;font-size:clamp(34px,3.3vw,46px);font-weight:600;line-height:1.22;letter-spacing:-.03em;color:var(--text);overflow-wrap:normal} /* 굵기 600: 첫 화면 제목(700)보다 한 단계 차분하게 — 크기로 먼저 읽힘 */
+.why-title__l{display:block}
+.why-title__l--soft{color:var(--why-soft)} /* '말이 아니라,'는 한 단계 낮게 — 뒤 '조건과 시스템'이 먼저 읽히게 */
+/* 금색 선: 옅은 바탕 선 위로 금색이 채워짐. 기본값은 다 채운 정적 선 */
+.why-rule{position:relative;max-width:25rem;height:2px;margin:var(--s4) 0 var(--s3);border-radius:1px;background:rgba(214,185,126,.16)} /* 길이는 제목 폭 정도까지만 */
+.why-rule__fill{position:absolute;inset:0;border-radius:inherit;background:var(--gold);transform-origin:0 50%}
+.why-sub{margin:0;max-width:24em;font-size:var(--fs-body);line-height:var(--lh-body);color:var(--why-desc);text-wrap:pretty}
+.why-sub__l{display:block}
+
+.why-list{list-style:none;margin:0;padding:0}
+.why-row{display:grid;grid-template-columns:4.25rem minmax(0,1fr);align-items:first baseline;padding:var(--s4) 0;border-top:1px solid var(--line)}
+.why-row:first-child{padding-top:0;border-top:0}
+.why-row:last-child{padding-bottom:0}
+.why-no{font-size:30px;font-weight:300;line-height:1;letter-spacing:-.01em;color:var(--gold);font-variant-numeric:tabular-nums;transition:color .3s ease} /* 크고 가는 금색 숫자(숫자 띠와 같은 결) — 세 근거가 한눈에 세어지게 */
+.why-body{min-width:0}
+.why-row__t{margin:0 0 var(--s1);font-size:clamp(20px,1.65vw,23px);font-weight:600;line-height:1.4;letter-spacing:-.015em;color:var(--text)}
+.why-row__d{margin:0;font-size:var(--fs-body);line-height:1.7;color:var(--why-desc);text-wrap:pretty;transition:color .3s ease}
+.why-s{display:block;text-wrap:balance} /* 한 문장에 한 줄(휴대폰도 같음). 한 문장이 두 줄이 되면 길이를 맞춰 끝에 한 낱말만 남지 않게 */
+.why-go{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:6px 0 -10px -6px;padding:0 6px;color:var(--text);font-size:15px;font-weight:500;line-height:1.4;text-decoration:none;transition:color .2s ease}
+.why-go:hover{color:var(--gold-hi);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+.why-go:focus-visible{outline-offset:2px;border-radius:8px}
+.why-arr{display:inline-block;color:var(--gold);transition:transform .2s ease}
+.why-go:hover .why-arr{transform:translateX(3px)}
+/* 근거 줄 잔잔한 강조: 마우스(가리키는 장치가 있을 때만) · 키보드 초점 */
+@media (hover:hover){
+  .why-row:hover .why-no{color:var(--gold-hi)}
+  .why-row:hover .why-row__d{color:var(--text)}
+}
+.why-row:focus-within .why-no{color:var(--gold-hi)}
+.why-row:focus-within .why-row__d{color:var(--text)}
+
+/* PC: 왼쪽 제목 칸이 따라 붙음. 위치 = 고정 상단 메뉴(위 12px + 높이 64px) 아래 32px.
+   격자 칸(align-items:start) 안에서만 움직이므로 오른쪽 근거 3줄이 끝나면 함께 멈춤.
+   화면 높이가 낮으면(제목 칸이 다 안 보일 수 있음) 쓰지 않음 */
+@media (min-width:861px) and (min-height:620px){
+  .why-head{position:sticky;top:calc(12px + var(--nav-h) + var(--s4))}
+}
+
+/* 효과: 스크롤 연동 금색 선(지원 브라우저 + 움직임 줄이기 아님). 선이 화면 아래쪽에 들어올 때 시작해 화면 가운데 조금 아래에서 다 채워지고, 그다음은 멈춘 선 */
+@keyframes why-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .why-rule{view-timeline-name:--why-rule}
+    .why-rule__fill{animation:why-fill linear both;animation-timeline:--why-rule;animation-range:cover 10% cover 45%}
+  }
+  /* PC 제목 칸이 따라 붙을 때: 붙는 요소의 진행은 붙어 있는 동안에도 계속 나아가므로(낮은 화면에서 반쯤 찬 선이 멈춰 보임),
+     붙지 않는 격자(.why-grid)를 기준으로 삼는다. 선은 격자 위에서 약 240px 아래에 있으므로 그만큼 더해,
+     선이 화면 높이 90% 에 올 때 시작 → 55%(낮은 화면은 위에서 420px) 에서 다 참 = 제목 칸이 붙기(선 위치 약 320~364px) 전에 다 채움 */
+  @media (prefers-reduced-motion:no-preference) and (min-width:861px) and (min-height:620px){
+    .why-grid{view-timeline-name:--why-grid}
+    .why-rule__fill{animation-timeline:--why-grid;animation-range:cover calc(10vh + 240px) cover calc(min(45vh, 100vh - 420px) + 240px)}
+  }
+}
+
+/* ---------- 반응형 ---------- */
+@media (max-width:860px){
+  .why-grid{grid-template-columns:1fr;gap:var(--s5)}
+  .why-head{padding-top:0}
+  .why-sub{max-width:34em}
+}
+@media (max-width:720px){
+  .why-title{font-size:clamp(28px,7.8vw,34px)}
+  .why-rule{margin:var(--s3) 0 var(--s2)}
+  .why-sub__l{display:inline}
+  .why-row{grid-template-columns:3.5rem minmax(0,1fr);padding:var(--s3) 0}
+  .why-no{font-size:26px}
+}
+@media (max-width:560px){
+  .why-row{grid-template-columns:1fr}
+  .why-no{margin:0 0 10px;font-size:24px}
+}
+
+/* 인쇄: 선은 다 채운 정적 선, 제목 칸 고정 없음 */
+@media print{
+  .why-rule__fill{animation:none!important;transform:none!important}
+  .why-head{position:static}
+}
+@media (forced-colors:active){
+  .why-rule{background:CanvasText}
+  .why-rule__fill{background:CanvasText}
+}
