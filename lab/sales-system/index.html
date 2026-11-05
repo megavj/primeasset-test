@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<!-- 메인 CSP 규칙을 따르되 더 엄격하게: inline script·style 없음(이 폴더의 sales-system.js·css만), 외부 출처 없음 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>시안 — 영업지원시스템 A안 | 프라임에셋 프리미엄</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="/assets/glass.css?v=16">
+<link rel="stylesheet" href="/assets/tool-hub.css?v=6">
+<link rel="stylesheet" href="./sales-system.css?v=1">
+<script src="./sales-system.js?v=1" defer></script>
+</head>
+<body class="g-main">
+<a class="g-skip" href="#sales-system">본문으로 건너뛰기</a>
+<div class="g-bg" aria-hidden="true"></div>
+<div class="lab-bar"><span>시안 — 영업지원시스템 A안</span><a href="/#sales-system">현재 메인 섹션 보기</a></div>
+
+<!-- 메인 상단 메뉴의 정적 사본(메인 site-nav.js 는 세션 확인 요청이 있어 싣지 않음). 1100px 이하 '메뉴' 열기는 sales-system.js -->
+<header class="g-nav pa-site-nav" data-lab-nav>
+  <div class="g-bar pa-nav-bar">
+    <a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33"><span>프라임에셋 프리미엄</span></a>
+    <button id="pa-nav-toggle" type="button" aria-controls="pa-nav-menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>메뉴</span></button>
+    <nav id="pa-nav-menu" aria-label="주요 메뉴">
+      <a href="/">홈</a><a href="/performance/">실적보드</a><a href="/qa/">보험자료</a><a href="/wiki/">보험위키</a>
+      <a data-nav-key="join" href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener"><svg class="g-kakao-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="#F5D75F" d="M12 3C6.48 3 2 6.47 2 10.75c0 2.75 1.85 5.17 4.65 6.54l-1.02 3.76c-.09.33.29.59.57.4l4.48-2.98c.43.04.87.06 1.32.06 5.52 0 10-3.48 10-7.78S17.52 3 12 3Z"/></svg><span>합류문의</span></a>
+      <a data-nav-key="login" href="/members/#login">로그인</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <!-- 앞 섹션 자리표시(메인 '설계사 성장 시스템' 그대로, 흐리게·조작 불가) -->
+  <section class="g-sec g-hub ss-ctx ss-ctx--before" aria-hidden="true" inert>
+    <h2>설계사 성장 시스템</h2>
+    <div class="g-growth-grid">
+      <article class="g-card g-growth-card"><h3>전문화된 자체 AI 플랫폼</h3><p>카톡으로 바로 답변을 받으세요. 상품/보상/화법/전산 등 전용카톡AI지원</p></article>
+      <article class="g-card g-growth-card"><h3>상담·화법 지원</h3><p>계약확률을 높이는 온라인/오프라인 화법 매뉴얼을 제공합니다.</p></article>
+      <article class="g-card g-growth-card"><h3>각종 영업지원툴</h3><p>가망고객확보부터 고객관리까지. 준비된 영업지원을 활용하세요.</p></article>
+      <article class="g-card g-growth-card"><h3>자료·교육</h3><p>수천개의 실시간 업데이트 되는 자료를 공유합니다.</p></article>
+    </div>
+  </section>
+
+  <!-- ===== 영업지원시스템 A안: 업무 흐름 5단계 → 선택한 단계의 실제 예시 → 공통 지원 → 지원 전체 보기 ===== -->
+  <section class="g-sec ss" id="sales-system" aria-labelledby="sales-system-title">
+    <h2 id="sales-system-title">영업지원시스템</h2>
+    <p class="ss-claim">영업의 각 단계에, 필요한 지원이 있습니다.</p>
+    <p class="ss-sub">고객을 만날 준비부터 상담·전산·보상 문의까지, 실제 업무에 쓰는 도구와 자료를 확인하세요.</p>
+
+    <div class="ss-flow" data-ss>
+      <div class="ss-flow__bar">
+        <p class="ss-flow__hint">업무 순서대로 정리했습니다.<span class="ss-hint ss-hint--tabs"> 단계를 고르면 아래 예시가 바뀝니다.</span><span class="ss-hint ss-hint--acc"> 단계를 누르면 예시가 펼쳐집니다.</span></p>
+        <button class="ss-auto" type="button" data-ss-auto hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 6v12M15 6v12"/></svg>자동 넘김 멈춤</button>
+      </div>
+
+      <!-- PC: 탭(tablist) / 휴대폰(640px 이하): 단계별 펼치기. 역할(role)과 예시 위치는 sales-system.js 가 화면 폭에 맞춰 바꿈 -->
+      <ol class="ss-steps" data-ss-tabs>
+        <li class="ss-item" data-ss-item>
+          <h3 class="ss-item__h"><button class="ss-tab" id="ss-tab-1" type="button" aria-controls="ss-panel-1" aria-labelledby="ss-name-1" aria-describedby="ss-help-1 ss-tools-1" data-ss-tab>
+            <span class="ss-tab__node" aria-hidden="true"></span>
+            <span class="ss-tab__no" aria-hidden="true">01</span>
+            <span class="ss-tab__name" id="ss-name-1">고객 접점 준비</span>
+            <span class="ss-tab__help" id="ss-help-1">새 고객을 만날 채널과 방법을 준비합니다</span>
+            <span class="ss-tab__tools" id="ss-tools-1"><span>보험비교카페·홈페이지</span> · <span>커뮤니티 활동</span> · <span>표준매뉴얼북</span></span>
+            <span class="ss-tab__chev" aria-hidden="true"></span>
+          </button></h3>
+        </li>
+        <li class="ss-item" data-ss-item>
+          <h3 class="ss-item__h"><button class="ss-tab" id="ss-tab-2" type="button" aria-controls="ss-panel-2" aria-labelledby="ss-name-2" aria-describedby="ss-help-2 ss-tools-2" data-ss-tab>
+            <span class="ss-tab__node" aria-hidden="true"></span>
+            <span class="ss-tab__no" aria-hidden="true">02</span>
+            <span class="ss-tab__name" id="ss-name-2">상담 준비</span>
+            <span class="ss-tab__help" id="ss-help-2">상담 전에 확인할 내용과 자료를 찾습니다</span>
+            <span class="ss-tab__tools" id="ss-tools-2"><span>보험위키</span> · <span>보험정보카페 자료</span> · <span>상품저장소</span> · <span>상품통합분석기</span></span>
+            <span class="ss-tab__chev" aria-hidden="true"></span>
+          </button></h3>
+        </li>
+        <li class="ss-item" data-ss-item>
+          <h3 class="ss-item__h"><button class="ss-tab" id="ss-tab-3" type="button" aria-controls="ss-panel-3" aria-labelledby="ss-name-3" aria-describedby="ss-help-3 ss-tools-3" data-ss-tab>
+            <span class="ss-tab__node" aria-hidden="true"></span>
+            <span class="ss-tab__no" aria-hidden="true">03</span>
+            <span class="ss-tab__name" id="ss-name-3">상담 진행</span>
+            <span class="ss-tab__help" id="ss-help-3">고객 질문에 맞는 화법과 설명 순서를 찾습니다</span>
+            <span class="ss-tab__tools" id="ss-tools-3"><span>AI 영업비서</span> · <span>실전상담 통합코치</span> · <span>익명 질문방</span></span>
+            <span class="ss-tab__chev" aria-hidden="true"></span>
+          </button></h3>
+        </li>
+        <li class="ss-item" data-ss-item>
+          <h3 class="ss-item__h"><button class="ss-tab" id="ss-tab-4" type="button" aria-controls="ss-panel-4" aria-labelledby="ss-name-4" aria-describedby="ss-help-4 ss-tools-4" data-ss-tab>
+            <span class="ss-tab__node" aria-hidden="true"></span>
+            <span class="ss-tab__no" aria-hidden="true">04</span>
+            <span class="ss-tab__name" id="ss-name-4">계약·전산</span>
+            <span class="ss-tab__help" id="ss-help-4">배서·전산 처리의 메뉴와 순서를 확인합니다</span>
+            <span class="ss-tab__tools" id="ss-tools-4"><span>AI 전산매뉴얼</span><span>(전산답변기)</span></span>
+            <span class="ss-tab__chev" aria-hidden="true"></span>
+          </button></h3>
+        </li>
+        <li class="ss-item" data-ss-item>
+          <h3 class="ss-item__h"><button class="ss-tab" id="ss-tab-5" type="button" aria-controls="ss-panel-5" aria-labelledby="ss-name-5" aria-describedby="ss-help-5 ss-tools-5" data-ss-tab>
+            <span class="ss-tab__node" aria-hidden="true"></span>
+            <span class="ss-tab__no" aria-hidden="true">05</span>
+            <span class="ss-tab__name" id="ss-name-5">보상·관리</span>
+            <span class="ss-tab__help" id="ss-help-5">보상 문의에 참고할 내용을 찾고 고객을 관리합니다</span>
+            <span class="ss-tab__tools" id="ss-tools-5"><span>보험보상답변기</span> · <span>고객관리 매뉴얼</span></span>
+            <span class="ss-tab__chev" aria-hidden="true"></span>
+          </button></h3>
+        </li>
+      </ol>
+
+      <!-- 실제 예시 영역: 왼쪽(휴대폰은 위) 쓰는 때·받는 도움·쓰는 도구 / 오른쪽 도구 화면 미리보기(HTML·CSS로 다시 그린 예시) -->
+      <div class="ss-stage" data-ss-stage>
+
+        <!-- 01 고객 접점 준비: 카페·홈페이지 글 + 매뉴얼 목차 -->
+        <div class="ss-panel" id="ss-panel-1" aria-labelledby="ss-name-1" data-ss-panel>
+          <div class="ss-info">
+            <p class="ss-eyebrow" aria-hidden="true"><b>01</b>고객 접점 준비</p>
+            <dl class="ss-dl">
+              <div><dt>쓰는 때</dt><dd class="ss-when">지인 말고도 새 고객을 만날 길이 필요할 때</dd></div>
+              <div><dt>받는 도움</dt><dd><ul class="ss-helps">
+                <li>온라인·오프라인으로 고객을 만나는 구조를 함께 만듭니다</li>
+                <li>커뮤니티 활동으로 새 고객을 만나는 방법을 익힙니다</li>
+                <li>온라인·DB영업의 순서를 표준매뉴얼로 익힙니다</li>
+              </ul></dd></div>
+              <div><dt>쓰는 도구</dt><dd><ul class="ss-tools">
+                <li>보험비교카페·홈페이지 자체운영</li><li>커뮤니티 활동</li><li>온라인영업·DB영업 표준매뉴얼북</li>
+              </ul></dd></div>
+            </dl>
+          </div>
+          <div class="ss-shot ss-shot--duo" role="img" aria-label="예시 화면: 보험비교카페 게시글과 댓글 응대, 온라인영업 표준매뉴얼 목차">
+            <div class="m-win m-win--back">
+              <div class="m-bar"><svg class="m-bar__ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg><span class="m-bar__path">보험비교카페<i>›</i>보장·청구 이야기</span><span class="ss-shot__badge">예시 화면</span></div>
+              <div class="m-body m-post">
+                <span class="m-tag">청구 가이드</span>
+                <p class="m-post__title">실손보험 청구 전, 먼저 확인할 것</p>
+                <p class="m-post__meta"><span class="m-redact m-redact--dot"></span><span class="m-redact"></span><span class="m-redact m-redact--sm"></span></p>
+                <p class="m-post__text">같은 치료라도 가입 시기에 따라 보상 기준이 달라집니다.</p>
+                <ul class="m-check"><li>영수증의 급여·비급여 항목</li><li>가입 시기와 실손 세대</li><li>약관의 보상하지 않는 사항</li></ul>
+                <div class="m-cmt" data-seq="1"><b>질문 댓글</b><span>비급여 도수치료도 청구할 수 있나요?</span></div>
+                <div class="m-cmt m-cmt--reply" data-seq="2"><b>답글</b><span>가입 시기와 약관에 따라 달라요. 증권을 보고 함께 확인해 드릴게요.</span></div>
+              </div>
+            </div>
+            <div class="m-win m-win--front">
+              <div class="m-bar"><svg class="m-bar__ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"/></svg><span class="m-bar__path">온라인영업 표준매뉴얼<i>›</i>목차</span></div>
+              <div class="m-body m-toc">
+                <ol>
+                  <li>채널 이해 — 카페·홈페이지·커뮤니티</li>
+                  <li class="is-on" data-seq="3">글쓰기 기본 양식</li>
+                  <li>고객의 입장에서 주제 찾기</li>
+                  <li>댓글·문의 응대</li>
+                  <li>상담으로 이어가기</li>
+                  <li>계약 후 고객관리</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 02 상담 준비: 보험위키 검색 + 상품 비교(가명) -->
+        <div class="ss-panel" id="ss-panel-2" aria-labelledby="ss-name-2" data-ss-panel hidden>
+          <div class="ss-info">
+            <p class="ss-eyebrow" aria-hidden="true"><b>02</b>상담 준비</p>
+            <dl class="ss-dl">
+              <div><dt>쓰는 때</dt><dd class="ss-when">상담 전에 보장 내용과 비교 자료를 미리 확인할 때</dd></div>
+              <div><dt>받는 도움</dt><dd><ul class="ss-helps">
+                <li>용어·보장·고지의무를 찾아 상담 내용을 정리합니다</li>
+                <li>상품과 화법 자료를 미리 살펴봅니다</li>
+                <li>상품 조건을 나란히 놓고 비교합니다</li>
+              </ul></dd></div>
+              <div><dt>쓰는 도구</dt><dd><ul class="ss-tools">
+                <li>보험위키</li><li>보험정보카페 자료</li><li>프리미엄 상품저장소</li><li>상품통합분석기</li>
+              </ul></dd></div>
+            </dl>
+          </div>
+          <div class="ss-shot ss-shot--duo ss-shot--prep" role="img" aria-label="예시 화면: 보험위키에서 고지의무를 찾고, 상품 통합 분석기로 A보험사 A상품과 B보험사 B상품의 조건을 비교하는 모습">
+            <div class="m-win m-win--back">
+              <div class="m-bar"><svg class="m-bar__ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6C9 4 6 4 3 5v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1ZM12 6v14"/></svg><span class="m-bar__path">보험위키<i>›</i>검색</span><span class="ss-shot__badge">예시 화면</span></div>
+              <div class="m-body m-wiki">
+                <div class="m-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg><span class="m-typed" data-seq="1" data-speed="fast"><span class="m-typed__ghost">간편고지</span><span class="m-typed__live"></span></span><span class="m-kbd">Ctrl K</span></div>
+                <ul class="m-results">
+                  <li data-seq="2"><b>간편고지의무</b><span>간편보험도 상품마다 질문이 다릅니다</span><em>고지의무</em></li>
+                  <li data-seq="2"><b>일반 고지의무</b><span>질문서에서 정한 확인 기간부터 봅니다</span><em>고지의무</em></li>
+                  <li data-seq="2"><b>고지의무 위반과 해지</b><span>해지 사유와 확인할 기간</span><em>고지의무</em></li>
+                  <li data-seq="2"><b>통지의무</b><span>계약 후 알려야 하는 사항</span><em>약관</em></li>
+                </ul>
+              </div>
+            </div>
+            <div class="m-win m-win--front">
+              <div class="m-bar"><img class="m-bar__logo" src="/assets/logo.svg" alt="" width="12" height="13"><span class="m-bar__path">설계사 인트라넷<i>›</i>상품 통합 분석기</span></div>
+              <div class="m-body m-px">
+                <div class="m-tabs"><span class="is-on">상품 질문</span><span>보험사 소식지</span><span>지금 중요한 내용</span></div>
+                <p class="m-q" data-seq="3">A보험사 A상품과 B보험사 B상품의 보장 조건을 비교해 주세요.</p>
+                <div class="m-grid" data-seq="4">
+                  <span class="m-grid__h">확인 항목</span><span class="m-grid__h">A보험사 A상품</span><span class="m-grid__h">B보험사 B상품</span>
+                  <span class="m-grid__k">고지 유형</span><span>간편고지</span><span>일반고지</span>
+                  <span class="m-grid__k">갱신 구조</span><span>비갱신형</span><span>갱신형</span>
+                  <span class="m-grid__k">확인할 점</span><span>감액·면책 기간</span><span>갱신 때 보험료 변동</span>
+                </div>
+                <p class="m-fine">자동 생성된 답변은 참고 자료입니다. 원문과 전산을 확인하세요.</p>
+                <div class="m-suggest" data-seq="5"><b>이렇게 물어보세요</b><span>A보험사 A상품의 가입 조건을 알려 주세요 <i>↗</i></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 03 상담 진행: 질문 → 답변 일부가 타이핑되듯 -->
+        <div class="ss-panel" id="ss-panel-3" aria-labelledby="ss-name-3" data-ss-panel data-dwell="11000" hidden>
+          <div class="ss-info">
+            <p class="ss-eyebrow" aria-hidden="true"><b>03</b>상담 진행</p>
+            <dl class="ss-dl">
+              <div><dt>쓰는 때</dt><dd class="ss-when">고객의 질문이나 거절에 어떻게 답할지 정리할 때</dd></div>
+              <div><dt>받는 도움</dt><dd><ul class="ss-helps">
+                <li>상황별 대응 화법과 설명 순서를 찾습니다</li>
+                <li>상담 연습과 영업능력 진단으로 상담을 점검합니다</li>
+                <li>막히는 질문은 익명으로 물어볼 수 있습니다</li>
+              </ul></dd></div>
+              <div><dt>쓰는 도구</dt><dd><ul class="ss-tools">
+                <li>AI 영업비서</li><li>실전상담 통합코치</li><li>익명 질문방 <small>(늅늅방)</small></li>
+              </ul></dd></div>
+            </dl>
+          </div>
+          <div class="ss-shot" role="img" aria-label="예시 화면: 실전상담 통합코치에 가격이 부담된다는 고객에게 어떻게 설명할지 묻고, 답변이 나타나는 모습">
+            <div class="m-win">
+              <div class="m-bar"><img class="m-bar__logo" src="/assets/logo.svg" alt="" width="12" height="13"><span class="m-bar__path">설계사 인트라넷<i>›</i>실전상담 통합코치</span><span class="ss-shot__badge">예시 화면</span></div>
+              <div class="m-body m-coach">
+                <div class="m-seg"><span class="is-on">화법도우미</span><span>상담연습</span><span>영업능력 진단</span></div>
+                <div class="m-coach__main">
+                  <div class="m-chat">
+                    <div class="m-msg m-msg--me" data-seq="1"><small>설계사</small><p>가격이 부담된다는 고객에게 어떻게 설명할까요?</p></div>
+                    <div class="m-msg m-msg--ai"><small>코치</small><p class="m-typed m-typed--grow" data-seq="2"><span class="m-typed__ghost">먼저 어떤 점이 부담인지 여쭤 보세요. 보험료 자체인지, 이미 가진 보장과 겹친다고 느끼는지에 따라 설명 순서가 달라집니다. 겹치는 보장을 함께 정리한 뒤, 꼭 필요한 보장부터 나눠 보여 드리세요.</span><span class="m-typed__live"></span></p></div>
+                  </div>
+                  <div class="m-side" data-seq="3">
+                    <b>분석 · 코칭</b>
+                    <span class="m-side__k">확인할 내용</span>
+                    <ul><li>이미 가입한 보장</li><li>매달 낼 수 있는 보험료</li><li>먼저 챙길 보장</li></ul>
+                  </div>
+                </div>
+                <div class="m-input"><span>상담 내용을 입력하세요</span><span class="m-btn">전송</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 04 계약·전산: 배서 질문 → 절차 답변 -->
+        <div class="ss-panel" id="ss-panel-4" aria-labelledby="ss-name-4" data-ss-panel hidden>
+          <div class="ss-info">
+            <p class="ss-eyebrow" aria-hidden="true"><b>04</b>계약·전산</p>
+            <dl class="ss-dl">
+              <div><dt>쓰는 때</dt><dd class="ss-when">청약 이후 배서·전산 처리 방법이 헷갈릴 때</dd></div>
+              <div><dt>받는 도움</dt><dd><ul class="ss-helps">
+                <li>막힌 내용을 적으면 관련 매뉴얼에서 메뉴 경로와 처리 순서를 찾아 줍니다</li>
+                <li>보험사와 업무를 골라 그 조건으로 다시 확인할 수 있습니다</li>
+              </ul></dd></div>
+              <div><dt>쓰는 도구</dt><dd><ul class="ss-tools">
+                <li>AI 전산매뉴얼 <small>(전산답변기)</small></li>
+              </ul></dd></div>
+            </dl>
+            <p class="ss-note">보험사 전산 화면과 기준은 바뀔 수 있어, 실제 화면과 다르면 보험사 안내를 함께 확인합니다.</p>
+          </div>
+          <div class="ss-shot" role="img" aria-label="예시 화면: 전산답변기에 계약자 주소·연락처 변경 배서를 묻고 처리 순서를 안내받는 모습">
+            <div class="m-win">
+              <div class="m-bar"><img class="m-bar__logo" src="/assets/logo.svg" alt="" width="12" height="13"><span class="m-bar__path">설계사 인트라넷<i>›</i>전산·청약<i>›</i>전산답변기</span><span class="ss-shot__badge">예시 화면</span></div>
+              <div class="m-body m-it">
+                <div class="m-card m-ask">
+                  <div class="m-fields">
+                    <span class="m-field"><small>보험사</small><span class="m-select">A보험사</span></span>
+                    <span class="m-field"><small>업무</small><span class="m-select">계약 변경·배서</span></span>
+                  </div>
+                  <small class="m-label">막힌 내용</small>
+                  <div class="m-textarea"><span class="m-typed" data-seq="1" data-speed="fast"><span class="m-typed__ghost">계약자 주소와 연락처를 바꾸는 배서는 어디서 하나요?</span><span class="m-typed__live"></span></span></div>
+                  <div class="m-actions"><span class="m-btn">답변 받기</span><span class="m-progress"><i data-seq="2" data-gap="320">전산 매뉴얼 검색</i><i data-seq="2" data-gap="320">메뉴 경로 확인</i><i data-seq="2" data-gap="320">답변 작성</i></span></div>
+                </div>
+                <div class="m-card m-answer" data-seq="3">
+                  <div class="m-answer__head"><b>처리 방법</b><span class="m-ok">전산 매뉴얼 근거</span></div>
+                  <ol class="m-steps">
+                    <li data-seq="4">계약 조회에서 해당 계약을 엽니다</li>
+                    <li data-seq="4">계약 변경(배서) 메뉴에서 계약자 정보 변경을 고릅니다</li>
+                    <li data-seq="4">바뀐 주소·연락처를 입력하고 본인 확인을 진행합니다</li>
+                    <li data-seq="4">접수 후 처리 상태를 계약 조회에서 확인합니다</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 05 보상·관리: 보상 질문 → 참고 답변 -->
+        <div class="ss-panel" id="ss-panel-5" aria-labelledby="ss-name-5" data-ss-panel data-dwell="9000" hidden>
+          <div class="ss-info">
+            <p class="ss-eyebrow" aria-hidden="true"><b>05</b>보상·관리</p>
+            <dl class="ss-dl">
+              <div><dt>쓰는 때</dt><dd class="ss-when">계약 후 고객의 보상 문의를 받았을 때</dd></div>
+              <div><dt>받는 도움</dt><dd><ul class="ss-helps">
+                <li>보상 기준과 판례·분쟁조정 사례를 찾아 참고 답변을 받습니다</li>
+                <li>계약 후 고객관리 방법을 매뉴얼로 익힙니다</li>
+              </ul></dd></div>
+              <div><dt>쓰는 도구</dt><dd><ul class="ss-tools">
+                <li>보험보상답변기</li><li>고객관리 매뉴얼</li>
+              </ul></dd></div>
+            </dl>
+            <p class="ss-note">참고 답변입니다. 최종 보험금 지급 여부는 약관·의무기록·보험사 심사에 따라 달라집니다.</p>
+          </div>
+          <div class="ss-shot" role="img" aria-label="예시 화면: 보험보상답변기에 암 전이 진단 후 추가 청구를 묻고, 확인 순서가 담긴 참고 답변을 받는 모습">
+            <div class="m-win">
+              <div class="m-bar"><img class="m-bar__logo" src="/assets/logo.svg" alt="" width="12" height="13"><span class="m-bar__path">설계사 인트라넷<i>›</i>상담·보상<i>›</i>보험보상답변기</span><span class="ss-shot__badge">예시 화면</span></div>
+              <div class="m-body m-claim">
+                <div class="m-chips"><span>고지의무 위반 해지</span><span>백내장 입원 인정</span><span class="is-on">암 재발·전이 진단비</span></div>
+                <div class="m-textarea"><span class="m-typed" data-seq="1" data-speed="fast"><span class="m-typed__ghost">암 진단비를 받은 고객이 전이 진단을 받았습니다. 추가로 청구하기 전에 무엇을 확인해야 하나요?</span><span class="m-typed__live"></span></span></div>
+                <div class="m-card m-answer" data-seq="2">
+                  <div class="m-answer__head"><b>판단 요지</b><span class="m-ok">판례·분쟁조정 근거</span></div>
+                  <p class="m-answer__lead" data-seq="3">가입한 약관이 전이암을 어떻게 분류하는지, 재진단 관련 담보가 있는지부터 확인합니다.</p>
+                  <ol class="m-steps">
+                    <li data-seq="4">약관의 암 분류 기준(원발 부위 기준인지)</li>
+                    <li data-seq="4">재진단암 등 추가 담보 가입 여부</li>
+                    <li data-seq="4">진단서 질병코드와 조직검사 결과지</li>
+                  </ol>
+                  <div class="m-ref" data-seq="5"><b>근거 판례·분쟁조정</b><span>전이암 분류 관련 유사 사례 요지 · 현재 사안의 결론을 확정하는 자료가 아닙니다.</span></div>
+                  <p class="m-warn" data-seq="5">최종 보험금 지급 여부는 약관, 의무기록, 보험사 심사에 따라 달라질 수 있습니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p class="ss-caption" data-ss-caption>예시 화면은 이해를 돕기 위해 다시 그린 것입니다. 상품명·고객 정보는 넣지 않았습니다.</p>
+    </div>
+
+    <!-- 공통 지원 띠: 특정 단계가 아니라 늘 쓰는 지원 -->
+    <div class="ss-common">
+      <h3 class="ss-common__title">모든 단계에 함께하는 지원</h3>
+      <ul class="ss-common__list">
+        <li class="ss-common__item">
+          <svg class="ss-ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m2 8 10-5 10 5-10 5ZM6 10v7c4 3 8 3 12 0v-7M22 8v8"/></svg>
+          <h4>교육</h4>
+          <p>스탠다드캠퍼스 · 정기 오프라인 교육 · 교육 후 복습</p>
+          <p class="ss-common__sub">신입·경력 단계별 교육, 복습 시스템<small>(성다)</small>과 현장 피드백</p>
+        </li>
+        <li class="ss-common__item">
+          <svg class="ss-ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h12v9H9l-5 4zM20 9v10l-3.5-2.5H10"/></svg>
+          <h4>보험정보공유방</h4>
+          <p>리플렛·시책·비교자료를 나누는 방</p>
+          <p class="ss-common__sub">수시로 업데이트됩니다</p>
+        </li>
+        <li class="ss-common__item">
+          <svg class="ss-ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 6h7a3 3 0 0 1 0 6h-4a3 3 0 0 0 0 6h7"/></svg>
+          <h4>질문 경로</h4>
+          <ol class="ss-path"><li>자료</li><li>질문방</li><li>담당자</li></ol>
+          <p class="ss-common__sub">자료에서 먼저 찾고, 남은 질문은 질문방에, 더 확인할 일은 담당자에게 묻습니다</p>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 지원 전체 보기: 업무별 이름·한 줄 도움·이용 조건(확인된 것만, 모르면 '확인 중') -->
+    <details class="ss-all">
+      <summary><span class="ss-all__t">지원 전체 보기</span><span class="ss-all__d">업무별 도구·자료와 이용 조건</span></summary>
+      <div class="ss-all__body">
+        <p class="ss-all__legend">이용 조건은 확인된 것만 적었습니다. 아직 확인하지 않은 항목은 <span class="ss-cond ss-cond--tbd">확인 중</span>으로 두었습니다.</p>
+
+        <div class="ss-group">
+          <h3 class="ss-group__t"><b>01</b>고객 접점 준비</h3>
+          <ul class="ss-rows">
+            <li><span class="ss-rows__n">보험비교카페·홈페이지 자체운영</span><span class="ss-rows__h">조직이 직접 운영하는 온라인 채널</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">커뮤니티 활동</span><span class="ss-rows__h">커뮤니티에서 새 고객을 만나는 활동</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">온라인영업 표준매뉴얼 · DB영업 표준매뉴얼북</span><span class="ss-rows__h">온라인·DB영업의 순서를 정리한 매뉴얼(DB영업은 제본 책)</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+          </ul>
+        </div>
+        <div class="ss-group">
+          <h3 class="ss-group__t"><b>02</b>상담 준비</h3>
+          <ul class="ss-rows">
+            <li><span class="ss-rows__n"><a href="/wiki/">보험위키</a></span><span class="ss-rows__h">보장·용어·청구 가이드</span><span class="ss-cond ss-cond--open"><span class="sr">이용 조건: </span>공개</span></li>
+            <li><span class="ss-rows__n">보험정보카페 자료</span><span class="ss-rows__h">약 4천 개 자료, 수시 업데이트</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">프리미엄 상품저장소</span><span class="ss-rows__h">상품과 화법 자료</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">상품통합분석기</span><span class="ss-rows__h">상품 조건을 비교·분석하는 AI</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+          </ul>
+        </div>
+        <div class="ss-group">
+          <h3 class="ss-group__t"><b>03</b>상담 진행</h3>
+          <ul class="ss-rows">
+            <li><span class="ss-rows__n">AI 영업비서</span><span class="ss-rows__h">영업 상황별 대응 화법과 매뉴얼</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">실전상담 통합코치</span><span class="ss-rows__h">화법도우미·상담연습·영업능력 진단</span><span class="ss-cond ss-cond--member"><span class="sr">이용 조건: </span>회원 전용</span></li>
+            <li><span class="ss-rows__n">익명 질문방 <small>(늅늅방)</small></span><span class="ss-rows__h">신입·경력 누구나 익명으로 질문</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+          </ul>
+        </div>
+        <div class="ss-group">
+          <h3 class="ss-group__t"><b>04</b>계약·전산</h3>
+          <ul class="ss-rows">
+            <li><span class="ss-rows__n">AI 전산매뉴얼 <small>(전산답변기)</small></span><span class="ss-rows__h">배서·전산 질문에 메뉴 경로와 처리 순서 안내</span><span class="ss-cond ss-cond--member"><span class="sr">이용 조건: </span>회원 전용</span></li>
+          </ul>
+        </div>
+        <div class="ss-group">
+          <h3 class="ss-group__t"><b>05</b>보상·관리</h3>
+          <ul class="ss-rows">
+            <li><span class="ss-rows__n">보험보상답변기</span><span class="ss-rows__h">보상 기준·판례·분쟁조정 사례를 찾아 참고 답변</span><span class="ss-cond ss-cond--member"><span class="sr">이용 조건: </span>회원 전용</span></li>
+            <li><span class="ss-rows__n">고객관리 매뉴얼</span><span class="ss-rows__h">계약 후 고객관리 방법</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+          </ul>
+        </div>
+        <div class="ss-group">
+          <h3 class="ss-group__t"><b aria-hidden="true">—</b>모든 단계</h3>
+          <ul class="ss-rows">
+            <li><span class="ss-rows__n">스탠다드캠퍼스</span><span class="ss-rows__h">신입·경력 단계별 교육</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">정기 오프라인 교육</span><span class="ss-rows__h">전국 거점 오프라인 교육, 매월 1회</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">교육 후 복습 <small>(성다)</small></span><span class="ss-rows__h">복습 시스템과 현장 피드백</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">보험정보공유방</span><span class="ss-rows__h">리플렛·시책·비교자료 수시 공유</span><span class="ss-cond ss-cond--tbd"><span class="sr">이용 조건: </span>확인 중</span></li>
+            <li><span class="ss-rows__n">설계사 인트라넷</span><span class="ss-rows__h">업무 도구를 모아 둔 화면</span><span class="ss-cond ss-cond--member"><span class="sr">이용 조건: </span>회원 전용</span></li>
+            <li><span class="ss-rows__n"><a href="/qa/">보험자료</a> <small>(공개 보험자료 QA)</small></span><span class="ss-rows__h">약관·판례·분쟁사례·보상 질문과 답변</span><span class="ss-cond ss-cond--open"><span class="sr">이용 조건: </span>공개</span></li>
+          </ul>
+        </div>
+        <p class="ss-all__foot">단계 순서는 업무 흐름을 나타냅니다. 각 도구는 필요한 때 따로 열어 씁니다.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- 뒤 섹션 자리표시(메인 '자주 묻는 질문' 그대로, 흐리게·조작 불가) -->
+  <section class="g-sec ss-ctx ss-ctx--after" aria-hidden="true" inert>
+    <h2>자주 묻는 질문</h2>
+    <details class="g-faq"><summary>Q. 원수사나 대리점이나 똑같지 않나요?</summary><p>A. 다릅니다. 대리점마다, 프라임에셋 안에서도 모두 다릅니다.</p></details>
+    <details class="g-faq"><summary>Q. 정착지원금 주시나요?</summary><p>A. 몸값 선지급 대신 공개된 규정과 환경으로 대우합니다.</p></details>
+    <details class="g-faq"><summary>Q. 디비 지급해 주나요?</summary><p>A. 디비를 받는 대신 수당이 낮아지는 구조를 권하지 않습니다.</p></details>
+    <details class="g-faq"><summary>Q. 보험영업을 제대로 배우고 싶습니다.</summary><p>A. 영업방식·공부자료·보상교육, 필요한 건 말씀만 주세요.</p></details>
+    <details class="g-faq"><summary>Q. 함께 일하려면 무엇이 필요한가요?</summary><p>A. 의지와 노력. 그 외에는 저희가 준비합니다.</p></details>
+  </section>
+</main>
+</body>
+</html>
