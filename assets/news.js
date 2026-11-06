@@ -122,8 +122,10 @@
     const invalid = !birth ? ['birth-date', '생년월일을 확인해 주세요. 예: 19800101 또는 800101'] : !ref ? ['reference-date', '기준일을 확인해 주세요. 예: ' + todayYmd()] : birth > ref ? ['birth-date', '생년월일은 기준일보다 이전이어야 합니다.'] : null;
     if (invalid) { setText('age-error', invalid[1]); $('age-error').hidden = false; $(invalid[0]).setAttribute('aria-invalid', 'true'); $(invalid[0]).focus(); return; }
     let age = ref.getFullYear() - birth.getFullYear(); const md = ref.getMonth() - birth.getMonth(), dd = ref.getDate() - birth.getDate(); if (md < 0 || (md === 0 && dd < 0)) age--;
-    const thisYearBirth = new Date(ref.getFullYear(), birth.getMonth(), birth.getDate()), nextBirth = new Date(ref.getFullYear() + 1, birth.getMonth(), birth.getDate());
-    const halfPoint = new Date(thisYearBirth.getTime() + (nextBirth - thisYearBirth) / 2), insuranceAge = ref >= halfPoint ? age + 1 : age, daysToHalf = Math.round((halfPoint - ref) / 86400000);
+    // 보험나이: 마지막 생일에서 6개월(달력 기준)이 지나면 만 나이 + 1
+    const lastBirth = new Date(birth.getFullYear() + age, birth.getMonth(), birth.getDate());
+    const halfPoint = new Date(lastBirth.getFullYear(), lastBirth.getMonth() + 6, 1); halfPoint.setDate(Math.min(lastBirth.getDate(), new Date(halfPoint.getFullYear(), halfPoint.getMonth() + 1, 0).getDate()));
+    const insuranceAge = ref >= halfPoint ? age + 1 : age, daysToHalf = Math.round((halfPoint - ref) / 86400000);
     setText('age-main', '만 ' + age + '세 → 보험나이 ' + insuranceAge + '세'); setText('age-tip', ref >= halfPoint ? '생일 6개월 이후 — 현재 보험나이 ' + insuranceAge + '세 적용 중' : '생일 6개월 이전 — ' + daysToHalf + '일 후 ' + (insuranceAge + 1) + '세로 올라갑니다'); $('age-result').hidden = false;
   });
   function recordVisit() {
