@@ -411,7 +411,7 @@
     const available = r => r.unlocked && r.url;
     const works = WORK;
     const tile = r => el("article", { class: "pa-work-card" + (!r.unlocked ? " is-locked" : ""), "data-resource-key": r.key },
-      available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, ...(r.internal ? {} : { target: "_blank", rel: "noopener noreferrer" }) }, el("b", {}, r.name), el("span", { class: "pa-open-label" }, r.internal ? el("span", { "aria-hidden": "true" }, "→") : "새 창 ↗")) : el("b", { class: "pa-locked-name" }, r.name),
+      available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, target: "_blank", rel: "noopener noreferrer" }, el("b", {}, r.name)) : el("b", { class: "pa-locked-name" }, r.name),
       r.description ? el("p", { class: "pa-tool-purpose" }, r.description) : null,
       !r.unlocked ? el("div", { class: "pa-lock-state" }, el("span", {}, pending ? "🔒 승인 후 열림" : "🔒 이용 권한 필요"), pending ? null : r.id != null ? reqBtn(r) : null) : !r.url ? N("주소 준비 중입니다.") : null);
     const directory = el("div", { id: "pa-directory" }, ...works.map(w => {
