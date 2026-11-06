@@ -96,3 +96,12 @@ a.nw-news-title:hover{color:var(--gold-hi);text-decoration:underline;text-underl
  .nw-tip{grid-template-columns:minmax(0,1fr);gap:22px;margin-top:36px;padding:28px 0}.nw-tip-copy{min-width:0}.nw-bottom{display:block;margin-top:20px}.nw-bottom .nw-helper{margin-bottom:8px}.nw-field-grid{grid-template-columns:minmax(0,1fr);gap:20px}.nw-age-form{padding:24px}.nw-age-form>.nw-button{width:100%}.nw-age-result{padding:24px}.nw-age-result h3{font-size:22px}
 }
 @media(max-width:360px){.nw-wrap{padding-inline:16px}.nw-hero h1{font-size:38px}.nw-mobile-break{display:block}.nw-stats span{font-size:16px;letter-spacing:-.035em}.nw-list-heading{display:block}.nw-list-heading>span{max-width:none;display:block;text-align:left;margin-top:8px}.nw-news-card{padding:18px}.nw-card-bottom{flex-wrap:wrap}.nw-age-form{padding:18px}}
+
+/* 2026-11-06 휴대폰 첫 화면 압축: 뉴스가 바로 보이게 */
+.nw-hero{margin-bottom:24px}.nw-hero h1{margin-bottom:0}
+@media(max-width:768px){
+ .nw-wrap{padding:24px 16px 24px}.nw-hero{margin-bottom:14px}.nw-hero h1{font-size:32px}.nw-eyebrow{font-size:13px;margin-bottom:6px}
+ .nw-tabs{display:flex;overflow-x:auto;gap:18px;margin-bottom:14px;scrollbar-width:none}.nw-tabs::-webkit-scrollbar{display:none}.nw-tabs>button{flex:none;padding:10px 0;min-height:44px;white-space:nowrap}
+ .nw-filters{flex-wrap:nowrap;overflow-x:auto;margin:12px -16px 16px;padding:0 16px;scrollbar-width:none}.nw-filters::-webkit-scrollbar{display:none}.nw-filters>button{flex:none;white-space:nowrap}
+ .nw-list-heading{margin-bottom:12px}
+}

@@ -98,7 +98,7 @@
   }
   async function load() {
     if (loading) return;
-    const sequence = ++loadId; loading = true; failed = false; $('refresh-data').disabled = true; $('retry-data').hidden = true; $('data-state').hidden = false; $('data-state').classList.remove('is-error'); setText('data-message', data ? '최신 자료를 다시 확인하는 중입니다.' : '뉴스와 업무 자료를 불러오는 중입니다.'); renderNews();
+    const sequence = ++loadId; loading = true; failed = false; if ($('refresh-data')) $('refresh-data').disabled = true; $('retry-data').hidden = true; $('data-state').hidden = false; $('data-state').classList.remove('is-error'); setText('data-message', data ? '최신 자료를 다시 확인하는 중입니다.' : '뉴스와 업무 자료를 불러오는 중입니다.'); renderNews();
     const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 30000);
     try {
       const response = await fetch(API + '?format=json', { mode: 'cors', credentials: 'omit', cache: 'no-store', signal: controller.signal });
@@ -108,7 +108,7 @@
     } catch (_) {
       if (sequence !== loadId) return; failed = true; $('data-state').classList.add('is-error'); $('retry-data').hidden = false; setText('data-message', data ? '새 자료를 받지 못해 이전에 불러온 내용을 표시합니다. 연결 상태를 확인하고 다시 시도해 주세요.' : '뉴스와 업무 자료를 불러오지 못했습니다. 인터넷 연결을 확인하고 잠시 후 다시 시도해 주세요.');
       if (!data) setText('updated-at', '연결을 확인해 주세요.');
-    } finally { clearTimeout(timeout); if (sequence === loadId) { loading = false; $('refresh-data').disabled = false; renderNews(); renderInsurers(); renderExtras(); } }
+    } finally { clearTimeout(timeout); if (sequence === loadId) { loading = false; if ($('refresh-data')) $('refresh-data').disabled = false; renderNews(); renderInsurers(); renderExtras(); } }
   }
   // 원래 포털의 날짜 해석 및 보험나이 계산식을 유지합니다.
   function todayYmd() { const date = new Date(); return '' + date.getFullYear() + String(date.getMonth() + 1).padStart(2, '0') + String(date.getDate()).padStart(2, '0'); }
@@ -142,6 +142,6 @@
   filterGroup('insurer-filters', ['전체', '손해보험', '생명보험'], insurerType, value => { insurerType = value; renderInsurers(); });
   $('news-search').addEventListener('input', renderNews); $('insurer-search').addEventListener('input', renderInsurers);
   $('view-toggle').addEventListener('click', () => { cardView = !cardView; $('view-toggle').setAttribute('aria-pressed', String(cardView)); setText('view-toggle', cardView ? '표형으로 보기' : '카드형으로 보기'); renderNews(); });
-  mobile.addEventListener('change', renderNews); $('refresh-data').addEventListener('click', load); $('retry-data').addEventListener('click', load);
-  $('reference-date').value = todayYmd(); $('admin-stats').href = API + '?view=admin'; renderInsurers(); recordVisit(); load();
+  mobile.addEventListener('change', renderNews); if ($('refresh-data')) $('refresh-data').addEventListener('click', load); $('retry-data').addEventListener('click', load);
+  $('reference-date').value = todayYmd();  renderInsurers(); recordVisit(); load();
 })();

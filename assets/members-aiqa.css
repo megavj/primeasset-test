@@ -1,7 +1,7 @@
 /* TASK29B: bright, readable member home; all rules are scoped to this page. */
 .g-members .pa-aiqa-home { font-size:16px; }
 .g-members .pa-aiqa-home button { font-size:1rem; min-height:44px; }
-.g-members .pa-aiqa-home .pa-home-head { display:flex; align-items:flex-end; justify-content:flex-end; text-align:right; }
+.g-members .pa-aiqa-home .pa-home-head { display:flex; align-items:flex-end; justify-content:flex-start; text-align:left; margin:0 0 12px; }
 .g-members .pa-aiqa-home .pa-home-title { color:#1d5ea6; font-size:clamp(1.3rem,3vw,1.85rem); overflow-wrap:anywhere; margin:0; }
 .g-members .pa-aiqa-home .pa-note,
 .g-members .pa-aiqa-home .pa-lock-state,
