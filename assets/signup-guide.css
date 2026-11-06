@@ -1,0 +1,18 @@
+/* TASK40 · 공통 가입 안내: 밝은 배경, 16px 이상 본문, 좁은 화면에서는 세로 단계 */
+.pa-signup-guide{box-sizing:border-box;margin:24px 0;padding:clamp(24px,4vw,40px);border:1px solid #d9e3ea;border-radius:20px;background:linear-gradient(135deg,#fff 0%,#f2f7fa 100%);color:#233746;box-shadow:0 12px 36px rgba(34,58,76,.04);text-align:left;font-family:inherit}
+.pa-signup-guide .pa-signup-eyebrow{margin:0 0 10px;font-size:16px;font-weight:650;letter-spacing:.02em;color:#4b686f}
+.pa-signup-guide h2{margin:0;font-size:clamp(24px,3vw,32px);line-height:1.4;letter-spacing:-.04em;color:#1a3440;word-break:keep-all}
+.pa-signup-guide .pa-signup-intro{margin:14px 0 0;max-width:48em;font-size:17px;line-height:1.8;color:#475e69;word-break:keep-all}
+.pa-signup-guide .pa-signup-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;list-style:none;margin:28px 0 0;padding:0}
+.pa-signup-guide .pa-signup-steps li{margin:0;padding:0 20px 0 0;border-right:1px solid #d9e3ea;min-width:0}
+.pa-signup-guide .pa-signup-steps li:last-child{padding-right:0;border-right:0}
+.pa-signup-guide .pa-signup-step{display:inline-block;font-size:16px;font-weight:750;color:#326068;letter-spacing:.02em}
+.pa-signup-guide .pa-signup-steps h3{font-size:18px;line-height:1.5;letter-spacing:-.03em;margin:12px 0 8px;color:#233746}
+.pa-signup-guide .pa-signup-steps p{font-size:16px;line-height:1.8;color:#4d606c;margin:0;word-break:keep-all;overflow-wrap:anywhere}
+.pa-profile-intro,.pa-signup-form-label{font-size:16px;line-height:1.7}
+.pa-signup-form-label{display:block;margin:16px 0 6px;font-weight:650;color:#344f60}
+#pa-signup-form .pa-in{font-size:16px;box-sizing:border-box;width:100%;min-width:0}
+#pa-signup-form .pa-consent,#pa-signup-form .pa-note,#pa-signup-form .pa-switch-email{font-size:16px;line-height:1.7}
+#pa-signup-form .pa-consent{margin-top:20px}
+.pa-signup-account{overflow-wrap:anywhere}
+@media(max-width:680px){.pa-signup-guide{padding:24px 20px;border-radius:16px}.pa-signup-guide .pa-signup-steps{grid-template-columns:1fr;gap:20px;margin-top:24px}.pa-signup-guide .pa-signup-steps li{padding:0 0 20px;border-right:0;border-bottom:1px solid #d9e3ea}.pa-signup-guide .pa-signup-steps li:last-child{padding-bottom:0;border-bottom:0}}

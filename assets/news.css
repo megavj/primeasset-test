@@ -81,8 +81,6 @@ a.nw-news-title:hover{color:var(--gold-hi);text-decoration:underline;text-underl
 .nw-form-error{color:var(--gold-hi);margin:20px 0;font-size:17px}
 .nw-age-result{max-width:760px;padding:28px 32px;margin-top:24px;border-left:3px solid var(--gold);background:var(--gold-soft);border-radius:0 12px 12px 0}
 .nw-age-result h3{font-size:24px;line-height:1.5;margin-bottom:12px}.nw-age-result p{margin-bottom:0;font-size:17px;line-height:1.8;color:var(--text-2)}
-.nw-disease-summary{max-width:780px;white-space:pre-line;font-size:18px;line-height:1.9;color:var(--text-2)}
-.nw-tags{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0}.nw-tags span{border:1px solid var(--line-2);border-radius:999px;color:var(--text-2);font-size:16px;padding:7px 14px}
 .nw-tip{display:grid;grid-template-columns:210px minmax(0,1fr);gap:32px;border-block:1px solid var(--line-2);padding:36px 0;margin-top:48px}
 .nw-tip h2{font-size:23px;font-weight:500;margin-bottom:0}.nw-tip .nw-eyebrow{font-size:16px;letter-spacing:.05em;margin-bottom:8px}
 .nw-tip-situation{font-size:16px;color:var(--text-3);line-height:1.7;margin-bottom:12px}

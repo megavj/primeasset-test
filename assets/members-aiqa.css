@@ -33,8 +33,6 @@
 .pa-ask-help { margin:10px 0; color:#53657b; font-size:1rem; line-height:1.6; }
 .pa-ask-controls { display:flex; justify-content:flex-end; margin-top:14px; }
 .pa-ask .g-btn { min-height:48px; font-size:1rem; white-space:normal; }
-.pa-ask-examples { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-.pa-ask-example { appearance:none; min-height:44px; padding:8px 12px; border:1px solid #d5e0ed; background:#f4f7fb; color:#334d6a; border-radius:8px; font:inherit; cursor:pointer; }
 .pa-ask-suggestions { display:grid; gap:8px; margin:12px 0; padding:12px; border:1px solid #c5d8ee; border-radius:8px; background:#f5f9ff; }
 .pa-ask-suggestions a { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; min-height:44px; color:#1d5ea6; text-decoration:none; font-size:1rem; }
 .pa-ask-suggestions p { margin:0; font-size:1rem; }

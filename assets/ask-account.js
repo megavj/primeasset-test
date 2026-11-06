@@ -1,6 +1,7 @@
 /* AI 질문 통계: 화면의 회원 확인과 서버의 통계 권한 검증을 함께 사용합니다. */
 (function () {
   'use strict';
+  const signup = window.PA_SIGNUP;
   const el = (tag, attrs, ...children) => {
     const node = document.createElement(tag);
     Object.entries(attrs || {}).forEach(([key, value]) => {
@@ -36,11 +37,11 @@
   function gate(root, title, description, retry) {
     root.removeAttribute('aria-busy');
     root.replaceChildren(card(title, note(description), el('div', { class: 'ask-account-actions' },
-      el('a', { class: 'g-btn g-btn--pri', href: '/members/#login' }, '인트라넷으로'), retry ? button('다시 확인', retry) : null)));
+      el('a', { class: 'g-btn g-btn--pri', href: '/members/#signup' }, '로그인·가입 정보 입력'), retry ? button('다시 확인', retry) : null)), signup.guide());
   }
   async function connect(root, admin, onChange) {
     const config = window.PA_AUTH || {};
-    if (!config.url || !config.anonKey || !window.supabase || !window.PA_ASK) throw new Error('화면을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.');
+    if (!config.url || !config.anonKey || !window.supabase || !window.PA_ASK || !signup) throw new Error('화면을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.');
     const sb = window.PA_SB || window.supabase.createClient(config.url, config.anonKey, { auth: { persistSession: true, detectSessionInUrl: true } });
     window.PA_SB = sb;
     let owner, stale = false, client = null;
@@ -68,8 +69,9 @@
     const profileResponse = await sb.rpc('my_profile');
     check();
     if (profileResponse.error) throw new Error('회원 정보를 확인하지 못했습니다. 잠시 후 다시 확인해 주세요.');
-    const profile = profileResponse.data && profileResponse.data[0];
-    if (!profile || profile.profile_done === false) { subscription.unsubscribe(); gate(root, '회원 정보를 먼저 입력해 주세요', '인트라넷에서 가입 정보를 입력한 뒤 이용해 주세요.'); return null; }
+    const profile = await signup.resolveProfile(sb, profileResponse.data && profileResponse.data[0], session);
+    check();
+    if (!signup.complete(profile)) { subscription.unsubscribe(); gate(root, '가입 정보를 먼저 입력해 주세요', '이름·휴대폰·소속 본부와 개인정보 수집·이용 동의를 완료해야 가입 신청이 접수됩니다.'); return null; }
     if (admin && (profile.status !== 'active' || profile.is_admin !== true)) {
       subscription.unsubscribe(); gate(root, '관리자만 볼 수 있습니다', 'AI 질문 전체 통계는 승인된 관리자 계정에서만 확인할 수 있습니다.'); return null;
     }

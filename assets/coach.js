@@ -20,6 +20,8 @@
     document.getElementById('coach-gate').hidden=false;
     document.getElementById('coach-gate-msg').innerHTML=html;
     app.hidden=true;
+    var panel=document.getElementById('coach-gate');
+    if(window.PA_SIGNUP&&!panel.querySelector('.pa-signup-guide'))panel.append(window.PA_SIGNUP.guide());
   }
   function safeUrl(value) { try { var u=new URL(String(value||'')); return u.protocol==='https:'&&!u.username&&!u.password; } catch(e){return false;} }
   function clearSession() {
@@ -52,7 +54,8 @@
       if(!session)return showGate('설계사 로그인 후 쓸 수 있어요. <a href="/members/#login">로그인하기</a>');
       var profile=await SB.rpc('my_profile');guard.check(generation);
       if(profile.error)throw new Error('회원 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.');
-      var member=profile.data&&profile.data[0];
+      var member=await window.PA_SIGNUP.resolveProfile(SB,profile.data&&profile.data[0],session);guard.check(generation);
+      if(!window.PA_SIGNUP.complete(member))return showGate('가입 정보를 먼저 입력해 주세요. 이름·휴대폰·소속 본부와 개인정보 동의를 완료해야 가입 신청이 접수됩니다. <a href="/members/#signup">가입 정보 입력</a>');
       if(!member||member.status!=='active')return showGate(member&&member.status==='pending'?'가입 승인 대기 중이에요. 관리자가 승인하면 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>':'가입 승인된 설계사만 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>');
       legacyLink(generation);
       var memberInfo=await api('whoami',{},generation);guard.check(generation);ME=memberInfo;

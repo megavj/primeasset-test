@@ -12,7 +12,7 @@
   const items = (v) => Array.isArray(v) ? v.filter(Boolean) : [];
   function safeUrl(value) { try { const u = new URL(String(value || '')); return u.protocol === 'https:' && !u.username && !u.password; } catch (e) { return false; } }
 
-  function gate(html) { $('it-gate').hidden = false; $('it-gate-msg').innerHTML = html; $('it-app').hidden = true; }
+  function gate(html) { const panel = $('it-gate'); panel.hidden = false; $('it-gate-msg').innerHTML = html; $('it-app').hidden = true; if (window.PA_SIGNUP && !panel.querySelector('.pa-signup-guide')) panel.append(window.PA_SIGNUP.guide()); }
   function formMsg(t) { $('it-form-msg').textContent = t || ''; }
 
   function clearSession() {
@@ -35,8 +35,9 @@
     if (!session) return gate('설계사 로그인 후 쓸 수 있어요. <a href="/members/#login">로그인하기</a>');
     const generation = S.guard.current();
     let prof = null;
-    try { const r = await S.sb.rpc('my_profile'); if (r.error) throw r.error; S.guard.check(generation); prof = r.data && r.data[0]; }
+    try { const r = await S.sb.rpc('my_profile'); if (r.error) throw r.error; S.guard.check(generation); prof = await window.PA_SIGNUP.resolveProfile(S.sb, r.data && r.data[0], session); S.guard.check(generation); }
     catch (e) { if (generation === S.guard.current()) gate('회원 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.'); return; }
+    if (!window.PA_SIGNUP.complete(prof)) return gate('가입 정보를 먼저 입력해 주세요. 이름·휴대폰·소속 본부와 개인정보 동의를 완료해야 가입 신청이 접수됩니다. <a href="/members/#signup">가입 정보 입력</a>');
     if (!prof || prof.status !== 'active') {
       return gate(prof && prof.status === 'pending' ? '가입 승인 대기 중이에요. 관리자가 승인하면 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>' : '가입 승인된 설계사만 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>');
     }

@@ -41,7 +41,8 @@
     loadPhone().catch(error => { if (error.code !== 'stale_session') { phoneUnavailable = true; draw(); } });
     const message = el('p', { class: 'ask-account-status', role: 'status', 'aria-live': 'polite' });
     const name = el('input', { class: 'ask-account-input', id: 'ask-profile-name', name: 'name', autocomplete: 'name', required: true, maxlength: '60' });
-    const branch = el('input', { class: 'ask-account-input', id: 'ask-profile-branch', name: 'organization', autocomplete: 'organization', required: true, maxlength: '120' });
+    const branch = el('select', { class: 'ask-account-input', id: 'ask-profile-branch', name: 'organization', autocomplete: 'organization', required: true });
+    window.PA_SIGNUP.fillBranches(branch, p.branch);
     const phone = el('input', { class: 'ask-account-input', id: 'ask-profile-phone', name: 'tel', type: 'tel', inputmode: 'tel', autocomplete: 'tel', required: true, maxlength: '15' });
     phone.addEventListener('blur', () => { phone.value = formatPhone(phone.value); });
     const consent = el('input', { id: 'ask-profile-consent', type: 'checkbox', required: true });
@@ -50,7 +51,7 @@
     const form = el('form', { class: 'ask-account-form', id: 'ask-profile-form', hidden: true },
       el('div', { class: 'ask-account-fields' },
         el('label', { class: 'ask-account-field', for: name.id }, '이름', name),
-        el('label', { class: 'ask-account-field', for: branch.id }, '소속 본부·지사', branch),
+        el('label', { class: 'ask-account-field', for: branch.id }, '소속 본부', branch),
         el('label', { class: 'ask-account-field', for: phone.id }, '휴대폰 번호', phone)),
       el('label', { class: 'ask-account-consent', for: consent.id }, consent,
         el('span', {}, '[필수] 개인정보 수집·이용에 동의합니다. ', el('a', { href: '/privacy/', target: '_blank', rel: 'noopener' }, '개인정보처리방침'))),
@@ -60,7 +61,7 @@
       try {
         await ctx.verify();
         await loadPhone();
-        name.value = p.name || ''; branch.value = p.branch || ''; phone.value = formatPhone(p.phone); consent.checked = false;
+        name.value = p.name || ''; window.PA_SIGNUP.fillBranches(branch, p.branch); phone.value = formatPhone(p.phone); consent.checked = false;
         form.hidden = false; edit.hidden = true; name.focus();
       } catch (error) {
         if (error.code !== 'stale_session') message.textContent = '내 정보를 불러오지 못했습니다. 연결을 확인한 뒤 다시 시도해 주세요.';
@@ -68,8 +69,9 @@
     });
     form.addEventListener('submit', async event => {
       event.preventDefault();
-      if (!name.value.trim() || !branch.value.trim()) { message.textContent = '이름과 소속을 입력해 주세요.'; return; }
-      if (!/^01[016789]\d{7,8}$/.test(phoneDigits(phone.value))) { message.textContent = '01로 시작하는 휴대폰 번호 10~11자리를 입력해 주세요.'; phone.focus(); return; }
+      if (!window.PA_SIGNUP.validName(name.value)) { message.textContent = '이름을 2자 이상 입력해 주세요.'; name.focus(); return; }
+      if (!window.PA_SIGNUP.validBranch(branch.value)) { message.textContent = '목록에서 소속 본부를 선택해 주세요.'; branch.focus(); return; }
+      if (!window.PA_SIGNUP.validPhone(phone.value)) { message.textContent = '010으로 시작하는 휴대폰 번호 11자리를 입력해 주세요.'; phone.focus(); return; }
       if (!consent.checked) { message.textContent = '개인정보 수집·이용 동의를 확인해 주세요.'; consent.focus(); return; }
       const values = { p_name: name.value.trim(), p_branch: branch.value.trim(), p_phone: formatPhone(phone.value), p_consent: true };
       const controls = [name, branch, phone, consent, submit, cancel];

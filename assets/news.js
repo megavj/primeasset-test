@@ -84,11 +84,8 @@
     $('insurer-rows').replaceChildren(...rows);
   }
   function renderExtras() {
-    const tip = data && data.tip, disease = data && data.disease, stats = data && data.stats;
+    const tip = data && data.tip, stats = data && data.stats;
     setText('tip-situation', tip ? '상황: ' + text(tip.situation) : loading ? '자료를 불러오는 중입니다.' : !data && failed ? '영업 팁을 불러오지 못했습니다.' : '등록된 영업 팁이 없습니다.'); setText('tip-speech', tip && tip.speech);
-    setText('disease-name', disease && disease.name || (loading ? '불러오는 중입니다' : !data && failed ? '질병정보를 불러오지 못했습니다' : '등록된 질병정보가 없습니다'));
-    setText('disease-date', data && data.diseaseDate ? text(data.diseaseDate) + ' 기준' : ''); setText('disease-summary', disease && disease.summary);
-    $('disease-tags').replaceChildren(...(disease && Array.isArray(disease.tags) ? disease.tags : []).map(tag => node('span', '', tag)));
     for (const [period, id] of [['today', 'stat-today'], ['week', 'stat-week'], ['month', 'stat-month']]) setText(id, stats && stats.ok && stats[period] && stats[period].uv != null ? Number(stats[period].uv).toLocaleString('ko-KR') : '—');
     setText('stat-news', data ? data.news.filter(item => !item.isPromo).length.toLocaleString('ko-KR') : '—');
     setText('stats-updated', stats && stats.ok ? '방문 현황은 자료를 불러온 시점을 기준으로 표시합니다.' : loading ? '방문 현황을 확인하는 중입니다.' : '방문 현황을 불러오지 못했습니다.');

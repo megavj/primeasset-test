@@ -6,6 +6,7 @@
 (function () { try { if (window.top !== window.self && window.top.location.origin !== window.location.origin) throw 0; } catch (e) { document.documentElement.style.display = 'none'; } })();
 (function () {
   const C = window.PA_AUTH || {};
+  const signup = window.PA_SIGNUP;
   const $ = (s) => document.querySelector(s);
   const el = (tag, attrs, ...kids) => {
     const e = document.createElement(tag);
@@ -22,7 +23,7 @@
   const msg = (t, sub) => el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, t), sub ? el("p", {}, sub) : null);
   const mode = (inside) => { document.body.classList.toggle("pa-logged", !!inside); document.documentElement.classList.remove("pa-in"); }; // 로그인 후: 홈·내 정보 메뉴 표시(html.pa-in 은 첫 화면 전 임시 표시, B7)
 
-  if (!C.url || !C.anonKey || !window.supabase) {
+  if (!C.url || !C.anonKey || !window.supabase || !signup) {
     show(msg("로그인 준비 중입니다", "관리자가 로그인 서버 설정을 마치면 이 화면에서 구글 계정 또는 이메일로 로그인할 수 있습니다."));
     return;
   }
@@ -56,8 +57,8 @@
     const middle = d.length > 10 ? 4 : 3;
     return d.slice(0, 3) + "-" + d.slice(3, 3 + middle) + "-" + d.slice(3 + middle);
   };
-  const validPhone = value => /^01[016789]\d{7,8}$/.test(digits(value));
-  const PHONE_MSG = "휴대폰 번호를 확인해 주세요. 010-8714-9262처럼 01로 시작하는 10~11자리 번호를 입력해 주세요.";
+  const validPhone = value => signup.validPhone(value);
+  const PHONE_MSG = "010으로 시작하는 휴대폰 번호 11자리를 입력해 주세요.";
   function formatPhoneInput(input) {
     const before = input.value, start = input.selectionStart;
     const count = digits(before.slice(0, start == null ? before.length : start)).length;
@@ -213,15 +214,12 @@
     // 로그인 소개는 HTML의 고정 글을 보여 줍니다.
     show(el("div", { class: "pa-login" }, errCard,
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, su ? "회원가입 · 로그인" : "로그인"),
-        N("구글로 간편 로그인. 처음이라면 가입 신청부터."),
+        N("구글 계정이나 이메일로 로그인한 뒤, 처음 오신 분은 가입 정보를 입력해 주세요."),
         kakao,
         el("button", { class: "g-btn g-btn--pri g-btn--lg g-wide", type: "button", onclick: () => sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: here } }) }, "구글 계정으로 로그인"),
         mailBox,
         out),
-      el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "가입 → 승인 → 이용"),
-        el("ol", { class: "pa-steps" }, el("li", {}, el("b", {}, "가입"), "구글로 로그인 → 이름·소속 본부·휴대폰 입력, 개인정보 동의"),
-          el("li", {}, el("b", {}, "승인"), "관리자가 확인하고 등급을 정합니다"),
-          el("li", {}, el("b", {}, "이용"), "등급에 맞는 업무 도구가 열립니다 (승인 전에는 🔒)"))),
+      signup.guide(),
       el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "연락처"), N("가입·승인 문의."),
         el("p", {}, "프라임에셋 이사 김상현 · 전화 ", el("a", { href: "tel:010-8714-9262" }, "010-8714-9262"), " · ",
           el("a", { href: "https://open.kakao.com/o/sFMF26y", target: "_blank", rel: "noopener" }, "카카오 오픈채팅")))));
@@ -232,14 +230,14 @@
 
   function profileView(p, owner, key) {
     mode(false);
-    const n = el("input", { class: "pa-in", placeholder: "이름", name: "name", autocomplete: "name", "aria-label": "이름" });
-    const b = el("input", { class: "pa-in", placeholder: "소속 본부·지사 (예: 188본부)", name: "organization", autocomplete: "organization", "aria-label": "소속 본부·지사" });
-    const ph = el("input", { class: "pa-in", placeholder: "휴대폰 번호", type: "tel", name: "tel", autocomplete: "tel", inputmode: "tel", "aria-label": "휴대폰 번호" });
-    const ok = el("input", { type: "checkbox", id: "pa-consent" });
+    const n = el("input", { class: "pa-in", id: "pa-signup-name", placeholder: "이름을 입력해 주세요", name: "name", autocomplete: "name", minlength: "2", maxlength: "60", required: "", "aria-label": "이름" });
+    const b = el("select", { class: "pa-in", id: "pa-signup-branch", name: "organization", autocomplete: "organization", required: "", "aria-label": "소속 본부" });
+    const ph = el("input", { class: "pa-in", id: "pa-signup-phone", placeholder: "010으로 시작하는 휴대폰 번호", type: "tel", name: "tel", autocomplete: "tel", inputmode: "tel", maxlength: "13", required: "", "aria-label": "휴대폰 번호" });
+    const ok = el("input", { type: "checkbox", id: "pa-consent", required: "" });
     const out = el("p", { class: "pa-note", role: "status" });
     const draft = readDraft(owner);
     n.value = typeof draft.name === "string" ? draft.name : p.name || "";
-    b.value = typeof draft.branch === "string" ? draft.branch : p.branch || "";
+    signup.fillBranches(b, typeof draft.branch === "string" ? draft.branch : p.branch || "");
     ph.value = formatPhone(typeof draft.phone === "string" ? draft.phone : p.phone || "");
     ok.checked = draft.consent === true;
     bindPhone(ph);
@@ -259,12 +257,20 @@
       if (saving) return;
       ph.value = formatPhone(ph.value); remember();
       if (![n, b, ph].every(input => input.value.trim())) { out.textContent = "이름·소속·휴대폰 번호를 모두 입력해 주세요."; [n, b, ph].find(input => !input.value.trim()).focus(); return; }
+      if (!signup.validName(n.value)) { out.textContent = "이름을 2자 이상 입력해 주세요."; n.focus(); return; }
+      if (!signup.validBranch(b.value)) { out.textContent = "목록에서 소속 본부를 선택해 주세요."; b.focus(); return; }
       if (!validPhone(ph.value)) { out.textContent = PHONE_MSG; ph.focus(); return; }
       if (!ok.checked) { out.textContent = "개인정보 수집·이용 동의에 체크해 주세요."; ok.focus(); return; }
       const values = { p_name: n.value.trim(), p_branch: b.value.trim(), p_phone: ph.value, p_consent: ok.checked };
       saving = true; [n, b, ph, ok, submit, switchEmail].forEach(input => { input.disabled = true; }); submit.textContent = "보내는 중…"; out.textContent = "";
       try {
-        const { error } = await sb.rpc("complete_profile", values);
+        const current = await sb.auth.getSession();
+        if (current.error || !current.data.session || current.data.session.user.id !== owner || currentOwner !== owner) {
+          await boot(); return;
+        }
+        // 전송 계정 고정: 제출 도중 다른 계정으로 바뀌어도 이전 입력을 새 계정에 저장하지 않습니다.
+        const { error } = await sb.rpc("complete_profile", values).setHeader("Authorization", "Bearer " + current.data.session.access_token);
+        if (currentOwner !== owner) return;
         if (error) throw error;
         draftActive = false; clearDraft(owner);
         window.dispatchEvent(new Event("pa:profile")); // 공통 메뉴: 로그아웃·내 정보 표시
@@ -275,12 +281,14 @@
       } finally {
         saving = false; [n, b, ph, ok, submit, switchEmail].forEach(input => { input.disabled = false; }); submit.textContent = "가입 신청";
       }
-    } }, n, b, ph,
+    } }, el("label", { class: "pa-signup-form-label", for: n.id }, "이름"), n,
+      el("label", { class: "pa-signup-form-label", for: ph.id }, "휴대폰 번호"), ph,
+      el("label", { class: "pa-signup-form-label", for: b.id }, "소속 본부"), b,
       el("label", { class: "pa-consent", for: "pa-consent" }, ok, " [필수] 개인정보 수집·이용에 동의합니다. ",
         el("a", { href: "../privacy/", target: "_blank", rel: "noopener" }, "개인정보처리방침 보기")),
       el("div", { class: "pa-head-btns" }, submit), out, switchEmail);
     show(el("div", { class: "pa-login" }, el("div", { class: "pa-card" },
-      el("h2", { class: "pa-h3" }, "가입 정보 입력"), N("처음 로그인한 분만 보입니다. 이름·소속 본부·휴대폰 번호와 [필수] 개인정보 수집 동의."), el("p", { class: "pa-signup-account" }, `가입 계정: ${p.email || ""}`), form)));
+      el("h2", { class: "pa-h3" }, "가입 정보 입력"), el("p", { class: "pa-profile-intro" }, "아직 가입 신청이 완료되지 않았습니다. 이름·휴대폰·소속 본부를 입력하고 개인정보 수집·이용에 동의한 뒤 가입 신청을 눌러 주세요."), el("p", { class: "pa-signup-account" }, `가입 계정: ${p.email || ""}`), form), signup.guide()));
     viewKey = key;
     window.addEventListener("pagehide", remember);
     disposeView = () => { draftActive = false; window.removeEventListener("pagehide", remember); };
@@ -335,10 +343,10 @@
     } }, "승인 요청");
     return el("div", { class: "pa-req-row" }, btn, out);
   }
-  // 승인 대기 회원: 가입정보 제출 시 관리자에게 알림 메일이 자동 발송되므로(일론 notify-signup) 별도 '승인 요청' 버튼 없이 안내만 표시합니다.
+  // 가입 정보를 저장한 승인 대기 회원에게만 접수 안내를 표시합니다. 실제 알림 발송 여부는 서버에서 확인합니다.
   function pendingCard() {
     return el("div", { class: "pa-card pa-banner pa-wait" }, el("h2", { class: "pa-h3" }, "승인 대기 중 — 관리자 확인 후 열립니다"),
-      el("p", {}, "가입 신청이 관리자에게 자동으로 전달됐어요. 승인되면 🔒 표시 메뉴가 열립니다. 그동안 인트라넷은 둘러보실 수 있어요."));
+      el("p", {}, "가입 신청이 접수됐어요. 관리자가 가입 정보를 확인하고 승인하면 🔒 표시 메뉴가 열립니다. 그동안 인트라넷은 둘러보실 수 있어요."));
   }
 
   const SITE_LINKS = [
@@ -349,14 +357,14 @@
   const WORK = ["상품·상담", "보상·청구", "청약·전산", "자료·지식"];
   const TOOL_WORK = Object.freeze({
     "상품통합분석기": "상품·상담", "AI영업비서": "상품·상담",
-    "질병정보·화법도우미": "상품·상담", "DB영업 화법도우미": "상품·상담",
+    "질병정보·화법도우미": "상품·상담", "실전 질병정보·화법도우미": "상품·상담", "DB영업 화법도우미": "상품·상담",
     "실전 DB영업 화법도우미": "상품·상담", "다보이는 보험비교 카페": "상품·상담", "레몬보험 보험비교 카페": "상품·상담",
     "보험보상답변기": "보상·청구", "N대·종수술 답변기": "보상·청구", "실손의료비 답변기": "보상·청구",
     "고지의무 판독기": "청약·전산", "전산답변기": "청약·전산",
     "프라임에셋 내부인트라넷 팜스": "청약·전산",
     "보험정보공유카페": "자료·지식", "프리미엄 상품저장소카페": "자료·지식",
     "프리미엄 디비영업저장소 카페": "자료·지식", "보험설계사끼리 카페": "자료·지식",
-    "프리미엄 자료검색기": "자료·지식", "최신보험뉴스": "자료·지식", "보험위키": "자료·지식", "보험노트": "자료·지식"
+    "프리미엄 자료검색기": "자료·지식", "최신보험뉴스": "자료·지식", "보험위키": "자료·지식", "보험노트": "상품·상담"
   });
   const TOOL_PURPOSE = Object.freeze({
     "상품통합분석기": "상품 보장과 조건 비교", "AI영업비서": "상담 준비와 화법 점검",
@@ -501,7 +509,7 @@
       currentOwner = null; clearDrafts();
       if (goto) { saveGoto(goto); goto = null; } // 로그인 뒤 이 칸으로(이 기기에 30분)
       if (viewKey === "login") return;
-      return loginView(location.hash === "#signup" ? "처음 오셨나요? 구글 계정이나 이메일로 로그인하면 바로 가입 신청이 됩니다." : "");
+      return loginView(location.hash === "#signup" ? "처음 오셨나요? 로그인 후 필수 가입 정보를 입력하면 가입 신청이 접수됩니다." : "");
     }
     const storageOwner = session.user.id || "local";
     if (currentOwner && currentOwner !== storageOwner) {
@@ -515,10 +523,14 @@
     if (location.hash && !knownSection(location.hash.slice(1))) history.replaceState(null, "", location.pathname); // 토큰·가입 주소는 지우고 섹션 주소는 둠
     const { data, error } = await sb.rpc("my_profile");
     if (epoch !== renderEpoch) return;
-    const p = data && data[0];
+    let p = data && data[0];
     if (error) return failView("회원 정보를 확인하지 못했습니다", error, true);
     if (!p) return show(msg("회원 정보를 확인하지 못했습니다", "잠시 후 다시 시도해 주세요."), logoutBtn());
-    if (!p.profile_done) {
+    try { p = await signup.resolveProfile(sb, p, session); }
+    catch (error) { if (epoch === renderEpoch) return failView("가입 정보를 확인하지 못했습니다", error, true); return; }
+    if (epoch !== renderEpoch) return;
+    if (!signup.complete(p)) {
+      p = p || { email: session.user.email || "" };
       const key = JSON.stringify([storageOwner, "signup", p.status]);
       // 창 복귀의 SIGNED_IN·토큰 갱신·세션 재확인에도 같은 가입 폼과 포커스를 유지합니다.
       if (viewKey !== key) profileView(p, storageOwner, key);

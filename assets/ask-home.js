@@ -30,15 +30,10 @@
       const answer = el('section', { class: 'pa-ask-answer', hidden: '', 'aria-labelledby': 'pa-ask-answer-title' });
       const retryNote = el('p', { class: 'pa-ask-help', hidden: '' });
       const retry = el('button', { class: 'g-btn g-btn--ghost', type: 'button', hidden: '', onclick: () => run(retryKind === 'new') }, '결과 다시 확인');
-      const examples = el('div', { class: 'pa-ask-examples', 'aria-label': '예시 질문' }, ...[
-        ['전산 업무', '보험사 전산에서 청약 진행 상태를 확인하는 방법을 알려 주세요.'],
-        ['상품 상담', '암보험 진단비 보장과 면책기간을 설명해 주세요.'],
-        ['보상 청구', '실손의료비 통원 청구에 필요한 서류는 무엇인가요?']
-      ].map(([label, value]) => el('button', { class: 'pa-ask-example', type: 'button', onclick: () => { if (!busy) { q.value = value; matchTools(); q.focus(); } } }, label)));
       const node = el('section', { class: 'pa-ask', 'aria-labelledby': 'pa-ask-title' },
         el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, '업무가 막힐 때, AI에게 물어보세요'), quota),
         el('form', { class: 'pa-ask-form', onsubmit: event => { event.preventDefault(); run(true); } },
-          q, suggestions, examples,
+          q, suggestions,
           el('div', { class: 'pa-ask-controls' }, submit), out, retry, retryNote), progress, answer);
       function invalidateAuth(error) {
         if (!['unauthorized', 'forbidden', 'login_required', 'invalid_token', 'expired', 'not_active', 'stale_session'].includes(error.code)) return false;
@@ -48,7 +43,6 @@
         answer.replaceChildren(); answer.hidden = true; progress.hidden = true; suggestions.replaceChildren(); suggestions.hidden = true;
         retry.hidden = true; retryNote.hidden = true; quota.textContent = '로그인·이용 권한 확인 필요';
         out.textContent = '이전 질문과 답변을 비웠습니다. 로그인·이용 권한을 확인한 뒤 다시 열어 주세요.';
-        examples.querySelectorAll('button').forEach(b => { b.disabled = true; });
         if (onAuthFailure) onAuthFailure();
         return true;
       }
@@ -61,7 +55,6 @@
       function controls() {
         submit.disabled = busy || !approved || remaining === 0;
         q.disabled = busy;
-        examples.querySelectorAll('button').forEach(b => { b.disabled = busy; });
         retry.disabled = busy;
       }
       function setQuota(value) {

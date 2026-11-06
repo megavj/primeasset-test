@@ -11,9 +11,10 @@
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
 <link rel="stylesheet" href="/assets/glass.css?v=16">
-<link rel="stylesheet" href="/assets/news.css?v=20261106-trim2">
+<link rel="stylesheet" href="/assets/news.css?v=20261106-t40">
+<script src="/assets/auth-config.js?v=2" defer></script>
 <script src="/assets/site-nav.js?v=20261103-audit" defer></script>
-<script src="/assets/news.js?v=20261106-trim2" defer></script>
+<script src="/assets/news.js?v=20261106-t40" defer></script>
 </head>
 <body class="g-main news-page">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -35,7 +36,6 @@
     <button id="tab-news" type="button" role="tab" aria-selected="true" aria-controls="panel-news" data-panel="news">최신뉴스</button>
     <button id="tab-insurers" type="button" role="tab" aria-selected="false" aria-controls="panel-insurers" data-panel="insurers" tabindex="-1">원수사정보</button>
     <button id="tab-age" type="button" role="tab" aria-selected="false" aria-controls="panel-age" data-panel="age" tabindex="-1">보험나이계산기</button>
-    <button id="tab-disease" type="button" role="tab" aria-selected="false" aria-controls="panel-disease" data-panel="disease" tabindex="-1">질병정보</button>
   </div>
 
   <section id="panel-news" class="nw-panel" role="tabpanel" aria-labelledby="tab-news">
@@ -64,11 +64,6 @@
     </form>
     <div id="age-result" class="nw-age-result" role="status" aria-live="polite" hidden><h3 id="age-main"></h3><p id="age-tip"></p></div>
     <p class="nw-helper">기존 포털과 같은 계산 방식을 사용합니다. 계산 결과는 참고용이며 실제 청약 시 해당 상품의 약관과 보험사 전산을 확인하세요.</p>
-  </section>
-
-  <section id="panel-disease" class="nw-panel" role="tabpanel" aria-labelledby="tab-disease" hidden>
-    <div class="nw-section-heading"><p class="nw-eyebrow">오늘의 질병정보</p><h2 id="disease-name">불러오는 중입니다</h2><p id="disease-date"></p></div>
-    <p id="disease-summary" class="nw-disease-summary"></p><div id="disease-tags" class="nw-tags" aria-label="질병 관련 태그"></div>
   </section>
 
 </main>
