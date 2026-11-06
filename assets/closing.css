@@ -86,3 +86,8 @@
   .cl-rule{background:CanvasText}
   .cl-title em{text-decoration:underline}
 }
+
+/* 2026-11-06 바닥글: 기존 홈페이지 바로가기 버튼(절제된 테두리형) */
+.g-foot .g-foot-old{display:inline-flex;align-items:center;min-height:32px;margin-left:12px;padding:4px 12px;border:1px solid rgba(201,169,97,.45);border-radius:999px;color:inherit;text-decoration:none;font-size:inherit;white-space:nowrap}
+.g-foot .g-foot-old:hover,.g-foot .g-foot-old:focus-visible{border-color:rgba(201,169,97,.9);color:#e8cf8f}
+@media (max-width:480px){.g-foot .g-foot-old{margin:10px 0 0;}}
