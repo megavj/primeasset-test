@@ -350,15 +350,23 @@
   const TOOL_WORK = Object.freeze({
     "상품통합분석기": "상품·상담", "AI영업비서": "상품·상담",
     "질병정보·화법도우미": "상품·상담", "DB영업 화법도우미": "상품·상담",
+    "실전 DB영업 화법도우미": "상품·상담", "다보이는 보험비교 카페": "상품·상담", "레몬보험 보험비교 카페": "상품·상담",
     "보험보상답변기": "보상·청구", "N대·종수술 답변기": "보상·청구", "실손의료비 답변기": "보상·청구",
     "고지의무 판독기": "청약·전산", "전산답변기": "청약·전산",
+    "프라임에셋 내부인트라넷 팜스": "청약·전산",
+    "보험정보공유카페": "자료·지식", "프리미엄 상품저장소카페": "자료·지식",
+    "프리미엄 디비영업저장소 카페": "자료·지식", "보험설계사끼리 카페": "자료·지식",
     "프리미엄 자료검색기": "자료·지식", "최신보험뉴스": "자료·지식", "보험위키": "자료·지식", "보험노트": "자료·지식"
   });
   const TOOL_PURPOSE = Object.freeze({
     "상품통합분석기": "상품 보장과 조건 비교", "AI영업비서": "상담 준비와 화법 점검",
     "질병정보·화법도우미": "질병 정보와 상담 화법", "DB영업 화법도우미": "DB 고객 상담 화법",
+    "실전 DB영업 화법도우미": "DB 고객 상담 화법", "다보이는 보험비교 카페": "고객 확보용 카페", "레몬보험 보험비교 카페": "고객 확보용 카페",
     "보험보상답변기": "보상 기준과 청구 서류 확인", "N대·종수술 답변기": "질병·수술 보장 기준 확인", "실손의료비 답변기": "실손 보장과 청구 기준 확인",
     "고지의무 판독기": "청약 전 고지 항목 확인", "전산답변기": "보험사 전산 업무 절차 확인",
+    "프라임에셋 내부인트라넷 팜스": "프라임에셋 내부 인트라넷",
+    "보험정보공유카페": "설계사 전용 자료 카페", "프리미엄 상품저장소카페": "설계사 전용 상품 자료 카페",
+    "프리미엄 디비영업저장소 카페": "설계사 전용 DB영업 자료 카페", "보험설계사끼리 카페": "소식지 파일 카페(외부 설계사도 가입)",
     "프리미엄 자료검색기": "업무 자료와 근거 검색", "최신보험뉴스": "보험업계 최신 소식"
   });
   const workFor = r => Object.prototype.hasOwnProperty.call(TOOL_WORK, r.name) ? TOOL_WORK[r.name] : WORK.includes(r.work || r.category) ? (r.work || r.category) : "자료·지식";
@@ -384,7 +392,7 @@
         const coach = /통합\s*코치|실전\s*상담|영업\s*비서/.test(r.name || "") || /AKfycbyKIz|AKfycbw6JIh|AKfycbz8vba3|1rIZRrzlYTgq5g0omTg_02q73sUi83Fp8US200QeoXQc4iPC5Wef6FHZQ/.test(r.url || "");
         // 보험뉴스 화면 이전: 메뉴 권한과 즐겨찾기 식별자는 유지합니다.
         const news = /보험\s*뉴스/.test(r.name || "") || /AKfycbyYyYaZD3zH-DReuzAH_fUdl2Xe4jU_xhgf2snq2hpgR0g-7yx68bD-xAvpaXe0hnk/.test(r.url || "");
-        return { ...r, key: "menu:" + r.id, work: product || coach ? "상품·상담" : claim ? "보상·청구" : it ? "청약·전산" : workFor(r), description: r.description || TOOL_PURPOSE[r.name] || "",
+        return { ...r, key: "menu:" + r.id, work: product || coach ? "상품·상담" : claim ? "보상·청구" : it ? "청약·전산" : workFor(r), description: TOOL_PURPOSE[r.name] || r.description || "",
           url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : it ? "/members/it/" : coach ? "/members/coach/" : news ? "https://test.primeasset.info/news/" : r.url) : null, internal: product || claim || it || coach || news };
       }),
       ...SITE_LINKS.filter(r => !data.some(m => m.name === r.name || m.url === r.url)).map(r => ({ ...r, unlocked: true, work: workFor(r), internal: r.url.startsWith("/") }))
@@ -436,10 +444,7 @@
     const head = el("header", { class: "pa-home-head" }, el("h2", { class: "pa-home-title" }, `${p.name || "회원"}님, 안녕하세요`));
     const browse = el("section", { id: "directory", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", { id: "pa-directory-title", tabindex: "-1" }, `업무 도구 (${tools.length})`)),
       tools.length ? directory : N("등록된 업무 도구가 없습니다."));
-    show(el("section", { class: "pa-sec pa-aiqa-home", id: "home" }, head, pending ? pendingCard() : banner,
-      el("nav", { class: "pa-home-shortcuts", "aria-label": "홈 바로 이동" },
-        el("a", { href: "#directory", onclick: e => { e.preventDefault(); jump("directory", true); } }, "업무 도구로 이동 ↓"),
-        el("a", { href: "#news", onclick: e => { e.preventDefault(); jump("news", true); } }, "보험자료 ↓")), ask.node, browse, noticeBox));
+    show(el("section", { class: "pa-sec pa-aiqa-home", id: "home" }, head, pending ? pendingCard() : banner, ask.node, browse, noticeBox));
     disposeView = () => { alive = false; ask.dispose(); };
     viewKey = key;
     loadNotice();

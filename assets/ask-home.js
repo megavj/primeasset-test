@@ -18,9 +18,8 @@
   window.PA_ASK_HOME = Object.freeze({
     create({ sb, approved, tools, choRx, owner, onAuthFailure }) {
       const api = window.PA_ASK.create(sb);
-      let alive = true, busy = false, last = null, timer = null, resumePause = null, length = 'normal', retryKind = '', quotaKnown = false, remaining = null;
-      const q = el('textarea', { class: 'pa-in pa-ask-input', id: 'pa-q', rows: '3', maxlength: '1200', placeholder: '예) 실손의료비 통원 청구에 필요한 서류는 무엇인가요?', 'aria-describedby': 'pa-ask-help', 'aria-keyshortcuts': '/', autocomplete: 'off' });
-      const hint = el('p', { class: 'pa-ask-help', id: 'pa-ask-help' }, '주민등록번호는 뒷자리 7자리만 가려 저장합니다. 도구 이름이나 초성도 찾을 수 있어요.');
+      let alive = true, busy = false, last = null, timer = null, resumePause = null, retryKind = '', quotaKnown = false, remaining = null;
+      const q = el('textarea', { class: 'pa-in pa-ask-input', id: 'pa-q', rows: '3', maxlength: '1200', placeholder: '예) 실손의료비 통원 청구에 필요한 서류는 무엇인가요?', 'aria-label': '업무 질문 또는 도구 찾기', 'aria-keyshortcuts': '/', autocomplete: 'off' });
       const quota = el('p', { class: 'pa-ask-quota', role: 'status' }, approved ? '오늘 남은 질문 확인 중…' : '승인 후 AI 질문을 이용할 수 있습니다.');
       const submit = el('button', { class: 'g-btn g-btn--pri', type: 'submit' }, '질문하기');
       const out = el('p', { class: 'pa-ask-message', role: 'alert' });
@@ -31,12 +30,6 @@
       const answer = el('section', { class: 'pa-ask-answer', hidden: '', 'aria-labelledby': 'pa-ask-answer-title' });
       const retryNote = el('p', { class: 'pa-ask-help', hidden: '' });
       const retry = el('button', { class: 'g-btn g-btn--ghost', type: 'button', hidden: '', onclick: () => run(retryKind === 'new') }, '결과 다시 확인');
-      const lengths = el('fieldset', { class: 'pa-ask-lengths' }, el('legend', {}, '답변 길이'));
-      const radios = [];
-      [['short', '짧게'], ['normal', '보통'], ['long', '자세히']].forEach(([value, text]) => {
-        const radio = el('input', { type: 'radio', name: 'ask-length', value, ...(value === 'normal' ? { checked: '' } : {}), onchange: () => { length = value; } });
-        radios.push(radio); lengths.append(el('label', {}, radio, el('span', {}, text)));
-      });
       const examples = el('div', { class: 'pa-ask-examples', 'aria-label': '예시 질문' }, ...[
         ['전산 업무', '보험사 전산에서 청약 진행 상태를 확인하는 방법을 알려 주세요.'],
         ['상품 상담', '암보험 진단비 보장과 면책기간을 설명해 주세요.'],
@@ -45,8 +38,8 @@
       const node = el('section', { class: 'pa-ask', 'aria-labelledby': 'pa-ask-title' },
         el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, '업무가 막힐 때, AI에게 물어보세요'), quota),
         el('form', { class: 'pa-ask-form', onsubmit: event => { event.preventDefault(); run(true); } },
-          el('label', { class: 'pa-ask-label', for: 'pa-q' }, '업무 질문 또는 도구 찾기'), q, hint, suggestions, examples,
-          el('div', { class: 'pa-ask-controls' }, lengths, submit), out, retry, retryNote), progress, answer);
+          q, suggestions, examples,
+          el('div', { class: 'pa-ask-controls' }, submit), out, retry, retryNote), progress, answer);
       function invalidateAuth(error) {
         if (!['unauthorized', 'forbidden', 'login_required', 'invalid_token', 'expired', 'not_active', 'stale_session'].includes(error.code)) return false;
         if (!alive) return true;
@@ -55,7 +48,7 @@
         answer.replaceChildren(); answer.hidden = true; progress.hidden = true; suggestions.replaceChildren(); suggestions.hidden = true;
         retry.hidden = true; retryNote.hidden = true; quota.textContent = '로그인·이용 권한 확인 필요';
         out.textContent = '이전 질문과 답변을 비웠습니다. 로그인·이용 권한을 확인한 뒤 다시 열어 주세요.';
-        radios.forEach(r => { r.disabled = true; }); examples.querySelectorAll('button').forEach(b => { b.disabled = true; });
+        examples.querySelectorAll('button').forEach(b => { b.disabled = true; });
         if (onAuthFailure) onAuthFailure();
         return true;
       }
@@ -67,7 +60,7 @@
       }
       function controls() {
         submit.disabled = busy || !approved || remaining === 0;
-        q.disabled = busy; radios.forEach(r => { r.disabled = busy; });
+        q.disabled = busy;
         examples.querySelectorAll('button').forEach(b => { b.disabled = busy; });
         retry.disabled = busy;
       }
@@ -171,8 +164,8 @@
         q.value = question;
         if (fresh && (question.length < 3 || question.length > 1200)) { out.textContent = '질문을 3자 이상, 1,200자 이내로 적어 주세요.'; q.focus(); return; }
         // A second submit of an ambiguous request must also reuse its idempotency key.
-        if (fresh && last && retryKind === 'resume' && !retry.hidden && last.question === question && last.length === length) fresh = false;
-        if (fresh) last = { question, length, requestId: uuid(), id: null };
+        if (fresh && last && retryKind === 'resume' && !retry.hidden && last.question === question) fresh = false;
+        if (fresh) last = { question, requestId: uuid(), id: null };
         if (!last) return;
         busy = true; controls(); out.textContent = ''; retry.hidden = true; retryNote.hidden = true;
         if (fresh) { answer.hidden = true; answer.replaceChildren(); }
@@ -180,7 +173,7 @@
         try {
           await verifySession();
           if (!last.id) {
-            const submitted = await api.request('askSubmit', { question: last.question, length: last.length, requestId: last.requestId });
+            const submitted = await api.request('askSubmit', { question: last.question, length: 'normal', requestId: last.requestId });
             if (!alive) return;
             last.id = submitted.id; setQuota(submitted.quota);
           }
