@@ -382,8 +382,10 @@
         const it = /전산\s*답변/.test(r.name || "") || /AKfycbzVbO8_XxSq8_WZhvNBXSi0myH22g0igqhAwkz7Kf9QtDUchxIds-E7fgTi06xGSP6lvg|AKfycbxWVCohTpOA3rZUK1hpuOqq_cfarzo57S2dlKL1g3CcTevVq1h-9oG28wBUvv_tzPb8tw|AKfycbzfFExpXscK87c2F54p17YDJwdDmpk7MAZ3NQAsWJtjqAFBXSaVJ1JC52H2czeaPPDNiw/.test(r.url || "");
         // 실전상담 통합코치는 보상·전산 규칙 다음에 홈페이지 새 화면으로 연결합니다.
         const coach = /통합\s*코치|실전\s*상담|영업\s*비서/.test(r.name || "") || /AKfycbyKIz|AKfycbw6JIh|AKfycbz8vba3|1rIZRrzlYTgq5g0omTg_02q73sUi83Fp8US200QeoXQc4iPC5Wef6FHZQ/.test(r.url || "");
+        // 보험뉴스 화면 이전: 메뉴 권한과 즐겨찾기 식별자는 유지합니다.
+        const news = /보험\s*뉴스/.test(r.name || "") || /AKfycbyYyYaZD3zH-DReuzAH_fUdl2Xe4jU_xhgf2snq2hpgR0g-7yx68bD-xAvpaXe0hnk/.test(r.url || "");
         return { ...r, key: "menu:" + r.id, work: product || coach ? "상품·상담" : claim ? "보상·청구" : it ? "청약·전산" : workFor(r), description: r.description || TOOL_PURPOSE[r.name] || "",
-          url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : it ? "/members/it/" : coach ? "/members/coach/" : r.url) : null, internal: product || claim || it || coach };
+          url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : it ? "/members/it/" : coach ? "/members/coach/" : news ? "https://test.primeasset.info/news/" : r.url) : null, internal: product || claim || it || coach || news };
       }),
       ...SITE_LINKS.filter(r => !data.some(m => m.name === r.name || m.url === r.url)).map(r => ({ ...r, unlocked: true, work: workFor(r), internal: r.url.startsWith("/") }))
     ];

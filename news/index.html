@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://ztypllzgjivutzorhayz.supabase.co https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070a12">
+<meta name="robots" content="noindex,nofollow">
+<title>보험뉴스 | 프라임에셋 프리미엄</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/pretendard/pretendardvariable-dynamic-subset.css">
+<link rel="stylesheet" href="/assets/glass.css?v=16">
+<link rel="stylesheet" href="/assets/news.css?v=20261106-news">
+<script src="/assets/site-nav.js?v=20261103-audit" defer></script>
+<script src="/assets/news.js?v=20261106-news" defer></script>
+</head>
+<body class="g-main news-page">
+<a class="g-skip" href="#main">본문으로 건너뛰기</a>
+<div class="g-bg" aria-hidden="true"></div>
+<header class="g-nav pa-site-nav" data-site-nav>
+  <div class="g-bar"><a class="g-logo" href="/"><img class="g-mark g-mark--shield" src="/assets/logo.svg" alt="" width="30" height="33">프라임에셋 프리미엄</a>
+    <noscript><nav aria-label="주요 메뉴"><a href="/">홈</a> · <a href="/performance/">실적보드</a> · <a href="/qa/">보험자료</a> · <a href="/wiki/">보험위키</a> · <a href="https://open.kakao.com/o/sFMF26y" target="_blank" rel="noopener">합류문의</a> · <a href="/members/#login">로그인</a></nav></noscript>
+  </div>
+</header>
+<main id="main" class="nw-wrap" tabindex="-1">
+  <header class="nw-hero">
+    <div class="nw-hero-copy"><p class="nw-eyebrow">PREMIUM INSURANCE PORTAL</p><h1>보험뉴스</h1><p class="nw-intro">보험의 흐름을 읽고,<br class="nw-mobile-break"> 오늘의 상담을 준비하세요.</p></div>
+    <div class="nw-hero-side"><a href="/members/#home" class="nw-back">설계사 인트라넷으로 →</a><p id="updated-at">최근 소식을 불러오는 중입니다.</p><button class="nw-button" id="refresh-data" type="button">새로고침</button></div>
+  </header>
+
+  <section class="nw-stats" aria-label="방문 현황">
+    <div><span>오늘 방문자</span><strong id="stat-today">—</strong></div>
+    <div><span>이번 주 방문자</span><strong id="stat-week">—</strong></div>
+    <div><span>이번 달 방문자</span><strong id="stat-month">—</strong></div>
+    <div><span>수집된 뉴스</span><strong id="stat-news">—</strong></div>
+  </section>
+  <div id="data-state" class="nw-state" role="status" aria-live="polite"><p id="data-message">뉴스와 업무 자료를 불러오는 중입니다.</p><button class="nw-button" id="retry-data" type="button" hidden>다시 불러오기</button></div>
+  <noscript><p class="nw-state">뉴스를 보려면 브라우저의 자바스크립트를 켜 주세요.</p></noscript>
+
+  <div class="nw-tabs" role="tablist" aria-label="보험 포털 메뉴">
+    <button id="tab-news" type="button" role="tab" aria-selected="true" aria-controls="panel-news" data-panel="news">최신뉴스</button>
+    <button id="tab-insurers" type="button" role="tab" aria-selected="false" aria-controls="panel-insurers" data-panel="insurers" tabindex="-1">원수사정보</button>
+    <button id="tab-age" type="button" role="tab" aria-selected="false" aria-controls="panel-age" data-panel="age" tabindex="-1">보험나이계산기</button>
+    <button id="tab-disease" type="button" role="tab" aria-selected="false" aria-controls="panel-disease" data-panel="disease" tabindex="-1">질병정보</button>
+  </div>
+
+  <section id="panel-news" class="nw-panel" role="tabpanel" aria-labelledby="tab-news">
+    <div class="nw-toolbar"><div class="nw-search"><label for="news-search">뉴스 검색</label><input id="news-search" type="search" placeholder="제목, 출처, 분류로 검색" autocomplete="off"></div><button id="view-toggle" class="nw-button" type="button" aria-pressed="false">카드형으로 보기</button></div>
+    <div id="news-filters" class="nw-filters" role="group" aria-label="뉴스 분류"></div>
+    <div class="nw-list-heading"><h2>최신 보험 소식</h2><span id="news-count" role="status" aria-live="polite">불러오는 중</span></div>
+    <div id="news-list" aria-busy="true"></div>
+    <p class="nw-source-note">제목과 요약을 제공합니다. 자세한 내용은 각 기사의 원문에서 확인하세요.</p>
+  </section>
+
+  <section id="panel-insurers" class="nw-panel" role="tabpanel" aria-labelledby="tab-insurers" hidden>
+    <div class="nw-section-heading"><h2>원수사 빠른검색</h2><p>고객센터부터 청구·전산 업무 정보까지 한눈에 확인하세요.</p></div>
+    <div class="nw-search"><label for="insurer-search">회사명 검색</label><input id="insurer-search" type="search" placeholder="예: 삼성, KB, 메리츠" autocomplete="off"></div>
+    <div id="insurer-filters" class="nw-filters" role="group" aria-label="보험사 구분"></div>
+    <p class="nw-result-count" id="insurer-count" role="status" aria-live="polite">불러오는 중</p>
+    <p class="nw-scroll-hint">표를 좌우로 움직이면 10개 항목을 모두 볼 수 있습니다.</p>
+    <div class="nw-table-scroll" role="region" aria-label="보험사 업무 정보 표, 좌우 스크롤" tabindex="0"><table class="nw-insurer-table"><caption class="sr">원수사 연락처와 납입 정보</caption><thead><tr><th scope="col">구분</th><th scope="col">회사명</th><th scope="col">고객센터</th><th scope="col">청구팩스</th><th scope="col">전산헬프데스크</th><th scope="col">인콜모니터링</th><th scope="col">카드납</th><th scope="col">자동이체</th><th scope="col">다자녀할인</th><th scope="col">자동이체일</th></tr></thead><tbody id="insurer-rows"></tbody></table></div>
+  </section>
+
+  <section id="panel-age" class="nw-panel" role="tabpanel" aria-labelledby="tab-age" hidden>
+    <div class="nw-section-heading"><h2>보험나이 계산기</h2><p>생년월일과 청약 기준일을 입력하세요.</p></div>
+    <form id="age-form" class="nw-age-form" novalidate>
+      <div class="nw-field-grid"><div class="nw-search"><label for="birth-date">생년월일</label><input id="birth-date" type="text" inputmode="numeric" maxlength="10" placeholder="19800101 또는 800101" autocomplete="off" aria-describedby="age-help"></div><div class="nw-search"><label for="reference-date">기준일 (청약일)</label><input id="reference-date" type="text" inputmode="numeric" maxlength="10" placeholder="오늘" autocomplete="off" aria-describedby="age-help"></div></div>
+      <p id="age-help" class="nw-helper">8자리 또는 6자리 숫자로 입력하세요. 6자리 생년월일은 현재 연도를 기준으로 1900년대·2000년대를 구분합니다.</p>
+      <p id="age-error" class="nw-form-error" role="alert" hidden></p><button class="nw-button nw-button--gold" type="submit">보험나이 계산하기</button>
+    </form>
+    <div id="age-result" class="nw-age-result" role="status" aria-live="polite" hidden><h3 id="age-main"></h3><p id="age-tip"></p></div>
+    <p class="nw-helper">기존 포털과 같은 계산 방식을 사용합니다. 계산 결과는 참고용이며 실제 청약 시 해당 상품의 약관과 보험사 전산을 확인하세요.</p>
+  </section>
+
+  <section id="panel-disease" class="nw-panel" role="tabpanel" aria-labelledby="tab-disease" hidden>
+    <div class="nw-section-heading"><p class="nw-eyebrow">오늘의 질병정보</p><h2 id="disease-name">불러오는 중입니다</h2><p id="disease-date"></p></div>
+    <p id="disease-summary" class="nw-disease-summary"></p><div id="disease-tags" class="nw-tags" aria-label="질병 관련 태그"></div>
+  </section>
+
+  <aside class="nw-tip" aria-labelledby="tip-heading"><div><p class="nw-eyebrow">DAILY SALES TIP</p><h2 id="tip-heading">오늘의 영업 팁</h2></div><div class="nw-tip-copy"><p id="tip-situation" class="nw-tip-situation">자료를 불러오는 중입니다.</p><blockquote id="tip-speech"></blockquote></div></aside>
+  <div class="nw-bottom"><p id="stats-updated" class="nw-helper">방문 현황을 확인하는 중입니다.</p><a id="admin-stats" target="_blank" rel="noopener noreferrer">관리자 방문통계 ↗</a></div>
+</main>
+<footer class="g-foot g-foot--full">
+  <p class="g-foot-brand"><img src="/assets/logo.svg" alt="" width="22" height="24">프라임에셋 프리미엄사업부</p>
+  <p>주소: 서울 광진구 광나루로56길 85 테크노마트 33층 188본부 · 사업자등록번호 837-94-00319 (김상현 보험설계소)</p>
+  <p><a href="/privacy/">개인정보처리방침</a> · <a href="/wiki/">보험위키</a></p>
+</footer>
+</body>
+</html>
