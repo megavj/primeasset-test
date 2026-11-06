@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/assets/glass.css?v=16">
 <link rel="stylesheet" href="/assets/news.css?v=20261106-news">
 <script src="/assets/site-nav.js?v=20261103-audit" defer></script>
-<script src="/assets/news.js?v=20261106-news" defer></script>
+<script src="/assets/news.js?v=20261106-trim" defer></script>
 </head>
 <body class="g-main news-page">
 <a class="g-skip" href="#main">본문으로 건너뛰기</a>
@@ -25,16 +25,10 @@
 </header>
 <main id="main" class="nw-wrap" tabindex="-1">
   <header class="nw-hero">
-    <div class="nw-hero-copy"><p class="nw-eyebrow">PREMIUM INSURANCE PORTAL</p><h1>보험뉴스</h1><p class="nw-intro">보험의 흐름을 읽고,<br class="nw-mobile-break"> 오늘의 상담을 준비하세요.</p></div>
-    <div class="nw-hero-side"><a href="/members/#home" class="nw-back">설계사 인트라넷으로 →</a><p id="updated-at">최근 소식을 불러오는 중입니다.</p><button class="nw-button" id="refresh-data" type="button">새로고침</button></div>
+    <div class="nw-hero-copy"><p class="nw-eyebrow">PREMIUM INSURANCE PORTAL</p><h1>보험뉴스</h1></div>
+    <div class="nw-hero-side"><button class="nw-button" id="refresh-data" type="button">새로고침</button></div>
   </header>
 
-  <section class="nw-stats" aria-label="방문 현황">
-    <div><span>오늘 방문자</span><strong id="stat-today">—</strong></div>
-    <div><span>이번 주 방문자</span><strong id="stat-week">—</strong></div>
-    <div><span>이번 달 방문자</span><strong id="stat-month">—</strong></div>
-    <div><span>수집된 뉴스</span><strong id="stat-news">—</strong></div>
-  </section>
   <div id="data-state" class="nw-state" role="status" aria-live="polite"><p id="data-message">뉴스와 업무 자료를 불러오는 중입니다.</p><button class="nw-button" id="retry-data" type="button" hidden>다시 불러오기</button></div>
   <noscript><p class="nw-state">뉴스를 보려면 브라우저의 자바스크립트를 켜 주세요.</p></noscript>
 
@@ -78,7 +72,6 @@
     <p id="disease-summary" class="nw-disease-summary"></p><div id="disease-tags" class="nw-tags" aria-label="질병 관련 태그"></div>
   </section>
 
-  <aside class="nw-tip" aria-labelledby="tip-heading"><div><p class="nw-eyebrow">DAILY SALES TIP</p><h2 id="tip-heading">오늘의 영업 팁</h2></div><div class="nw-tip-copy"><p id="tip-situation" class="nw-tip-situation">자료를 불러오는 중입니다.</p><blockquote id="tip-speech"></blockquote></div></aside>
   <div class="nw-bottom"><p id="stats-updated" class="nw-helper">방문 현황을 확인하는 중입니다.</p><a id="admin-stats" target="_blank" rel="noopener noreferrer">관리자 방문통계 ↗</a></div>
 </main>
 <footer class="g-foot g-foot--full">

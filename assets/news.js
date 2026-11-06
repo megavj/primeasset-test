@@ -10,7 +10,7 @@
   const mobile = window.matchMedia('(max-width: 768px)');
   let loadId = 0;
   const safeUrl = value => { try { const url = new URL(text(value)); return /^https?:$/.test(url.protocol) ? url.href : ''; } catch (_) { return ''; } };
-  const setText = (id, value) => { $(id).textContent = text(value); };
+  const setText = (id, value) => { const el = $(id); if (el) el.textContent = text(value); };
   function link(value, label, className) {
     const url = safeUrl(value), item = node(url ? 'a' : 'span', className, label);
     if (url) { item.href = url; item.target = '_blank'; item.rel = 'noopener noreferrer'; }
