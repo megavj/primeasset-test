@@ -131,7 +131,7 @@
     let list = [];
     if (Array.isArray(rows) && rows.length) { // DB 목록 = 보이는 본부(메인 목록과 같은 개수)
       const seen = new Set();
-      rows.forEach(r => { const no = cleanNo(r && r.no); if (no && !seen.has(no)) { seen.add(no); list.push({ no, url: safeUrl(r.url) || safeUrl(FALLBACK_URLS[no]) }); } });
+      rows.forEach(r => { const no = cleanNo(r && r.no); if (no && !seen.has(no)) { seen.add(no); list.push({ no, url: safeUrl(r.url) || (window.PA_BRANCHES ? '' : safeUrl(FALLBACK_URLS[no])) }); } });
       if (!seen.has(ROOT)) list.unshift({ no: ROOT, url: safeUrl(FALLBACK_URLS[ROOT]) });
       const rank = new Map(BASE.map(([no], k) => [no, k])); // 번호 순서를 DB 정렬과 무관하게(기본 데이터 순 → 새 본부는 DB 순)
       list = list.map((b, k) => [b, rank.has(b.no) ? rank.get(b.no) : BASE.length + k]).sort((a, b) => a[1] - b[1]).map(x => x[0]);
@@ -627,6 +627,8 @@
   let rowsPromise = null;
   function loadRows() {
     if (rowsPromise) return rowsPromise;
+    // 메인·성장스토리는 공통 결과를 재사용. 독립 시안에서만 아래 REST를 사용한다.
+    if (window.PA_BRANCHES) return (rowsPromise = window.PA_BRANCHES.load());
     rowsPromise = (async () => {
       const C = window.PA_AUTH || {};
       if (!C.url || !C.anonKey || typeof fetch !== 'function') return null;
@@ -727,6 +729,7 @@
     }
 
     setCount() {
+      if (window.PA_BRANCHES) return; // 공개 개수는 branches.js의 visible 목록이 관리한다.
       const n = String(this.model.nodes.length);
       document.querySelectorAll('[data-branch-count]').forEach(e => { if (e.textContent !== n) e.textContent = n; });
     }

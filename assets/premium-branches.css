@@ -1,0 +1,28 @@
+/* TASK43 — 시험 메인 데스크톱 전용 본부 바로가기. 모바일 합류 막대(720px 이하)와 분리. */
+.premium-branches{display:none}
+@media (min-width:1024px) and (hover:hover) and (pointer:fine){
+  .premium-branches{display:block;position:fixed;right:24px;bottom:24px;z-index:65}
+  .premium-branches__toggle{display:flex;align-items:center;gap:16px;min-height:56px;padding:14px 20px;border:1px solid var(--gold);border-radius:16px;background:var(--bg-2);color:var(--gold-hi);font:inherit;font-size:16px;font-weight:600;line-height:1.5;cursor:pointer;box-shadow:var(--shadow-1);transition:background .18s ease,border-color .18s ease}
+  .premium-branches__toggle:hover,.premium-branches__toggle[aria-expanded="true"]{background:#1b2435;border-color:var(--gold-hi)}
+  .premium-branches__chevron{flex:none;transition:transform .24s ease}
+  .premium-branches__toggle[aria-expanded="true"] .premium-branches__chevron{transform:rotate(180deg)}
+  .premium-branches__panel{position:absolute;right:0;bottom:calc(100% + 12px);width:392px;max-width:calc(100vw - 48px);max-height:calc(100vh - 120px);max-height:calc(100dvh - 120px);display:flex;flex-direction:column;padding:20px;border:1px solid rgba(214,185,126,.4);border-radius:20px;background:var(--bg-1);box-shadow:var(--shadow-2);transform-origin:bottom right;animation:premium-branches-open .26s cubic-bezier(.16,1,.3,1) both}
+  .premium-branches__head{flex:none;margin-bottom:16px}
+  .premium-branches__title{margin:0;color:var(--gold-hi);font-size:17px;font-weight:600;line-height:1.5}
+  .premium-branches__hint{margin:4px 0 0;color:var(--text-3);font-size:14px;line-height:1.5}
+  .premium-branches__list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;min-height:0;margin:0;padding:4px;overflow-y:auto;overscroll-behavior:contain;list-style:none;scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+  .premium-branches__list>li{min-width:0}
+  .premium-branches__item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;padding:8px 4px;border:1px solid var(--line);border-radius:10px;background:var(--bg-2);color:var(--text);text-decoration:none;font-size:15px;line-height:1.5;scroll-margin:4px}
+  .premium-branches__item small{font-size:14px;font-weight:400;line-height:1.5;color:var(--gold)}
+  a.premium-branches__item{border-color:rgba(214,185,126,.45);transition:background .18s ease,border-color .18s ease}
+  a.premium-branches__item:hover{background:#1b2435;border-color:var(--gold)}
+  .premium-branches__item[aria-disabled="true"]{background:transparent;color:var(--text-3);cursor:default}
+  .premium-branches__item[aria-disabled="true"] small{color:var(--text-3)}
+  .premium-branches :focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
+}
+@keyframes premium-branches-open{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .premium-branches__panel{animation:none}
+  .premium-branches__toggle,.premium-branches__chevron,a.premium-branches__item{transition:none}
+}
+@media print{.premium-branches{display:none!important}}
