@@ -70,7 +70,7 @@
         const td = el('td', 'qa-col-title'); td.append(link(url({ p: r.slug }), r.question, 'qa-board-link'));
         const sub = el('span', 'qa-board-sub', [field(r), (r.meta && r.meta.audience_label) || '', fmt(date(r))].filter(Boolean).join(' · ')); td.append(sub);
         tr.append(td);
-        tr.append(el('td', 'qa-col-aud', (r.meta && r.meta.audience_label) || ''));
+        tr.append(el('td', 'qa-col-aud', (r.meta && r.meta.audience_label) || '전체'));
         const tdd = el('td', 'qa-col-date'); const t = el('time', '', fmt(date(r))); t.dateTime = date(r); tdd.append(t); tr.append(tdd);
         tb.append(tr);
       });
