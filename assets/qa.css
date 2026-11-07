@@ -86,3 +86,24 @@
 .qa-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .qa-search+.qa-hero{padding-top:24px}
 @media(max-width:600px){.qa-search{max-width:none;margin-top:20px}.qa-search+.qa-hero{padding-top:20px}}
+/* 2026-11-07 회원 전용 게시글형 목록 */
+.qa-gate{margin:24px 0 0;padding:48px 24px;border:1px solid var(--line);border-radius:16px;text-align:center;color:var(--text-2);font-size:16px;line-height:1.8}
+.qa-gate p{margin:0 0 20px}.qa-gate p:last-child{margin:0}
+.qa-board-top{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;font-size:14px;color:var(--text-3)}
+.qa-board-top p{margin:0}
+.qa-board{width:100%;border-collapse:collapse;border-top:2px solid var(--gold);font-size:15px}
+.qa-board th{padding:14px 12px;border-bottom:1px solid var(--line-2);color:var(--text-3);font-weight:500;font-size:14px;text-align:center;white-space:nowrap}
+.qa-board td{padding:16px 12px;border-bottom:1px solid var(--line);color:var(--text-2);text-align:center;vertical-align:middle}
+.qa-board tbody tr:hover{background:rgba(255,255,255,.035)}
+.qa-board .qa-col-no{width:64px;font-variant-numeric:tabular-nums;color:var(--text-3)}
+.qa-board .qa-col-field{width:110px;white-space:nowrap}
+.qa-board .qa-col-aud{width:120px;white-space:nowrap;font-size:14px}
+.qa-board .qa-col-date{width:110px;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:14px;color:var(--text-3)}
+.qa-board .qa-col-title{text-align:left}
+.qa-board th.qa-col-title{text-align:center}
+.qa-board-link{color:var(--text);text-decoration:none;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+.qa-board-link:hover{color:var(--gold-hi);text-decoration:underline}
+.qa-board-sub{display:none}
+.qa-pager a[aria-current="page"]{color:var(--gold-hi);font-weight:600}
+.qa-pager{gap:8px 16px}
+@media(max-width:700px){.qa-board thead,.qa-board .qa-col-no,.qa-board .qa-col-field,.qa-board .qa-col-aud,.qa-board .qa-col-date{display:none}.qa-board,.qa-board tbody,.qa-board tr,.qa-board td{display:block;width:auto}.qa-board td.qa-col-title{padding:16px 4px}.qa-board-link{font-size:16px}.qa-board-sub{display:block;margin-top:6px;font-size:14px;color:var(--text-3)}}
