@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#channel-symbol').textContent=ch.symbol;
     $('#channel-description').textContent=tag==='weekly'?'6개 채널에서 함께 읽을 만한 질문을 모았습니다. 모두 테스트용 창작 글입니다.':ch.description;
     $('#channel-write').href='write.html?channel='+key;
-    document.title=label+' 채널 | 보험은 지금';
+    document.title=label+' 채널 | 보험라이브';
     $('#channel-public-note').textContent='회사명은 그대로, 닉네임은 첫 글자만 표시해요. 실무·커리어 본문은 전체 공개, 댓글과 AI 참고 답변은 회원 화면에서 볼 수 있어요.';
     let sort=params.get('sort')==='best'?'popular':'latest';
     function render() {
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (page === 'post' || page === 'post-guest') {
     const p=selected, ch=channel(p.channel), guest=page==='post-guest';
-    document.title=p.title+' | 보험은 지금';
+    document.title=p.title+' | 보험라이브';
     $('.post-header h1').textContent=p.title;
     $('.post-author').textContent=company(p.company).name+' · '+p.nickname;
     const trail=$('.breadcrumb a:nth-of-type(2)');
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('[data-result-kind]').forEach(b=>{b.classList.toggle('active',b.dataset.resultKind===active);b.setAttribute('aria-pressed',String(b.dataset.resultKind===active));});
       $('#search-summary').textContent=(query?'“'+query+'”':'공개 콘텐츠')+' 검색 결과 '+counts[active]+'개';
       $('#search-empty').hidden=counts[active]>0;$('#search-end').hidden=counts[active]===0;
-      document.title=(query?query+' 검색':'검색')+' | 보험은 지금';
+      document.title=(query?query+' 검색':'검색')+' | 보험라이브';
       window.renderIcons($('#search-results'));
     }
     $('#content-search').addEventListener('submit',event=>{event.preventDefault();update();const url=new URL(location.href);url.searchParams.set('q',input.value.trim());url.searchParams.set('type',active);history.replaceState(null,'',url);});
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
     let text;
     while((text=walker.nextNode()))if(!['SCRIPT','STYLE'].includes(text.parentElement.tagName))text.data=text.data.replace(/삼성생명/g,selectedCompany.name);
-    document.title=(page==='company'?selectedCompany.name+' 보험사 리뷰':selectedCompany.name+' 키워드 모음')+' | 보험은 지금';
+    document.title=(page==='company'?selectedCompany.name+' 보험사 리뷰':selectedCompany.name+' 키워드 모음')+' | 보험라이브';
     document.querySelectorAll('a[href*="browse.html"]').forEach(a=>{const url=new URL(a.getAttribute('href'),location.href);url.searchParams.set('company',selectedCompany.id);a.href=url.pathname.split('/').pop()+url.search;});
     if(page==='company') {
       const hero=$('.company-hero');

@@ -1,6 +1,6 @@
-# 보험은 지금 · 1차 테스트 견본
+# 보험라이브 · 1차 테스트 견본
 
-주소: https://test.primeasset.info/bohumnow/
+주소: https://test.primeasset.info/bohumlive/
 
 기존 `mockup-v2/`의 12개 화면, 흰색·회색 구분선과 코랄 포인트, 모바일 목록·본문·댓글 순서를 유지한 클릭형 견본입니다. 프라임에셋 공통 메뉴나 스크립트를 사용하지 않습니다.
 
