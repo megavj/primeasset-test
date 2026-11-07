@@ -10,7 +10,7 @@
   const PER = 20;
   let rows = [];
   const hero = document.querySelector('main > .qa-hero');
-  const showHero = on => { if (hero) hero.hidden = !on; };
+  const showHero = on => { if (hero) hero.style.display = on ? '' : 'none'; };
 
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const link = (href, text, cls) => { const a = el('a', cls, text); a.href = href; return a; };
