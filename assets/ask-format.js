@@ -207,6 +207,21 @@
     }
   }
 
+  function trimBlockSpacing(root) {
+    const blocks = new Set(['p', 'ul', 'li']);
+    const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const remove = []; let node;
+    while ((node = walk.nextNode())) {
+      if (!/^[\s]*$/.test(node.data) || !/[\r\n]/.test(node.data)) continue;
+      const before = node.previousSibling, after = node.nextSibling;
+      if (blocks.has(node.parentNode.localName) || (before && blocks.has(before.localName)) || (after && blocks.has(after.localName))) {
+        if (before && after && !blocks.has(before.localName) && !blocks.has(after.localName) && node.parentNode.localName !== 'ul') node.data = ' ';
+        else remove.push(node);
+      }
+    }
+    remove.forEach(node => node.remove());
+  }
+
   function fragment(raw) {
     // The detached document has no browsing context; its template supplies an inert parse tree.
     const detached = document.implementation.createHTMLDocument('');
@@ -215,6 +230,7 @@
     template.innerHTML = withoutSourceAttributes(maskPlain(String(raw == null ? '' : raw)));
     const safe = document.createDocumentFragment();
     copySafe(template.content, safe);
+    trimBlockSpacing(safe);
     maskTree(safe);
     return safe;
   }
