@@ -9,6 +9,8 @@
   const FIELDS = ['전체', '약관', '판례', '분쟁사례', '보상', '사업방법서', '요약서', '상품·비교'];
   const PER = 20;
   let rows = [];
+  const hero = document.querySelector('main > .qa-hero');
+  const showHero = on => { if (hero) hero.hidden = !on; };
 
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const link = (href, text, cls) => { const a = el('a', cls, text); a.href = href; return a; };
@@ -34,6 +36,7 @@
   const plain = r => { const d = document.createElement('div'); d.append(clean(r.body_html)); return d.textContent; };
 
   function renderList(params) {
+    showHero(true);
     const f = FIELDS.includes(params.field) ? params.field : '전체';
     const q = (params.q || '').trim().toLowerCase();
     let list = rows.filter(r => f === '전체' || field(r) === f || (f === '상품·비교' && field(r) === '상품·비교'));
@@ -83,6 +86,7 @@
   }
 
   function renderPost(slug) {
+    showHero(false);
     const idx = rows.findIndex(r => r.slug === slug);
     if (idx < 0) { app.replaceChildren(el('p', 'qa-empty', '글을 찾을 수 없습니다.'), link('/qa/', '← 목록으로', 'qa-back')); return; }
     const r = rows[idx], m = r.meta || {};
