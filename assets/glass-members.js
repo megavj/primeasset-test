@@ -432,18 +432,18 @@
     const loadNotice = async () => {
       noticeBody.replaceChildren(N("보험자료를 불러오는 중…"));
       try {
-        const res = await fetch("/qa/_data/posts.json", { cache: "no-cache" });
-        if (!res.ok) throw new Error("posts " + res.status);
-        const records = await res.json();
-        if (!Array.isArray(records)) throw new Error("invalid_posts");
+        // 2026-11-07 보험자료 회원 전용: 공개 JSON 대신 승인 회원만 읽는 qa_member_posts에서 가져옴
+        const res = await sb.from("qa_member_posts").select("slug,question,meta");
+        if (res.error) throw res.error;
+        const records = (res.data || []).map(r => ({ slug: r.slug, question: r.question, date: r.meta && r.meta.date, datePublished: r.meta && r.meta.datePublished }));
         const recent = records.filter(x => x && x.slug && x.question)
           .sort((a, b) => (Date.parse(b.datePublished || b.date) || 0) - (Date.parse(a.datePublished || a.date) || 0)).slice(0, 3);
         if (!alive) return;
         noticeBody.replaceChildren(recent.length
           ? el("ul", { class: "pa-qa-new" }, ...recent.map(x => {
             const date = String(x.datePublished || x.date || "").slice(0, 10);
-            return el("li", {}, el("a", { href: "/qa/" + encodeURIComponent(x.slug) + "/" }, x.question), el("time", { datetime: date }, date ? "등록일 " + date.replace(/-/g, ".") : "등록일 미정"));
-          })) : el("p", { class: "pa-qa-empty" }, "등록된 보험자료가 없습니다."));
+            return el("li", {}, el("a", { href: "/qa/?p=" + encodeURIComponent(x.slug) }, x.question), el("time", { datetime: date }, date ? "등록일 " + date.replace(/-/g, ".") : "등록일 미정"));
+          })) : el("p", { class: "pa-qa-empty" }, p.status === "active" ? "등록된 보험자료가 없습니다." : "보험자료는 가입 승인 후 볼 수 있습니다."));
       } catch (e) {
         if (!alive) return;
         noticeBody.replaceChildren(N("보험자료를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요."), el("button", { class: "pa-text-button", type: "button", onclick: loadNotice }, "다시 시도"));
