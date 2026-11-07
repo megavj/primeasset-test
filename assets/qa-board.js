@@ -9,6 +9,8 @@
   const FIELDS = ['전체', '약관', '판례', '분쟁사례', '보상', '사업방법서', '요약서', '상품·비교'];
   const PER = 20;
   let rows = [];
+  let canDelete = false;
+  let sbRef = null, tokenRef = '';
   const hero = document.querySelector('main > .qa-hero');
   const showHero = on => { if (hero) hero.style.display = on ? '' : 'none'; };
 
@@ -60,17 +62,20 @@
       const table = el('table', 'qa-board');
       const cap = el('caption', 'qa-sr', '보험자료 게시글 목록'); table.append(cap);
       const thead = el('thead'); const hr = el('tr');
-      [['번호', 'qa-col-no'], ['분야', 'qa-col-field'], ['제목', 'qa-col-title'], ['등록일', 'qa-col-date']].forEach(([t, c]) => { const th = el('th', c, t); th.scope = 'col'; hr.append(th); });
+      [['분야', 'qa-col-field'], ['제목', 'qa-col-title'], ['등록일', 'qa-col-date']].concat(canDelete ? [['관리', 'qa-col-del']] : []).forEach(([t, c]) => { const th = el('th', c, t); th.scope = 'col'; hr.append(th); });
       thead.append(hr); table.append(thead);
       const tb = el('tbody');
       list.slice((page - 1) * PER, page * PER).forEach((r, i) => {
         const tr = el('tr');
-        tr.append(el('td', 'qa-col-no', String(list.length - ((page - 1) * PER + i))));
         tr.append(el('td', 'qa-col-field', field(r)));
         const td = el('td', 'qa-col-title'); td.append(link(url({ p: r.slug }), r.question, 'qa-board-link'));
         const sub = el('span', 'qa-board-sub', [field(r), fmt(date(r))].filter(Boolean).join(' · ')); td.append(sub);
         tr.append(td);
         const tdd = el('td', 'qa-col-date'); const t = el('time', '', fmt(date(r))); t.dateTime = date(r); tdd.append(t); tr.append(tdd);
+        if (canDelete) {
+          const tdx = el('td', 'qa-col-del'); const b = el('button', 'qa-del-btn', '삭제'); b.type = 'button';
+          b.addEventListener('click', () => removePost(r, b)); tdx.append(b); tr.append(tdx);
+        }
         tb.append(tr);
       });
       table.append(tb); frag.append(table);
@@ -123,6 +128,14 @@
     if (p.p) renderPost(p.p); else renderList(p);
   }
 
+  async function removePost(r, btn) {
+    if (!confirm('이 자료글을 삭제할까요?\n\n' + r.question + '\n\n삭제하면 다시 올라오지 않습니다.')) return;
+    btn.disabled = true; btn.textContent = '삭제 중';
+    const res = await sbRef.rpc('qa_delete_post', { p_slug: r.slug }).setHeader('Authorization', 'Bearer ' + tokenRef);
+    if (res.error) { btn.disabled = false; btn.textContent = '삭제'; alert('삭제하지 못했습니다. 관리자 계정으로 다시 로그인해 주세요.'); return; }
+    rows = rows.filter(x => x.slug !== r.slug); route();
+  }
+
   async function start() {
     let sb;
     try { sb = await window.paClient(); } catch (_) { gate('로그인 기능을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.'); return; }
@@ -133,6 +146,9 @@
     const profile = me.data && me.data[0];
     if (me.error || !profile) { gate('회원 정보를 확인하지 못했습니다. 다시 로그인해 주세요.', '/members/#login', '다시 로그인'); return; }
     if (profile.status !== 'active') { gate('보험자료는 가입 승인 후 볼 수 있습니다.', '/members/#home', '승인 상태 확인'); return; }
+    sbRef = sb; tokenRef = session.access_token;
+    const cd = await sb.rpc('qa_can_delete').setHeader('Authorization', 'Bearer ' + session.access_token);
+    canDelete = !cd.error && cd.data === true;
     const res = await sb.from('qa_member_posts').select('slug,question,body_html,meta,updated_at').setHeader('Authorization', 'Bearer ' + session.access_token);
     if (res.error) { gate('자료를 불러오지 못했습니다. 잠시 후 다시 열어 주세요.'); return; }
     rows = (res.data || []).filter(r => r.meta && r.meta.date).sort((a, b) => (date(b) + (b.meta.slot === 'pm' ? '2' : '1')).localeCompare(date(a) + (a.meta.slot === 'pm' ? '2' : '1')));
