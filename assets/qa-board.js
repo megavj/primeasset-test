@@ -60,7 +60,7 @@
       const table = el('table', 'qa-board');
       const cap = el('caption', 'qa-sr', '보험자료 게시글 목록'); table.append(cap);
       const thead = el('thead'); const hr = el('tr');
-      [['번호', 'qa-col-no'], ['분야', 'qa-col-field'], ['제목', 'qa-col-title'], ['대상', 'qa-col-aud'], ['등록일', 'qa-col-date']].forEach(([t, c]) => { const th = el('th', c, t); th.scope = 'col'; hr.append(th); });
+      [['번호', 'qa-col-no'], ['분야', 'qa-col-field'], ['제목', 'qa-col-title'], ['등록일', 'qa-col-date']].forEach(([t, c]) => { const th = el('th', c, t); th.scope = 'col'; hr.append(th); });
       thead.append(hr); table.append(thead);
       const tb = el('tbody');
       list.slice((page - 1) * PER, page * PER).forEach((r, i) => {
@@ -68,9 +68,8 @@
         tr.append(el('td', 'qa-col-no', String(list.length - ((page - 1) * PER + i))));
         tr.append(el('td', 'qa-col-field', field(r)));
         const td = el('td', 'qa-col-title'); td.append(link(url({ p: r.slug }), r.question, 'qa-board-link'));
-        const sub = el('span', 'qa-board-sub', [field(r), (r.meta && r.meta.audience_label) || '', fmt(date(r))].filter(Boolean).join(' · ')); td.append(sub);
+        const sub = el('span', 'qa-board-sub', [field(r), fmt(date(r))].filter(Boolean).join(' · ')); td.append(sub);
         tr.append(td);
-        tr.append(el('td', 'qa-col-aud', (r.meta && r.meta.audience_label) || '전체'));
         const tdd = el('td', 'qa-col-date'); const t = el('time', '', fmt(date(r))); t.dateTime = date(r); tdd.append(t); tr.append(tdd);
         tb.append(tr);
       });
@@ -93,7 +92,7 @@
     const art = el('article', 'qa-article'); art.id = 'qa-article';
     art.append(link('/qa/', '← 보험자료 목록', 'qa-back'));
     const hd = el('header', 'qa-hero');
-    hd.append(el('p', 'qa-eyebrow', '보험자료' + (m.audience_label ? ' · ' + m.audience_label : '')));
+    hd.append(el('p', 'qa-eyebrow', '보험자료'));
     hd.append(el('h1', '', r.question));
     const meta = el('div', 'qa-meta'); meta.append(el('span', 'qa-field', field(r))); const t = el('time', '', fmt(date(r))); t.dateTime = date(r); meta.append(t); hd.append(meta);
     art.append(hd);

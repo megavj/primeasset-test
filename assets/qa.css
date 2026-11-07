@@ -97,7 +97,6 @@
 .qa-board tbody tr:hover{background:rgba(255,255,255,.035)}
 .qa-board .qa-col-no{width:64px;font-variant-numeric:tabular-nums;color:var(--text-3)}
 .qa-board .qa-col-field{width:110px;white-space:nowrap}
-.qa-board .qa-col-aud{width:120px;white-space:nowrap;font-size:14px}
 .qa-board .qa-col-date{width:110px;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:14px;color:var(--text-3)}
 .qa-board .qa-col-title{text-align:left}
 .qa-board th.qa-col-title{text-align:center}
@@ -106,4 +105,4 @@
 .qa-board-sub{display:none}
 .qa-pager a[aria-current="page"]{color:var(--gold-hi);font-weight:600}
 .qa-pager{gap:8px 16px}
-@media(max-width:700px){.qa-board thead,.qa-board .qa-col-no,.qa-board .qa-col-field,.qa-board .qa-col-aud,.qa-board .qa-col-date{display:none}.qa-board,.qa-board tbody,.qa-board tr,.qa-board td{display:block;width:auto}.qa-board td.qa-col-title{padding:16px 4px}.qa-board-link{font-size:16px}.qa-board-sub{display:block;margin-top:6px;font-size:14px;color:var(--text-3)}}
+@media(max-width:700px){.qa-board thead,.qa-board .qa-col-no,.qa-board .qa-col-field,.qa-board .qa-col-date{display:none}.qa-board,.qa-board tbody,.qa-board tr,.qa-board td{display:block;width:auto}.qa-board td.qa-col-title{padding:16px 4px}.qa-board-link{font-size:16px}.qa-board-sub{display:block;margin-top:6px;font-size:14px;color:var(--text-3)}}
