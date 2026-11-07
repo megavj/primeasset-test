@@ -7,6 +7,9 @@
   const { el, note, button, card, metrics, count, duration, date } = U;
   let context = null;
   const mask = value => window.PA_ASK.maskResidentId(value);
+  const answerPlain = value => window.PA_ASK_FORMAT.text(value || '');
+  const answerBody = value => { const body = el('div', { class: 'pa-answer-rich' }); body.append(window.PA_ASK_FORMAT.fragment(value || '저장된 답변 없음')); return body; };
+
   const timeText = value => value == null || value === '' || !Number.isFinite(Number(value)) ? '기록 없음' : duration(value);
   const safeLink = value => { try { const u = new URL(value); return /^https?:$/.test(u.protocol) ? u.href : null; } catch (_) { return null; } };
   const knownCount = value => value == null || value === '' || !Number.isFinite(Number(value)) ? '집계 없음' : count(value) + '건';
@@ -141,14 +144,20 @@
     function render(result) {
       const sources = Array.isArray(result.sources) ? result.sources : [];
       const refs = sources.map((source, i) => `${i + 1}. ${source.title || '참고 자료'}${source.page ? ' · ' + source.page + '쪽' : ''}${safeLink(source.url) ? '\n' + safeLink(source.url) : ''}`).join('\n');
-      detail.replaceChildren(el('h4', {}, '저장된 답변'), el('div', { class: 'ask-profile-answer-text' }, mask(result.answer || '저장된 답변 내용이 없습니다.')),
+      detail.replaceChildren(el('h4', {}, '저장된 답변'), answerBody(result.answer),
         el('h4', {}, '근거 자료 (' + sources.length + ')'), sources.length ? el('ol', { class: 'ask-profile-sources' }, sources.map(source => {
           const title = mask((source.title || '참고 자료') + (source.page ? ' · ' + source.page + '쪽' : ''));
           const url = safeLink(source.url);
           return el('li', {}, url ? el('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, title + ' · 새 창 ↗') : title);
         })) : note('저장된 근거 자료가 없습니다.'),
-        el('div', { class: 'ask-account-actions' }, button('근거 포함 복사', () => copyText((result.answer || '') + '\n\n근거 자료\n' + (refs || '근거 자료 없음'), status, ctx))),
+        el('div', { class: 'ask-account-actions' }, button('근거 포함 복사', () => copyText(answerPlain(result.answer) + '\n\n근거 자료\n' + (refs || '근거 자료 없음'), status, ctx))),
         note('저장된 답변 조회 · 새 질문 횟수 차감 없음. 내용은 원문과 함께 확인해 주세요.'));
+      if (result.deep && result.deep.status) {
+        const d = result.deep;
+        detail.append(el('h4', {}, '더 깊게 다시 답변'), d.status === 'done' ? answerBody(d.answer) : note(d.status === 'error' ? '다시 답변을 만들지 못했습니다' : '더 깊게 다시 답변하고 있습니다(1~3분)'));
+        if (d.status === 'done') detail.append(note('위 첫 답변과 같은 근거 자료를 사용했습니다.'), button('다시 답변 복사', () => copyText(answerPlain(d.answer), status, ctx)));
+      }
+
     }
     async function load(copyOnly) {
       if (loading) return;
@@ -158,7 +167,7 @@
       loading = true; open.disabled = true; if (copy) copy.disabled = true; status.textContent = '저장된 결과를 확인하는 중…';
       try {
         await ctx.verify();
-        if (!cached) {
+        if (!cached || (cached.deep && ['queued', 'writing'].includes(cached.deep.status))) {
           // Read-only path: never submit a new question or call askAnswer here.
           const response = await ctx.client.request('askStatus', { id: item.id });
           ctx.check();
@@ -169,13 +178,13 @@
               : '아직 처리 중입니다. 잠시 후 다시 확인해 주세요. 새 질문 횟수 차감 없음.';
             return;
           }
-          cached = response.result || response;
+          cached = Object.assign({}, response.result || response, { deep: response.deep });
           item.status = 'done'; item.noEvidence = typeof cached.noEvidence === 'boolean' ? cached.noEvidence : null;
           heading.textContent = date(item.createdAt) + ' · ' + mask(item.category || '미분류') + ' · ' + resultLabel(item);
           render(cached);
         }
         ctx.check();
-        if (copyOnly) await copyText(cached.answer || '', status, ctx);
+        if (copyOnly) await copyText(answerPlain(cached.answer), status, ctx);
         else { detail.hidden = false; open.textContent = '답변 접기'; open.setAttribute('aria-expanded', 'true'); status.textContent = '저장된 답변을 열었습니다. 새 질문 횟수 차감 없음.'; }
       } catch (error) {
         if (!accessError(ctx, error)) status.textContent = mask(error.message && /[가-힣]/.test(error.message) ? error.message : '저장된 답변을 불러오지 못했습니다. 다시 확인해 주세요.');

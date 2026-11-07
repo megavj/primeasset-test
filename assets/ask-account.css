@@ -95,3 +95,10 @@ body.ask-account .ask-admin-pricing summary { cursor:pointer; min-height:44px; p
   body.ask-account .ask-admin-filters>* { width:100%; }
   body.ask-account .ask-admin-question-details { grid-template-columns:minmax(0,1fr); }
 }
+
+/* IM: shared safe rich answer in saved-answer views. */
+.pa-answer-rich{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8;color:#1c3049}
+.pa-answer-rich :is(b,strong){font-weight:750}
+.pa-answer-rich :is(.pa-hl-key,.pa-hl-warning){background:none;padding:0;font-weight:750}
+.pa-answer-rich .pa-hl-key{color:#164f88}.pa-answer-rich .pa-hl-warning{color:#9b410b}
+.pa-answer-rich p{margin:.6em 0}.pa-answer-rich ul{margin:.6em 0;padding-left:1.4em}

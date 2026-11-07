@@ -93,3 +93,15 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
 .g-members .pa-aiqa-home .pa-work-link b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .g-members .pa-aiqa-home .pa-tool-purpose { margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 @media (max-width:760px) { .g-members .pa-aiqa-home .pa-work-link b { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; } }
+
+/* IM: safe answer emphasis and a separate deeper answer. */
+.pa-ask-answer-text :is(b,strong){font-weight:750;color:inherit}
+.pa-ask-answer-text :is(.pa-hl-key,.pa-hl-warning){background:none;font-weight:750;padding:0}
+.pa-ask-answer-text .pa-hl-key{color:#164f88}
+.pa-ask-answer-text .pa-hl-warning{color:#9b410b}
+.pa-ask-answer-text p{margin:.6em 0}
+.pa-ask-answer-text ul{margin:.6em 0;padding-left:1.4em}
+.pa-ask-deep{margin-top:24px;padding:20px;border:1px solid #bed2e8;border-radius:12px;background:#f7faff}
+.pa-ask-deep>h4{margin:0 0 14px;color:#164f88;font-size:1.15rem}
+.pa-ask-deep-status{color:#164f88;font-weight:600;line-height:1.7}
+@media(max-width:700px){.pa-ask-deep{padding:14px}}

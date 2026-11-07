@@ -5,6 +5,9 @@
   if (!root || !U) return;
   const { el, note, button, card, count, duration, date, table } = U;
   const mask = value => window.PA_ASK.maskResidentId(value);
+  const answerPlain = value => window.PA_ASK_FORMAT.text(value || '');
+  const answerBody = value => { const body = el('div', { class: 'pa-answer-rich' }); body.append(window.PA_ASK_FORMAT.fragment(value || '저장된 답변 없음')); return body; };
+
   const periods = { today: '오늘', week: '최근 7일', month: '이번 달', '30': '최근 30일', custom: '직접 기간', all: '전체' };
   const results = { pending: '처리 중', completed: '답변 완료', no_evidence: '자료 없음', failed: '처리 실패', unknown: '판정 미확인' };
   const lengths = { short: '짧게', normal: '보통', long: '자세히' };
@@ -265,15 +268,16 @@
     const details = [['실제 모델', item.actualModel || item.model || '기록 없음'], ['선택 모델', item.selectedModel || '기록 없음'], ['모델 전환', item.fallbackUsed === true ? '대체 모델 사용' : item.fallbackUsed === false ? '전환 없음' : '기록 없음'], ['추론 설정', item.reasoningEffort || '기록 없음'], ['답변 길이', lengths[item.length] || '기록 없음'], ['API 호출 수', token(item.apiCalls)], ['입력 토큰', token(item.inputTokens)], ['출력 토큰', token(item.outputTokens)], ['단가 확인일', pricing.checkedAt || '기록 없음'], ['적용 환율', numeric(pricing.exchangeRateKrwPerUsd) ? count(pricing.exchangeRateKrwPerUsd) + '원 / USD' : '기록 없음']];
     const attempts = Array.isArray(item.usageDetails) ? item.usageDetails : [];
     const dl = pairs => el('dl', { class: 'ask-admin-question-details' }, pairs.map(([key, value]) => el('div', {}, el('dt', {}, key), el('dd', {}, value))));
-    detailBody.replaceChildren(note('저장된 기록 조회입니다. 새 질문 횟수 차감이나 답변 생성은 없습니다.'), dl(meta),
+    detailBody.replaceChildren(...[note('저장된 기록 조회입니다. 새 질문 횟수 차감이나 답변 생성은 없습니다.'), dl(meta),
       el('h3', {}, '질문'), el('p', { class: 'ask-admin-fulltext' }, mask(item.question || '질문 기록 없음')), button('질문 복사', () => copyText(item.question || '', report)),
-      el('h3', {}, '저장된 답변'), el('div', { class: 'ask-admin-fulltext' }, mask(answer || '저장된 답변 없음')),
-      answer ? el('div', { class: 'ask-account-actions' }, button('답변 복사', () => copyText(answer, report)), button('근거 포함 복사', () => copyText(answer + (sources.length ? '\n\n근거 자료\n' + sourceText(sources) : ''), report))) : null,
+      el('h3', {}, '저장된 답변'), answerBody(answer),
+      answer ? el('div', { class: 'ask-account-actions' }, button('답변 복사', () => copyText(answerPlain(answer), report)), button('근거 포함 복사', () => copyText(answerPlain(answer) + (sources.length ? '\n\n근거 자료\n' + sourceText(sources) : ''), report))) : null,
       el('h3', {}, '근거 자료'), sources.length ? el('ol', { class: 'ask-admin-sources' }, sources.map(source => { const link = safeLink(source.url); return el('li', {}, el('strong', {}, mask(source.title || '자료명 기록 없음')), source.page ? el('p', {}, mask(source.page) + '쪽') : null, link ? el('a', { href: link, target: '_blank', rel: 'noopener noreferrer' }, '원문 열기 · 새 창') : note('원문 연결 없음')); })) : note('저장된 근거 없음'),
+      item.deep && item.deep.status === 'done' ? el('section', {}, el('h3', {}, '더 깊게 다시 답변'), answerBody(item.deep.answer), note('첫 답변과 같은 근거 자료를 사용했습니다.'), button('다시 답변 복사', () => copyText(answerPlain(item.deep.answer), report))) : null,
       item.error ? el('section', {}, el('h3', {}, '처리 실패 기록'), note(mask(item.error))) : null,
       el('details', { class: 'ask-admin-table-toggle' }, el('summary', {}, '계산 상세 · 모델·토큰·단가'), dl(details),
         attempts.length ? table(['시도 모델', '입력', '출력', '캐시 읽기', '캐시 쓰기', '쓰기 5분', '쓰기 1시간'], attempts.map(a => [a.actualModel || a.model || '기록 없음', token(a.inputTokens), token(a.outputTokens), token(a.cachedInputTokens == null ? a.cacheReadInputTokens : a.cachedInputTokens), token(a.cacheCreationInputTokens), token(a.cacheCreation5mInputTokens), token(a.cacheCreation1hInputTokens)])) : note('시도별 사용량 기록 없음'),
-        el('h3', {}, '적용 단가 (USD / 100만 토큰)'), table(['모델', '입력', '출력', '캐시 읽기', '캐시 쓰기 5분', '캐시 쓰기 1시간'], Object.entries(pricing.models || {}).filter(([model]) => model === item.model || model === item.actualModel || attempts.some(a => model === a.model || model.endsWith(':' + a.model))).map(([model, rate]) => [model, money(rate.inputUsdPerMillion, 'USD'), money(rate.outputUsdPerMillion, 'USD'), money(rate.cachedInputUsdPerMillion, 'USD'), money(rate.cacheWrite5mUsdPerMillion, 'USD'), money(rate.cacheWrite1hUsdPerMillion, 'USD')]), '이 모델에 확인된 단가 기록이 없습니다.')), report);
+        el('h3', {}, '적용 단가 (USD / 100만 토큰)'), table(['모델', '입력', '출력', '캐시 읽기', '캐시 쓰기 5분', '캐시 쓰기 1시간'], Object.entries(pricing.models || {}).filter(([model]) => model === item.model || model === item.actualModel || attempts.some(a => model === a.model || model.endsWith(':' + a.model))).map(([model, rate]) => [model, money(rate.inputUsdPerMillion, 'USD'), money(rate.outputUsdPerMillion, 'USD'), money(rate.cachedInputUsdPerMillion, 'USD'), money(rate.cacheWrite5mUsdPerMillion, 'USD'), money(rate.cacheWrite1hUsdPerMillion, 'USD')]), '이 모델에 확인된 단가 기록이 없습니다.')), report].filter(value => value != null));
   }
   async function openDetail(id, opener) {
     detailReturn = opener; detailScroll = window.scrollY; const ticket = ++detailSequence, currentSnapshot = snapshot.id;
