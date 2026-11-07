@@ -1,6 +1,7 @@
 {
   "version": 1,
   "files": [
+    "assets/qa-search.js",
     "assets/qa.css",
     "qa/2026-11-01-premium-waiver-overdue-payments/index.html",
     "qa/2026-11-02-insurance-dispute-policy-issues/index.html",

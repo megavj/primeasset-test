@@ -75,3 +75,14 @@
 @media print{.g-qa .g-nav,.qa-audience,.qa-post-nav,.qa-all-link,.g-qa .g-foot{display:none!important}.g-qa main{max-width:none;padding:0}.qa-article{max-width:none}.qa-summary,.qa-practice li{break-inside:avoid}}
 
 .qa-member-note{color:#e8c77a;font-size:.9rem;margin:0 0 1rem;padding:.6rem .8rem;border:1px solid rgba(232,199,122,.35);border-radius:10px}
+
+/* 2026-11-07 게시글 검색(맨 위 작게) */
+.qa-search{display:flex;gap:6px;max-width:320px;margin:28px 0 0 auto}
+.qa-search[hidden]{display:none}
+.qa-search input{flex:1;min-width:0;height:40px;padding:0 14px;border:1px solid var(--line-2);border-radius:999px;background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-size:14px}
+.qa-search input::placeholder{color:var(--text-3)}
+.qa-search input:focus{outline:none;border-color:var(--gold)}
+.qa-search button{height:40px;padding:0 16px;border:1px solid var(--gold);border-radius:999px;background:var(--gold-soft);color:var(--gold-hi);font:inherit;font-size:14px;cursor:pointer}
+.qa-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.qa-search+.qa-hero{padding-top:24px}
+@media(max-width:600px){.qa-search{max-width:none;margin-top:20px}.qa-search+.qa-hero{padding-top:20px}}
