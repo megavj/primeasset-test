@@ -6,7 +6,16 @@
     <description>보험설계사를 위한 매일 질문과 답변</description>
     <language>ko-kr</language>
     <atom:link href="https://test.primeasset.info/qa/feed.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Fri, 06 Nov 2026 09:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 07 Nov 2026 09:00:00 +0900</lastBuildDate>
+    <item>
+      <title>보험료 납입최고를 못 받았다고 하면 보험계약 해지는 무효가 되나요?</title>
+      <link>https://test.primeasset.info/qa/2026-11-07-premium-notice-not-received-contract-termination/</link>
+      <guid isPermaLink="true">https://test.primeasset.info/qa/2026-11-07-premium-notice-not-received-contract-termination/</guid>
+      <pubDate>Sat, 07 Nov 2026 09:00:00 +0900</pubDate>
+      <category>분쟁사례</category>
+      <category domain="audience">경력 설계사용</category>
+      <description>[경력 설계사용] 납입최고를 받지 못했다는 주장만으로 보험계약 해지가 곧바로 무효가 되지는 않습니다. 계약자가 주소변경을 알리지 않았다면 변경 전 주소로 보낸 최고장도 도달한 것으로 볼 수 있다는 판단이 있었습니다. 전자문서 최고는 약관에 근거가 있고 수신·열람 사실이 증명서로 확인되면 해지가 부당하다고 보기 어렵다고 안내되었습니다.</description>
+    </item>
     <item>
       <title>계약 전 알릴 의무, 청약서 질문사항은 모두 중요한 사항으로 보나요?</title>
       <link>https://test.primeasset.info/qa/2026-11-06-written-questions-presumed-material-disclosure-duty/</link>
