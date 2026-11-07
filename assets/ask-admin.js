@@ -149,8 +149,7 @@
       el('details', { class: 'ask-admin-table-toggle' }, el('summary', {}, '표로 보기'), table(isCost ? ['날짜', '예상 비용', '비용 상태·제외'] : ['날짜', '질문 수'], days.map(row => isCost ? [row.day, costLabel({ cost: row.cost || {} }), (row.cost && numeric(row.cost.usd) ? money(row.cost.usd, 'USD') + ' · ' : '') + '제외 ' + count(row.cost && row.cost.excludedQuestions) + '건'] : [row.day, count(row.count) + '건']))));
     return card('질문과 비용 추이', el('div', { class: 'ask-account-split' }, dayBlock('일별 질문 수', false), dayBlock('일별 예상 비용', true)),
       el('section', {}, el('h3', {}, '분야별 질문'), categories.length ? categoryBars : note('조건에 맞는 질문 없음'), el('details', { class: 'ask-admin-table-toggle' }, el('summary', {}, '표로 보기'), table(['분야', '질문 수'], categories.map(row => [mask(row.category || '기타'), count(row.count) + '건'])))),
-      note(numeric(stats.avgResponseMs) && Number(stats.responseSampleCount) > 0 ? '완료 중 응답 시간이 기록된 ' + count(stats.responseSampleCount) + '건 평균 ' + duration(stats.avgResponseMs) + ' · 서버 처리 기록 기준' : '평균 응답 시간: 집계 없음'),
-      note('도움 됨 ' + count(feedback.up) + '건 / 평가 ' + count(feedback.total == null ? Number(feedback.up || 0) + Number(feedback.down || 0) : feedback.total) + '건 · 평가하지 않은 질문은 비율에서 제외합니다.'));
+      note(numeric(stats.avgResponseMs) && Number(stats.responseSampleCount) > 0 ? '완료 중 응답 시간이 기록된 ' + count(stats.responseSampleCount) + '건 평균 ' + duration(stats.avgResponseMs) + ' · 서버 처리 기록 기준' : '평균 응답 시간: 집계 없음'));
   }
   function pager(current, totalPages, onChange, label) {
     const prev = button('이전', () => onChange(current - 1)), next = button('다음', () => onChange(current + 1)); prev.disabled = current <= 1; next.disabled = current >= totalPages;
@@ -273,7 +272,7 @@
       el('h3', {}, '저장된 답변'), answerBody(answer),
       answer ? el('div', { class: 'ask-account-actions' }, button('답변 복사', () => copyText(answerPlain(answer), report)), button('근거 포함 복사', () => copyText(answerPlain(answer) + (sources.length ? '\n\n근거 자료\n' + sourceText(sources) : ''), report))) : null,
       el('h3', {}, '근거 자료'), sources.length ? el('ol', { class: 'ask-admin-sources' }, sources.map(source => { const link = safeLink(source.url); return el('li', {}, el('strong', {}, mask(source.title || '자료명 기록 없음')), source.page ? el('p', {}, mask(source.page) + '쪽') : null, link ? el('a', { href: link, target: '_blank', rel: 'noopener noreferrer' }, '원문 열기 · 새 창') : note('원문 연결 없음')); })) : note('저장된 근거 없음'),
-      item.deep && item.deep.status === 'done' ? el('section', {}, el('h3', {}, '더 깊게 다시 답변'), answerBody(item.deep.answer), note('첫 답변과 같은 근거 자료를 사용했습니다.'), button('다시 답변 복사', () => copyText(answerPlain(item.deep.answer), report))) : null,
+      false && item.deep && item.deep.status === 'done' ? el('section', {}, el('h3', {}, '더 깊게 다시 답변'), answerBody(item.deep.answer), note('첫 답변과 같은 근거 자료를 사용했습니다.'), button('다시 답변 복사', () => copyText(answerPlain(item.deep.answer), report))) : null,
       item.error ? el('section', {}, el('h3', {}, '처리 실패 기록'), note(mask(item.error))) : null,
       el('details', { class: 'ask-admin-table-toggle' }, el('summary', {}, '계산 상세 · 모델·토큰·단가'), dl(details),
         attempts.length ? table(['시도 모델', '입력', '출력', '캐시 읽기', '캐시 쓰기', '쓰기 5분', '쓰기 1시간'], attempts.map(a => [a.actualModel || a.model || '기록 없음', token(a.inputTokens), token(a.outputTokens), token(a.cachedInputTokens == null ? a.cacheReadInputTokens : a.cachedInputTokens), token(a.cacheCreationInputTokens), token(a.cacheCreation5mInputTokens), token(a.cacheCreation1hInputTokens)])) : note('시도별 사용량 기록 없음'),

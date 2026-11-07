@@ -152,7 +152,7 @@
         })) : note('저장된 근거 자료가 없습니다.'),
         el('div', { class: 'ask-account-actions' }, button('근거 포함 복사', () => copyText(answerPlain(result.answer) + '\n\n근거 자료\n' + (refs || '근거 자료 없음'), status, ctx))),
         note('저장된 답변 조회 · 새 질문 횟수 차감 없음. 내용은 원문과 함께 확인해 주세요.'));
-      if (result.deep && result.deep.status) {
+      if (false && result.deep && result.deep.status) {  // 2026-11-07 다시답변 화면 제거
         const d = result.deep;
         detail.append(el('h4', {}, '더 깊게 다시 답변'), d.status === 'done' ? answerBody(d.answer) : note(d.status === 'error' ? '다시 답변을 만들지 못했습니다' : '더 깊게 다시 답변하고 있습니다(1~3분)'));
         if (d.status === 'done') detail.append(note('위 첫 답변과 같은 근거 자료를 사용했습니다.'), button('다시 답변 복사', () => copyText(answerPlain(d.answer), status, ctx)));
@@ -191,7 +191,7 @@
       } finally { loading = false; open.disabled = false; if (copy) copy.disabled = false; }
     }
     return el('li', {}, heading, el('p', {}, mask(item.question || '질문 내용 없음')),
-      el('small', {}, '응답 시간 ' + timeText(item.elapsedMs) + (item.feedback === 'up' ? ' · 도움 됨' : item.feedback === 'down' ? ' · 아쉬움' : '')),
+      el('small', {}, '응답 시간 ' + timeText(item.elapsedMs)),
       el('div', { class: 'ask-account-actions' }, open, copy), status, detail);
   }
   async function loadStats(ctx, container) {
@@ -216,7 +216,6 @@
         note(samples == null ? '응답 시간 표본 수를 확인하지 못했습니다.' : '완료 중 응답 시간이 기록된 ' + count(samples) + '건 기준'),
         metrics([['처리 중', knownCount(results.processing)], ['답변 완료', knownCount(results.answered)], ['자료 없음', knownCount(results.noEvidence)], ['처리 실패', knownCount(results.failed)]]),
         note('답변 완료는 정답을 보장하지 않습니다.' + (Number(results.unknown) > 0 ? ' 자료 여부 미확인 ' + count(results.unknown) + '건은 별도로 보관합니다.' : '')),
-        el('h3', {}, '답변 평가'), note(feedback.total == null ? '평가 집계 없음' : '도움 됨 ' + count(feedback.up) + '건 / 평가 ' + count(feedback.total) + '건 · 평가한 질문만의 결과입니다.'),
         el('h3', {}, '분야별 질문'), U.categoryTable(stats));
       container.replaceChildren(
         el('section', { class: 'ask-profile-quota', 'aria-label': '오늘 질문 한도' },
