@@ -240,6 +240,8 @@
       root.removeAttribute('aria-busy'); root.classList.add('ask-account-stack');
       root.replaceChildren(profileCard(context), card('내 AI 질문 기록', body));
       loadStats(context, body);
+      // TASK-ART: 작성글모음에서 보관한 글(내 글 보관함). 쓸 수 없는 등급이고 보관한 글도 없으면 칸이 스스로 숨는다.
+      if (window.PA_ART_LOCKER && context.profile.status === 'active') root.append(window.PA_ART_LOCKER.mount(context));
     } catch (error) { U.gate(root, '내 정보를 불러오지 못했습니다', error.message || '연결을 확인한 뒤 다시 시도해 주세요.', boot); }
   }
   boot();
