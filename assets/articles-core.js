@@ -8,7 +8,9 @@
   const STORE = 'https://ztypllzgjivutzorhayz.supabase.co/storage/v1/object/public/articles/';
   const TAGS = new Set(['P', 'H2', 'H3', 'H4', 'UL', 'OL', 'LI', 'STRONG', 'B', 'EM', 'I', 'U', 'BR', 'HR', 'BLOCKQUOTE', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD', 'CAPTION', 'FIGURE', 'FIGCAPTION', 'IMG', 'A', 'SMALL', 'SPAN', 'MARK']);
   const DROP = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT', 'SVG', 'MATH', 'FORM', 'INPUT', 'BUTTON', 'TEXTAREA', 'SELECT', 'LINK', 'META']);
-  const ATTRS = { IMG: ['src', 'alt', 'width', 'height'], A: ['href'], TH: ['colspan', 'rowspan', 'scope'], TD: ['colspan', 'rowspan'] };
+  const ATTRS = { IMG: ['src', 'alt', 'width', 'height'], A: ['href'], TH: ['colspan', 'rowspan', 'scope'], TD: ['colspan', 'rowspan'], P: ['class'], SPAN: ['class'] };
+  // 글 속 표시: warn = 금소법 경고문구(빨간 글자, 원문 그대로) · legal = 필수안내사항 · slot = 설계사가 채울 자리 · ai = AI 사용 표시
+  const MARKS = ['warn', 'legal', 'slot', 'ai'];
   const safeHref = v => { try { const u = new URL(v, location.href); return /^https?:$/.test(u.protocol) ? u.href : null; } catch (_) { return null; } };
   const safeImg = v => typeof v === 'string' && v.startsWith(STORE) && !/[\s"'<>]/.test(v) ? v : null;
 
@@ -38,6 +40,7 @@
           if (a === 'src') v = safeImg(v);
           if ((a === 'width' || a === 'height' || a === 'colspan' || a === 'rowspan') && !/^\d{1,4}$/.test(v)) v = null;
           if (a === 'scope' && !/^(row|col)$/.test(v)) v = null;
+          if (a === 'class') v = MARKS.includes(String(v).trim()) ? String(v).trim() : null;
           if (v != null) e.setAttribute(a, a === 'alt' ? v.slice(0, 300) : v);
         });
         if (n.tagName === 'IMG' && !e.getAttribute('src')) return; // 우리 저장소가 아닌 그림은 버림
@@ -53,6 +56,12 @@
     body.append(sanitize(article.body_html));
     body.querySelectorAll('img').forEach(img => { img.loading = 'lazy'; img.decoding = 'async'; });
     body.querySelectorAll('table').forEach(t => { const wrap = el('div', { class: 'art-table-wrap', tabindex: '0', role: 'region', 'aria-label': '표 · 좌우로 밀어 볼 수 있습니다' }); t.replaceWith(wrap); wrap.append(t); });
+    // 필수안내사항 줄들을 상자 하나로
+    body.querySelectorAll('p.legal').forEach(p => {
+      const prev = p.previousElementSibling;
+      if (prev && prev.classList.contains('art-legal')) { prev.append(p); return; }
+      const box = el('div', { class: 'art-legal', role: 'note', 'aria-label': '필수안내사항' }); p.replaceWith(box); box.append(p);
+    });
     return body;
   }
 
@@ -71,16 +80,25 @@
       if (t === 'table') return `<table style="border-collapse:collapse;width:100%">${kids}</table>`;
       if (t === 'th' || t === 'td') return `<${t}${n.getAttribute('scope') ? ` scope="${esc(n.getAttribute('scope'))}"` : ''}${n.getAttribute('colspan') ? ` colspan="${n.getAttribute('colspan')}"` : ''} style="border:1px solid #cccccc;padding:8px;text-align:left${t === 'th' ? ';background-color:#f2f4f6' : ''}">${kids}</${t}>`;
       if (t === 'a') return `<a href="${esc(n.getAttribute('href'))}" target="_blank" rel="noopener">${kids}</a>`;
+      if (t === 'p' && n.className === 'warn') return `<p style="color:#d0021b;font-weight:600">${kids}</p>`;
+      if (t === 'p' && n.className === 'slot') return `<p style="background-color:#fff6d6;border:1px dashed #c9a227;padding:8px 10px">${kids}</p>`;
+      if (t === 'p' && n.className === 'ai') return `<p><small>${kids}</small></p>`;
       const attrs = ['colspan', 'rowspan', 'scope'].filter(a => n.getAttribute(a)).map(a => ` ${a}="${esc(n.getAttribute(a))}"`).join('');
       return `<${t}${attrs}>${kids}</${t}>`;
     };
-    [...frag.childNodes].forEach(n => { const s = ser(n, 0).trim(); if (s) lines.push(s); });
+    let legal = [];
+    const flush = () => { if (legal.length) { lines.push(`<div style="border:1px solid #999999;padding:12px 14px;font-size:13px;line-height:1.7;margin-top:16px">${legal.join('<br>\n')}</div>`); legal = []; } };
+    [...frag.childNodes].forEach(n => {
+      if (n.nodeType === 1 && n.tagName === 'P' && n.className === 'legal') { legal.push([...n.childNodes].map(c => ser(c, 1)).join('')); return; }
+      flush(); const s = ser(n, 0).trim(); if (s) lines.push(s);
+    });
+    flush();
     return lines.join('\n');
   }
   // 네이버 블로그 편집기(스마트에디터 ONE)용 — 근거: evidence/research-naver-paste.md 7-1
   // 인라인 style만 · 문단 하나 = <p> 하나 · 글자 조각은 겹치지 않고 나란히(<b><span>) · 소제목은 굵은 24/19px 문단 ·
   // 목록은 '• '·'1) ' 글자 문단 · 표는 border="1"+칸마다 테두리 · 요약 상자는 1칸 표 · 그림은 단독 문단 + '▲ 설명' 줄 · 끝은 빈 문단
-  const NV = { body: 16, small: 13, h2: 24, h3: 19, table: 15, color: '#222222', head: '#111111', link: '#0b57d0', cap: '#888888', line: '#cccccc', headBg: '#f2f4f6', boxBg: '#faf7ec', boxLine: '#e6d9a8' };
+  const NV = { body: 16, small: 13, h2: 24, h3: 19, table: 15, warn: '#d0021b', color: '#222222', head: '#111111', link: '#0b57d0', cap: '#888888', line: '#cccccc', headBg: '#f2f4f6', boxBg: '#faf7ec', boxLine: '#e6d9a8' };
   const span = (text, size, color, extra) => `<span style="font-size:${size}px;color:${color};${extra || ''}">${esc(text)}</span>`;
   // 문장 안의 굵게·링크·형광펜을 '나란한 조각'으로 편다
   function runs(node, size, color, acc = [], st = {}) {
@@ -114,11 +132,19 @@
   const P = html => `<p>${html}</p>`, BLANK = '<p><br></p>';
   function naverHtml(article) {
     const frag = sanitize(article.body_html), out = [];
+    let legal = [];
+    // 필수안내사항 줄들은 테두리 상자 하나(1칸 표)로 묶는다 — 네이버에서 테두리가 살아남는 형식
+    const flushLegal = () => { if (!legal.length) return; out.push(BLANK, `<table border="1" cellpadding="12" cellspacing="0" width="100%" style="border-collapse:collapse;width:100%;border:1px solid #999999;"><tbody><tr><td style="border:1px solid #999999;padding:12px;">${legal.join('<br>')}</td></tr></tbody></table>`); legal = []; };
     const cell = (n, head) => `<td${head ? ` bgcolor="${NV.headBg}"` : ''} style="border:1px solid ${NV.line};padding:8px;${head ? `background-color:${NV.headBg};` : ''}"${n.getAttribute('colspan') ? ` colspan="${n.getAttribute('colspan')}"` : ''}>${head ? `<b>${inline(n, NV.table, NV.color)}</b>` : inline(n, NV.table, NV.color)}</td>`;
     const block = n => {
       if (n.nodeType === 3) { if (n.nodeValue.trim()) out.push(P(span(n.nodeValue.trim(), NV.body, NV.color))); return; }
       if (n.nodeType !== 1) return;
       const t = n.tagName.toLowerCase();
+      if (t === 'p' && n.className === 'legal') { legal.push(inline(n, NV.small, '#444444')); return; }
+      flushLegal();
+      if (t === 'p' && n.className === 'warn') { out.push(P(`<b>${inline(n, NV.body, NV.warn)}</b>`)); return; }
+      if (t === 'p' && n.className === 'slot') { out.push(P(span(n.textContent.trim(), NV.body, '#7a5a00', 'background-color:#fff3b0;'))); return; }
+      if (t === 'p' && n.className === 'ai') { out.push(P(span(n.textContent.trim(), NV.small, '#666666'))); return; }
       if (t === 'p') { const h = inline(n, NV.body, NV.color); if (h.replace(/<[^>]+>/g, '').trim()) out.push(P(h)); return; }
       if (t === 'h2') { out.push(BLANK, P(`<b>${span(n.textContent.trim(), NV.h2, NV.head)}</b>`)); return; }
       if (t === 'h3' || t === 'h4') { out.push(P(`<b>${span(n.textContent.trim(), NV.h3, NV.head)}</b>`)); return; }
@@ -144,6 +170,7 @@
       n.childNodes.forEach(block); // 그 밖의 묶음은 안쪽만
     };
     frag.childNodes.forEach(block);
+    flushLegal();
     out.push(BLANK);
     return out.join('\n');
   }
@@ -227,9 +254,9 @@
       el('h3', { id: 'art-guide-title' }, '게시 전에 꼭 확인하세요'),
       el('ol', {},
         el('li', {}, el('b', {}, '본인 경험 한두 줄을 더하세요. '), '상담하며 실제로 겪은 일이나 고객이 자주 묻는 점을 한두 문장 넣으면 글이 더 믿음직하고, 다른 글과 겹치지 않습니다(고객 이름·연락처 등 개인정보는 넣지 마세요).'),
-        el('li', {}, el('b', {}, '고친 뒤 광고심의를 받고 게시하세요. '), '블로그·홈페이지 글도 업무광고입니다. 회사 광고심의 절차로 심의를 받은 뒤, 받은 심의필 번호를 글 아래에 적어 게시하세요.'),
+        el('li', {}, el('b', {}, '고친 뒤 광고심의를 받고 게시하세요. '), '블로그·홈페이지 글도 업무광고입니다. 팜스 광고심의(업무광고)로 신청하고, "참고한 자료"의 원문을 증빙으로 함께 내세요. 승인 뒤에는 고치지 말고 그대로 게시합니다.'),
         el('li', {}, el('b', {}, '보험사 이름·상품 이름은 넣지 마세요. '), '넣으면 상품광고가 되어 심의 기준이 달라집니다. 숫자·제도는 게시 시점 기준으로 한 번 더 확인하세요.'),
-        el('li', {}, el('b', {}, '글 아래 안내 문구는 지우지 마세요. '), '[대리점명·등록번호]·[심의필 번호] 자리는 본인 정보로 채우세요.')));
+        el('li', {}, el('b', {}, '빨간 안내 문구와 맨 아래 필수안내사항은 지우거나 줄이지 마세요. '), '"설계사 OOO"와 협회 등록번호(0000…)는 본인 정보로 바꾸고, 심의필 번호·기간(제00000호, 0000.00.00)은 심의 신청 때는 그대로 두었다가 승인 뒤 받은 번호로 바꿉니다.')));
   }
   function tagChips(tags) {
     const t = tags || {}, list = [t.insurance, t.format, t.length].filter(v => typeof v === 'string' && v);

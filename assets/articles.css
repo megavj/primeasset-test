@@ -55,7 +55,7 @@
 .art-view{background:var(--bg-1);border:1px solid var(--line);border-radius:var(--r-card);padding:clamp(18px,3.5vw,40px);margin:0 0 16px}
 .art-view-head{margin:0 0 14px}
 .art-view-title{font-size:clamp(24px,3.2vw,32px);line-height:1.35;letter-spacing:-.02em;margin:10px 0 6px}
-.art-view-title:focus{outline:none}
+body.intranet-light .art-view-title:focus,body.intranet-light .art-view-title:focus-visible{outline:none;box-shadow:none}
 .art-view-meta{margin:0;color:var(--text-3);font-size:15px}
 .art-actbar{display:grid;gap:10px;padding:14px 16px;margin:0 0 18px;border:1px solid var(--line-2);border-radius:var(--r-tile);background:var(--bg-2)}
 .art-actions{display:flex;flex-wrap:wrap;gap:8px}
@@ -147,3 +147,10 @@
 .g-admin .adm-art-claims li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
 .g-admin .adm-art-claims strong{display:block;font-size:15px;line-height:1.4}
 @media (max-width:640px){.g-admin .adm-art-stats{grid-template-columns:1fr 1fr}.g-admin .adm-art-title img{display:none}}
+
+/* 글 속 표시(생성기가 넣음): 금소법 경고문구 · 필수안내사항 · 설계사가 채울 자리 · AI 사용 표시 */
+.art-body p.warn{color:#c0001a;font-weight:600}
+.art-body p.slot{background:#fff6d6;border:1px dashed var(--gold);border-radius:8px;padding:10px 12px;color:#6b4e00}
+.art-body p.ai{font-size:14px;color:var(--text-3)}
+.art-body .art-legal{margin:8px 0 0;padding:12px 14px;border:1px solid var(--line-2);border-radius:8px;font-size:14px;line-height:1.7;color:var(--text-2)}
+.art-body .art-legal p{margin:0}

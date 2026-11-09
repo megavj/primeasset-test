@@ -172,7 +172,6 @@
     } else actions = el('p', { class: 'art-lock-note' }, '관리자 보기 — 다른 회원이 보관한 글입니다. 보관 기록은 관리자 화면에서 확인합니다.');
     const body = K.render(a);
     if (open) body.classList.add('is-preview');
-    const src = a.meta && Array.isArray(a.meta.sources) ? a.meta.sources : [];
     busy(false);
     root.replaceChildren(back,
       el('article', { class: 'art-view' },
@@ -180,9 +179,8 @@
         actions,
         mine ? K.postingGuide() : null,
         body,
-        mine && src.length ? el('details', { class: 'art-src' }, el('summary', {}, `글을 쓸 때 참고한 자료 ${src.length}개 (심의 받을 때 함께 내면 좋습니다)`),
-          el('ul', {}, ...src.map(s => el('li', {}, s.url && /^https?:/.test(s.url) ? el('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer' }, s.title || s.url) : (s.title || '자료'))))) : null),
-      mine ? null : quotaBar());
+        null),
+      ...(mine ? [] : [quotaBar()])); // replaceChildren은 null도 글자로 넣으므로 빈 배열로
     window.scrollTo({ top: 0, behavior: 'instant' });
     root.querySelector('.art-view-title')?.focus({ preventScroll: true });
   }
