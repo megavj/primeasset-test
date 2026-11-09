@@ -85,6 +85,8 @@
     }
 
     function csvDownload(list, withMemo) {
+      // 내려받은 기록(누가·언제·몇 명)을 먼저 보낸다. 기록이 실패해도 내려받기는 진행.
+      sb.rpc('log_admin_export', { p_kind: withMemo ? 'members_csv_memo' : 'members_csv', p_count: list.length }).then(() => {}, () => {});
       const cell = value => { let t = String(value ?? ''); if (/^[\t\r\n]/.test(t) || /^[\s\u0000-\u001f]*[=+\-@]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
       const heads = ['이름', '소속', '휴대폰', '이메일', '등급', '상태', '관리자', '가입일', '승인일', '최근 접속', '정지 사유', ...(withMemo ? ['관리 메모'] : [])];
       const rows = list.map(m => [m.name, m.branch, phone(m.phone), m.email, gname(m.grade_id), stateOf(m)[1], m.is_admin ? '예' : '', fmtTime(m.created_at), fmtTime(m.approved_at), seen(m) ? fmtTime(seen(m)) : '', m.suspend_reason, ...(withMemo ? [m.memo] : [])]);
@@ -92,7 +94,6 @@
       const url = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
       const a = el('a', { href: url, download: `회원목록_${new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })}.csv`, hidden: '' });
       document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500);
-      sb.rpc('log_admin_export', { p_kind: withMemo ? 'members_csv_memo' : 'members_csv', p_count: list.length }).then(() => {}, () => {});
     }
 
     function dialog(title, ...kids) {
