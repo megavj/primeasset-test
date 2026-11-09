@@ -4,6 +4,7 @@
 (function () {
   'use strict';
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbx6uEY4cAXbKaux44qiEYZpDM0mm3v1nAFlkyIoXeAA6DIRF1HoZLWwDY1nzVVq1oq2TA/exec';
+  const MENU_LEGACY_URL = 'https://script.google.com/macros/s/AKfycbwxsEPxs_uq5H4gH43Ie_FH0mrKAtdkrnzP-30b52GKTBMXVzARfgggs6_klkyadIVl/exec?itHelp=1'; // TASK-MENU: 메뉴에 있던 예전 주소
   const LEGACY_IDS = ['AKfycbzVbO8_XxSq8_WZhvNBXSi0myH22g0igqhAwkz7Kf9QtDUchxIds-E7fgTi06xGSP6lvg', 'AKfycbxWVCohTpOA3rZUK1hpuOqq_cfarzo57S2dlKL1g3CcTevVq1h-9oG28wBUvv_tzPb8tw', 'AKfycbzfFExpXscK87c2F54p17YDJwdDmpk7MAZ3NQAsWJtjqAFBXSaVJ1JC52H2czeaPPDNiw'];
   const $ = (id) => document.getElementById(id);
   const S = { sb: null, me: null, busy: false, answer: '', timer: 0, started: 0, step: -1, lastQuestion: '', lastInsurer: '', lastTask: '' };
@@ -62,8 +63,9 @@
     let url = 'https://script.google.com/macros/s/' + LEGACY_IDS[0] + '/exec';
     try {
       const r = await S.sb.rpc('my_menu'); S.guard.check(generation);
-      const item = items(r.data).find((x) => (/전산\s*답변/.test(x.name || '') || LEGACY_IDS.some((id) => String(x.url || '').includes(id))) && x.unlocked && x.url && !/\/members\/it/.test(x.url));
-      if (item && safeUrl(item.url)) url = item.url;
+      const item = items(r.data).find((x) => (/전산\s*답변/.test(x.name || '') || LEGACY_IDS.some((id) => String(x.url || '').includes(id))) && x.unlocked && x.url);
+      // TASK-MENU(2026-11-09): 메뉴 주소가 이 화면(/members/it/)이면, 메뉴에 있던 예전 GAS 주소를 그대로 연다.
+      if (item) url = safeUrl(item.url) && !/\/members\/it/.test(item.url) ? item.url : MENU_LEGACY_URL;
     } catch (e) { /* 확인된 원본 링크 사용 */ }
     if (generation !== S.guard.current()) return;
     $('it-legacy').href = url; $('it-legacy-wrap').hidden = false;

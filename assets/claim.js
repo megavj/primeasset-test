@@ -56,12 +56,15 @@
     ai.className = me.ai && me.ai.ready ? 'is-ok' : 'is-warn';
     ai.lastElementChild.textContent = me.ai && me.ai.ready ? 'AI 답변 준비됨' : '답변 서비스 준비 중 · 확인된 근거만 표시';
   }
-  /* 이전 답변기(기존 GAS) 링크: 인트라넷 메뉴에 등록된 주소를 그대로 쓴다(권한 있는 회원만 보임) */
+  /* 이전 답변기(기존 GAS) 링크: 보상답변기 메뉴가 열린 회원에게만 보인다.
+     TASK-MENU(2026-11-09): 메뉴 주소를 이 화면(/members/claim/)으로 바꿔 관리하므로, 예전 GAS 주소는 여기 둔다(메뉴에 다른 외부 주소를 적으면 그 주소). */
+  const LEGACY_URL = 'https://script.google.com/macros/s/AKfycbzNrEdi_UlbQJI0Qg5xkGV83nSh8se7hVoYAJTgtCDs5rgNt4hsT122SFfDGJTexjiCag/exec';
   async function legacyLink(generation) {
     try {
       const r = await S.sb.rpc('my_menu'); S.guard.check(generation);
-      const item = (r.data || []).find((x) => /보상\s*답변/.test(x.name || '') && x.unlocked && x.url && !/\/members\/claim/.test(x.url));
-      if (item && /^https:\/\//.test(item.url)) { $('cl-legacy').href = item.url; $('cl-legacy-wrap').hidden = false; }
+      const item = (r.data || []).find((x) => /보상\s*답변/.test(x.name || '') && x.unlocked && x.url);
+      const url = item && (/^https:\/\//.test(item.url) && !/\/members\/claim/.test(item.url) ? item.url : LEGACY_URL);
+      if (url) { $('cl-legacy').href = url; $('cl-legacy-wrap').hidden = false; }
     } catch (e) { /* 링크만 숨김 */ }
   }
 
