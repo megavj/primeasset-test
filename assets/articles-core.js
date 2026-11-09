@@ -66,7 +66,10 @@
       const t = n.tagName.toLowerCase(), kids = [...n.childNodes].map(c => ser(c, depth + 1)).join('');
       if (t === 'br') return '<br>';
       if (t === 'hr') return '<hr>';
-      if (t === 'img') return `<img src="${esc(n.getAttribute('src'))}" alt="${esc(n.getAttribute('alt') || '')}"${n.getAttribute('width') ? ` width="${n.getAttribute('width')}" height="${n.getAttribute('height') || ''}"` : ''} loading="lazy">`;
+      if (t === 'img') return `<img src="${esc(n.getAttribute('src'))}" alt="${esc(n.getAttribute('alt') || '')}"${n.getAttribute('width') ? ` width="${n.getAttribute('width')}" height="${n.getAttribute('height') || ''}"` : ''} loading="lazy" decoding="async" style="max-width:100%;height:auto">`;
+      // 테마가 표를 꾸미지 않아도 보이게 테두리·여백만 인라인(워드프레스가 허용하는 속성)
+      if (t === 'table') return `<table style="border-collapse:collapse;width:100%">${kids}</table>`;
+      if (t === 'th' || t === 'td') return `<${t}${n.getAttribute('scope') ? ` scope="${esc(n.getAttribute('scope'))}"` : ''}${n.getAttribute('colspan') ? ` colspan="${n.getAttribute('colspan')}"` : ''} style="border:1px solid #cccccc;padding:8px;text-align:left${t === 'th' ? ';background-color:#f2f4f6' : ''}">${kids}</${t}>`;
       if (t === 'a') return `<a href="${esc(n.getAttribute('href'))}" target="_blank" rel="noopener">${kids}</a>`;
       const attrs = ['colspan', 'rowspan', 'scope'].filter(a => n.getAttribute(a)).map(a => ` ${a}="${esc(n.getAttribute(a))}"`).join('');
       return `<${t}${attrs}>${kids}</${t}>`;
@@ -74,46 +77,75 @@
     [...frag.childNodes].forEach(n => { const s = ser(n, 0).trim(); if (s) lines.push(s); });
     return lines.join('\n');
   }
-  // 네이버 블로그 편집기용: 인라인 서식만(편집기가 class·style 묶음을 버림). 제목은 굵은 큰 글자 문단, 표는 테두리 인라인.
-  const NV = {
-    p: 'font-size:16px;line-height:1.8;color:#222;margin:0 0 16px',
-    h2: 'font-size:24px;font-weight:bold;color:#111;line-height:1.5;margin:32px 0 12px',
-    h3: 'font-size:19px;font-weight:bold;color:#111;line-height:1.5;margin:24px 0 8px',
-    table: 'border-collapse:collapse;width:100%;margin:8px 0 20px;font-size:15px',
-    th: 'border:1px solid #bbbbbb;background:#f2f4f7;padding:8px 10px;text-align:left;font-weight:bold',
-    td: 'border:1px solid #bbbbbb;padding:8px 10px;vertical-align:top',
-    blockquote: 'border-left:4px solid #c9a227;background:#faf7ec;margin:16px 0;padding:12px 16px;font-size:16px;line-height:1.7',
-    figcaption: 'font-size:13px;color:#777;text-align:center;margin:6px 0 18px',
-    small: 'font-size:13px;color:#666;line-height:1.7'
-  };
+  // 네이버 블로그 편집기(스마트에디터 ONE)용 — 근거: evidence/research-naver-paste.md 7-1
+  // 인라인 style만 · 문단 하나 = <p> 하나 · 글자 조각은 겹치지 않고 나란히(<b><span>) · 소제목은 굵은 24/19px 문단 ·
+  // 목록은 '• '·'1) ' 글자 문단 · 표는 border="1"+칸마다 테두리 · 요약 상자는 1칸 표 · 그림은 단독 문단 + '▲ 설명' 줄 · 끝은 빈 문단
+  const NV = { body: 16, small: 13, h2: 24, h3: 19, table: 15, color: '#222222', head: '#111111', link: '#0b57d0', cap: '#888888', line: '#cccccc', headBg: '#f2f4f6', boxBg: '#faf7ec', boxLine: '#e6d9a8' };
+  const span = (text, size, color, extra) => `<span style="font-size:${size}px;color:${color};${extra || ''}">${esc(text)}</span>`;
+  // 문장 안의 굵게·링크·형광펜을 '나란한 조각'으로 편다
+  function runs(node, size, color, acc = [], st = {}) {
+    node.childNodes.forEach(n => {
+      if (n.nodeType === 3) { if (n.nodeValue) acc.push({ t: n.nodeValue, ...st }); return; }
+      if (n.nodeType !== 1) return;
+      const t = n.tagName.toLowerCase();
+      if (t === 'br') { acc.push({ br: true }); return; }
+      if (t === 'img' || t === 'table' || t === 'figure') return;
+      const next = { ...st };
+      if (t === 'strong' || t === 'b') next.b = true;
+      if (t === 'mark') next.mark = true;
+      if (t === 'small') next.small = true;
+      if (t === 'a' && n.getAttribute('href')) next.href = n.getAttribute('href');
+      runs(n, size, color, acc, next);
+    });
+    return acc;
+  }
+  function inline(node, size, color, prefix) {
+    const list = runs(node, size, color);
+    if (prefix) { if (list[0] && list[0].t != null && !list[0].b && !list[0].href) list[0] = { ...list[0], t: prefix + list[0].t }; else list.unshift({ t: prefix }); }
+    return list.map(r => {
+      if (r.br) return '<br>';
+      const sz = r.small ? NV.small : size, col = r.href ? NV.link : color;
+      let h = span(r.t, sz, col, r.mark ? 'background-color:#fff3b0;' : '');
+      if (r.b) h = `<b>${h}</b>`;
+      if (r.href) h = `<a href="${esc(r.href)}">${h}</a>`;
+      return h;
+    }).join('');
+  }
+  const P = html => `<p>${html}</p>`, BLANK = '<p><br></p>';
   function naverHtml(article) {
-    const frag = sanitize(article.body_html);
-    const ser = n => {
-      if (n.nodeType === 3) return esc(n.nodeValue);
-      const t = n.tagName.toLowerCase(), kids = [...n.childNodes].map(ser).join('');
-      switch (t) {
-        case 'h2': return `<p style="${NV.p}"><br></p><p style="${NV.h2}"><span style="font-size:24px"><b>${kids}</b></span></p>`;
-        case 'h3': case 'h4': return `<p style="${NV.h3}"><span style="font-size:19px"><b>${kids}</b></span></p>`;
-        case 'p': return `<p style="${NV.p}"><span style="font-size:16px">${kids}</span></p>`;
-        case 'strong': case 'b': return `<b>${kids}</b>`;
-        case 'em': case 'i': return `<i>${kids}</i>`;
-        case 'mark': return `<span style="background-color:#fff3b0">${kids}</span>`;
-        case 'small': return `<span style="${NV.small}">${kids}</span>`;
-        case 'ul': case 'ol': return `<${t} style="font-size:16px;line-height:1.8;margin:0 0 16px">${kids}</${t}>`;
-        case 'li': return `<li style="margin:0 0 6px"><span style="font-size:16px">${kids}</span></li>`;
-        case 'blockquote': return `<blockquote style="${NV.blockquote}">${kids}</blockquote>`;
-        case 'table': return `<table style="${NV.table}" border="1" cellpadding="8" cellspacing="0">${kids}</table>`;
-        case 'th': case 'td': return `<${t} style="${NV[t]}"${n.getAttribute('colspan') ? ` colspan="${n.getAttribute('colspan')}"` : ''}>${kids}</${t}>`;
-        case 'figure': return `<div style="text-align:center;margin:20px 0">${kids}</div>`;
-        case 'figcaption': return `<p style="${NV.figcaption}">${kids}</p>`;
-        case 'img': return `<img src="${esc(n.getAttribute('src'))}" alt="${esc(n.getAttribute('alt') || '')}" style="max-width:100%;height:auto"${n.getAttribute('width') ? ` width="${Math.min(+n.getAttribute('width'), 900)}"` : ''}>`;
-        case 'a': return `<a href="${esc(n.getAttribute('href'))}">${kids}</a>`;
-        case 'hr': return '<hr>';
-        case 'br': return '<br>';
-        default: return `<${t}>${kids}</${t}>`;
+    const frag = sanitize(article.body_html), out = [];
+    const cell = (n, head) => `<td${head ? ` bgcolor="${NV.headBg}"` : ''} style="border:1px solid ${NV.line};padding:8px;${head ? `background-color:${NV.headBg};` : ''}"${n.getAttribute('colspan') ? ` colspan="${n.getAttribute('colspan')}"` : ''}>${head ? `<b>${inline(n, NV.table, NV.color)}</b>` : inline(n, NV.table, NV.color)}</td>`;
+    const block = n => {
+      if (n.nodeType === 3) { if (n.nodeValue.trim()) out.push(P(span(n.nodeValue.trim(), NV.body, NV.color))); return; }
+      if (n.nodeType !== 1) return;
+      const t = n.tagName.toLowerCase();
+      if (t === 'p') { const h = inline(n, NV.body, NV.color); if (h.replace(/<[^>]+>/g, '').trim()) out.push(P(h)); return; }
+      if (t === 'h2') { out.push(BLANK, P(`<b>${span(n.textContent.trim(), NV.h2, NV.head)}</b>`)); return; }
+      if (t === 'h3' || t === 'h4') { out.push(P(`<b>${span(n.textContent.trim(), NV.h3, NV.head)}</b>`)); return; }
+      if (t === 'ul' || t === 'ol') { let i = 0; n.querySelectorAll(':scope > li').forEach(li => { i++; out.push(P(inline(li, NV.body, NV.color, t === 'ol' ? `${i}) ` : '• '))); }); return; }
+      if (t === 'blockquote' || t === 'aside') {
+        const parts = [...n.children].length ? [...n.children].map(c => inline(c, NV.body, NV.color)).join('<br>') : inline(n, NV.body, NV.color);
+        out.push(`<table border="1" cellpadding="12" cellspacing="0" width="100%" style="border-collapse:collapse;width:100%;border:1px solid ${NV.boxLine};"><tbody><tr><td bgcolor="${NV.boxBg}" style="border:1px solid ${NV.boxLine};padding:12px;background-color:${NV.boxBg};">${parts}</td></tr></tbody></table>`, BLANK); return;
       }
+      if (t === 'table') {
+        const rows = [...n.querySelectorAll('tr')].map(tr => `<tr>${[...tr.children].map(c => cell(c, c.tagName === 'TH' || !!c.closest('thead'))).join('')}</tr>`).join('\n');
+        const cap = n.querySelector('caption');
+        if (cap) out.push(P(`<b>${span(cap.textContent.trim(), NV.body, NV.head)}</b>`));
+        out.push(`<table border="1" cellpadding="8" cellspacing="0" width="100%" style="border-collapse:collapse;width:100%;border:1px solid ${NV.line};"><tbody>\n${rows}\n</tbody></table>`, BLANK); return;
+      }
+      if (t === 'figure' || t === 'img') {
+        const img = t === 'img' ? n : n.querySelector('img'), cap = t === 'figure' ? n.querySelector('figcaption') : null;
+        if (img) out.push(P(`<img src="${esc(img.getAttribute('src'))}" alt="${esc(img.getAttribute('alt') || '')}">`));
+        if (cap && cap.textContent.trim()) out.push(P(span('▲ ' + cap.textContent.trim(), NV.small, NV.cap)));
+        out.push(BLANK); return;
+      }
+      if (t === 'hr') { out.push(BLANK); return; }
+      if (t === 'small') { out.push(P(span(n.textContent.trim(), NV.small, '#666666'))); return; }
+      n.childNodes.forEach(block); // 그 밖의 묶음은 안쪽만
     };
-    return `<div style="font-size:16px;line-height:1.8;color:#222">${[...frag.childNodes].map(ser).join('')}</div>`;
+    frag.childNodes.forEach(block);
+    out.push(BLANK);
+    return out.join('\n');
   }
   // 글자만(붙여넣기 대체용): 줄 바꿈을 살린 순수 글
   function plainText(article) {
@@ -128,7 +160,8 @@
       const s = []; n.childNodes.forEach(c => walk(c, s));
       let text = s.join('');
       if (t === 'li') text = '• ' + text.trim();
-      if (t === 'h2' || t === 'h3') text = '\n■ ' + text.trim();
+      if (t === 'h2' || t === 'h3') text = '\n' + text.trim();
+      if (t === 'figcaption') text = '[사진] ' + text.trim();
       if (t === 'tr') text = '| ' + text.trim();
       acc.push(block.has(t) ? text.trim() + '\n' : text);
     };
@@ -136,36 +169,43 @@
     return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
   }
 
-  // ── 클립보드: 버튼을 누른 순간에 쓰기 시작(사파리는 누른 직후가 아니면 막음). 글을 아직 안 받았으면 약속(Promise)으로 넘김 ──
-  // rich=true: 서식(text/html)+글자(text/plain), false: 글자만(HTML 원문 복사)
-  async function writeClipboard(getParts, rich) {
-    const parts = typeof getParts === 'function' ? null : getParts;
-    if (navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
-      try {
-        const p = parts ? Promise.resolve(parts) : Promise.resolve().then(getParts);
-        const item = { 'text/plain': p.then(x => new Blob([x.text], { type: 'text/plain' })) };
-        if (rich) item['text/html'] = p.then(x => new Blob([x.html], { type: 'text/html' }));
-        await navigator.clipboard.write([new ClipboardItem(item)]);
-        return 'clipboard';
-      } catch (e) { console.debug('[art clipboard]', e && e.name); }
-    }
-    // 대체: 화면 밖에 그려 선택한 뒤 복사(서식 포함 복사가 되는 오래된 방식)
-    const x = parts || await getParts();
-    const box = el('div', { contenteditable: 'true', 'aria-hidden': 'true', style: 'position:fixed;left:-99999px;top:0;width:800px;opacity:0' });
-    if (rich && x.html) box.append(sanitizeForCopy(x.html)); else { box.style.whiteSpace = 'pre'; box.textContent = x.text; }
-    document.body.append(box);
-    const sel = getSelection(), range = document.createRange(); range.selectNodeContents(box); sel.removeAllRanges(); sel.addRange(range);
-    let ok = false; try { ok = document.execCommand('copy'); } catch (_) {}
-    sel.removeAllRanges(); box.remove();
-    if (!ok) throw new Error('copy_failed');
-    return 'execCommand';
+  // ── 클립보드(근거: evidence/research-naver-paste.md 6·7-4) ──
+  // 1순위: 누른 순간 동기로 execCommand('copy') + copy 이벤트에서 우리가 만든 text/html·text/plain을 넣기(카톡 안 브라우저·아이폰에서도 됨)
+  // 2순위: 비동기 클립보드(ClipboardItem, 값은 Blob). 글을 아직 안 받았으면 Blob 약속(Promise)으로 넘겨 누른 순간에 쓰기 시작(사파리 규칙)
+  function copyViaCopyEvent(html, text) {
+    const ta = document.createElement('textarea');
+    ta.value = text || ' '; ta.setAttribute('readonly', ''); ta.setAttribute('aria-hidden', 'true');
+    Object.assign(ta.style, { position: 'fixed', left: '0', top: '0', width: '1px', height: '1px', opacity: '0.01', fontSize: '16px', border: '0', padding: '0', pointerEvents: 'none', zIndex: '-1' }); // 숨김(display:none)이면 아이폰에서 실패
+    document.body.appendChild(ta);
+    const onCopy = e => { if (!e.clipboardData) return; if (html) e.clipboardData.setData('text/html', html); e.clipboardData.setData('text/plain', text); e.preventDefault(); };
+    document.addEventListener('copy', onCopy, true);
+    const active = document.activeElement;
+    ta.focus({ preventScroll: true }); ta.select(); try { ta.setSelectionRange(0, ta.value.length); } catch (_) {}
+    let ok = false; try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+    document.removeEventListener('copy', onCopy, true); ta.remove();
+    if (active && active.focus) active.focus({ preventScroll: true });
+    return ok;
   }
-  // 대체 복사용: 우리가 만든 HTML 문자열을 그대로 붙이되 스크립트 실행 경로는 없음(태그·인라인 style만 존재)
-  function sanitizeForCopy(html) { const t = document.createElement('template'); t.innerHTML = html; t.content.querySelectorAll('script,iframe,object,embed').forEach(n => n.remove()); return t.content; }
-
+  function copyViaAsync(parts, rich) {
+    if (!(window.isSecureContext && navigator.clipboard && window.ClipboardItem && navigator.clipboard.write)) return Promise.reject(new Error('no_clipboard'));
+    const p = Promise.resolve(parts), item = { 'text/plain': p.then(x => new Blob([x.text], { type: 'text/plain' })) };
+    if (rich) item['text/html'] = p.then(x => new Blob([x.html], { type: 'text/html' }));
+    return navigator.clipboard.write([new ClipboardItem(item)]).then(() => 'clipboard.write');
+  }
+  // make(article) → {html?, text}. getArticle()이 글을 바로 주면 동기 복사, 약속을 주면 비동기 복사.
+  function copyWith(getArticle, make, rich) {
+    const v = getArticle();
+    if (v && typeof v.then !== 'function') {
+      const parts = make(v);
+      if (copyViaCopyEvent(rich ? parts.html : null, parts.text)) return Promise.resolve('execCommand');
+      return copyViaAsync(parts, rich);
+    }
+    const pending = Promise.resolve(v).then(make);
+    return copyViaAsync(pending, rich).catch(e => pending.then(parts => { if (copyViaCopyEvent(rich ? parts.html : null, parts.text)) return 'execCommand'; throw e; }));
+  }
   function fileBase(article) { return String(article.title || '글').replace(/[\\/:*?"<>|#%]/g, '').replace(/\s+/g, '_').slice(0, 40) || '글'; }
-  function copyHtml(getArticle) { return writeClipboard(() => Promise.resolve(getArticle()).then(a => ({ text: webHtml(a) + '\n' })), false); }
-  function copyRich(getArticle) { return writeClipboard(() => Promise.resolve(getArticle()).then(a => ({ html: naverHtml(a), text: plainText(a) })), true); }
+  const copyHtml = getArticle => copyWith(getArticle, a => ({ text: webHtml(a) + '\n' }), false);
+  const copyRich = getArticle => copyWith(getArticle, a => ({ html: naverHtml(a), text: plainText(a) }), true);
   async function downloadImages(article, onStep) {
     const imgs = (article.images || []).filter(i => safeImg(i.url));
     let n = 0;
@@ -207,11 +247,11 @@
       try { await fn(b); } catch (e) { console.debug('[art action]', e); say(/image_/.test(e && e.message) ? '그림을 받지 못했습니다. 잠시 후 다시 눌러 주세요.' : '하지 못했습니다. 다시 눌러 주세요. 계속 안 되면 글을 직접 선택해 복사해 주세요.'); }
       finally { b.disabled = locked; }
     } }, label);
-    const a = mk('HTML 복사', '홈페이지·워드프레스의 HTML(코드) 편집 칸에 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyHtml(getArticle); say('HTML을 복사했습니다. 홈페이지·워드프레스의 HTML(코드) 편집 칸에 붙여 넣으세요. 그림 주소도 들어 있습니다.'); });
-    const b = mk('서식 그대로 복사', '네이버 블로그 편집기에 그대로 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyRich(getArticle); say('서식째 복사했습니다. 네이버 블로그 글쓰기 화면 본문에 붙여 넣으세요. 그림이 안 붙으면 [그림 내려받기]로 받아 직접 올려 주세요.'); });
-    const c = mk('그림 내려받기', '글에 들어간 그림 파일을 모두 내려받기', async () => { const art = await getArticle(); const n = await downloadImages(art, (i, all) => say(`그림 ${i}/${all}장 내려받는 중…`)); say(n ? `그림 ${n}장을 내려받았습니다.` : '이 글에는 내려받을 그림이 없습니다.'); });
+    const a = mk('HTML 복사', '홈페이지·워드프레스의 HTML(코드) 편집 칸에 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyHtml(getArticle); say('HTML을 복사했습니다. 홈페이지의 HTML 편집 칸, 워드프레스는 \'사용자 정의 HTML\' 블록(또는 코드 편집기), 티스토리는 HTML 모드에 붙여 넣으세요. 그림 주소도 들어 있습니다.'); });
+    const b = mk('서식 그대로 복사', '네이버 블로그 편집기에 그대로 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyRich(getArticle); say('서식째 복사했습니다. 네이버 블로그 글쓰기 본문에 붙여 넣으세요(제목은 제목 칸에 따로). 그림이 안 들어오면 ▲ 설명 줄 위에 [그림 내려받기]로 받은 사진을 올려 주세요.'); });
+    const c = mk('그림 내려받기', '글에 들어간 그림 파일을 모두 내려받기', async () => { const art = await Promise.resolve(getArticle()); const n = await downloadImages(art, (i, all) => say(`그림 ${i}/${all}장 내려받는 중…`)); say(n ? `그림 ${n}장을 내려받았습니다.` : '이 글에는 내려받을 그림이 없습니다.'); });
     return el('div', { class: 'art-actions', role: 'group', 'aria-label': '글 가져가기' }, a, b, c);
   }
 
-  window.PA_ART_CORE = { STORE, el, sanitize, render, webHtml, naverHtml, plainText, writeClipboard, copyHtml, copyRich, downloadImages, postingGuide, tagChips, actionButtons, kDate, daysLeft, fileBase };
+  window.PA_ART_CORE = { STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, downloadImages, postingGuide, tagChips, actionButtons, kDate, daysLeft, fileBase };
 })();

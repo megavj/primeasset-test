@@ -32,17 +32,20 @@
       }
     }
     function item(x) {
-      let cached = null;
-      const getArticle = () => cached || (cached = (async () => {
+      // 본문은 버튼 근처에 손가락·마우스가 오면 미리 받아 둔다 → 누르는 순간 바로(동기로) 복사할 수 있게
+      let cached = null, ready = null;
+      const fetchIt = () => cached || (cached = (async () => {
         await ctx.verify();
         const r = await ctx.sb.rpc('art_get', { p_id: x.id });
         ctx.check();
         if (r.error || !r.data || !r.data[0]) { cached = null; throw r.error || new Error('art_not_found'); }
-        return r.data[0];
+        ready = r.data[0]; return ready;
       })());
+      const getArticle = () => ready || fetchIt();
+      const warm = () => { fetchIt().catch(() => {}); };
       const status = el('p', { class: 'art-status', role: 'status', 'aria-live': 'polite' });
       const t = x.tags || {};
-      return el('li', {},
+      return el('li', { onpointerenter: warm, onfocusin: warm, ontouchstart: warm },
         x.thumb ? el('img', { class: 'art-locker-thumb', src: x.thumb, alt: '', loading: 'lazy', width: '96', height: '64' }) : el('span', { class: 'art-locker-thumb', 'aria-hidden': 'true' }),
         el('div', {}, el('h3', {}, el('a', { href: '/members/articles/#a=' + x.id }, x.title)),
           el('p', { class: 'art-locker-meta' }, [`${kDate(x.claimed_at)} 보관`, t.insurance, t.format, x.chars ? `약 ${Number(x.chars).toLocaleString('ko-KR')}자` : null].filter(Boolean).join(' · ')),
