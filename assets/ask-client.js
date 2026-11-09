@@ -5,7 +5,9 @@
   const messages = {
     unauthorized: '로그인이 만료됐습니다. 다시 로그인해 주세요.',
     forbidden: '승인된 계정의 이용 권한을 확인해 주세요.',
-    daily_limit: '오늘 질문 한도(20회)를 모두 쓰셨습니다. 내일 다시 이용해 주세요.',
+    daily_limit: '오늘 질문 한도를 모두 쓰셨습니다. 내일 다시 이용해 주세요.',
+    ask_forbidden: '현재 등급에서는 AI 질문을 이용할 수 없습니다.',
+    ask_policy_unavailable: 'AI 질문 이용 권한을 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.',
     deep_daily_limit: '오늘 다시 답변 횟수(5회)를 모두 쓰셨습니다',
     processing: '답변을 작성하고 있습니다. 잠시 후 결과를 다시 확인해 주세요.',
     not_found: '질문을 찾지 못했습니다. 새 질문을 입력해 주세요.',

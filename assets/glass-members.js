@@ -1,6 +1,7 @@
 /* 설계사 인트라넷: 회원 메뉴의 권한·활성 상태를 유지하며 업무별로 표시합니다.
    이름으로 메뉴를 숨기지 않습니다. 관리자가 숨긴 메뉴와 빈 분류는 데이터에 따라 제외됩니다.
-   AI 질문·도구 이름(초성) 제안·승인 요청. 기존 즐겨찾기 저장값은 읽거나 지우지 않습니다. */
+   AI 질문·도구 이름(초성) 제안. 기존 즐겨찾기 저장값은 읽거나 지우지 않습니다.
+   TASK-ADM(2026-11-09 대표 지시): 회원 쪽 '승인 요청' 버튼 폐지 — 권한은 관리자가 등급으로만 정합니다(서버 요청 함수·기록은 그대로 둠). */
 /* AUDIT-20261103: 다른 사이트가 이 화면을 보이지 않는 액자(iframe)로 띄워 클릭을 유도하는 것(클릭재킹) 방지.
    GitHub Pages는 X-Frame-Options 헤더를 못 주므로, 다른 출처 액자 안이면 화면을 숨긴다. 같은 사이트 안 액자는 허용. */
 (function () { try { if (window.top !== window.self && window.top.location.origin !== window.location.origin) throw 0; } catch (e) { document.documentElement.style.display = 'none'; } })();
@@ -309,40 +310,10 @@
     finally { btn.disabled = false; }
   } }, "로그아웃"); // 연결이 끊겨도 이 기기에서는 로그아웃
 
-  // 도구 검색(초성)·승인 요청
-  const OPENCHAT = "https://open.kakao.com/o/sFMF26y";
+  // 도구 검색(초성)
   // 한글 초성 검색: 'ㅅㅍ' → 상품… (초성 글자는 그 초성으로 시작하는 모든 음절과 맞음, 나머지 글자는 그대로)
   const CHO = "ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ";
   const choRx = (q) => new RegExp([...q].map(c => { const i = CHO.indexOf(c); if (i < 0) return c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); const a = 0xAC00 + i * 588; return `[${c}${String.fromCharCode(a)}-${String.fromCharCode(a + 587)}]`; }).join(""));
-  const requested = new Set(); // 이 화면에서 이미 요청 보낸 도구 id
-  // FUNC-FIX A1: 서버가 요청을 거절해도 오픈채팅을 저절로 열지 않음 — 한국어 이유 + 오픈채팅 링크(누를 때만). 영어 원문은 console 에만(isNet·hasKo 는 위 A3)
-  const REQ_WHY = [[/승인된 회원만/, "승인 대기 중인 계정의 요청은 아직 서버가 받지 않도록 설정돼 있어요. 가입 신청은 이미 접수돼 있으니 관리자가 확인하면 열립니다."],
-    [/정지/, "이용이 정지된 계정이라 요청할 수 없어요."], [/로그인이 필요/, "로그인이 풀렸어요. 새로고침한 뒤 다시 로그인해 주세요."]];
-  function reqFail(out, error) {
-    console.debug("[request_access]", error);
-    if (isNet(error)) { out.replaceChildren(NET_MSG); return true; }
-    const m = String((error && error.message) || "");
-    const hit = REQ_WHY.find(([rx]) => rx.test(m));
-    const why = hit ? hit[1] : hasKo(m) ? `요청을 보내지 못했어요: ${m}` : "요청을 보내지 못했어요. 잠시 후 다시 시도해 주세요.";
-    out.replaceChildren(why, " 급하면 관리자에게 알려 주세요 — ", el("a", { href: OPENCHAT, target: "_blank", rel: "noopener" }, "카카오 오픈채팅 ↗"));
-    return false;
-  }
-  // 잠긴 도구 '승인 요청'(승인된 회원): 서버 함수 request_access(p_resource_id)
-  function reqBtn(r) {
-    const out = el("small", { class: "pa-req-msg", role: "status" });
-    const btn = el("button", { class: "g-btn g-btn--ghost g-btn--sm pa-req", type: "button", onclick: async () => {
-      if (requested.has(r.id)) { out.textContent = "이미 요청한 도구입니다. 관리자 확인 중."; return; }
-      btn.disabled = true; btn.textContent = "보내는 중…";
-      const { data, error } = await sb.rpc("request_access", { p_resource_id: r.id });
-      if (!error) {
-        requested.add(r.id); btn.textContent = "요청 보냄";
-        out.textContent = data === "already" ? "이미 요청한 도구입니다. 관리자 확인 중." : data === "unlocked" ? "이미 열린 도구입니다. 새로고침해 주세요." : "요청을 보냈습니다. 관리자가 확인한 뒤 열립니다.";
-        return;
-      }
-      btn.disabled = false; btn.textContent = reqFail(out, error) ? "다시 시도" : "승인 요청";
-    } }, "승인 요청");
-    return el("div", { class: "pa-req-row" }, btn, out);
-  }
   // 가입 정보를 저장한 승인 대기 회원에게만 접수 안내를 표시합니다. 실제 알림 발송 여부는 서버에서 확인합니다.
   function pendingCard() {
     return el("div", { class: "pa-card pa-banner pa-wait" }, el("h2", { class: "pa-h3" }, "승인 대기 중 — 관리자 확인 후 열립니다"),
@@ -413,7 +384,7 @@
     const tile = r => el("article", { class: "pa-work-card" + (!r.unlocked ? " is-locked" : ""), "data-resource-key": r.key },
       available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, target: "_blank", rel: "noopener noreferrer" }, el("b", {}, r.name)) : el("b", { class: "pa-locked-name" }, r.name),
       r.description ? el("p", { class: "pa-tool-purpose" }, r.description) : null,
-      !r.unlocked ? el("div", { class: "pa-lock-state" }, el("span", {}, pending ? "🔒 승인 후 열림" : "🔒 이용 권한 필요"), pending ? null : r.id != null ? reqBtn(r) : null) : !r.url ? N("주소 준비 중입니다.") : null);
+      !r.unlocked ? el("div", { class: "pa-lock-state" }, el("span", {}, pending ? "🔒 승인 후 열림" : "🔒 관리자가 등급에 따라 열어 드립니다")) : !r.url ? N("주소 준비 중입니다.") : null);
     const directory = el("div", { id: "pa-directory" }, ...works.map(w => {
       const items = tools.filter(r => r.work === w);
       return el("section", { class: "pa-work-group", "aria-label": w }, el("h3", {}, w), el("div", { class: "pa-work-grid" }, ...items.map(tile)), items.length ? null : N("등록된 도구가 없습니다."));
@@ -505,7 +476,7 @@
     if (epoch !== renderEpoch) return;
     if (!session) {
       if (sErr && isNet(sErr)) return failView("로그인 상태를 확인하지 못했습니다", sErr, false);
-      logged = false; requested.clear();
+      logged = false;
       currentOwner = null; clearDrafts();
       if (goto) { saveGoto(goto); goto = null; } // 로그인 뒤 이 칸으로(이 기기에 30분)
       if (viewKey === "login") return;
@@ -514,12 +485,13 @@
     const storageOwner = session.user.id || "local";
     if (currentOwner && currentOwner !== storageOwner) {
       mode(false); show(msg("가입 계정을 확인하는 중입니다"));
-      clearDraft(currentOwner); logged = false; requested.clear();
+      clearDraft(currentOwner); logged = false;
     }
     currentOwner = storageOwner;
     retryOnline = null;
     if (!goto) goto = takeGoto(); // 로그인 전에 가려던 칸
-    if (!logged) { logged = true; sb.rpc("record_login", { p_method: (session.user.app_metadata || {}).provider || "", p_agent: navigator.userAgent }); }
+    // TASK-ADM: rpc는 then을 붙여야 실제로 전송됩니다(관리자 회원 관리의 '최근 접속'에 쓰임). 실패해도 화면에는 영향 없음.
+    if (!logged) { logged = true; sb.rpc("record_login", { p_method: (session.user.app_metadata || {}).provider || "", p_agent: navigator.userAgent }).then(() => {}, () => {}); }
     if (location.hash && !knownSection(location.hash.slice(1))) history.replaceState(null, "", location.pathname); // 토큰·가입 주소는 지우고 섹션 주소는 둠
     const { data, error } = await sb.rpc("my_profile");
     if (epoch !== renderEpoch) return;

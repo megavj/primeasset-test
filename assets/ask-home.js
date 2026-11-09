@@ -19,7 +19,7 @@
     create({ sb, approved, tools, choRx, owner, onAuthFailure }) {
       const api = window.PA_ASK.create(sb);
       let alive = true, busy = false, last = null, timer = null, resumePause = null, retryKind = '', quotaKnown = false, remaining = null;
-      let deepTimer = null, answerGeneration = 0;
+      let deepTimer = null, answerGeneration = 0, limit = null, access = approved ? 'checking' : 'pending';
       const q = el('textarea', { class: 'pa-in pa-ask-input', id: 'pa-q', rows: '3', maxlength: '1200', placeholder: '예) 실손의료비 통원 청구에 필요한 서류는 무엇인가요?', 'aria-label': '업무 질문 또는 도구 찾기', 'aria-keyshortcuts': '/', autocomplete: 'off' });
       const quota = el('p', { class: 'pa-ask-quota', role: 'status' }, approved ? '오늘 남은 질문 확인 중…' : '승인 후 AI 질문을 이용할 수 있습니다.');
       const submit = el('button', { class: 'g-btn g-btn--pri', type: 'submit' }, '질문하기');
@@ -31,11 +31,38 @@
       const answer = el('section', { class: 'pa-ask-answer', hidden: '', 'aria-labelledby': 'pa-ask-answer-title' });
       const retryNote = el('p', { class: 'pa-ask-help', hidden: '' });
       const retry = el('button', { class: 'g-btn g-btn--ghost', type: 'button', hidden: '', onclick: () => run(retryKind === 'new') }, '결과 다시 확인');
+      // TASK-ADM: 등급에 'AI 질문' 권한이 없으면 질문창 대신 짧은 안내만 보여 줍니다(요청 버튼 없음 — 권한은 관리자가 등급으로 정함). 서버도 같은 기준으로 막습니다.
+      const lockBox = el('div', { class: 'pa-ask-lock', hidden: '', role: 'note' },
+        el('p', { class: 'pa-ask-lock-title' }, '🔒 현재 등급에서는 AI 질문을 이용할 수 없습니다'),
+        el('p', { class: 'pa-ask-help' }, '이용 범위는 관리자가 등급에 따라 정합니다. 업무 도구와 보험자료는 그대로 이용할 수 있습니다.'));
+      const form = el('form', { class: 'pa-ask-form', onsubmit: event => { event.preventDefault(); run(true); } },
+          q, suggestions,
+          el('div', { class: 'pa-ask-controls' }, submit), out, retry, retryNote);
       const node = el('section', { class: 'pa-ask', 'aria-labelledby': 'pa-ask-title' },
         el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, '업무가 막힐 때, AI에게 물어보세요'), quota),
-        el('form', { class: 'pa-ask-form', onsubmit: event => { event.preventDefault(); run(true); } },
-          q, suggestions,
-          el('div', { class: 'pa-ask-controls' }, submit), out, retry, retryNote), progress, answer);
+        form, lockBox, progress, answer);
+      function lock() {
+        if (!alive) return;
+        access = 'denied';
+        form.hidden = true; lockBox.hidden = false; progress.hidden = true;
+        quota.textContent = 'AI 질문 이용 권한 없음';
+        controls();
+      }
+      function unlock() {
+        if (!alive || access === 'allowed') return;
+        access = 'allowed'; form.hidden = false; lockBox.hidden = true; controls();
+      }
+      async function checkAccess() {
+        if (!approved) return;
+        try {
+          const { data, error } = await sb.rpc('my_ask_policy');
+          if (!alive) return;
+          const row = Array.isArray(data) ? data[0] : null;
+          if (error || !row) return; // 확인하지 못하면 서버 응답(남은 횟수 확인)으로 판단합니다.
+          if (Number(row.daily_limit) > 0) limit = Math.floor(Number(row.daily_limit));
+          if (row.allowed === false) lock(); else unlock();
+        } catch (_) { /* 서버 응답으로 판단 */ }
+      }
       function invalidateAuth(error) {
         if (!['unauthorized', 'forbidden', 'login_required', 'invalid_token', 'expired', 'not_active', 'stale_session'].includes(error.code)) return false;
         if (!alive) return true;
@@ -54,28 +81,37 @@
         }
       }
       function controls() {
-        submit.disabled = busy || !approved || remaining === 0;
+        submit.disabled = busy || !approved || remaining === 0 || access === 'denied';
         q.disabled = busy;
         retry.disabled = busy;
       }
+      const limitText = () => limit ? `하루 ${limit}회` : '하루 횟수 제한';
       function setQuota(value) {
         if (!value || !alive) return;
+        if (value.allowed === false) { lock(); return; }
+        if (value.allowed === true) unlock();
+        if (Number(value.limit) > 0) limit = Math.floor(Number(value.limit));
+        if (value.exempt === true) { quota.textContent = '관리자 계정 · 질문 횟수 제한 없음'; quotaKnown = true; remaining = null; controls(); return; }
         const parsed = Number(value.remaining);
         if (value.remaining == null || value.remaining === '' || !Number.isFinite(parsed) || parsed < 0) {
-          quota.textContent = '남은 질문 수를 확인하지 못했습니다. 하루 20회 · 한국시간 자정 초기화';
+          quota.textContent = `남은 질문 수를 확인하지 못했습니다. ${limitText()} · 한국시간 자정 초기화`;
           return;
         }
         quotaKnown = true;
         remaining = Math.max(0, Math.floor(parsed));
-        quota.textContent = `오늘 남은 질문 ${remaining}/20회 · 한국시간 자정 초기화`;
-        if (remaining === 0) out.textContent = '오늘 질문 한도(20회)를 모두 쓰셨습니다. 업무 도구와 저장된 답변은 계속 이용할 수 있습니다.';
-        else if (out.textContent.startsWith('오늘 질문 한도(')) out.textContent = '';
+        quota.textContent = limit ? `오늘 남은 질문 ${remaining}/${limit}회 · 한국시간 자정 초기화` : `오늘 남은 질문 ${remaining}회 · 한국시간 자정 초기화`;
+        if (remaining === 0) out.textContent = `오늘 질문 한도${limit ? `(${limit}회)` : ''}를 모두 쓰셨습니다. 업무 도구와 저장된 답변은 계속 이용할 수 있습니다.`;
+        else if (out.textContent.startsWith('오늘 질문 한도')) out.textContent = '';
         controls();
       }
       async function loadQuota() {
         if (!approved) return;
         try { await verifySession(); const r = await api.request('askQuota'); if (alive) setQuota(r.quota); }
-        catch (e) { if (invalidateAuth(e)) return; if (alive && !quotaKnown) quota.textContent = '남은 질문 수를 확인하지 못했습니다. 하루 20회 · 한국시간 자정 초기화'; }
+        catch (e) {
+          if (invalidateAuth(e)) return;
+          if (e.code === 'ask_forbidden') { lock(); return; }
+          if (alive && !quotaKnown && access !== 'denied') quota.textContent = e.code === 'ask_policy_unavailable' ? '이용 권한을 확인하지 못했습니다. 잠시 후 다시 확인합니다.' : `남은 질문 수를 확인하지 못했습니다. ${limitText()} · 한국시간 자정 초기화`;
+        }
       }
       function matchTools() {
         const text = q.value.trim().toLowerCase();
@@ -207,7 +243,7 @@
       }
       function pause(ms) { return new Promise(resolve => { resumePause = resolve; timer = setTimeout(() => { resumePause = null; resolve(); }, ms); }); }
       async function run(fresh) {
-        if (busy || !approved || !alive) return;
+        if (busy || !approved || !alive || access === 'denied') return;
         const question = window.PA_ASK.maskResidentId(q.value.trim());
         q.value = question;
         if (fresh && (question.length < 3 || question.length > 1200)) { out.textContent = '질문을 3자 이상, 1,200자 이내로 적어 주세요.'; q.focus(); return; }
@@ -245,9 +281,11 @@
           if (alive) { const timeout = new Error('아직 처리 중입니다. 결과 다시 확인을 눌러 이어서 확인해 주세요.'); timeout.code = 'timeout'; throw timeout; }
         } catch (e) {
           if (!alive || invalidateAuth(e)) return;
-          progress.hidden = true; out.textContent = e.message;
+          progress.hidden = true;
+          if (e.code === 'ask_forbidden') { out.textContent = ''; lock(); return; }
+          out.textContent = e.message;
           if (e.quota) setQuota(e.quota);
-          if (e.code === 'daily_limit') { remaining = 0; quota.textContent = '오늘 남은 질문 0/20회 · 한국시간 자정 초기화'; }
+          if (e.code === 'daily_limit') { remaining = 0; quota.textContent = limit ? `오늘 남은 질문 0/${limit}회 · 한국시간 자정 초기화` : '오늘 남은 질문 0회 · 한국시간 자정 초기화'; }
           retryKind = ['answer_failed', 'not_found', 'invalid_question'].includes(e.code) ? 'new' : 'resume';
           retry.textContent = retryKind === 'new' ? '새 질문으로 접수' : last.id ? '기존 결과 확인' : '접수·결과 다시 확인';
           retryNote.textContent = retryKind === 'new' ? '새 질문으로 접수하며 하루 질문 횟수를 사용합니다.' : last.id ? '새 질문 횟수 차감 없음. 기존 질문의 진행 상태와 결과를 확인합니다.' : '같은 접수 번호로 확인합니다. 이미 접수된 질문은 횟수를 다시 차감하지 않습니다.';
@@ -265,7 +303,7 @@
         quotaTimer = setTimeout(() => { refreshQuota(); if (alive) scheduleQuotaReset(); }, midnight - now + 1000);
       };
       scheduleQuotaReset();
-      controls(); loadQuota();
+      controls(); checkAccess().then(loadQuota);
       return { node, dispose() { alive = false; answerGeneration++; clearTimeout(deepTimer); clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause(); window.removeEventListener('focus', refreshQuota); document.removeEventListener('visibilitychange', refreshQuota); api.dispose(); } };
     }
   });

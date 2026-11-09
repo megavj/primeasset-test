@@ -58,7 +58,7 @@
   let askClient = null, sessionOwner;
   let tab = 'tasks', busy = false, dirty = false, ready = false, loadVersion = 0;
   const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'yes',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''}};
-  const TABS = {tasks:['요약','이번 달 AI 이용 현황과 현재 처리할 일을 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['승인 요청','가입 승인 요청과 메뉴 이용 요청을 확인합니다.'],members:['회원 관리','회원 검색·등급·상태·메모 관리'],matrix:['메뉴 권한','등급별로 열어 줄 페이지와 도구를 선택합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['페이지·도구','인트라넷 메뉴의 이름·주소·표시 여부를 관리합니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
+  const TABS = {tasks:['요약','이번 달 AI 이용 현황과 현재 처리할 일을 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['지난 요청','예전에 회원이 보낸 이용 요청 중 아직 정리하지 않은 것입니다. 이제 회원 화면에는 요청 버튼이 없습니다.'],members:['회원 관리','회원 검색·등급·상태·메모 관리'],matrix:['메뉴 권한','등급별로 열어 줄 페이지와 도구를 선택합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['페이지·도구','인트라넷 메뉴의 이름·주소·표시 여부를 관리합니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
 
   const confirmAction = message => window.confirm(message);
   const discard = () => !dirty || confirmAction('저장하지 않은 변경이 있습니다. 변경을 버리고 이동할까요?');
@@ -235,9 +235,10 @@
       const stat = (label,value,next,detail) => button(el('span',{class:'adm-stat-inner'},el('span',{},label),el('strong',{},value),el('small',{},detail)),() => go(next),'stat');
       const featured = el('div',{class:'adm-task-panel'},el('div',{class:'adm-panel-heading'},el('div',{},el('p',{class:'adm-eyebrow'},'먼저 확인하세요'),el('h3',{},pending.length ? '가입을 기다리는 회원이 있습니다' : '가입 승인 대기를 모두 확인했습니다')),button('가입 승인 열기',() => go('pending'),'primary')),
         pending.length ? el('div',{},el('p',{class:'adm-note',role:'status'},`가입 승인 대기 전체 ${num(pending.length)}명 · 현재 ${num(preview.length)}명 표시${pending.length > preview.length ? ` · 나머지 ${num(pending.length - preview.length)}명은 가입 승인 전체 목록에서 확인할 수 있습니다(첫 화면 최대 20명).` : ''}`),el('div',{class:'adm-task-list'},...preview.map(m => el('div',{class:'adm-task-row'},person(m),el('div',{class:'adm-task-meta'},badge(profileComplete(m) ? '정보 입력 완료' : '정보 미입력'),el('span',{class:'adm-note'},fmt(m.created_at)),button('검토',() => go('pending',{q:m.email || m.name}))))))) : el('p',{class:'adm-note'},'새 가입 신청이 도착하면 이곳에서 확인할 수 있습니다.'));
-      return el('div',{class:'adm-stack'},el('section',{id:'admin-ai-summary',class:'adm-panel','aria-label':'이번 달 AI 이용 현황'}),el('div',{},el('h3',{},'현재 처리할 일'),el('p',{class:'adm-note'},'AI 조회 기간과 관계없는 현재 상태입니다. 가입 대기와 요청은 중복될 수 있어 합산하지 않습니다.')),el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보 확인 → 승인'),stat('확인된 승인 요청',S.requestError ? '조회 실패' : num(S.requests.length),'requests',S.requestError ? '목록 연결 확인 필요' : '최근 조회 · 최대 300건'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`)),featured,incomplete.length ? el('section',{class:'adm-panel'},el('h3',{},`정보 미입력 ${num(incomplete.length)}명`),el('p',{class:'adm-note'},'가입 정보를 아직 완료하지 않은 계정입니다. 승인 대기 인원에 포함하지 않으며 승인할 수 없습니다.'),button('미입력 계정 보기',() => go('pending',{complete:'no'}))) : null,
-        el('div',{class:'adm-two-col'},el('section',{class:'adm-panel'},el('div',{class:'adm-panel-heading'},el('h3',{},'승인 요청'),button('모두 보기',() => go('requests'))),S.requestError ? empty('요청 목록을 확인할 수 없습니다','승인 요청 화면에서 다시 불러올 수 있습니다.') : S.requests.length ? el('div',{class:'adm-task-list'},...S.requests.slice(0,3).map(r => el('div',{class:'adm-request-preview'},el('strong',{},r.member_name || '회원'),el('span',{},r.resource_name || '승인 요청'),el('small',{class:'adm-note'},r.resource_category || '가입')))) : empty('열린 요청이 없습니다','요청이 접수되면 여기에 표시됩니다.')),
-        el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
+      return el('div',{class:'adm-stack'},el('section',{id:'admin-ai-summary',class:'adm-panel','aria-label':'이번 달 AI 이용 현황'}),el('div',{},el('h3',{},'현재 처리할 일'),el('p',{class:'adm-note'},'AI 조회 기간과 관계없는 현재 상태입니다. 메뉴·AI 이용 범위는 회원 요청 없이 등급으로 정합니다.')),el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보 확인 → 승인'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`)),featured,incomplete.length ? el('section',{class:'adm-panel'},el('h3',{},`정보 미입력 ${num(incomplete.length)}명`),el('p',{class:'adm-note'},'가입 정보를 아직 완료하지 않은 계정입니다. 승인 대기 인원에 포함하지 않으며 승인할 수 없습니다.'),button('미입력 계정 보기',() => go('pending',{complete:'no'}))) : null,
+        // TASK-ADM: 회원 요청 버튼을 없앴으므로 요청 카드 대신, 예전 요청이 남아 있을 때만 정리 안내를 보여 준다.
+        S.requests.length ? el('p',{class:'adm-callout'},`정리하지 않은 지난 이용 요청 ${num(S.requests.length)}건이 남아 있습니다. `,button('지난 요청 정리',() => go('requests'))) : null,
+        el('div',{},el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
     },
     pending() {
       const f = filters.pending, selected = new Set(), rowGrades = new Map();
@@ -320,7 +321,7 @@
         }),'열린 승인 요청') : empty('열린 요청이 없습니다','권한이 열린 요청은 서버에서 자동으로 정리됩니다.'),paging);sync();
       };
       q.addEventListener('input',() => {f.q=q.value;f.page=1;chosen.clear();draw();});draw();
-      return el('div',{class:'adm-stack'},el('p',{class:'adm-callout'},'가입 요청은 가입 승인에서, 메뉴 요청은 등급·메뉴 권한에서 처리하세요. 완료 표시는 요청만 정리하며 권한을 부여하지 않습니다.'),field('승인 요청 검색',q),el('div',{class:'adm-bulk'},note,done),body,el('p',{class:'adm-note'},'서버에서 반환한 열린 요청을 최대 300건 표시합니다. 처리한 뒤 새로고침하면 다음 요청을 확인할 수 있습니다.'));
+      return el('div',{class:'adm-stack'},el('p',{class:'adm-callout'},'이제 회원 화면에는 요청 버튼이 없고, 이용 범위는 등급으로만 정합니다. 남은 옛 요청은 확인한 뒤 완료 표시로 정리하세요. 완료 표시는 권한을 바꾸지 않습니다.'),field('승인 요청 검색',q),el('div',{class:'adm-bulk'},note,done),body,el('p',{class:'adm-note'},'서버에서 반환한 열린 요청을 최대 300건 표시합니다. 처리한 뒤 새로고침하면 다음 요청을 확인할 수 있습니다.'));
     },
     matrix() {
       const want = new Set(S.perms), f = filters.matrix;
@@ -348,8 +349,20 @@
         const t = table(heads,rows.map(r=>el('tr',{},el('th',{scope:'row'},el('span',{},r.name),el('small',{class:'adm-note'},r.category || '기타',r.active ? '' : ' · 숨김')), ...grades.map(g=>el('td',{},check(`${g.name} · ${r.name} 이용 허용`,want.has(g.id+':'+r.id),e=>{const k=g.id+':'+r.id;e.target.checked?want.add(k):want.delete(k);sync();}))))),'등급별 메뉴 권한표');t.classList.add('adm-matrix');
         body.replaceChildren(rows.length && grades.length ? t : empty('표시할 메뉴·등급이 없습니다','검색 조건을 바꾸거나 메뉴와 등급을 먼저 등록하세요.'));sync();
       };
+      // TASK-ADM: 'AI 질문' 줄(켜기/끄기)은 위 표에서, 등급별 하루 질문 횟수는 여기서 저장합니다. 서버(GAS)도 같은 값으로 검사합니다.
+      const limits = S.grades.map(g=>({g,input:input(`${g.name} AI 하루 질문 횟수`,String(g.ask_daily_limit ?? 20),{type:'number',min:'1',max:'1000',step:'1',inputmode:'numeric'})}));
+      const saveLimits = button('하루 질문 횟수 저장',async()=>{
+        const changed=limits.filter(x=>String(x.g.ask_daily_limit ?? 20)!==x.input.value.trim());
+        if(!changed.length)return toast('변경한 내용이 없습니다.');
+        const bad=changed.find(x=>!/^\d+$/.test(x.input.value.trim())||+x.input.value<1||+x.input.value>1000);
+        if(bad){toast('하루 질문 횟수는 1~1000 사이 숫자로 입력해 주세요.',true);bad.input.focus();return;}
+        if(!confirmAction('AI 하루 질문 횟수를 바꿀까요?\n'+changed.map(x=>`${x.g.name}: ${x.g.ask_daily_limit ?? 20}회 → ${+x.input.value}회`).join('\n')+'\n해당 등급의 모든 회원에게 바로 적용됩니다.'))return;
+        await mutate(async()=>{for(const x of changed){const r=await sb.from('grades').update({ask_daily_limit:+x.input.value}).eq('id',x.g.id);if(r.error)return r;}return {};},'하루 질문 횟수를 저장했습니다.');
+      },'primary');
+      const aiLimits = el('section',{class:'adm-panel adm-stack'},el('h3',{},'AI 질문 · 등급별 하루 질문 횟수'),el('p',{class:'adm-note'},'AI 질문을 켜고 끄는 것은 아래 표의 \'AI 질문\' 줄에서 합니다. 횟수는 한국시간 자정에 다시 채워집니다.'),
+        el('div',{class:'adm-form-grid'},...limits.map(x=>field(x.g.name,x.input,'1~1000회'))),el('div',{class:'adm-actions'},saveLimits));
       q.addEventListener('input',()=>{f.q=q.value;draw();});grade.addEventListener('change',()=>{f.grade=grade.value;draw();});draw();
-      return el('div',{class:'adm-stack'},el('p',{class:'adm-callout'},'체크한 메뉴는 해당 등급 전체에 열립니다. 관리자는 이 체크와 관계없이 모든 메뉴를 볼 수 있습니다. 변경 후 저장을 눌러 주세요.'),el('div',{class:'adm-toolbar'},field('메뉴 검색',q),field('등급',grade)),el('div',{class:'adm-bulk'},changeNote,save,button('변경 취소',()=>{if(discard()){dirty=false;render();}})),el('p',{class:'adm-note'},'표는 좌우로 스크롤할 수 있습니다. 선택·해제는 현재 검색 결과에만 적용됩니다.'),body);
+      return el('div',{class:'adm-stack'},el('p',{class:'adm-callout'},'체크한 메뉴는 해당 등급 전체에 열립니다. 관리자는 이 체크와 관계없이 모든 메뉴를 볼 수 있습니다. 변경 후 저장을 눌러 주세요.'),aiLimits,el('div',{class:'adm-toolbar'},field('메뉴 검색',q),field('등급',grade)),el('div',{class:'adm-bulk'},changeNote,save,button('변경 취소',()=>{if(discard()){dirty=false;render();}})),el('p',{class:'adm-note'},'표는 좌우로 스크롤할 수 있습니다. 선택·해제는 현재 검색 결과에만 적용됩니다.'),body);
     },
     hits() {
       const body=el('div'),days=filter(select('방문 집계 기간',[[7,'최근 7일'],[30,'최근 30일'],[90,'최근 90일']],30));let sequence=0;

@@ -219,7 +219,9 @@
         el('h3', {}, '분야별 질문'), U.categoryTable(stats));
       container.replaceChildren(
         el('section', { class: 'ask-profile-quota', 'aria-label': '오늘 질문 한도' },
-          note(quotaKnown ? '오늘 남은 질문 ' + count(quota.remaining) + '/20회 · 한국시간 자정 초기화' : '남은 질문 수를 확인하지 못했습니다. 하루 20회 · 한국시간 자정 초기화')),
+          note(quota.allowed === false ? '현재 등급에서는 AI 질문을 이용할 수 없습니다. 이용 범위는 관리자가 등급에 따라 정합니다.'
+            : quotaKnown ? '오늘 남은 질문 ' + count(quota.remaining) + (Number(quota.limit) > 0 ? '/' + count(quota.limit) : '') + '회 · 한국시간 자정 초기화'
+            : '남은 질문 수를 확인하지 못했습니다.' + (Number(quota.limit) > 0 ? ' 하루 ' + count(quota.limit) + '회' : '') + ' · 한국시간 자정 초기화')),
         el('div', { class: 'ask-profile-section-heading' }, el('h3', {}, '최근 질문 10개'), button('기록 새로고침', () => loadStats(ctx, container))),
         note('저장된 답변을 다시 보거나 복사해도 새 질문 횟수를 차감하지 않습니다.'), list,
         el('div', { class: 'ask-account-actions' }, el('a', { class: 'g-btn g-btn--pri', href: '/members/#home' }, '새로 질문하기')),

@@ -54,6 +54,10 @@
 .pa-ask-feedback button { min-height:44px; padding:8px 12px; border:1px solid #b7c7da; border-radius:8px; font:inherit; color:#334d6a; background:#fff; cursor:pointer; }
 .pa-ask-feedback button[aria-pressed=true] { border-color:#397abf; background:#e8f1ff; color:#174c87; }
 .pa-ask :is(button,a,textarea):focus-visible { outline:3px solid #397abf; outline-offset:3px; }
+/* TASK-ADM: AI 질문 이용 권한이 없는 등급 안내 */
+.pa-ask-lock { padding:16px; border:1px dashed #b7c7da; border-radius:10px; background:#f8fafd; }
+.pa-ask-lock-title { margin:0 0 4px; font-size:1.05rem; font-weight:650; color:#2b3f57; line-height:1.55; }
+.pa-ask-lock .pa-ask-help { margin-bottom:0; }
 @media (max-width:700px) {
   .g-members .pa-aiqa-home .pa-work-group { display:block; }
   .g-members .pa-aiqa-home .pa-work-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,max(9rem,calc(50% - 4px))),1fr)); }

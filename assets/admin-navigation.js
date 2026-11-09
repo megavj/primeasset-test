@@ -3,7 +3,7 @@
   'use strict';
   const groups = [
     ['요약', [['tasks', '요약·현재 처리할 일']]],
-    ['회원·승인', [['pending', '가입 승인'], ['requests', '메뉴 이용 요청'], ['members', '회원 관리']]],
+    ['회원·승인', [['pending', '가입 승인'], ['members', '회원 관리'], ['requests', '지난 요청']]],
     ['AI 질문·비용', [['ask', 'AI 질문·비용']]],
     ['자료·도구', [['notice', '새 소식'], ['resources', '페이지·도구'], ['branches', '본부 관리']]],
     ['설정·기록', [['matrix', '메뉴 권한'], ['grades', '등급 관리'], ['admins', '관리자 관리'], ['hits', '방문 합계'], ['audit', '변경 기록'], ['backup', '백업']]]
@@ -20,6 +20,8 @@
       const section = document.createElement('div'); section.className = 'admin-navigation-group';
       const label = document.createElement('p'); label.textContent = title; section.append(label);
       items.forEach(([key, text]) => {
+        // TASK-ADM: 회원 요청 버튼 폐지 — '지난 요청'은 정리할 옛 요청이 남아 있거나 지금 보고 있을 때만 메뉴에 보인다.
+        if (key === 'requests' && current !== key && !(counts && Number(counts[key]) > 0)) return;
         const link = document.createElement('a'); link.href = key === 'ask' ? '/members/admin/ask/' : '/members/admin/#' + key;
         link.textContent = text; link.dataset.tab = key;
         if (counts && counts[key] != null) link.textContent += ' (' + counts[key] + ')';

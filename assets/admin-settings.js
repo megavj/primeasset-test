@@ -225,7 +225,8 @@
         return patch;
       };
       // 필터를 바꿔도 카드의 입력 상태를 유지합니다.
-      const cards = S.resources.map((resource) => {
+      // TASK-ADM: 'AI 질문' 줄은 메뉴 권한 화면에서만 관리합니다(종류를 바꾸면 질문 권한이 풀리지 않게 여기서는 제외).
+      const cards = S.resources.filter((resource) => resource.kind !== "ai").map((resource) => {
         const f = createFields(resource, resource.name || "메뉴");
         const original = {
           kind: resource.kind || "tool", category: (resource.category || "").trim() || "기타", name: (resource.name || "").trim(),
@@ -243,7 +244,7 @@
       const draw = () => {
         const query = search.value.trim().toLocaleLowerCase("ko-KR");
         const matches = cards.filter(({ resource: r }) => (!query || [r.name, r.category, r.description, r.url].join(" ").toLocaleLowerCase("ko-KR").includes(query)) && (!kindFilter.value || r.kind === kindFilter.value) && (!activeFilter.value || (activeFilter.value === "active" ? !!r.active : !r.active)));
-        count.textContent = `${matches.length}개 표시 · 전체 ${S.resources.length}개`;
+        count.textContent = `${matches.length}개 표시 · 전체 ${cards.length}개 · AI 질문은 메뉴 권한 화면에서 관리`;
         body.replaceChildren(...(matches.length ? matches.map((item) => item.detail) : [empty("조건에 맞는 메뉴가 없습니다", "검색어나 필터를 바꿔 다시 확인해 주세요.")]));
       };
       search.addEventListener("input", draw);
@@ -270,7 +271,7 @@
       let records = [];
       const tableNames = { members: "회원", grades: "등급", grade_permissions: "메뉴 권한", resources: "페이지·도구", branches: "본부", site_notice: "새 소식" };
       const actionNames = { insert: "추가", update: "변경", delete: "삭제", reject: "가입 거절" };
-      const fieldNames = { name: "이름", branch: "소속", phone: "연락처", email: "이메일", grade_id: "등급 ID", status: "상태", is_admin: "관리자", memo: "메모", suspend_reason: "정지 사유", suspended_at: "정지 시각", kind: "종류", category: "분류", description: "설명", url: "주소", active: "사용", sort: "순서", is_default: "가입 기본", no: "본부 번호", visible: "메인 표시", text: "새 소식", grade_permissions: "메뉴 권한", resource_id: "메뉴 ID" };
+      const fieldNames = { name: "이름", branch: "소속", phone: "연락처", email: "이메일", grade_id: "등급 ID", status: "상태", is_admin: "관리자", memo: "메모", suspend_reason: "정지 사유", suspended_at: "정지 시각", kind: "종류", category: "분류", description: "설명", url: "주소", active: "사용", sort: "순서", is_default: "가입 기본", no: "본부 번호", visible: "메인 표시", text: "새 소식", grade_permissions: "메뉴 권한", resource_id: "메뉴 ID", ask_daily_limit: "AI 하루 질문 횟수" };
       const printable = (value) => value == null ? "없음" : typeof value === "object" ? JSON.stringify(value) : String(value);
       const changes = (record) => {
         const detail = record.detail || {}, before = detail.before || {}, after = detail.after || {};
