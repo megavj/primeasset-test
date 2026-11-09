@@ -1,4 +1,4 @@
-/* TASK-ART 작성글모음 공용(2026-11-09): 글 본문 안전하게 그리기 · [HTML 복사] · [서식 그대로 복사] · [그림 내려받기] · 게시 전 안내.
+/* TASK-ART 작성글모음 공용(2026-11-09, ART3 같은 날 밤: 글쓴이 줄·대표 그림 바로 불러오기·HTML 복사 구조화 데이터·그림 받기 이름): 글 본문 안전하게 그리기 · [HTML 복사] · [서식 그대로 복사] · [그림 내려받기] · 게시 전 안내.
    작성글모음(/members/articles/)·내 정보 보관함(/members/me/)·관리자 화면이 같은 코드를 쓴다.
    본문은 생성기가 만든 HTML이지만 그대로 넣지 않고 허용한 태그·속성만 다시 만든다(그림은 우리 저장소 주소만).
    서식 그대로 복사: 네이버 블로그 편집기(스마트에디터 ONE)는 붙여넣은 HTML의 class·<style>을 버리고 일부 인라인 서식만 살리므로
@@ -9,8 +9,8 @@
   const TAGS = new Set(['P', 'H2', 'H3', 'H4', 'UL', 'OL', 'LI', 'STRONG', 'B', 'EM', 'I', 'U', 'BR', 'HR', 'BLOCKQUOTE', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD', 'CAPTION', 'FIGURE', 'FIGCAPTION', 'IMG', 'A', 'SMALL', 'SPAN', 'MARK']);
   const DROP = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT', 'SVG', 'MATH', 'FORM', 'INPUT', 'BUTTON', 'TEXTAREA', 'SELECT', 'LINK', 'META']);
   const ATTRS = { IMG: ['src', 'alt', 'width', 'height'], A: ['href'], TH: ['colspan', 'rowspan', 'scope'], TD: ['colspan', 'rowspan'], P: ['class'], SPAN: ['class'] };
-  // 글 속 표시: warn = 금소법 경고문구(빨간 글자, 원문 그대로) · legal = 필수안내사항 · slot = 설계사가 채울 자리 · ai = AI 사용 표시
-  const MARKS = ['warn', 'legal', 'slot', 'ai'];
+  // 글 속 표시: warn = 금소법 경고문구(빨간 글자, 원문 그대로) · legal = 필수안내사항 · slot = 설계사가 채울 자리 · ai = AI 사용 표시 · byline = 글쓴이·작성일·사실 확인일(ART3)
+  const MARKS = ['warn', 'legal', 'slot', 'ai', 'byline'];
   const safeHref = v => { try { const u = new URL(v, location.href); return /^https?:$/.test(u.protocol) ? u.href : null; } catch (_) { return null; } };
   const safeImg = v => typeof v === 'string' && v.startsWith(STORE) && !/[\s"'<>]/.test(v) ? v : null;
 
@@ -54,7 +54,7 @@
   function render(article) {
     const body = el('div', { class: 'art-body' });
     body.append(sanitize(article.body_html));
-    body.querySelectorAll('img').forEach(img => { img.loading = 'lazy'; img.decoding = 'async'; });
+    body.querySelectorAll('img').forEach((img, i) => { img.loading = i ? 'lazy' : 'eager'; img.decoding = 'async'; if (!i) img.setAttribute('fetchpriority', 'high'); });   // ART3: 대표 그림은 바로(web.dev LCP)
     body.querySelectorAll('table').forEach(t => { const wrap = el('div', { class: 'art-table-wrap', tabindex: '0', role: 'region', 'aria-label': '표 · 좌우로 밀어 볼 수 있습니다' }); t.replaceWith(wrap); wrap.append(t); });
     // 필수안내사항 줄들을 상자 하나로
     body.querySelectorAll('p.legal').forEach(p => {
@@ -70,12 +70,13 @@
   // 홈페이지·워드프레스용: 뜻이 분명한 기본 태그 + 그림 주소(alt·크기·늦게 불러오기)
   function webHtml(article) {
     const frag = sanitize(article.body_html), lines = [`<h1>${esc(article.title)}</h1>`];
+    let imgNo = 0;
     const ser = (n, depth) => {
       if (n.nodeType === 3) return esc(n.nodeValue);
       const t = n.tagName.toLowerCase(), kids = [...n.childNodes].map(c => ser(c, depth + 1)).join('');
       if (t === 'br') return '<br>';
       if (t === 'hr') return '<hr>';
-      if (t === 'img') return `<img src="${esc(n.getAttribute('src'))}" alt="${esc(n.getAttribute('alt') || '')}"${n.getAttribute('width') ? ` width="${n.getAttribute('width')}" height="${n.getAttribute('height') || ''}"` : ''} loading="lazy" decoding="async" style="max-width:100%;height:auto">`;
+      if (t === 'img') { const first = imgNo++ === 0; return `<img src="${esc(n.getAttribute('src'))}" alt="${esc(n.getAttribute('alt') || '')}"${n.getAttribute('width') ? ` width="${n.getAttribute('width')}" height="${n.getAttribute('height') || ''}"` : ''}${first ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async" style="max-width:100%;height:auto">`; }
       // 테마가 표를 꾸미지 않아도 보이게 테두리·여백만 인라인(워드프레스가 허용하는 속성)
       if (t === 'table') return `<table style="border-collapse:collapse;width:100%">${kids}</table>`;
       if (t === 'th' || t === 'td') return `<${t}${n.getAttribute('scope') ? ` scope="${esc(n.getAttribute('scope'))}"` : ''}${n.getAttribute('colspan') ? ` colspan="${n.getAttribute('colspan')}"` : ''} style="border:1px solid #cccccc;padding:8px;text-align:left${t === 'th' ? ';background-color:#f2f4f6' : ''}">${kids}</${t}>`;
@@ -83,6 +84,7 @@
       if (t === 'p' && n.className === 'warn') return `<p style="color:#d0021b;font-weight:600">${kids}</p>`;
       if (t === 'p' && n.className === 'slot') return `<p style="background-color:#fff6d6;border:1px dashed #c9a227;padding:8px 10px">${kids}</p>`;
       if (t === 'p' && n.className === 'ai') return `<p><small>${kids}</small></p>`;
+      if (t === 'p' && n.className === 'byline') return `<p style="font-size:14px;color:#555555">${kids}</p>`;
       const attrs = ['colspan', 'rowspan', 'scope'].filter(a => n.getAttribute(a)).map(a => ` ${a}="${esc(n.getAttribute(a))}"`).join('');
       return `<${t}${attrs}>${kids}</${t}>`;
     };
@@ -93,7 +95,17 @@
       flush(); const s = ser(n, 0).trim(); if (s) lines.push(s);
     });
     flush();
+    const ld = jsonLd(article); if (ld) lines.push(ld);
     return lines.join('\n');
+  }
+  // ART3 구조화 데이터(구글 Article/BlogPosting 권장 속성). 붙여 넣는 곳이 지워도 글에는 영향 없음.
+  // 글쓴이 이름(설계사 OOO)은 게시할 때 본인 이름으로, 게시일(datePublished)은 게시하는 날로 넣는다.
+  function jsonLd(article) {
+    const ims = (article.images || []).filter(i => i && safeImg(i.url));
+    if (!ims.length) return '';
+    const image = [...new Set([ims[0].og, ims[0].url].filter(u => u && safeImg(u)))];
+    const d = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: String(article.title || '').slice(0, 110), description: String(article.summary || '').slice(0, 300), image, inLanguage: 'ko-KR', author: { '@type': 'Person', name: '설계사 OOO' } };
+    return `<!-- 검색 노출용 정보(구조화 데이터): 게시할 때 "설계사 OOO"를 본인 이름으로 바꾸고, 원하면 "datePublished":"게시일(예: 2026-11-20)"을 더하세요. 지워져도 글에는 영향 없습니다. -->\n<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`;
   }
   // 네이버 블로그 편집기(스마트에디터 ONE)용 — 근거: evidence/research-naver-paste.md 7-1
   // 인라인 style만 · 문단 하나 = <p> 하나 · 글자 조각은 겹치지 않고 나란히(<b><span>) · 소제목은 굵은 24/19px 문단 ·
@@ -145,6 +157,7 @@
       if (t === 'p' && n.className === 'warn') { out.push(P(`<b>${inline(n, NV.body, NV.warn)}</b>`)); return; }
       if (t === 'p' && n.className === 'slot') { out.push(P(span(n.textContent.trim(), NV.body, '#7a5a00', 'background-color:#fff3b0;'))); return; }
       if (t === 'p' && n.className === 'ai') { out.push(P(span(n.textContent.trim(), NV.small, '#666666'))); return; }
+      if (t === 'p' && n.className === 'byline') { out.push(P(span(n.textContent.trim(), NV.small, '#555555'))); return; }
       if (t === 'p') { const h = inline(n, NV.body, NV.color); if (h.replace(/<[^>]+>/g, '').trim()) out.push(P(h)); return; }
       if (t === 'h2') { out.push(BLANK, P(`<b>${span(n.textContent.trim(), NV.h2, NV.head)}</b>`)); return; }
       if (t === 'h3' || t === 'h4') { out.push(P(`<b>${span(n.textContent.trim(), NV.h3, NV.head)}</b>`)); return; }
@@ -241,7 +254,8 @@
       const r = await fetch(img.url, { mode: 'cors', credentials: 'omit' });
       if (!r.ok) throw new Error('image_' + r.status);
       const blob = await r.blob(), ext = /png/.test(blob.type) ? 'png' : /webp/.test(blob.type) ? 'webp' : 'jpg';
-      const url = URL.createObjectURL(blob), a = el('a', { href: url, download: `${fileBase(article)}_그림${i + 1}.${ext}`, hidden: true });
+      const nm = String(img.name || '').replace(/[\\/:*?"<>|#%]/g, '').trim();   // ART3: 그림 내용을 뜻하는 이름(네이버는 사진 설명칸이 없어 파일 이름이 설명 역할)
+      const url = URL.createObjectURL(blob), a = el('a', { href: url, download: nm ? `${i + 1}_${nm}.${ext}` : `${fileBase(article)}_그림${i + 1}.${ext}`, hidden: true });
       document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); n++;
       await new Promise(res => setTimeout(res, 400)); // 여러 장을 연달아 받을 때 브라우저가 막지 않게
     }

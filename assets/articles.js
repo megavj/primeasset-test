@@ -126,7 +126,7 @@
       const left = daysLeft(x.expires_at);
       const open = '#a=' + x.id;
       return el('article', { class: 'art-card', 'data-article': x.id },
-        x.thumb ? el('a', { class: 'art-thumb', href: open, tabindex: '-1', 'aria-hidden': 'true' }, el('img', { src: x.thumb, alt: '', loading: 'lazy', decoding: 'async', width: '600', height: '400' })) : null,
+        x.thumb ? el('a', { class: 'art-thumb', href: open, tabindex: '-1', 'aria-hidden': 'true' }, el('img', { class: 'art-thumb-bg', src: x.thumb, alt: '', loading: 'lazy', decoding: 'async' }), el('img', { src: x.thumb, alt: '', loading: 'lazy', decoding: 'async', width: '600', height: '400' })) : null,   // ART3: 비율이 달라도 자르지 않음(뒤는 흐린 같은 그림)
         el('div', { class: 'art-card-body' },
           tagChips(x.tags),
           el('h2', { class: 'art-card-title' }, el('a', { href: open }, x.title)),
