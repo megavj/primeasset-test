@@ -58,7 +58,7 @@
   let askClient = null, sessionOwner;
   let tab = 'tasks', busy = false, dirty = false, ready = false, loadVersion = 0;
   const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'yes',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''}};
-  const TABS = {tasks:['요약','이번 달 AI 이용 현황과 현재 처리할 일을 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['지난 요청','예전에 회원이 보낸 이용 요청 중 아직 정리하지 않은 것입니다. 이제 회원 화면에는 요청 버튼이 없습니다.'],members:['회원 관리','회원 검색·등급·상태·메모 관리'],matrix:['메뉴 권한','등급마다 회원이 볼 수 있는 메뉴와 AI 질문 횟수를 정합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['페이지·도구','인트라넷 메뉴의 이름·주소·표시 여부를 관리합니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
+  const TABS = {tasks:['요약','이번 달 AI 이용 현황과 현재 처리할 일을 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['지난 요청','예전에 회원이 보낸 이용 요청 중 아직 정리하지 않은 것입니다. 이제 회원 화면에는 요청 버튼이 없습니다.'],members:['회원 관리','이름을 누르면 상세 창이 열리고, 여러 명을 고르면 등급 변경·정지·정지 풀기를 한 번에 할 수 있습니다.'],matrix:['메뉴 권한','등급마다 회원이 볼 수 있는 메뉴와 AI 질문 횟수를 정합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['페이지·도구','인트라넷 메뉴의 이름·주소·표시 여부를 관리합니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
 
   const confirmAction = message => window.confirm(message);
   const discard = () => !dirty || confirmAction('저장하지 않은 변경이 있습니다. 변경을 버리고 이동할까요?');
@@ -277,33 +277,6 @@
       q.addEventListener('input',() => { f.q = q.value; f.page = 1; selected.clear(); draw(); }); complete.addEventListener('change',() => {f.complete = complete.value;f.page = 1;selected.clear();draw();});
       draw();
       return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('대기 회원 검색',q),field('가입 정보',complete),button('검색·필터 초기화',() => go('pending'))),el('p',{class:'adm-note'},'이름·휴대폰·소속 본부·개인정보 동의를 모두 확인한 신청만 승인할 수 있습니다. 정보 미입력 계정은 별도로 분류합니다.'),el('div',{class:'adm-bulk'},summary,field('선택 회원에게 부여할 등급',grade),approve),body);
-    },
-    // 기존 회원 목록(admin-members.js가 없을 때만 쓰임)
-    members() {
-      const f = filters.members;
-      const q = filter(input('회원 검색',f.q,{type:'search',placeholder:'이름 · 소속 · 이메일 · 연락처'}));
-      const g = filter(select('회원 등급 필터',[['','전체 등급'],...S.grades.map(x => [x.id,x.name])],f.grade));
-      const st = filter(select('회원 상태 필터',[['','전체 상태'],['active','사용 중'],['pending','승인 대기'],['incomplete','정보 미입력'],['suspended','정지']],f.status));
-      const body = el('div');
-      const draw = () => {
-        const list = S.members.filter(m => matches(f.q,m.name,m.email,m.branch,m.phone) && (!f.grade || m.grade_id === +f.grade) && (!f.status || (f.status === 'incomplete' ? (m.status === 'incomplete' || (m.status === 'pending' && !profileComplete(m))) : f.status === 'pending' ? m.status === 'pending' && profileComplete(m) : m.status === f.status)));
-        const paging = pager(list,f,draw);
-        body.replaceChildren(list.length ? table(['회원','등급·관리자','상태','회원 관리'],pageRows(list,f).map(m => {
-          const gs = gradeSelect(`${m.name || m.email} 회원 등급`,m.grade_id), memo = input(`${m.name || m.email} 관리 메모`,m.memo || '',{maxlength:'1000'}), initialGrade=gs.value;
-          const saveMember = () => {
-            const patch={};
-            if(gs.value!==initialGrade)patch.grade_id=+gs.value;
-            if(memo.value!==(m.memo||''))patch.memo=memo.value;
-            if(!Object.keys(patch).length)return toast('변경한 내용이 없습니다.');
-            if (!confirmAction(`${m.name || m.email} (${m.email || m.id}) 님의 변경을 저장할까요?\n${patch.grade_id !== undefined ? '등급: '+gname(m.grade_id)+' → '+gname(patch.grade_id) : ''}${patch.memo !== undefined ? '\n관리 메모 변경' : ''}`)) return;
-            mutate(()=>checkedUpdate(m.id,patch),'회원 정보를 저장했습니다.');
-          };
-          const edit = el('details',{class:'adm-edit'},el('summary',{},'회원 관리'),el('div',{class:'adm-stack'},field('회원 등급',gs),field('관리 메모',memo),el('div',{class:'adm-actions'},button('변경 저장',saveMember,'primary'),['pending','incomplete'].includes(m.status) ? button('가입 승인으로',() => go('pending',{q:m.email || m.name,complete:m.status === 'pending' && profileComplete(m) ? 'yes' : 'no'})) : null,m.status === 'suspended' ? button('정지 해제',() => mutate(() => checkedUpdate(m.id,{status:'active'}),'회원 정지를 해제했습니다.')) : button('회원 정지',() => {const why = window.prompt(`${m.name || m.email} 님의 정지 사유를 입력해 주세요.`,'퇴사'); if (why !== null) mutate(() => checkedUpdate(m.id,{status:'suspended',suspend_reason:why}),'회원을 정지했습니다.');},'danger'))));
-          return el('tr',{},el('td',{},person(m)),el('td',{},gname(m.grade_id),m.is_admin ? badge('관리자') : null),el('td',{},badge((['pending','incomplete'].includes(m.status) && !profileComplete(m)) ? '정보 미입력' : ({active:'사용 중',pending:'승인 대기',incomplete:'정보 미입력',suspended:'정지'}[m.status] || m.status)),m.status === 'suspended' ? el('small',{class:'adm-note'},m.suspend_reason || '', ' ',fmt(m.suspended_at)) : null),el('td',{},edit));
-        }),'회원 목록') : empty('검색 결과가 없습니다','다른 검색어나 필터로 찾아보세요.'),paging);
-      };
-      [[q,'q'],[g,'grade'],[st,'status']].forEach(([control,key]) => control.addEventListener(key === 'q' ? 'input' : 'change',() => {if (dirty && !discard()) {control.value=f[key];return;} dirty=false;edited.clear();f[key]=control.value;f.page=1;draw();}));draw();
-      return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('회원 검색',q),field('등급',g),field('상태',st)),body);
     },
     requests() {
       if (S.requestError) return el('div',{class:'adm-panel'},empty('승인 요청을 불러오지 못했습니다','연결 상태 또는 승인 요청 기능의 서버 설정을 확인해 주세요. 다른 관리 기능은 계속 사용할 수 있습니다.'),button('요청 다시 불러오기',() => mutate(async () => {await requestData();if(S.requestError)throw S.requestError;render();return {};},'요청 목록을 확인했습니다.',{reload:false})));

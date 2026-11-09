@@ -116,8 +116,11 @@
 .g-admin .adm-mm-bulk .adm-input{width:auto;min-width:160px}
 .g-admin .adm-mm-undo{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .g-admin .adm-mm-table .adm-table{width:100%}
-.g-admin .adm-mm-table th,.g-admin .adm-mm-table td{text-align:left;vertical-align:middle}
+.g-admin .adm-mm-table .adm-table th,.g-admin .adm-mm-table .adm-table td{text-align:left;vertical-align:middle}
 .g-admin .adm-mm-table tr.is-selected td{background:#eef4fb}
+.g-admin .adm-mm-table .adm-mm-pick{width:64px}
+.g-admin .adm-mm-tr,.g-admin .adm-mm-card{cursor:pointer}
+.g-admin .adm-mm-tr:hover td{background:var(--bg-2)}
 .g-admin .adm-mm-sort{background:none;border:0;padding:6px 4px;font:inherit;font-weight:700;color:var(--text);cursor:pointer;min-height:40px;text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:4px}
 .g-admin .adm-mm-sort:hover{color:var(--accent)}
 .g-admin .adm-mm-name{display:grid;gap:1px;text-align:left;background:none;border:0;padding:4px 0;font:inherit;color:inherit;cursor:pointer;min-height:44px}
