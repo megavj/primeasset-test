@@ -176,8 +176,9 @@
     root.replaceChildren(back,
       el('article', { class: 'art-view' },
         el('header', { class: 'art-view-head' }, tagChips(a.meta), el('h2', { class: 'art-view-title', tabindex: '-1' }, a.title), meta),
+        K.adNote(a.meta),   // ART4 상품광고 표시·심의필 자리
         actions,
-        mine ? K.postingGuide() : null,
+        mine ? K.postingGuide(a.meta) : null,
         body,
         null),
       ...(mine ? [] : [quotaBar()])); // replaceChildren은 null도 글자로 넣으므로 빈 배열로

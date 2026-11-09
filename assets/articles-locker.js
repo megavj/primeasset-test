@@ -48,7 +48,7 @@
       return el('li', { onpointerenter: warm, onfocusin: warm, ontouchstart: warm },
         x.thumb ? el('img', { class: 'art-locker-thumb', src: x.thumb, alt: '', loading: 'lazy', width: '96', height: '64' }) : el('span', { class: 'art-locker-thumb', 'aria-hidden': 'true' }),
         el('div', {}, el('h3', {}, el('a', { href: '/members/articles/#a=' + x.id }, x.title)),
-          el('p', { class: 'art-locker-meta' }, [`${kDate(x.claimed_at)} 보관`, t.insurance, t.format, x.chars ? `약 ${Number(x.chars).toLocaleString('ko-KR')}자` : null].filter(Boolean).join(' · ')),
+          el('p', { class: 'art-locker-meta' }, [`${kDate(x.claimed_at)} 보관`, K.isProduct && K.isProduct(t) ? K.PRODUCT_LABEL : null, t.insurance, t.format, x.chars ? `약 ${Number(x.chars).toLocaleString('ko-KR')}자` : null].filter(Boolean).join(' · ')),
           el('a', { class: 'art-locker-link', href: '/members/articles/#a=' + x.id }, '글 보기 · 게시 전 안내 →')),
         K.actionButtons(getArticle, status), status);
     }

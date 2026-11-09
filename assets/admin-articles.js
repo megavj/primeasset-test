@@ -150,7 +150,7 @@
               return el('tr', {},
                 el('td', {}, el('label', { class: 'adm-check' }, el('input', { type: 'checkbox', checked: selected.has(a.id), 'aria-label': `${a.title} 선택`, onchange: e => { e.target.checked ? selected.add(a.id) : selected.delete(a.id); sync(); } }), el('span', { class: 'sr' }, a.title))),
                 el('td', {}, el('div', { class: 'adm-art-title' }, a.images?.[0]?.url ? el('img', { src: a.images[0].url, alt: '', loading: 'lazy', width: '72', height: '48' }) : null,
-                  el('div', {}, el('strong', {}, a.title), el('small', { class: 'adm-note' }, [a.meta?.insurance, a.meta?.format, a.meta?.length, a.meta?.chars ? `약 ${num(a.meta.chars)}자` : null].filter(Boolean).join(' · '))))),
+                  el('div', {}, el('strong', {}, a.title), el('small', { class: 'adm-note' }, [a.meta?.ad_type === 'product' ? '상품광고(협회 심의 필요)' : null, a.meta?.insurance, a.meta?.format, a.meta?.length, a.meta?.chars ? `약 ${num(a.meta.chars)}자` : null].filter(Boolean).join(' · '))))),
                 el('td', {}, status === 'open' ? `${fmtDay(a.created_at)} · ${left}일 남음` : `${who} · ${fmtTime(a.claimed_at)}`),
                 el('td', {}, button('원문 보기', () => openViewer(a.id))));
             }), status === 'open' ? '남은 글 목록' : '보관된 글 목록') : empty(status === 'open' ? '남은 글이 없습니다' : '보관된 글이 없습니다', status === 'open' ? '생성기가 글을 올리면 이곳과 회원 화면에 보입니다.' : '회원이 보관하면 이곳에 보입니다.'));

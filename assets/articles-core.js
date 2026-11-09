@@ -1,4 +1,4 @@
-/* TASK-ART 작성글모음 공용(2026-11-09, ART3 같은 날 밤: 글쓴이 줄·대표 그림 바로 불러오기·HTML 복사 구조화 데이터·그림 받기 이름): 글 본문 안전하게 그리기 · [HTML 복사] · [서식 그대로 복사] · [그림 내려받기] · 게시 전 안내.
+/* TASK-ART 작성글모음 공용(2026-11-09, ART3 같은 날 밤: 글쓴이 줄·대표 그림 바로 불러오기·HTML 복사 구조화 데이터·그림 받기 이름 · ART4 2026-11-10: 'AI 작성' 표시 숨김·상품광고 표시·채울 자리 표시): 글 본문 안전하게 그리기 · [HTML 복사] · [서식 그대로 복사] · [그림 내려받기] · 게시 전 안내.
    작성글모음(/members/articles/)·내 정보 보관함(/members/me/)·관리자 화면이 같은 코드를 쓴다.
    본문은 생성기가 만든 HTML이지만 그대로 넣지 않고 허용한 태그·속성만 다시 만든다(그림은 우리 저장소 주소만).
    서식 그대로 복사: 네이버 블로그 편집기(스마트에디터 ONE)는 붙여넣은 HTML의 class·<style>을 버리고 일부 인라인 서식만 살리므로
@@ -9,8 +9,10 @@
   const TAGS = new Set(['P', 'H2', 'H3', 'H4', 'UL', 'OL', 'LI', 'STRONG', 'B', 'EM', 'I', 'U', 'BR', 'HR', 'BLOCKQUOTE', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD', 'CAPTION', 'FIGURE', 'FIGCAPTION', 'IMG', 'A', 'SMALL', 'SPAN', 'MARK']);
   const DROP = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'NOSCRIPT', 'SVG', 'MATH', 'FORM', 'INPUT', 'BUTTON', 'TEXTAREA', 'SELECT', 'LINK', 'META']);
   const ATTRS = { IMG: ['src', 'alt', 'width', 'height'], A: ['href'], TH: ['colspan', 'rowspan', 'scope'], TD: ['colspan', 'rowspan'], P: ['class'], SPAN: ['class'] };
-  // 글 속 표시: warn = 금소법 경고문구(빨간 글자, 원문 그대로) · legal = 필수안내사항 · slot = 설계사가 채울 자리 · ai = AI 사용 표시 · byline = 글쓴이·작성일·사실 확인일(ART3)
-  const MARKS = ['warn', 'legal', 'slot', 'ai', 'byline'];
+  // 글 속 표시: warn = 금소법 경고문구(빨간 글자, 원문 그대로) · legal = 필수안내사항 · slot = 설계사가 채울 자리 · ai = (예전 글) AI 사용 표시 — ART4부터 보이지 않게 지움 · byline = 글쓴이·작성일·사실 확인일(ART3)
+  // ART4: fill = 설계사가 채울 칸(심의필 번호·등록번호·예금자보호 로고 자리, 화면에서만 노란 칸) · pinfo = 상품광고 안내 문단
+  const MARKS = ['warn', 'legal', 'slot', 'ai', 'byline', 'fill', 'pinfo'];
+  const AI_CAP = /\s*\(AI로 만든[^)]*\)\s*/g;   // 예전 글 캡션 끝의 'AI로 만든 그림' 표시
   const safeHref = v => { try { const u = new URL(v, location.href); return /^https?:$/.test(u.protocol) ? u.href : null; } catch (_) { return null; } };
   const safeImg = v => typeof v === 'string' && v.startsWith(STORE) && !/[\s"'<>]/.test(v) ? v : null;
 
@@ -49,6 +51,9 @@
       });
     };
     walk(doc.body, out);
+    // ART4(대표 지시): 글·그림 위에 보이는 'AI 작성' 표시는 화면과 복사본 모두에서 뺀다(그림 파일 속 메타데이터 표시는 그대로)
+    out.querySelectorAll('p.ai').forEach(p => p.remove());
+    out.querySelectorAll('figcaption').forEach(c => { const t = c.textContent.replace(AI_CAP, ' ').trim(); if (t !== c.textContent) c.textContent = t; });
     return out;
   }
   function render(article) {
@@ -262,19 +267,38 @@
     return n;
   }
 
-  // 보관한 글 위에 붙이는 '게시 전 안내'(근거: 금소법·광고심의 자료, STANDARD-ART.md)
-  function postingGuide() {
-    return el('section', { class: 'art-guide', 'aria-labelledby': 'art-guide-title' },
-      el('h3', { id: 'art-guide-title' }, '게시 전에 꼭 확인하세요'),
-      el('ol', {},
-        el('li', {}, el('b', {}, '본인 경험 한두 줄을 더하세요. '), '상담하며 실제로 겪은 일이나 고객이 자주 묻는 점을 한두 문장 넣으면 글이 더 믿음직하고, 다른 글과 겹치지 않습니다(고객 이름·연락처 등 개인정보는 넣지 마세요).'),
-        el('li', {}, el('b', {}, '고친 뒤 광고심의를 받고 게시하세요. '), '블로그·홈페이지 글도 업무광고입니다. 팜스 광고심의(업무광고)로 신청하고, "참고한 자료"의 원문을 증빙으로 함께 내세요. 승인 뒤에는 고치지 말고 그대로 게시합니다.'),
-        el('li', {}, el('b', {}, '보험사 이름·상품 이름은 넣지 마세요. '), '넣으면 상품광고가 되어 심의 기준이 달라집니다. 숫자·제도는 게시 시점 기준으로 한 번 더 확인하세요.'),
-        el('li', {}, el('b', {}, '빨간 안내 문구와 맨 아래 필수안내사항은 지우거나 줄이지 마세요. '), '"설계사 OOO"와 협회 등록번호(0000…)는 본인 정보로 바꾸고, 심의필 번호·기간(제00000호, 0000.00.00)은 심의 신청 때는 그대로 두었다가 승인 뒤 받은 번호로 바꿉니다.')));
+  // 보관한 글 위에 붙이는 '게시 전 안내'(근거: 금소법·광고심의 자료, 심의기준-정리본.md). ART4: 업무광고·상품광고에 따라 다르게
+  const isProduct = m => !!m && (m.ad === 'product' || m.ad_type === 'product');
+  const PRODUCT_LABEL = '상품광고(협회 심의 필요)';
+  function postingGuide(meta) {
+    const P = isProduct(meta), pr = (meta && meta.product) || {};
+    const common = [
+      el('li', {}, el('b', {}, '✍ 노란 "설계사 경험 칸"을 채우거나 지우세요. '), '상담하며 직접 받은 질문이나 확인한 서류를 한두 문장 넣으면 글이 더 믿음직하고 다른 글과 겹치지 않습니다. 고객 이름·연락처·받은 보험금 같은 개인 사례는 넣지 마세요.'),
+      el('li', {}, el('b', {}, '"상담하다 보면 ~ 자주 받습니다" 같은 현장 이야기는 본인 경험에 맞게 고쳐 쓰세요. '), '본인 상담과 다르면 지우거나 바꿔도 됩니다. 특정 고객의 실제 사례·받은 금액으로 바꾸면 안 됩니다.')];
+    const items = P ? [
+      el('li', {}, el('b', {}, '이 글은 상품광고입니다. '), `${pr.insurer || '보험사'} 「${pr.name || '상품'}」 한 상품만 다룹니다. 팜스 광고심의에서 [상품광고] 탭으로 보험회사·상품명을 정확히 적어 신청하면 본사 → 보험사 심의(약 2개월, 진행 표시 '협회(보험사) 심사중')를 거칩니다. 상품요약서·약관(근거 자료)을 증빙 PDF로 함께 내세요.`),
+      el('li', {}, el('b', {}, '노란 칸을 채우세요. '), `"설계사 OOO"·협회 등록번호는 본인 정보로, "${pr.review_no_slot || '보험사 준법감시필 제00000호'}"는 심의 신청 때 그대로 두었다가 승인 뒤 받은 번호·기간으로, 예금자보호한도 로고 자리에는 예금보험공사 공식 로고 파일을 넣습니다.`),
+      el('li', {}, el('b', {}, '보험료·환급금 표와 빨간 안내 문구, 맨 아래 필수안내사항은 지우거나 줄이지 마세요. '), `표의 숫자는 ${pr.basis || '근거 자료'} 기준입니다. 상품이 개정되면 다시 심의를 받아야 합니다. 다른 보험사·다른 상품과 비교하는 문장을 넣으면 안 됩니다.`),
+      ...common] : [
+      ...common,
+      el('li', {}, el('b', {}, '고친 뒤 광고심의를 받고 게시하세요. '), '블로그·홈페이지 글도 업무광고입니다. 팜스 광고심의(업무광고)로 신청하고, "참고한 자료"의 원문을 증빙으로 함께 내세요. 승인 뒤에는 고치지 말고 그대로 게시합니다.'),
+      el('li', {}, el('b', {}, '보험사 이름·상품 이름은 넣지 마세요. '), '넣으면 상품광고가 되어 심의 기준이 달라집니다. 숫자·제도는 게시 시점 기준으로 한 번 더 확인하세요.'),
+      el('li', {}, el('b', {}, '빨간 안내 문구와 맨 아래 필수안내사항은 지우거나 줄이지 마세요. '), '노란 칸의 "설계사 OOO"와 협회 등록번호는 본인 정보로 바꾸고, 심의필 번호·기간(제00000호, 0000.00.00)은 심의 신청 때는 그대로 두었다가 승인 뒤 받은 번호로 바꿉니다.')];
+    return el('section', { class: 'art-guide', 'aria-labelledby': 'art-guide-title' }, el('h3', { id: 'art-guide-title' }, '게시 전에 꼭 확인하세요'), el('ol', {}, ...items));
+  }
+  // ART4 상품광고 표시(글 보기 맨 위) — 본문 밖이라 복사되지 않음
+  function adNote(meta) {
+    if (!isProduct(meta)) return null;
+    const pr = meta.product || {};
+    return el('div', { class: 'art-adnote', role: 'note', 'aria-label': PRODUCT_LABEL },
+      el('strong', {}, PRODUCT_LABEL),
+      el('p', {}, `${pr.insurer || ''} 「${pr.name || ''}」 한 상품만 다루는 상품광고입니다. 업무광고와 달리 본사 → 보험사 심의(약 2개월)를 받아야 게시할 수 있습니다.`),
+      el('p', {}, '심의필 번호 넣는 자리: 글 맨 아래 노란 칸 ', el('mark', {}, pr.review_no_slot || '보험사 준법감시필 제00000호 (0000.00.00~0000.00.00)'), pr.basis ? ` · 근거 자료: ${pr.basis}` : ''));
   }
   function tagChips(tags) {
     const t = tags || {}, list = [t.insurance, t.format, t.length].filter(v => typeof v === 'string' && v);
-    return list.length ? el('ul', { class: 'art-tags', 'aria-label': '글 분류' }, ...list.map(v => el('li', {}, v))) : null;
+    const items = (isProduct(t) ? [el('li', { class: 'is-product' }, PRODUCT_LABEL)] : []).concat(list.map(v => el('li', {}, v)));
+    return items.length ? el('ul', { class: 'art-tags', 'aria-label': '글 분류' }, ...items) : null;
   }
   const kDate = v => { const d = new Date(v); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' }); };
   const daysLeft = v => { const d = Date.parse(v); return Number.isNaN(d) ? null : Math.max(0, Math.ceil((d - Date.now()) / 86400000)); };
@@ -294,5 +318,5 @@
     return el('div', { class: 'art-actions', role: 'group', 'aria-label': '글 가져가기' }, a, b, c);
   }
 
-  window.PA_ART_CORE = { STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, downloadImages, postingGuide, tagChips, actionButtons, kDate, daysLeft, fileBase };
+  window.PA_ART_CORE = { STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, actionButtons, kDate, daysLeft, fileBase };
 })();
