@@ -77,7 +77,7 @@
 
     // 회원 등급으로 볼 수 있는 메뉴(회원 화면에 보이는 메뉴만). 관리자는 모두.
     function menusFor(m) {
-      const visible = S.resources.filter(r => r.active && r.kind !== 'ai' && !/승격/.test(r.name || ''));
+      const visible = S.resources.filter(r => r.active && r.kind !== 'ai'); // TASK-MENU: 숨김·지운 메뉴는 DB 상태로만 가림
       const ai = S.resources.find(r => r.kind === 'ai');
       const allowed = r => m.is_admin || S.perms.has(m.grade_id + ':' + r.id);
       const grade = S.grades.find(g => g.id === m.grade_id);

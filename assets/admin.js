@@ -42,6 +42,7 @@
   const errorText = e => {
     const m = String(e?.message || e || '');
     if (/fetch|network|timeout|abort|Failed/i.test(m)) return '연결을 확인하고 다시 시도해 주세요.';
+    if (e?.hint === 'pa-menu' && /[가-힣]/.test(m)) return m; // TASK-MENU: 메뉴 관리 서버 함수의 안내 문구는 그대로 보여 줌
     if (/JWT|token|session|401/i.test(m)) return '로그인이 만료되었습니다. 인트라넷에서 다시 로그인해 주세요.';
     if (/permission|denied|42501|관리자|권한/i.test(m)) return '관리자 권한을 확인하지 못했습니다. 다시 로그인한 뒤 시도해 주세요.';
     if (/가입 정보|정보 미입력/i.test(m)) return '이름·휴대폰·소속 본부·개인정보 동의를 모두 입력한 회원만 승인할 수 있습니다.';
@@ -53,12 +54,12 @@
   if (!C.url || !C.anonKey || !window.supabase) { box.replaceChildren(empty('로그인 서버를 연결하지 못했습니다', '잠시 후 새로고침해 주세요.')); return; }
   const sb = window.supabase.createClient(C.url, C.anonKey);
   window.PA_SB = sb; // 공통 상단 메뉴도 기존 인증 클라이언트를 재사용합니다.
-  const S = {grades:[],members:[],resources:[],branches:[],perms:new Set(),profile:null,requests:[],requestError:null,loadedAt:null};
+  const S = {grades:[],members:[],resources:[],trash:[],groups:[],branches:[],perms:new Set(),profile:null,requests:[],requestError:null,loadedAt:null}; // TASK-MENU: resources=지우지 않은 메뉴, trash=지운 메뉴함(30일), groups=묶음
   const gname = id => S.grades.find(g => g.id === id)?.name || '등급 없음';
   let askClient = null, sessionOwner;
   let tab = 'tasks', busy = false, dirty = false, ready = false, loadVersion = 0;
-  const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'yes',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''}};
-  const TABS = {tasks:['요약','이번 달 AI 이용 현황과 현재 처리할 일을 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['지난 요청','예전에 회원이 보낸 이용 요청 중 아직 정리하지 않은 것입니다. 이제 회원 화면에는 요청 버튼이 없습니다.'],members:['회원 관리','이름을 누르면 상세 창이 열리고, 여러 명을 고르면 등급 변경·정지·정지 풀기를 한 번에 할 수 있습니다.'],matrix:['메뉴 권한','등급마다 회원이 볼 수 있는 메뉴와 AI 질문 횟수를 정합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['페이지·도구','인트라넷 메뉴의 이름·주소·표시 여부를 관리합니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],articles:['작성글모음','AI가 쓴 글의 남은 수·보관 기록을 보고, 필요 없는 글을 지웁니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
+  const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'yes',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''},resources:{q:'',view:'list',open:null}};
+  const TABS = {tasks:['요약','이번 달 AI 이용 현황과 현재 처리할 일을 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['지난 요청','예전에 회원이 보낸 이용 요청 중 아직 정리하지 않은 것입니다. 이제 회원 화면에는 요청 버튼이 없습니다.'],members:['회원 관리','이름을 누르면 상세 창이 열리고, 여러 명을 고르면 등급 변경·정지·정지 풀기를 한 번에 할 수 있습니다.'],matrix:['메뉴 권한','등급마다 회원이 볼 수 있는 메뉴와 AI 질문 횟수를 정합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['메뉴 관리','회원 업무 도구 화면의 메뉴를 추가·수정·숨김·삭제하고, 지운 메뉴를 30일 안에 되살립니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],articles:['작성글모음','AI가 쓴 글의 남은 수·보관 기록을 보고, 필요 없는 글을 지웁니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
 
   const confirmAction = message => window.confirm(message);
   const discard = () => !dirty || confirmAction('저장하지 않은 변경이 있습니다. 변경을 버리고 이동할까요?');
@@ -144,11 +145,12 @@
       if (!window.PA_SIGNUP.complete(profile)) { gate('가입 정보를 먼저 입력해 주세요','이름·휴대폰·소속 본부와 개인정보 동의를 입력한 뒤 이용해 주세요.',false,true); return; }
       S.profile = profile;
     }
-    const [grades,members,resources,perms,branches] = await Promise.all([
+    const [grades,members,allMenus,perms,branches,groups] = await Promise.all([
       readAll('grades',[['sort'],['id']]),readAll('members',[['created_at',{ascending:false}],['id']]),
-      readAll('resources',[['kind'],['category'],['sort'],['id']]),readAll('grade_permissions',[['grade_id'],['resource_id']]),readAll('branches',[['sort'],['no']])]);
+      readAll('resources',[['kind'],['category'],['sort'],['id']]),readAll('grade_permissions',[['grade_id'],['resource_id']]),readAll('branches',[['sort'],['no']]),readAll('menu_groups',[['sort'],['name']])]);
     if (version !== loadVersion) return;
-    Object.assign(S,{grades,members,resources,branches,perms:new Set(perms.map(p => p.grade_id + ':' + p.resource_id))});
+    // TASK-MENU: 지운 메뉴(deleted_at)는 모든 관리 화면에서 빼고 '지운 메뉴'함에만 보인다.
+    Object.assign(S,{grades,members,resources:allMenus.filter(r => !r.deleted_at),trash:allMenus.filter(r => r.deleted_at),groups,branches,perms:new Set(perms.map(p => p.grade_id + ':' + p.resource_id))});
     await requestData();
     if (version !== loadVersion) return;
     S.loadedAt = new Date(); ready = true; render();
@@ -156,7 +158,7 @@
   function gate(title, description, retry = false, signup = false) {
     if (askClient) { askClient.dispose(); askClient = null; }
     loadVersion++; ready = false; dirty = false; edited.clear(); S.profile = null;
-    Object.assign(S,{grades:[],members:[],resources:[],branches:[],perms:new Set(),requests:[],requestError:null});
+    Object.assign(S,{grades:[],members:[],resources:[],trash:[],groups:[],branches:[],perms:new Set(),requests:[],requestError:null});
     document.getElementById('admin-feedback')?.replaceChildren();
     box.replaceChildren(el('section',{class:'adm-gate'},empty(title,description),el('div',{class:'adm-actions'},el('a',{class:'adm-button',href:signup ? '/members/#signup' : '/members/#login'},signup ? '가입 정보 입력' : '인트라넷 로그인'),retry ? button('다시 시도',boot,'primary') : null),window.PA_SIGNUP?.guide()));
   }
@@ -238,7 +240,7 @@
       return el('div',{class:'adm-stack'},el('section',{id:'admin-ai-summary',class:'adm-panel','aria-label':'이번 달 AI 이용 현황'}),el('div',{},el('h3',{},'현재 처리할 일'),el('p',{class:'adm-note'},'AI 조회 기간과 관계없는 현재 상태입니다. 메뉴·AI 이용 범위는 회원 요청 없이 등급으로 정합니다.')),el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보 확인 → 승인'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`)),featured,incomplete.length ? el('section',{class:'adm-panel'},el('h3',{},`정보 미입력 ${num(incomplete.length)}명`),el('p',{class:'adm-note'},'가입 정보를 아직 완료하지 않은 계정입니다. 승인 대기 인원에 포함하지 않으며 승인할 수 없습니다.'),button('미입력 계정 보기',() => go('pending',{complete:'no'}))) : null,
         // TASK-ADM: 회원 요청 버튼을 없앴으므로 요청 카드 대신, 예전 요청이 남아 있을 때만 정리 안내를 보여 준다.
         S.requests.length ? el('p',{class:'adm-callout'},`정리하지 않은 지난 이용 요청 ${num(S.requests.length)}건이 남아 있습니다. `,button('지난 요청 정리',() => go('requests'))) : null,
-        el('div',{},el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['articles','작성글모음 현황','남은 글·보관 기록'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
+        el('div',{},el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['resources','메뉴 추가·정리','이름·주소·순서·지운 메뉴'],['articles','작성글모음 현황','남은 글·보관 기록'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
     },
     pending() {
       const f = filters.pending, selected = new Set(), rowGrades = new Map();
@@ -324,7 +326,7 @@
   const ctx = {sb,S,el,button,field,input,select,table,empty,toast,mutate,go,fmt,gname,confirmAction,errorText,remember,num,badge,person,filters,profileComplete,checkedUpdate,load,
     setDirty:value => { dirty = !!value; }, isBusy:() => busy, askClient:() => { if (!askClient && window.PA_ASK) askClient = window.PA_ASK.create(sb); return askClient; }};
   const settings = window.PA_ADMIN_SETTINGS ? window.PA_ADMIN_SETTINGS(ctx) : {};
-  const modules = Object.assign({}, window.PA_ADMIN_MATRIX ? window.PA_ADMIN_MATRIX(ctx) : {}, window.PA_ADMIN_MEMBERS ? window.PA_ADMIN_MEMBERS(ctx) : {}, window.PA_ADMIN_ARTICLES ? window.PA_ADMIN_ARTICLES(ctx) : {}); // TASK-ART: 작성글모음(admin-articles.js)
+  const modules = Object.assign({}, window.PA_ADMIN_MATRIX ? window.PA_ADMIN_MATRIX(ctx) : {}, window.PA_ADMIN_MEMBERS ? window.PA_ADMIN_MEMBERS(ctx) : {}, window.PA_ADMIN_ARTICLES ? window.PA_ADMIN_ARTICLES(ctx) : {}, window.PA_ADMIN_MENUS ? window.PA_ADMIN_MENUS(ctx) : {}); // TASK-ART: 작성글모음(admin-articles.js) · TASK-MENU: 메뉴 관리(admin-menus.js)
   box.addEventListener('click',e=>{const b=e.target.closest('button');if(b){actionScope=b.closest('tr,details,.adm-panel') || b.closest('.adm-content');savesDraft=/저장|추가/.test(b.textContent);}},true);
   const trackDraft = e => {if(e.target.matches('[data-draft="true"]:not(.adm-filter)')){controlValue(e.target)===originals.get(e.target)?edited.delete(e.target):edited.add(e.target);dirty=edited.size>0;}};
   box.addEventListener('input',trackDraft);

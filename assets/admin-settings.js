@@ -198,86 +198,27 @@
           }, "primary"))));
     }
 
-    function resources() {
-      const search = input("페이지·도구 검색", "", { type: "search", placeholder: "이름·분류·설명·주소 검색", "data-draft": "false" });
-      const kindFilter = select("종류 필터", [["", "모든 종류"], ["tool", "도구"], ["page", "페이지"]], "");
-      const activeFilter = select("표시 상태 필터", [["", "모든 표시 상태"], ["active", "사용 중"], ["hidden", "숨김"]], "");
-      kindFilter.setAttribute("data-draft", "false");
-      activeFilter.setAttribute("data-draft", "false");
-      const count = el("p", { class: "adm-note", role: "status" });
-      const body = el("div", { class: "adm-stack" });
-      const createFields = (resource, prefix) => ({
-        kind: select(`${prefix} 종류`, [["tool", "도구"], ["page", "페이지"]], resource.kind || "tool"),
-        category: input(`${prefix} 분류`, resource.category || "", { maxlength: "100", placeholder: "예: 영업 지원" }),
-        name: input(`${prefix} 이름`, resource.name || "", { maxlength: "200" }),
-        url: input(`${prefix} 주소`, resource.url || "", { placeholder: "https://… 또는 /사이트경로/", inputmode: "url" }),
-        description: el("textarea", { class: "adm-input", "aria-label": `${prefix} 설명`, "data-draft": "true", rows: "2", value: resource.description || "" }),
-        active: check(`${prefix} 회원 메뉴 표시`, resource.active !== false)
-      });
-      const fieldsView = (f) => el("div", { class: "adm-form-grid" }, field("종류", f.kind), field("분류", f.category), field("이름", f.name), field("주소", f.url), field("설명", f.description), field("회원 메뉴에 표시", f.active));
-      const values = (f, original) => {
-        const name = f.name.value.trim(), url = f.url.value.trim();
-        const next = { kind: f.kind.value, category: f.category.value.trim() || "기타", name, url: url || null, description: f.description.value.trim() || null, active: f.active.checked };
-        const patch = original ? changedFields(original, next) : next;
-        if (!Object.keys(patch).length) return unchanged();
-        if ("name" in patch && !name) return report("페이지·도구 이름을 입력해 주세요.", f.name);
-        if ("url" in patch && !validUrl(url)) return report("주소는 https:// 또는 http://로 시작하거나 /로 시작하는 사이트 경로를 입력해 주세요.", f.url);
-        return patch;
-      };
-      // 필터를 바꿔도 카드의 입력 상태를 유지합니다.
-      // TASK-ADM: 'AI 질문' 줄은 메뉴 권한 화면에서만 관리합니다(종류를 바꾸면 질문 권한이 풀리지 않게 여기서는 제외).
-      const cards = S.resources.filter((resource) => resource.kind !== "ai").map((resource) => {
-        const f = createFields(resource, resource.name || "메뉴");
-        const original = {
-          kind: resource.kind || "tool", category: (resource.category || "").trim() || "기타", name: (resource.name || "").trim(),
-          url: (resource.url || "").trim() || null, description: (resource.description || "").trim() || null, active: resource.active !== false
-        };
-        const detail = el("details", { class: "adm-panel" },
-          el("summary", {}, el("strong", {}, resource.name || "이름 없음"), " ", el("span", { class: "adm-badge" }, resource.kind === "tool" ? "도구" : "페이지"), " ", el("span", { class: "adm-badge" }, resource.active ? "사용 중" : "숨김"), " · ", resource.category || "기타"),
-          el("div", { class: "adm-stack" }, fieldsView(f), actions(button("변경 저장", async () => {
-            const value = values(f, original);
-            if (!value) return;
-            await mutate(() => sb.from("resources").update(value).eq("id", resource.id), "페이지·도구 설정을 저장했습니다.");
-          }, "primary", { "aria-label": `${resource.name} 변경 저장` }), button("메뉴 권한 설정", () => go("matrix")))));
-        return { resource, detail };
-      });
-      const draw = () => {
-        const query = search.value.trim().toLocaleLowerCase("ko-KR");
-        const matches = cards.filter(({ resource: r }) => (!query || [r.name, r.category, r.description, r.url].join(" ").toLocaleLowerCase("ko-KR").includes(query)) && (!kindFilter.value || r.kind === kindFilter.value) && (!activeFilter.value || (activeFilter.value === "active" ? !!r.active : !r.active)));
-        count.textContent = `${matches.length}개 표시 · 전체 ${cards.length}개 · AI 질문은 메뉴 권한 화면에서 관리`;
-        body.replaceChildren(...(matches.length ? matches.map((item) => item.detail) : [empty("조건에 맞는 메뉴가 없습니다", "검색어나 필터를 바꿔 다시 확인해 주세요.")]));
-      };
-      search.addEventListener("input", draw);
-      kindFilter.addEventListener("change", draw);
-      activeFilter.addEventListener("change", draw);
-      draw();
-      const f = createFields({}, "새 페이지·도구");
-      return el("div", { class: "adm-stack" },
-        note("편집 후 저장하세요. 새 메뉴는 이용 등급도 지정하세요."),
-        el("div", { class: "adm-toolbar" }, field("페이지·도구 검색", search), field("종류", kindFilter), field("표시 상태", activeFilter)), count, body,
-        el("details", { class: "adm-panel" }, el("summary", {}, "새 페이지·도구 추가"), el("div", { class: "adm-stack" }, fieldsView(f), actions(button("페이지·도구 추가", async () => {
-          const value = values(f);
-          if (!value) return;
-          await mutate(() => sb.from("resources").insert({ ...value, sort: nextSort(S.resources) }), "페이지·도구를 추가했습니다. 메뉴 권한에서 사용할 등급을 지정해 주세요.");
-        }, "primary")))));
-    }
+    // TASK-MENU(2026-11-09): 예전 '페이지·도구' 편집 목록은 새 '메뉴 관리'(admin-menus.js)로 바뀌었습니다.
 
     function audit() {
       const body = el("div", { class: "adm-stack" });
       const count = el("p", { class: "adm-note", role: "status" }, "변경 기록을 불러오는 중입니다.");
       const search = input("변경 기록 검색", "", { type: "search", placeholder: "처리자·대상·변경 내용 검색", "data-draft": "false" });
-      const target = select("변경 기록 대상", [["", "모든 대상"], ["members", "회원"], ["grades", "등급"], ["grade_permissions", "메뉴 권한"], ["resources", "페이지·도구"], ["branches", "본부"], ["site_notice", "새 소식"], ["articles", "작성글모음"], ["article_claims", "작성글 보관 기록"]], "");
+      const target = select("변경 기록 대상", [["", "모든 대상"], ["members", "회원"], ["grades", "등급"], ["grade_permissions", "메뉴 권한"], ["menu", "메뉴 관리"], ["resources", "메뉴(세부)"], ["menu_groups", "메뉴 묶음"], ["branches", "본부"], ["site_notice", "새 소식"], ["articles", "작성글모음"], ["article_claims", "작성글 보관 기록"]], "");
       target.setAttribute("data-draft", "false");
       let records = [];
-      const tableNames = { members: "회원", grades: "등급", grade_permissions: "메뉴 권한", resources: "페이지·도구", branches: "본부", site_notice: "새 소식", articles: "작성글모음", article_claims: "작성글 보관 기록" };
-      const actionNames = { insert: "추가", update: "변경", delete: "삭제", reject: "가입 거절", export: "내려받기" };
-      const fieldNames = { name: "이름", branch: "소속", phone: "연락처", email: "이메일", grade_id: "등급 ID", status: "상태", is_admin: "관리자", memo: "메모", suspend_reason: "정지 사유", suspended_at: "정지 시각", kind: "종류", category: "분류", description: "설명", url: "주소", active: "사용", sort: "순서", is_default: "가입 기본", no: "본부 번호", visible: "메인 표시", text: "새 소식", grade_permissions: "메뉴 권한", resource_id: "메뉴 ID", ask_daily_limit: "AI 하루 질문 횟수", export_kind: "내려받은 파일", export_count: "인원 수", article_titles: "지운 글", claimed_count: "그중 보관된 글" };
-      const printable = (value) => value == null ? "없음" : typeof value === "object" ? JSON.stringify(value) : String(value);
+      const tableNames = { members: "회원", grades: "등급", grade_permissions: "메뉴 권한", menu: "메뉴 관리", resources: "메뉴(세부)", menu_groups: "메뉴 묶음", branches: "본부", site_notice: "새 소식", articles: "작성글모음", article_claims: "작성글 보관 기록" };
+      const actionNames = { insert: "추가", update: "변경", delete: "삭제", reject: "가입 거절", export: "내려받기",
+        // TASK-MENU: 메뉴 관리 한 줄 기록
+        menu_add: "메뉴 추가", menu_edit: "메뉴 수정", menu_hide: "메뉴 숨김", menu_show: "메뉴 다시 보이기", menu_move: "메뉴 순서 바꿈", menu_delete: "메뉴 삭제(지운 메뉴함)",
+        menu_restore: "메뉴 되살림", menu_purge: "지운 메뉴 30일 자동 정리", menu_migrate: "메뉴 목록 정리", group_rename: "묶음 이름 바꿈", group_move: "묶음 순서 바꿈" };
+      const fieldNames = { name: "이름", branch: "소속", phone: "연락처", email: "이메일", grade_id: "등급 ID", status: "상태", is_admin: "관리자", memo: "메모", suspend_reason: "정지 사유", suspended_at: "정지 시각", kind: "종류", category: "묶음", description: "설명", url: "주소", active: "사용", sort: "순서", is_default: "가입 기본", no: "본부 번호", visible: "메인 표시", text: "새 소식", grade_permissions: "메뉴 권한", resource_id: "메뉴 ID", ask_daily_limit: "AI 하루 질문 횟수", export_kind: "내려받은 파일", export_count: "인원 수", article_titles: "지운 글", claimed_count: "그중 보관된 글", open_new_tab: "새 창", admin_memo: "관리자 메모", grades: "볼 수 있는 등급", deleted: "상태" };
+      const printable = (value) => value == null ? "없음" : Array.isArray(value) ? (value.join(", ") || "없음") : typeof value === "boolean" ? (value ? "켬" : "끔") : typeof value === "object" ? JSON.stringify(value) : String(value);
       const changes = (record) => {
         const detail = record.detail || {}, before = detail.before || {}, after = detail.after || {};
         return [...new Set([...Object.keys(before), ...Object.keys(after)])]
           .filter((key) => !["updated_at", "approved_at", "approved_by"].includes(key) && JSON.stringify(before[key]) !== JSON.stringify(after[key]))
-          .map((key) => `${fieldNames[key] || key}: ${printable(before[key])} → ${printable(after[key])}`).join("\n") || "상세 변경 내용이 없습니다.";
+          .map((key) => `${fieldNames[key] || key}: ${printable(before[key])} → ${printable(after[key])}`).concat(detail.note ? [`사유: ${detail.note}`] : []).join("\n") || "상세 변경 내용이 없습니다.";
       };
       const draw = () => {
         const query = search.value.trim().toLocaleLowerCase("ko-KR");
@@ -358,6 +299,6 @@
           note("이 화면에는 자동 백업의 최근 실행 결과가 연결되어 있지 않습니다.")));
     }
 
-    return { notice, admins, grades, branches, resources, audit, backup };
+    return { notice, admins, grades, branches, audit, backup };
   };
 })();

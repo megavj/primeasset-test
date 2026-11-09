@@ -1,0 +1,120 @@
+/* TASK-MENU(2026-11-09) 관리자 '메뉴 관리' 화면. intranet-light 색 변수와 admin-adm.css 의 스위치·대화창 모양을 그대로 쓴다.
+   PC: 줄마다 [순서 버튼 | 메뉴 내용 | 보임 스위치·수정·삭제]. 휴대폰(800px 이하): 카드로 쌓고 버튼은 글자와 함께 44px 이상. */
+.g-admin .adm-mn-top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}
+.g-admin .adm-mn-add{min-height:48px;padding:10px 20px;font-size:17px}
+.g-admin .adm-mn-search{flex:1 1 260px}
+.g-admin .adm-mn-tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-top:4px}
+.g-admin .adm-mn-tab{min-height:44px;padding:8px 16px;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;background:none;font:inherit;font-weight:600;color:var(--text-2);cursor:pointer}
+.g-admin .adm-mn-tab[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+.g-admin .adm-mn-tab:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* 묶음 */
+.g-admin .adm-mn-group{display:grid;gap:8px}
+.g-admin .adm-mn-ghead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:10px 14px;border-radius:12px;background:var(--accent-soft)}
+.g-admin .adm-mn-ghead h3{margin:0;font-size:18px;color:var(--accent)}
+.g-admin .adm-mn-ghead h3 small{font-size:14px;font-weight:400;color:var(--text-2)}
+.g-admin .adm-mn-gtools{display:flex;flex-wrap:wrap;gap:6px}
+.g-admin .adm-mn-gtools .adm-button{min-height:40px;padding:6px 12px;font-size:14px}
+.g-admin .adm-mn-emptyg{margin:0;padding:12px 14px;border:1px dashed var(--line-2);border-radius:12px}
+.g-admin .adm-mn-ai{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border:1px solid #c5d8ee;border-radius:12px;background:#f5f9ff}
+.g-admin .adm-mn-ai strong{font-size:17px;margin-right:6px}
+.g-admin .adm-mn-ai .adm-mn-desc{margin:4px 0 0}
+
+/* 메뉴 줄 */
+.g-admin .adm-mn-list{list-style:none;margin:0;padding:0;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-1);overflow:hidden}
+.g-admin .adm-mn-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 16px;align-items:center;padding:14px 16px;border-top:1px solid var(--line)}
+.g-admin .adm-mn-item:first-child{border-top:0}
+.g-admin .adm-mn-item.is-hidden{background:var(--bg-2)}
+.g-admin .adm-mn-item.is-hidden .adm-mn-title strong{color:var(--text-2)}
+.g-admin .adm-mn-trash .adm-mn-item{grid-template-columns:minmax(0,1fr) auto}
+.g-admin .adm-mn-order{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;gap:4px 6px;align-items:center}
+.g-admin .adm-mn-no{grid-row:1/3;min-width:1.8em;text-align:center;font-weight:700;color:var(--text-3);font-variant-numeric:tabular-nums}
+.g-admin .adm-mn-order .adm-button{min-height:36px;min-width:88px;padding:4px 10px;font-size:14px}
+.g-admin .adm-mn-order .adm-button:disabled{opacity:.35}
+.g-admin .adm-mn-main{min-width:0;display:grid;gap:3px}
+.g-admin .adm-mn-title{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.g-admin .adm-mn-title strong{font-size:17px}
+.g-admin .adm-mn-title .adm-badge{font-size:13px}
+.g-admin .adm-mn-badge--off{background:#fde8e8;color:#8a1c1c;border-color:#f3c2c2}
+.g-admin .adm-mn-badge--none{background:var(--bg-2);color:var(--text-2)}
+.g-admin .adm-mn-desc{margin:0;font-size:15px;line-height:1.55;color:var(--text);overflow-wrap:anywhere}
+.g-admin .adm-mn-desc.is-empty{color:var(--text-3);font-style:italic}
+.g-admin .adm-mn-url{margin:0;font-size:14px;color:var(--text-2);overflow-wrap:anywhere}
+.g-admin .adm-mn-url a{color:var(--accent);text-underline-offset:3px}
+.g-admin .adm-mn-grades-line{margin:0;font-size:14px;color:var(--text-2)}
+.g-admin .adm-mn-grades-line b{color:var(--text)}
+.g-admin .adm-mn-memo{margin:0;font-size:13px;color:var(--text-3);line-height:1.5;overflow-wrap:anywhere}
+.g-admin .adm-mn-left{margin:0;font-weight:600;color:var(--text-2)}
+.g-admin .adm-mn-left.is-soon{color:var(--danger)}
+.g-admin .adm-mn-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px}
+.g-admin .adm-mn-actions .adm-button{min-height:44px;min-width:64px}
+.g-admin .adm-mn-actions .adm-mx-switch-text{min-width:2.2em}
+
+/* 메뉴 권한 표의 [수정] */
+.g-admin .adm-mx-edit{background:none;border:0;padding:0 2px;min-height:32px;font:inherit;font-size:14px;font-weight:500;color:var(--text-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.g-admin .adm-mx-edit:hover{color:var(--accent)}
+
+/* 추가·수정 대화창 */
+.g-admin .adm-mn-dialog{width:min(720px,calc(100vw - 32px))}
+.g-admin .adm-mn-form{display:grid;gap:16px;margin-top:12px}
+.g-admin .adm-mn-form .adm-field>label,.g-admin .adm-mn-form .adm-field>span,.g-admin .adm-mn-fs legend{font-weight:700;font-size:16px}
+.g-admin .adm-mn-req{color:var(--danger)}
+.g-admin .adm-mn-fs{border:0;margin:0;padding:0;min-width:0;display:grid;gap:8px}
+.g-admin .adm-mn-radios{display:flex;flex-wrap:wrap;gap:8px}
+.g-admin .adm-mn-radio{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:6px 14px;border:1px solid var(--line-2);border-radius:999px;cursor:pointer;background:var(--bg-1)}
+.g-admin .adm-mn-radio:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+.g-admin .adm-mn-radio input{width:20px;height:20px;accent-color:var(--accent)}
+.g-admin .adm-mn-urlbox{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.g-admin .adm-mn-urlbox .adm-input{flex:1 1 280px}
+.g-admin .adm-mn-urlbox .adm-input:disabled{opacity:.5}
+.g-admin .adm-mn-try{font-size:14px;font-weight:600;color:var(--accent);min-height:40px;display:inline-flex;align-items:center}
+.g-admin .adm-mn-switches{display:grid;gap:10px}
+.g-admin .adm-mn-switches .adm-mx-switch{align-items:flex-start}
+.g-admin .adm-mn-switches .adm-mx-switch>span:last-child{display:grid;gap:2px;font-weight:700;padding-top:4px}
+.g-admin .adm-mn-switches .adm-mx-switch small{font-weight:400;color:var(--text-2);font-size:14px;line-height:1.5}
+.g-admin .adm-mn-grades{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.g-admin .adm-mn-check{display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 12px;border:1px solid var(--line-2);border-radius:10px;cursor:pointer;background:var(--bg-1)}
+.g-admin .adm-mn-check:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.g-admin .adm-mn-check input{width:22px;height:22px;accent-color:var(--accent)}
+.g-admin .adm-mn-check small{color:var(--text-2);font-size:13px}
+.g-admin .adm-mn-fs .adm-actions .adm-button{min-height:40px;padding:6px 12px;font-size:14px}
+.g-admin .adm-mn-gradeline{margin:0 0 6px;color:var(--text)}
+.g-admin .adm-mn-more>summary{cursor:pointer;font-weight:600;color:var(--text-2);min-height:40px;display:flex;align-items:center}
+.g-admin .adm-mn-more textarea{width:100%}
+.g-admin .adm-mn-pv{display:grid;gap:6px;padding:14px;border:1px dashed var(--line-2);border-radius:12px;background:var(--bg-2)}
+.g-admin .adm-mn-pv>small{color:var(--text-2);font-size:13px}
+.g-admin .adm-mn-pv-card{display:grid;gap:4px;max-width:340px;padding:12px 14px;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-1)}
+.g-admin .adm-mn-pv-card b{color:var(--accent);font-size:16px}
+.g-admin .adm-mn-pv-card p{margin:0;font-size:14px;color:var(--text-2)}
+.g-admin .adm-mn-pv-card span{font-size:13px;color:var(--text-3)}
+.g-admin .adm-mn-pv-card.is-off{opacity:.6;border-style:dashed}
+.g-admin .adm-mn-error{margin:12px 0 0;padding:10px 12px;border:1px solid #f3c2c2;border-radius:10px;background:#fdf0f0;color:#8a1c1c;font-weight:600}
+.g-admin .adm-mn-strong{font-size:17px;font-weight:700;margin:4px 0}
+.g-admin .adm-mn-ul{margin:8px 0 0;padding-left:20px;line-height:1.7}
+
+/* 화면 아래 알림(되살리기) */
+.adm-mn-snack{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:1000;width:min(640px,calc(100vw - 24px));display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 14px;padding:14px 16px;border-radius:14px;background:#17283d;color:#fff;box-shadow:0 12px 32px rgba(23,40,61,.28)}
+.adm-mn-snack p{margin:0;flex:1 1 260px;font-size:15px;line-height:1.5}
+.adm-mn-snack .adm-actions{display:flex;gap:8px}
+.adm-mn-snack .adm-button{min-height:44px}
+.adm-mn-snack .adm-button--secondary{background:transparent;color:#fff;border-color:#8ea3bd}
+
+@media(max-width:800px){
+  .g-admin .adm-mn-top{display:grid;grid-template-columns:1fr}
+  .g-admin .adm-mn-top .adm-button{width:100%}
+  .g-admin .adm-mn-item{grid-template-columns:minmax(0,1fr);gap:10px;padding:14px}
+  .g-admin .adm-mn-item>.adm-mn-main{order:1}
+  .g-admin .adm-mn-item>.adm-mn-order{order:2;display:flex;flex-wrap:wrap;gap:8px}
+  .g-admin .adm-mn-item>.adm-mn-actions{order:3;justify-content:flex-start}
+  .g-admin .adm-mn-no{display:none}
+  .g-admin .adm-mn-order .adm-button{flex:1 1 0;min-height:44px}
+  .g-admin .adm-mn-actions .adm-mx-switch{margin-right:auto}
+  .g-admin .adm-mn-ghead{align-items:stretch}
+  .g-admin .adm-mn-gtools{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .g-admin .adm-mn-gtools .adm-button{min-height:44px}
+  .g-admin .adm-mn-ai{display:grid}
+  .g-admin .adm-mn-dialog{width:100vw}
+  .g-admin .adm-mn-dialog .adm-dialog-actions{position:sticky;bottom:-20px;background:var(--bg-1);padding:12px 0;margin-bottom:-8px;display:grid;grid-template-columns:1fr 1fr}
+  .adm-mn-snack{bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){.g-admin .adm-mn-tab{transition:none}}

@@ -5,8 +5,8 @@
     ['요약', [['tasks', '요약·현재 처리할 일']]],
     ['회원·승인', [['pending', '가입 승인'], ['members', '회원 관리'], ['requests', '지난 요청']]],
     ['AI 질문·비용', [['ask', 'AI 질문·비용']]],
-    ['자료·도구', [['articles', '작성글모음'], ['notice', '새 소식'], ['resources', '페이지·도구'], ['branches', '본부 관리']]],
-    ['설정·기록', [['matrix', '메뉴 권한'], ['grades', '등급 관리'], ['admins', '관리자 관리'], ['hits', '방문 합계'], ['audit', '변경 기록'], ['backup', '백업']]]
+    ['자료·도구', [['articles', '작성글모음'], ['notice', '새 소식'], ['branches', '본부 관리']]],
+    ['설정·기록', [['resources', '메뉴 관리'], ['matrix', '메뉴 권한'], ['grades', '등급 관리'], ['admins', '관리자 관리'], ['hits', '방문 합계'], ['audit', '변경 기록'], ['backup', '백업']]]
   ];
   const media = window.matchMedia('(min-width: 801px)');
   media.addEventListener('change', event => document.querySelectorAll('.admin-navigation').forEach(wrap => { wrap.open = event.matches; }));

@@ -3,82 +3,32 @@
    'AI 질문' 줄은 켜기/끄기와 등급별 하루 질문 횟수를 함께 둔다(서버도 같은 값으로 검사). 저장은 기존 표(grade_permissions·grades)를 그대로 쓴다. */
 (function () {
   'use strict';
-  // 회원 인트라넷(assets/glass-members.js)과 같은 규칙: 업무 묶음 순서·묶음 정하기·실제로 열리는 주소. 그쪽을 바꾸면 여기도 함께 바꾼다.
-  const WORK = ['상품·상담', '보상·청구', '청약·전산', '자료·지식'];
-  const TOOL_WORK = {
-    '상품통합분석기': '상품·상담', 'AI영업비서': '상품·상담', '질병정보·화법도우미': '상품·상담', '실전 질병정보·화법도우미': '상품·상담', 'DB영업 화법도우미': '상품·상담',
-    '실전 DB영업 화법도우미': '상품·상담', '다보이는 보험비교 카페': '상품·상담', '레몬보험 보험비교 카페': '상품·상담',
-    '보험보상답변기': '보상·청구', 'N대·종수술 답변기': '보상·청구', '실손의료비 답변기': '보상·청구',
-    '고지의무 판독기': '청약·전산', '전산답변기': '청약·전산', '프라임에셋 내부인트라넷 팜스': '청약·전산',
-    '보험정보공유카페': '자료·지식', '프리미엄 상품저장소카페': '자료·지식', '프리미엄 디비영업저장소 카페': '자료·지식', '보험설계사끼리 카페': '자료·지식',
-    '프리미엄 자료검색기': '자료·지식', '최신보험뉴스': '자료·지식', '보험위키': '자료·지식', '보험노트': '상품·상담',
-    '작성글모음': '자료·지식' // TASK-ART
-  };
-  // 실제 화면을 열어 보고 쓴 설명(2026-11-09 확인, 근거: 작업 폴더 evidence/menu-descriptions.json). [설명, 확인 메모]. 없으면 '페이지·도구'에 적은 설명을 쓴다.
-  const DESC = {
-    "AI 질문": ["업무 중 막힌 점을 적으면 인공지능이 답해 주는 질문창", ""],
-    "작성글모음": ["AI가 쓴 보험 정보 글을 골라 하루 3개까지 내 보관함으로 가져가는 화면", ""], // TASK-ART(2026-11-09)
-    "상품통합분석기": ["보험사별 상품의 가입조건과 장단점을 묻고 비교해 보는 화면", ""],
-    "AI영업비서(화법·상담연습)": ["고객에게 할 말을 추천받고 상담 연습과 영업 실력 점검을 하는 화면", ""],
-    "보험보상답변기": ["보험금 지급 문제를 적으면 기준과 비슷한 사례로 답해 주는 화면", ""],
-    "전산답변기": ["보험사 업무 프로그램에서 막힌 일의 메뉴 위치와 처리 순서를 알려 주는 화면", ""],
-    "최신보험뉴스": ["보험업계 최신 기사를 주제별로 모아 원문으로 연결해 주는 화면", ""],
-    "프리미엄 자료검색기": ["필요한 업무 자료를 주제별로 검색해 카페 글로 찾아 주는 도구", ""],
-    "실전 질병정보·화법도우미": ["질병 정보와 고객에게 설명할 말을 알려 주는 대화 도우미", "구글 로그인이 필요해 안쪽은 확인하지 못함"],
-    "실전 DB영업 화법도우미": ["상담 신청 고객에게 연락할 때 쓸 말을 추천하는 대화 도우미", "구글 로그인이 필요해 안쪽은 확인하지 못함"],
-    "N대·종수술 답변기": ["질병·수술이 보장 기준의 어느 분류에 드는지 답해 주는 도구", "구글 로그인이 필요해 안쪽은 확인하지 못함"],
-    "보험정보공유카페": ["설계사끼리 보험 자료를 나누는 회원 전용 네이버 카페", "네이버 로그인이 필요해 카페 안은 확인하지 못함"],
-    "프리미엄 상품저장소카페": ["보험 상품 자료를 모아 두는 설계사 전용 네이버 카페", "네이버 로그인이 필요해 카페 안은 확인하지 못함"],
-    "프리미엄 디비영업저장소 카페": ["상담 신청 고객 영업에 쓰는 자료를 모아 둔 설계사 전용 카페", "네이버 로그인이 필요해 카페 안은 확인하지 못함"],
-    "보험설계사끼리 카페": ["보험사 소식지와 시험·실무 자료를 설계사끼리 나누는 카페", ""],
-    "다보이는 보험비교 카페": ["일반 고객이 보험을 비교하고 상담을 묻는 네이버 카페", ""],
-    "레몬보험 보험비교 카페": ["고객용 보험비교 카페이나 지금은 네이버가 접근을 막아 둔 상태", "⚠ 지금 네이버가 접근을 막아 회원이 눌러도 열리지 않음 — 주소 점검 필요"],
-    "프라임에셋 내부인트라넷 팜스": ["회사 업무 시스템으로 증명서 발급과 보험사 전산 접속을 하는 곳", "로그인이 필요해 첫 화면만 확인"],
-    "프라임 수당계산기": ["보험사·상품별로 받을 수당을 물어보고 계산해 보는 도구", "입장 비밀번호 화면만 확인"],
-    "상품분석기": ["보험사 상품을 검색하고 비교해 보는 예전 구글 앱 분석기", "입장 비밀번호 화면만 확인"],
-    "PrimeVault 자료검색기": ["업무 자료를 묻거나 검색하면 절차와 조건을 정리해 주는 도구", ""],
-    "소식지 분석기": ["보험사별 이달 소식지의 새 상품·변경·판매 요점을 정리한 화면", "화면의 최신 자료가 2026년 7월"],
-    "사업부 분기별 성과판": ["사업부 상반기 실적을 본부·보험사별로 정리한 홍보용 현황판", "실제 내용은 1~6월(상반기) 실적"],
-    "188본부 시스템 안내서": ["188본부에 새로 온 설계사가 순서대로 따라 할 시작 안내서", "입장 코드 화면만 확인"],
-    "AI 영업도구 통합페이지": ["자주 쓰는 업무 도구 바로가기와 안내서를 모아 둔 화면", "입장 비밀번호 화면만 확인"],
-    "MY포털": ["구글 계정으로 로그인해야 열리는 개인용 포털 화면", "구글 로그인이 필요해 안쪽은 확인하지 못함"],
-    "상담연습도우미": ["고객 상담 상황을 인공지능과 미리 연습해 보는 대화 도우미", "구글 로그인이 필요해 안쪽은 확인하지 못함"],
-    "실손의료비 답변기": ["실손의료비 보장과 청구 질문에 답해 주는 자료 노트", "구글 로그인이 필요해 안쪽은 확인하지 못함"],
-    "전산매뉴얼 자동답변기": ["보험사 전산 사용법 자료를 바탕으로 답해 주는 자료 노트", "구글 로그인이 필요해 안쪽은 확인하지 못함"],
-    "고지의무 판독기": ["가입할 때 알려야 할 병력인지 판단을 돕는 자료 노트", "구글 로그인이 필요해 안쪽은 확인하지 못함"],
-    "영업능력진단 봇": ["설계사의 영업 실력을 질문으로 점검해 주는 인공지능 대화", "챗GPT 로그인이 필요해 안쪽은 확인하지 못함"],
-    "업무보드": ["관리자 한 사람의 할 일과 진행 상황을 보는 개인 업무판", "입장 비밀번호 화면만 확인 · 개인 전용 화면"],
-    "양규철 리크루팅": ["프라임에셋 이직·입사를 권하는 설계사 개인 홍보 페이지", ""]
-  };
+  // TASK-MENU(2026-11-09): 묶음·쉬운 설명·주소·관리자 메모는 DB(메뉴 관리 화면에서 정함)를 그대로 쓴다. 회원 화면(my_menu)과 같은 목록·같은 순서.
+  //   예전에 이 파일에 있던 메뉴 이름 사전(묶음·설명)과 주소 바꾸기 규칙은 DB로 옮겼다(작업 폴더 sql/menu02_data.sql).
   const route = r => {
-    const name = r.name || '', url = r.url || '';
     if (r.kind === 'ai') return { group: 'ai', url: '/members/#home' };
-    if (!r.active) return { group: 'hidden', url: url || null, why: '숨김으로 설정됨' };
-    if (/승격/.test(name)) return { group: 'hidden', url: url || null, why: '회원 화면에서 감춤' };
-    const product = name === '상품통합분석기';
-    const claim = /보상\s*답변|보상\s*AI|보험금\s*청구\s*답변/i.test(name) || /AKfycbzNrEdi_|AKfycbz4WjJLM6OR|1ZyOPAVHmWW65aRKq05QFk/.test(url);
-    const it = /전산\s*답변/.test(name) || /AKfycbzVbO8_XxSq8_WZhvNBXSi0myH22g0igqhAwkz7Kf9QtDUchxIds-E7fgTi06xGSP6lvg|AKfycbxWVCohTpOA3rZUK1hpuOqq_cfarzo57S2dlKL1g3CcTevVq1h-9oG28wBUvv_tzPb8tw|AKfycbzfFExpXscK87c2F54p17YDJwdDmpk7MAZ3NQAsWJtjqAFBXSaVJ1JC52H2czeaPPDNiw/.test(url);
-    const coach = /통합\s*코치|실전\s*상담|영업\s*비서/.test(name) || /AKfycbyKIz|AKfycbw6JIh|AKfycbz8vba3|1rIZRrzlYTgq5g0omTg_02q73sUi83Fp8US200QeoXQc4iPC5Wef6FHZQ/.test(url);
-    const news = /보험\s*뉴스/.test(name) || /AKfycbyYyYaZD3zH-DReuzAH_fUdl2Xe4jU_xhgf2snq2hpgR0g-7yx68bD-xAvpaXe0hnk/.test(url);
-    const group = product || coach ? '상품·상담' : claim ? '보상·청구' : it ? '청약·전산' : Object.prototype.hasOwnProperty.call(TOOL_WORK, name) ? TOOL_WORK[name] : WORK.includes(r.category) ? r.category : '자료·지식';
-    return { group, url: product ? '/product/' : claim ? '/members/claim/' : it ? '/members/it/' : coach ? '/members/coach/' : news ? '/news/' : (url || null) };
+    if (!r.active) return { group: 'hidden', url: r.url || null, why: '숨김으로 설정됨 — 메뉴 관리에서 켤 수 있음' };
+    return { group: r.category, url: r.url || null };
   };
-  const GROUPS = [['ai', 'AI 질문', '인트라넷 첫 화면 맨 위 질문창'], ...WORK.map(w => [w, '업무 도구 · ' + w, '인트라넷 업무 도구 묶음']), ['hidden', '회원 화면에 안 보이는 메뉴', '숨김이거나 감춘 메뉴 — 켜 두어도 회원에게 보이지 않습니다']];
 
   window.PA_ADMIN_MATRIX = function (ctx) {
-    const { sb, S, el, button, input, empty, toast, mutate, num, setDirty, filters } = ctx;
+    const { sb, S, el, button, input, empty, toast, mutate, num, setDirty, filters, go } = ctx;
     const media = window.matchMedia('(max-width: 800px)');
-    const descOf = r => (DESC[r.name] && DESC[r.name][0]) || r.description || (r.url ? '설명이 아직 없습니다. 페이지·도구에서 설명을 적어 주세요.' : '아직 주소가 없는 준비 중 메뉴');
-    const checkNote = r => DESC[r.name] && DESC[r.name][1] ? el('small', { class: 'adm-mx-why' + (/^⚠/.test(DESC[r.name][1]) ? ' is-warn' : '') }, DESC[r.name][1]) : null;
+    const descOf = r => r.description || (r.url ? '설명이 비어 있습니다 — 메뉴 관리에서 한 줄 적어 주세요' : '아직 주소가 없는 준비 중 메뉴');
+    const checkNote = r => r.admin_memo ? el('small', { class: 'adm-mx-why' + (/^⚠/.test(r.admin_memo) ? ' is-warn' : '') }, '메모: ' + r.admin_memo) : null;
+    const editLink = r => r.kind === 'ai' ? null : el('button', { type: 'button', class: 'adm-mx-edit', onclick: () => go('resources', { open: r.id }), 'aria-label': `${r.name} 메뉴 수정(메뉴 관리)` }, '수정');
     const memberCount = g => S.members.filter(m => m.grade_id === g.id).length;
 
     function matrix() {
       const f = filters.matrix;
+      // 묶음 순서 = DB 묶음 순서(회원 화면과 같음). 'AI 질문' 맨 위, 숨김 메뉴 맨 아래. 불러올 때마다 다시 계산.
+      const WORK = (S.groups || []).filter(g => !g.system).map(g => g.name);
+      const GROUPS = [['ai', 'AI 질문', '인트라넷 첫 화면 맨 위 질문창'], ...WORK.map(w => [w, '업무 도구 · ' + w, '인트라넷 업무 도구 묶음']), ['hidden', '회원 화면에 안 보이는 메뉴', '숨김 메뉴 — 켜 두어도 회원에게 보이지 않습니다']];
       const want = new Set(S.perms), limits = new Map(S.grades.map(g => [g.id, Number(g.ask_daily_limit ?? 20)]));
-      // 묶음 안 순서는 회원 메뉴(my_menu: 종류·분류·순서·이름)와 같게 — 글자 코드 순으로 비교한다.
+      // 묶음 안 순서는 회원 메뉴(my_menu: 묶음 순서·순서·이름)와 같게 — 글자 코드 순으로 비교한다.
       const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
       const rows = S.resources.map(r => ({ r, ...route(r) }))
-        .sort((a, b) => GROUPS.findIndex(x => x[0] === a.group) - GROUPS.findIndex(x => x[0] === b.group) || cmp(String(a.r.kind), String(b.r.kind)) || cmp(String(a.r.category), String(b.r.category)) || (a.r.sort || 0) - (b.r.sort || 0) || cmp(String(a.r.name), String(b.r.name)));
+        .sort((a, b) => GROUPS.findIndex(x => x[0] === a.group) - GROUPS.findIndex(x => x[0] === b.group) || cmp(String(a.r.category), String(b.r.category)) || (a.r.sort || 0) - (b.r.sort || 0) || cmp(String(a.r.name), String(b.r.name)) || a.r.id - b.r.id);
       const key = (g, r) => g.id + ':' + r.id;
       const visible = row => row.group !== 'hidden';
       const ai = rows.find(x => x.group === 'ai');
@@ -145,7 +95,7 @@
           if (!items.length) return;
           body.push(el('tr', { class: 'adm-mx-group' + (gk === 'hidden' ? ' is-hidden-group' : '') }, el('th', { scope: 'rowgroup', colspan: String(grades.length + 1) }, el('span', {}, title), el('small', {}, ` · ${items.length}개 · ${sub}`))));
           items.forEach(row => body.push(el('tr', { class: gk === 'hidden' ? 'is-muted' : '' },
-            el('th', { scope: 'row' }, el('div', { class: 'adm-mx-name' }, el('strong', {}, row.r.name), previewLink(row)), el('p', { class: 'adm-mx-desc' }, descOf(row.r)), checkNote(row.r), row.why ? el('small', { class: 'adm-mx-why' }, row.why) : null),
+            el('th', { scope: 'row' }, el('div', { class: 'adm-mx-name' }, el('strong', {}, row.r.name), previewLink(row), editLink(row.r)), el('p', { class: 'adm-mx-desc' }, descOf(row.r)), checkNote(row.r), row.why ? el('small', { class: 'adm-mx-why' }, row.why) : null),
             ...grades.map(g => {
               const k = key(g, row.r);
               const box = el('input', { type: 'checkbox', checked: want.has(k), 'aria-label': `${g.name} · ${row.r.name} 볼 수 있음`, onchange: e => toggle(g, row, e.target.checked) });
@@ -174,7 +124,7 @@
             const sw = el('input', { type: 'checkbox', role: 'switch', checked: want.has(k), 'aria-label': `${row.r.name} 볼 수 있음`, onchange: e => { toggle(g, row, e.target.checked); state.textContent = e.target.checked ? '켬' : '끔'; } });
             const state = el('span', { class: 'adm-mx-switch-text', 'aria-hidden': 'true' }, want.has(k) ? '켬' : '끔');
             const li = el('li', { class: 'adm-mx-item' + (gk === 'hidden' ? ' is-muted' : '') },
-              el('div', { class: 'adm-mx-item-text' }, el('strong', {}, row.r.name), el('p', { class: 'adm-mx-desc' }, descOf(row.r)), checkNote(row.r), el('div', { class: 'adm-mx-item-links' }, previewLink(row), changedTag())),
+              el('div', { class: 'adm-mx-item-text' }, el('strong', {}, row.r.name), el('p', { class: 'adm-mx-desc' }, descOf(row.r)), checkNote(row.r), el('div', { class: 'adm-mx-item-links' }, previewLink(row), editLink(row.r), changedTag())),
               el('label', { class: 'adm-mx-switch' }, sw, el('span', { class: 'adm-mx-switch-ui', 'aria-hidden': 'true' }), state),
               row.group === 'ai' ? limitField(g) : null);
             remember(cells, k, li);
@@ -277,8 +227,9 @@
       media.addEventListener('change', onMedia);
       draw();
       return el('div', { class: 'adm-stack adm-mx-view' },
-        el('p', { class: 'adm-callout' }, '✓ 표시한 메뉴를 그 등급 회원이 볼 수 있습니다. 바꾼 칸은 색으로 표시되고, 아래 [바뀐 내용 확인 후 저장]을 눌러야 적용됩니다.'),
-        el('div', { class: 'adm-toolbar' }, el('label', { class: 'adm-field' }, el('span', {}, '메뉴 찾기'), q), gradeField),
+        el('p', { class: 'adm-callout' }, '✓ 표시한 메뉴를 그 등급 회원이 볼 수 있습니다. 바꾼 칸은 색으로 표시되고, 아래 [바뀐 내용 확인 후 저장]을 눌러야 적용됩니다. 메뉴 자체의 추가·이름·주소·순서·삭제는 [메뉴 관리]에서 합니다.'),
+        el('div', { class: 'adm-toolbar' }, el('label', { class: 'adm-field' }, el('span', {}, '메뉴 찾기'), q), gradeField,
+          button('＋ 메뉴 추가', () => go('resources', { open: 'new' }), 'secondary'), button('메뉴 관리', () => go('resources'), 'secondary')),
         chipBar, memberNote, body, bar);
     }
     return { matrix };
