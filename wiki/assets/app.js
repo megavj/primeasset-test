@@ -23,6 +23,7 @@ function goPage(u){location.href=pageUrl(u);}
 /* ================= LOCK ================= */
 function lockBlock(title,desc,inner){
   if(member){return '<div class="unlocked"><span class="badge-m">'+LOCK+' MEMBERS</span>'+inner+'</div>';}
+  if(signedIn()){return '<div class="locked is-member"><div class="over" style="position:static"><b>'+LOCK+title+'</b><span>로그인되어 있습니다. 화법 원문은 설계사 전용 페이지에서 볼 수 있습니다.</span><a class="btn sm" href="/members/wiki/">화법 원문 보기</a></div></div>';}
   var ghost='';for(var i=0;i<5;i++){ghost+='<i style="width:'+(60+((i*37)%38))+'%"></i>';}
   return '<div class="locked"><div class="ghosttext">'+ghost+'</div><div class="over"><b>'+LOCK+title+'</b><span>'+desc+'</span><button class="btn sm" type="button" data-login>로그인하고 보기</button></div></div>';
 }
@@ -221,8 +222,9 @@ function viewGlossary(){
 
 function viewLounge(){
   var items=[['고객관리 자료','세팅부터 소개 창출까지. 로그인 후 열람하는 관리 자료.','PDF 원문 연결 예정'],['실전 화법 모음','세일즈 8단계 화법 전문과 상황별 응대.','세일즈 페이지와 연동'],['상품 비교 · 시책','보험사별 비교표와 이달의 시책.','통합페이지 연동 예정'],['프리미엄 자료검색기','보유 자료 수천 건 통합 검색.','기존 검색기 연결 예정']];
-  var tiles=items.map(function(t){return '<div class="tile glass rv'+(member?' open':'')+'"'+(member?'':' data-login')+'><h3>'+t[0]+'</h3><p>'+t[1]+'</p><span class="st">'+LOCK+(member?t[2]:'로그인 후 열람')+'</span></div>';}).join('');
+  var tiles=items.map(function(t){return '<div class="tile glass rv'+(member?' open':'')+'"'+(member?'':' data-login')+'><h3>'+t[0]+'</h3><p>'+t[1]+'</p><span class="st">'+LOCK+(member?t[2]:(signedIn()?'인트라넷에서 열람':'로그인 후 열람'))+'</span></div>';}).join('');
   var top=member?'<div class="note"><b>설계사 화면 미리보기 중</b> 운영 버전에서는 통합페이지 로그인 정보로 자동 인증됩니다. <button class="btn ghost sm" type="button" data-logout style="margin-left:8px">미리보기 끄기</button></div>'
+    :signedIn()?'<div class="note"><b>로그인되어 있습니다</b> 설계사 전용 자료는 인트라넷에서 볼 수 있습니다. <a class="btn sm" href="/members/" style="margin-left:8px">설계사 인트라넷</a></div>'
     :'<div class="note"><b>소속 설계사 전용</b> 통합페이지 로그인 후 이용할 수 있습니다. <button class="btn sm" type="button" data-login style="margin-left:8px">로그인</button></div>';
   return '<section class="pagehead"><div class="wrap"><div class="crumbs"><a href="#home">지식지도</a><span>/</span><span>설계사 라운지</span></div><h1>설계사 라운지</h1><p>공개 위키 위에 얹히는 소속 설계사 전용 영역입니다.</p></div></section>'+
     '<div class="wrap" style="padding-block:28px 80px">'+top+'<div class="tiles" style="margin-top:20px">'+tiles+'</div></div>';
