@@ -320,71 +320,39 @@
       el("p", {}, "가입 신청이 접수됐어요. 관리자가 가입 정보를 확인하고 승인하면 🔒 표시 메뉴가 열립니다. 그동안 인트라넷은 둘러보실 수 있어요."));
   }
 
+  // TASK-MENU(2026-11-09): 메뉴의 묶음·쉬운 설명·주소·순서·새 창 여부는 관리자 화면 '메뉴 관리'에서 정해 DB(my_menu)로 온다.
+  //   화면 코드에 메뉴 이름 사전·주소 바꾸기 규칙을 두지 않는다(추가하면 바로 보이고, 지우면 바로 사라짐).
+  //   보험위키·보험노트 두 바로가기만 모든 회원에게 늘 보이는 고정 링크(메뉴 권한 표 밖)로 둔다.
   const SITE_LINKS = [
-    { key: "site:0", name: "보험위키", description: "보장·용어·청구 가이드", url: "/wiki/" },
-    { key: "site:2", name: "보험노트", description: "보험노트 공식 홈페이지", url: "https://bohumnote.com/" }
+    { key: "site:0", name: "보험위키", description: "보장·용어·청구 가이드", url: "/wiki/", work: "자료·지식" },
+    { key: "site:2", name: "보험노트", description: "보험노트 공식 홈페이지", url: "https://bohumnote.com/", work: "상품·상담" }
   ];
-  // 4분류 고정. 확인된 이름과 기존 경로를 우선하며 미분류 메뉴도 자료·지식에서 이용할 수 있습니다. 등록·이름 변경 시 이 매핑을 함께 확인합니다.
-  const WORK = ["상품·상담", "보상·청구", "청약·전산", "자료·지식"];
-  const TOOL_WORK = Object.freeze({
-    "상품통합분석기": "상품·상담", "AI영업비서": "상품·상담",
-    "질병정보·화법도우미": "상품·상담", "실전 질병정보·화법도우미": "상품·상담", "DB영업 화법도우미": "상품·상담",
-    "실전 DB영업 화법도우미": "상품·상담", "다보이는 보험비교 카페": "상품·상담", "레몬보험 보험비교 카페": "상품·상담",
-    "보험보상답변기": "보상·청구", "N대·종수술 답변기": "보상·청구", "실손의료비 답변기": "보상·청구",
-    "고지의무 판독기": "청약·전산", "전산답변기": "청약·전산",
-    "프라임에셋 내부인트라넷 팜스": "청약·전산",
-    "보험정보공유카페": "자료·지식", "프리미엄 상품저장소카페": "자료·지식",
-    "프리미엄 디비영업저장소 카페": "자료·지식", "보험설계사끼리 카페": "자료·지식",
-    "프리미엄 자료검색기": "자료·지식", "최신보험뉴스": "자료·지식", "보험위키": "자료·지식", "보험노트": "상품·상담",
-    "작성글모음": "자료·지식" // TASK-ART: AI가 쓴 글을 골라 보관함으로(/members/articles/)
-  });
-  const TOOL_PURPOSE = Object.freeze({
-    "상품통합분석기": "상품 보장과 조건 비교", "AI영업비서": "상담 준비와 화법 점검",
-    "질병정보·화법도우미": "질병 정보와 상담 화법", "DB영업 화법도우미": "DB 고객 상담 화법",
-    "실전 DB영업 화법도우미": "DB 고객 상담 화법", "다보이는 보험비교 카페": "고객 확보용 카페", "레몬보험 보험비교 카페": "고객 확보용 카페",
-    "보험보상답변기": "보상 기준과 청구 서류 확인", "N대·종수술 답변기": "질병·수술 보장 기준 확인", "실손의료비 답변기": "실손 보장과 청구 기준 확인",
-    "고지의무 판독기": "청약 전 고지 항목 확인", "전산답변기": "보험사 전산 업무 절차 확인",
-    "프라임에셋 내부인트라넷 팜스": "프라임에셋 내부 인트라넷",
-    "보험정보공유카페": "설계사 전용 자료 카페", "프리미엄 상품저장소카페": "설계사 전용 상품 자료 카페",
-    "프리미엄 디비영업저장소 카페": "설계사 전용 DB영업 자료 카페", "보험설계사끼리 카페": "소식지 파일 카페(외부 설계사도 가입)",
-    "프리미엄 자료검색기": "업무 자료와 근거 검색", "최신보험뉴스": "보험업계 최신 소식",
-    "작성글모음": "블로그·홈페이지용 보험 정보 글 가져가기(하루 3개)"
-  });
-  const workFor = r => Object.prototype.hasOwnProperty.call(TOOL_WORK, r.name) ? TOOL_WORK[r.name] : WORK.includes(r.work || r.category) ? (r.work || r.category) : "자료·지식";
+  const sameSite = url => { try { return new URL(url, location.origin).origin === location.origin; } catch { return false; } };
   let renderEpoch = 0;
   async function intranetView(p, banner, epoch, storageOwner) {
     const { data: raw, error } = await sb.rpc("my_menu");
     if (epoch !== renderEpoch) return;
     if (error || !Array.isArray(raw)) return failView("메뉴 목록을 불러오지 못했습니다", error, true);
-    // my_menu는 활성 메뉴만 반환합니다. active를 포함하는 응답도 같은 일반 규칙으로 처리합니다.
-    const data = raw.filter(r => r.active !== false && !/승격/.test(r.name || "")); // 이사 지시 2026-11-03: 승격기준 박스 숨김
+    // my_menu는 보이는 메뉴(숨김·지운 메뉴 제외)만 묶음 순서·묶음 안 순서대로 돌려줍니다.
+    const data = raw.filter(r => r.active !== false);
     const key = JSON.stringify([storageOwner, "intranet", p, data]);
     if (viewKey === key) return; // 같은 인증 상태의 갱신은 질문 입력과 진행 상태를 유지
     mode(true);
     const pending = p.status === "pending";
     const catalog = [
       ...data.map(r => {
-        const product = r.name === "상품통합분석기";
-        // 이사 승인 2026-11-04: 보험보상답변기는 홈페이지 새 화면(/members/claim/)으로. 기존 GAS 주소는 그 화면 아래 '이전 답변기'로 남김.
-        const claim = /보상\s*답변|보상\s*AI|보험금\s*청구\s*답변/i.test(r.name || "") || /AKfycbzNrEdi_|AKfycbz4WjJLM6OR|1ZyOPAVHmWW65aRKq05QFk/.test(r.url || ""); // 이름이 달라도 원본 보상답변기 주소면 새 화면으로
-        // 전산답변기도 새 홈페이지 화면으로 연결하고, 확인한 원본 배포 3개를 모두 인식한다.
-        const it = /전산\s*답변/.test(r.name || "") || /AKfycbzVbO8_XxSq8_WZhvNBXSi0myH22g0igqhAwkz7Kf9QtDUchxIds-E7fgTi06xGSP6lvg|AKfycbxWVCohTpOA3rZUK1hpuOqq_cfarzo57S2dlKL1g3CcTevVq1h-9oG28wBUvv_tzPb8tw|AKfycbzfFExpXscK87c2F54p17YDJwdDmpk7MAZ3NQAsWJtjqAFBXSaVJ1JC52H2czeaPPDNiw/.test(r.url || "");
-        // 실전상담 통합코치는 보상·전산 규칙 다음에 홈페이지 새 화면으로 연결합니다.
-        const coach = /통합\s*코치|실전\s*상담|영업\s*비서/.test(r.name || "") || /AKfycbyKIz|AKfycbw6JIh|AKfycbz8vba3|1rIZRrzlYTgq5g0omTg_02q73sUi83Fp8US200QeoXQc4iPC5Wef6FHZQ/.test(r.url || "");
-        // 보험뉴스 화면 이전: 메뉴 권한과 즐겨찾기 식별자는 유지합니다.
-        const news = /보험\s*뉴스/.test(r.name || "") || /AKfycbyYyYaZD3zH-DReuzAH_fUdl2Xe4jU_xhgf2snq2hpgR0g-7yx68bD-xAvpaXe0hnk/.test(r.url || "");
-        return { ...r, key: "menu:" + r.id, work: product || coach ? "상품·상담" : claim ? "보상·청구" : it ? "청약·전산" : workFor(r), description: TOOL_PURPOSE[r.name] || r.description || "",
-          url: r.unlocked && r.url ? (product ? "/product/" : claim ? "/members/claim/" : it ? "/members/it/" : coach ? "/members/coach/" : news ? "https://test.primeasset.info/news/" : r.url) : null, internal: product || claim || it || coach || news };
+        const url = r.unlocked && r.url ? r.url : null;
+        return { ...r, key: "menu:" + r.id, work: r.category || "자료·지식", description: r.description || "", url, newTab: r.open_new_tab !== false, internal: !!url && sameSite(url) };
       }),
-      ...SITE_LINKS.filter(r => !data.some(m => m.name === r.name || m.url === r.url)).map(r => ({ ...r, unlocked: true, work: workFor(r), internal: r.url.startsWith("/") }))
+      ...SITE_LINKS.filter(r => !data.some(m => m.name === r.name || m.url === r.url)).map(r => ({ ...r, unlocked: true, newTab: true, internal: r.url.startsWith("/") }))
     ];
     // 중복 메뉴 행은 첫 항목 한 번만 표시하고, 기존 즐겨찾기 키는 보존합니다.
     const seen = new Set(), seenKeys = new Set();
     const tools = catalog.filter(r => { const identity = r.name || r.key; if (seen.has(identity) || seenKeys.has(r.key)) return false; seen.add(identity); seenKeys.add(r.key); return true; });
     const available = r => r.unlocked && r.url;
-    const works = WORK;
+    const works = [...new Set(tools.map(r => r.work))]; // DB 묶음 순서(고정 바로가기 묶음이 없으면 맨 뒤)
     const tile = r => el("article", { class: "pa-work-card" + (!r.unlocked ? " is-locked" : ""), "data-resource-key": r.key },
-      available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, target: "_blank", rel: "noopener noreferrer" }, el("b", {}, r.name)) : el("b", { class: "pa-locked-name" }, r.name),
+      available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, ...(r.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {}) }, el("b", {}, r.name)) : el("b", { class: "pa-locked-name" }, r.name),
       r.description ? el("p", { class: "pa-tool-purpose" }, r.description) : null,
       !r.unlocked ? el("div", { class: "pa-lock-state" }, el("span", {}, pending ? "🔒 승인 후 열림" : "🔒 관리자가 등급에 따라 열어 드립니다")) : !r.url ? N("주소 준비 중입니다.") : null);
     const directory = el("div", { id: "pa-directory" }, ...works.map(w => {
