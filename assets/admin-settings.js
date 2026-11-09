@@ -270,8 +270,8 @@
       target.setAttribute("data-draft", "false");
       let records = [];
       const tableNames = { members: "회원", grades: "등급", grade_permissions: "메뉴 권한", resources: "페이지·도구", branches: "본부", site_notice: "새 소식" };
-      const actionNames = { insert: "추가", update: "변경", delete: "삭제", reject: "가입 거절" };
-      const fieldNames = { name: "이름", branch: "소속", phone: "연락처", email: "이메일", grade_id: "등급 ID", status: "상태", is_admin: "관리자", memo: "메모", suspend_reason: "정지 사유", suspended_at: "정지 시각", kind: "종류", category: "분류", description: "설명", url: "주소", active: "사용", sort: "순서", is_default: "가입 기본", no: "본부 번호", visible: "메인 표시", text: "새 소식", grade_permissions: "메뉴 권한", resource_id: "메뉴 ID", ask_daily_limit: "AI 하루 질문 횟수" };
+      const actionNames = { insert: "추가", update: "변경", delete: "삭제", reject: "가입 거절", export: "내려받기" };
+      const fieldNames = { name: "이름", branch: "소속", phone: "연락처", email: "이메일", grade_id: "등급 ID", status: "상태", is_admin: "관리자", memo: "메모", suspend_reason: "정지 사유", suspended_at: "정지 시각", kind: "종류", category: "분류", description: "설명", url: "주소", active: "사용", sort: "순서", is_default: "가입 기본", no: "본부 번호", visible: "메인 표시", text: "새 소식", grade_permissions: "메뉴 권한", resource_id: "메뉴 ID", ask_daily_limit: "AI 하루 질문 횟수", export_kind: "내려받은 파일", export_count: "인원 수" };
       const printable = (value) => value == null ? "없음" : typeof value === "object" ? JSON.stringify(value) : String(value);
       const changes = (record) => {
         const detail = record.detail || {}, before = detail.before || {}, after = detail.after || {};
@@ -346,6 +346,7 @@
           actions(button("회원 CSV 내려받기", () => {
             const columns = ["name", "branch", "phone", "email", "grade", "status", "is_admin", "suspend_reason", "suspended_at", "approved_at", "created_at", "memo"];
             download(`회원_${date}.csv`, csv(columns, S.members.map((member) => columns.map((key) => key === "grade" ? gname(member.grade_id) : member[key]))));
+            sb.rpc("log_admin_export", { p_kind: "backup_members_csv", p_count: S.members.length }).then(() => {}, () => {}); // TASK-ADM: 내려받은 기록 남김
           }, "primary"))),
         panel(el("h3", {}, "등급별 메뉴 권한 CSV"), note("전체 페이지·도구와 등급별 메뉴 권한을 내려받습니다. 허용한 항목은 O로 표시됩니다."),
           actions(button("권한표 CSV 내려받기", () => {

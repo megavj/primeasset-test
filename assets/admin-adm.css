@@ -1,0 +1,158 @@
+/* TASK-ADM(2026-11-09) 관리자 메뉴 권한·회원 관리 화면. intranet-light 색 변수를 그대로 쓴다. */
+.g-admin .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.g-admin [hidden]{display:none!important}
+
+/* 메뉴 권한 표 */
+.g-admin .adm-mx{max-height:none}
+.g-admin .adm-mx .adm-table{border-collapse:separate;border-spacing:0;min-width:max-content}
+.g-admin .adm-mx .adm-table th,.g-admin .adm-mx .adm-table td{border-bottom:1px solid var(--line);padding:12px 14px;vertical-align:top}
+.g-admin .adm-mx thead th{background:var(--bg-2);vertical-align:bottom;position:sticky;top:0;z-index:2}
+.g-admin .adm-mx tbody th[scope=row],.g-admin .adm-mx thead th.adm-mx-corner{position:sticky;left:0;z-index:1;background:var(--bg-1);text-align:left;min-width:240px;max-width:320px;box-shadow:1px 0 0 var(--line)}
+.g-admin .adm-mx thead th.adm-mx-corner{z-index:3;background:var(--bg-2)}
+.g-admin .adm-mx-corner small{display:block;font-weight:400;color:var(--text-2);font-size:14px;margin-top:4px}
+.g-admin .adm-mx-head{display:grid;gap:4px;justify-items:center;text-align:center;min-width:132px}
+.g-admin .adm-mx-head strong{font-size:16px}
+.g-admin .adm-mx-head small,.g-admin .adm-mx-count{font-size:14px;color:var(--text-2);font-weight:400}
+.g-admin .adm-mx-count{color:var(--accent);font-weight:600}
+.g-admin .adm-mx-asgrade{min-height:40px;padding:6px 10px;font-size:14px;margin-top:4px}
+.g-admin .adm-mx-group th{background:var(--accent-soft);color:var(--accent);font-size:16px;font-weight:700;text-align:left;position:static}
+.g-admin .adm-mx-group th small{font-weight:400;color:var(--text-2);font-size:14px}
+.g-admin .adm-mx-group.is-hidden-group th{background:var(--bg-2);color:var(--text-2)}
+.g-admin .adm-mx tr.is-muted th[scope=row] strong{color:var(--text-2)}
+.g-admin .adm-mx-name{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.g-admin .adm-mx-name strong{font-size:16px}
+.g-admin .adm-mx-desc{margin:4px 0 0;font-size:15px;line-height:1.55;color:var(--text-2);font-weight:400;overflow-wrap:anywhere}
+.g-admin .adm-mx-why{display:block;margin-top:4px;font-size:13px;color:var(--text-3);font-weight:400;line-height:1.5}
+.g-admin .adm-mx-why.is-warn{color:var(--danger);font-weight:600}
+.g-admin .adm-mx-preview{font-size:14px;font-weight:500;color:var(--accent);text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;min-height:32px}
+.g-admin .adm-mx-nourl{font-size:13px;color:var(--text-3);font-weight:400}
+.g-admin .adm-mx-cell{text-align:center;min-width:132px;transition:background-color .15s}
+.g-admin .adm-mx-check{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:10px;cursor:pointer}
+.g-admin .adm-mx-check:hover{background:var(--bg-2)}
+.g-admin .adm-mx-check input{width:24px;height:24px;accent-color:var(--accent);cursor:pointer}
+.g-admin .adm-mx-mark{display:none}
+.g-admin .is-changed{background:#fff4d6!important}
+.g-admin .adm-mx-changed{display:block;font-size:12px;font-weight:700;color:#7a4b00;margin-top:2px}
+.g-admin .adm-mx-limit{display:flex;align-items:center;justify-content:center;gap:4px;font-size:14px;color:var(--text-2);margin-top:6px;padding:2px 4px;border-radius:8px}
+.g-admin .adm-mx-limit-input{width:76px;min-height:40px;padding:6px 8px;text-align:right;font-variant-numeric:tabular-nums}
+.g-admin .adm-mx-limit-input:disabled{opacity:.5}
+.g-admin .adm-mx-savebar{position:sticky;bottom:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;margin-top:4px;border:2px solid #d9a400;border-radius:12px;background:#fffaf0;box-shadow:0 -6px 20px rgba(23,40,61,.08)}
+.g-admin .adm-mx-savebar-text{margin:0;font-weight:700;color:#5c3b00;font-size:16px}
+
+/* 휴대폰: 등급 고르기 + 스위치 목록 */
+.g-admin .adm-mx-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:thin}
+.g-admin .adm-mx-chip{flex:0 0 auto;white-space:nowrap;border-radius:999px;padding:8px 14px}
+.g-admin .adm-mx-chip small{color:var(--text-2);font-weight:400}
+.g-admin .adm-mx-chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.g-admin .adm-mx-chip[aria-pressed=true] small{color:#dfe8f3}
+.g-admin .adm-mx-mobile{display:grid;gap:18px}
+.g-admin .adm-mx-gradehead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-1)}
+.g-admin .adm-mx-gradehead strong{font-size:18px}
+.g-admin .adm-mx-gradehead small{color:var(--text-2)}
+.g-admin .adm-mx-section h3{margin:0;font-size:17px;color:var(--accent)}
+.g-admin .adm-mx-section h3 small{color:var(--text-2);font-weight:400;font-size:14px}
+.g-admin .adm-mx-section>.adm-note{margin:2px 0 8px;font-size:14px}
+.g-admin .adm-mx-list{list-style:none;margin:0;padding:0;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-1);overflow:hidden}
+.g-admin .adm-mx-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:14px 16px;border-top:1px solid var(--line)}
+.g-admin .adm-mx-item:first-child{border-top:0}
+.g-admin .adm-mx-item.is-muted strong{color:var(--text-2)}
+.g-admin .adm-mx-item-text{min-width:0}
+.g-admin .adm-mx-item-links{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.g-admin .adm-mx-item .adm-mx-changed{display:inline-block;margin:0}
+.g-admin .adm-mx-item .adm-mx-limit{grid-column:1/-1;justify-content:flex-start;margin:0}
+.g-admin .adm-mx-switch{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:44px;cursor:pointer}
+.g-admin .adm-mx-switch input{position:absolute;opacity:0;width:52px;height:32px;margin:0;cursor:pointer}
+.g-admin .adm-mx-switch-ui{width:52px;height:32px;border-radius:999px;background:#c3ccd7;position:relative;transition:background-color .15s;flex-shrink:0}
+.g-admin .adm-mx-switch-ui::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
+.g-admin .adm-mx-switch input:checked+.adm-mx-switch-ui{background:var(--accent)}
+.g-admin .adm-mx-switch input:checked+.adm-mx-switch-ui::after{transform:translateX(20px)}
+.g-admin .adm-mx-switch input:focus-visible+.adm-mx-switch-ui{outline:3px solid var(--accent);outline-offset:3px}
+.g-admin .adm-mx-switch-text{min-width:1.5em;font-size:15px;font-weight:600;color:var(--text-2)}
+.g-admin .adm-mx-hidden>summary{padding:12px 16px;border:1px dashed var(--line-2);border-radius:12px;background:var(--bg-2)}
+.g-admin .adm-mx-hidden[open]>summary{margin-bottom:12px}
+
+/* 대화창(저장 전 확인·이 등급으로 보기·회원 상세 휴대폰) */
+.g-admin .adm-dialog{width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;padding:24px;border:1px solid var(--line-2);border-radius:16px;background:var(--bg-1);color:var(--text);box-shadow:var(--shadow-2)}
+.g-admin .adm-dialog::backdrop{background:var(--dialog-backdrop)}
+.g-admin .adm-dialog--wide{width:min(860px,calc(100vw - 32px))}
+.g-admin .adm-dialog h3{margin:0 0 8px;font-size:20px}
+.g-admin .adm-dialog h4{margin:18px 0 8px;font-size:17px}
+.g-admin .adm-dialog h5{margin:12px 0 6px;font-size:15px;color:var(--accent)}
+.g-admin .adm-dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.g-admin .adm-dialog-actions{margin-top:20px;justify-content:flex-end}
+.g-admin .adm-mx-change{padding:12px 14px;margin-top:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg-2)}
+.g-admin .adm-mx-change h4{margin:0 0 6px}
+.g-admin .adm-mx-change ul{margin:0;padding-left:20px;line-height:1.7}
+.g-admin .adm-mx-change .is-on{color:var(--success)}
+.g-admin .adm-mx-change .is-off{color:var(--danger)}
+.g-admin .adm-mx-pv-ai{padding:14px 16px;margin-top:12px;border:1px solid #c5d8ee;border-radius:12px;background:#f5f9ff}
+.g-admin .adm-mx-pv-ai.is-locked{border-style:dashed;background:var(--bg-2)}
+.g-admin .adm-mx-pv-ai h4{margin:0 0 4px}
+.g-admin .adm-mx-pv-ai p{margin:0}
+.g-admin .adm-mx-pv-group ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.g-admin .adm-mx-pv-group li{display:grid;gap:2px;padding:10px 12px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg-1)}
+.g-admin .adm-mx-pv-group li.is-locked{background:var(--bg-2);color:var(--text-2);border-style:dashed}
+.g-admin .adm-mx-pv-group li small{font-size:14px;color:var(--text-2);line-height:1.5}
+
+@media(max-width:800px){
+  .g-admin .adm-dialog{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;border-radius:0;border:0;padding:20px 16px}
+  .g-admin .adm-mx-savebar{flex-direction:column;align-items:stretch;padding:12px}
+  .g-admin .adm-mx-savebar .adm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+}
+@media(prefers-reduced-motion:reduce){.g-admin .adm-mx-switch-ui,.g-admin .adm-mx-switch-ui::after,.g-admin .adm-mx-cell{transition:none}}
+
+/* 회원 관리 */
+.g-admin .adm-mm-tools{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:end}
+.g-admin .adm-mm-search{font-size:17px}
+.g-admin .adm-mm-chips{display:flex;flex-wrap:wrap;gap:8px}
+.g-admin .adm-mm-chip{border-radius:999px;padding:8px 14px;min-height:44px}
+.g-admin .adm-mm-chip small{color:var(--text-2);font-weight:600;margin-left:2px}
+.g-admin .adm-mm-chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.g-admin .adm-mm-chip[aria-pressed=true] small{color:#dfe8f3}
+.g-admin .adm-mm-toolrow{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.g-admin .adm-mm-toolrow>.adm-note{flex:1 1 320px}
+.g-admin .adm-mm-bulk{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border:2px solid var(--accent);border-radius:12px;background:#eef4fb;box-shadow:0 6px 18px rgba(23,40,61,.08)}
+.g-admin .adm-mm-bulk-text{margin:0;font-weight:700;color:var(--accent)}
+.g-admin .adm-mm-bulk .adm-input{width:auto;min-width:160px}
+.g-admin .adm-mm-undo{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.g-admin .adm-mm-table .adm-table{width:100%}
+.g-admin .adm-mm-table th,.g-admin .adm-mm-table td{text-align:left;vertical-align:middle}
+.g-admin .adm-mm-table tr.is-selected td{background:#eef4fb}
+.g-admin .adm-mm-sort{background:none;border:0;padding:6px 4px;font:inherit;font-weight:700;color:var(--text);cursor:pointer;min-height:40px;text-decoration:underline;text-decoration-color:var(--line-2);text-underline-offset:4px}
+.g-admin .adm-mm-sort:hover{color:var(--accent)}
+.g-admin .adm-mm-name{display:grid;gap:1px;text-align:left;background:none;border:0;padding:4px 0;font:inherit;color:inherit;cursor:pointer;min-height:44px}
+.g-admin .adm-mm-name strong{color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:16px}
+.g-admin .adm-mm-name span,.g-admin .adm-mm-name small{color:var(--text-2);font-size:14px;overflow-wrap:anywhere}
+.g-admin .adm-mm-cards{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px}
+.g-admin .adm-mm-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:start;padding:12px;border:1px solid var(--line-2);border-radius:12px;background:var(--bg-1)}
+.g-admin .adm-mm-card.is-selected{border-color:var(--accent);background:#eef4fb}
+.g-admin .adm-mm-card-meta{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.g-admin .adm-mm-card-meta small{color:var(--text-2);font-size:14px;flex-basis:100%}
+.g-admin .adm-mm-privacy{padding:12px 14px;border:1px solid #e0b252;border-radius:10px;background:#fff8e6;color:#4d3300;font-weight:600}
+.g-admin .adm-mm-memo{display:flex;gap:10px;align-items:center;margin:8px 0}
+.g-admin .adm-mm-dlg-list{margin:4px 0 8px;padding-left:20px}
+/* 회원 상세 옆 창(휴대폰은 전체 화면) */
+.g-admin .adm-drawer{position:fixed;inset:0 0 0 auto;margin:0;width:min(480px,100vw);max-width:100vw;height:100dvh;max-height:100dvh;padding:22px 22px 32px;border:0;border-left:1px solid var(--line-2);border-radius:16px 0 0 16px;background:var(--bg-1);color:var(--text);overflow:auto;box-shadow:-12px 0 32px rgba(23,40,61,.16)}
+.g-admin .adm-drawer::backdrop{background:var(--dialog-backdrop)}
+.g-admin .adm-drawer h3{margin:0 0 4px;font-size:22px}
+.g-admin .adm-drawer h4{margin:22px 0 8px;font-size:17px}
+.g-admin .adm-drawer section{border-top:1px solid var(--line);margin-top:16px}
+.g-admin .adm-drawer .adm-note .adm-badge{margin-right:4px}
+.g-admin .adm-drawer textarea.adm-input{width:100%;min-height:96px;margin-bottom:8px}
+.g-admin .adm-mm-dl{display:grid;grid-template-columns:88px minmax(0,1fr);gap:6px 12px;margin:0}
+.g-admin .adm-mm-dl dt{color:var(--text-2);font-size:15px}
+.g-admin .adm-mm-dl dd{margin:0;overflow-wrap:anywhere}
+.g-admin .adm-mm-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.g-admin .adm-mm-row .adm-input{flex:1 1 160px;width:auto}
+.g-admin .adm-mm-ai{margin:8px 0;font-weight:600}
+.g-admin .adm-mm-menus{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:8px 0 12px}
+.g-admin .adm-mm-menus li{padding:4px 10px;border:1px solid var(--line-2);border-radius:999px;font-size:14px;background:var(--bg-2)}
+@media(max-width:800px){
+  .g-admin .adm-mm-tools{grid-template-columns:1fr 1fr}
+  .g-admin .adm-mm-searchfield{grid-column:1/-1}
+  .g-admin .adm-mm-chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}
+  .g-admin .adm-mm-chip{flex:0 0 auto;white-space:nowrap}
+  .g-admin .adm-mm-bulk .adm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+  .g-admin .adm-mm-bulk .adm-input{width:100%;grid-column:1/-1}
+  .g-admin .adm-drawer{width:100vw;border-radius:0;border:0;padding:18px 16px 32px}
+}
