@@ -127,3 +127,23 @@
 .art-locker-link:hover{text-decoration:underline}
 .art-locker-head{display:grid;gap:4px}
 .art-locker-head a{color:var(--accent);font-weight:600}
+
+/* 관리자 › 작성글모음 */
+.g-admin .adm-art-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-admin .adm-art-tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.g-admin .adm-art-tab{min-height:42px;padding:8px 16px;border-radius:999px;border:1px solid var(--line-2);background:var(--bg-1);color:var(--text-2);font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.g-admin .adm-art-tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-gold)}
+.g-admin .adm-art-title{display:flex;gap:10px;align-items:flex-start}
+.g-admin .adm-art-title img{width:72px;height:48px;object-fit:cover;border-radius:6px;flex:none;background:var(--bg-2)}
+.g-admin .adm-art-title strong{display:block;line-height:1.4}
+.g-admin .adm-art-title small,.g-admin .adm-art small.adm-note{display:block}
+.g-admin .adm-art-names{white-space:pre-wrap;font:inherit;font-size:14px;max-height:220px;overflow:auto;background:var(--bg-2);padding:10px 12px;border-radius:8px}
+.g-admin .adm-link{background:none;border:0;padding:0;font:inherit;color:var(--accent);font-weight:600;text-decoration:underline;cursor:pointer;text-align:left}
+.g-admin .adm-art-drawer{width:min(780px,100vw)}
+.g-admin .adm-art-viewer .art-body{font-size:16px}
+.g-admin .adm-art-dl{grid-template-columns:96px minmax(0,1fr);margin:12px 0}
+.g-admin .adm-art-src{margin-top:18px}
+.g-admin .adm-art-claims{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:8px}
+.g-admin .adm-art-claims li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.g-admin .adm-art-claims strong{display:block;font-size:15px;line-height:1.4}
+@media (max-width:640px){.g-admin .adm-art-stats{grid-template-columns:1fr 1fr}.g-admin .adm-art-title img{display:none}}

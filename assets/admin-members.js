@@ -215,6 +215,7 @@
         const gradeSel = el('select', { class: 'adm-input', 'aria-label': '회원 등급' }, ...S.grades.map(x => el('option', { value: String(x.id), selected: x.id === m.grade_id }, x.name)));
         const memo = el('textarea', { class: 'adm-input', rows: '4', maxlength: '1000', 'aria-label': '관리 메모', placeholder: '관리자만 보는 메모' }); memo.value = m.memo || '';
         const usageBox = el('div', { class: 'adm-mm-usage', role: 'status' }, '불러오는 중…');
+        const claimsBox = el('div', { class: 'adm-art-claims-box' }); // TASK-ART: 이 회원이 보관한 글
         const drawUsage = () => {
           if (usageState === 'error') { usageBox.replaceChildren(el('p', { class: 'adm-note' }, 'AI 사용량을 불러오지 못했습니다.'), button('다시 불러오기', async () => { usageBox.textContent = '불러오는 중…'; await loadUsage(true); drawUsage(); })); return; }
           if (usageState !== 'ok') { usageBox.textContent = '불러오는 중…'; return; }
@@ -246,6 +247,7 @@
             menus.open.length ? el('ul', { class: 'adm-mm-menus' }, ...menus.open.map(r => el('li', {}, r.name))) : el('p', { class: 'adm-note' }, '볼 수 있는 업무 도구가 없습니다.'),
             button('메뉴 권한 화면에서 보기', () => { close(); go('matrix', { q: '', grade: String(m.grade_id || '') }); })),
           el('section', {}, el('h4', {}, 'AI 질문 사용량'), usageBox),
+          window.PA_ADMIN_ARTICLE_CLAIMS ? el('section', {}, el('h4', {}, '보관한 글(작성글모음)'), claimsBox) : null,
           el('section', {}, el('h4', {}, '관리 메모'), memo, el('div', { class: 'adm-actions' }, button('메모 저장', async () => {
             if (memo.value === (m.memo || '')) return toast('메모가 그대로입니다.');
             close(); await mutate(() => checkedUpdate(m.id, { memo: memo.value }), '메모를 저장했습니다.');
@@ -255,6 +257,7 @@
         if (typeof panel.showModal === 'function') panel.showModal(); else panel.setAttribute('open', '');
         panel.querySelector('.adm-dialog-head .adm-button')?.focus();
         loadUsage(false).then(() => { if (panel.isConnected) drawUsage(); }); drawUsage();
+        if (window.PA_ADMIN_ARTICLE_CLAIMS) window.PA_ADMIN_ARTICLE_CLAIMS(m, claimsBox).catch(() => { claimsBox.textContent = '보관한 글을 불러오지 못했습니다.'; });
       }
 
       function row(m, list) {

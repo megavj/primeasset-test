@@ -266,12 +266,12 @@
       const body = el("div", { class: "adm-stack" });
       const count = el("p", { class: "adm-note", role: "status" }, "변경 기록을 불러오는 중입니다.");
       const search = input("변경 기록 검색", "", { type: "search", placeholder: "처리자·대상·변경 내용 검색", "data-draft": "false" });
-      const target = select("변경 기록 대상", [["", "모든 대상"], ["members", "회원"], ["grades", "등급"], ["grade_permissions", "메뉴 권한"], ["resources", "페이지·도구"], ["branches", "본부"], ["site_notice", "새 소식"]], "");
+      const target = select("변경 기록 대상", [["", "모든 대상"], ["members", "회원"], ["grades", "등급"], ["grade_permissions", "메뉴 권한"], ["resources", "페이지·도구"], ["branches", "본부"], ["site_notice", "새 소식"], ["articles", "작성글모음"], ["article_claims", "작성글 보관 기록"]], "");
       target.setAttribute("data-draft", "false");
       let records = [];
-      const tableNames = { members: "회원", grades: "등급", grade_permissions: "메뉴 권한", resources: "페이지·도구", branches: "본부", site_notice: "새 소식" };
+      const tableNames = { members: "회원", grades: "등급", grade_permissions: "메뉴 권한", resources: "페이지·도구", branches: "본부", site_notice: "새 소식", articles: "작성글모음", article_claims: "작성글 보관 기록" };
       const actionNames = { insert: "추가", update: "변경", delete: "삭제", reject: "가입 거절", export: "내려받기" };
-      const fieldNames = { name: "이름", branch: "소속", phone: "연락처", email: "이메일", grade_id: "등급 ID", status: "상태", is_admin: "관리자", memo: "메모", suspend_reason: "정지 사유", suspended_at: "정지 시각", kind: "종류", category: "분류", description: "설명", url: "주소", active: "사용", sort: "순서", is_default: "가입 기본", no: "본부 번호", visible: "메인 표시", text: "새 소식", grade_permissions: "메뉴 권한", resource_id: "메뉴 ID", ask_daily_limit: "AI 하루 질문 횟수", export_kind: "내려받은 파일", export_count: "인원 수" };
+      const fieldNames = { name: "이름", branch: "소속", phone: "연락처", email: "이메일", grade_id: "등급 ID", status: "상태", is_admin: "관리자", memo: "메모", suspend_reason: "정지 사유", suspended_at: "정지 시각", kind: "종류", category: "분류", description: "설명", url: "주소", active: "사용", sort: "순서", is_default: "가입 기본", no: "본부 번호", visible: "메인 표시", text: "새 소식", grade_permissions: "메뉴 권한", resource_id: "메뉴 ID", ask_daily_limit: "AI 하루 질문 횟수", export_kind: "내려받은 파일", export_count: "인원 수", article_titles: "지운 글", claimed_count: "그중 보관된 글" };
       const printable = (value) => value == null ? "없음" : typeof value === "object" ? JSON.stringify(value) : String(value);
       const changes = (record) => {
         const detail = record.detail || {}, before = detail.before || {}, after = detail.after || {};
