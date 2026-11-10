@@ -124,6 +124,7 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-card p{margin:4px 0 12px}
 .g-members .pa-card p:last-child{margin-bottom:0}
 .g-members .pa-card p.pa-note:empty{margin:0}
+.g-members .pa-login .pa-in{padding:12px 16px}
 .g-members .pa-card p a{padding:8px 0}
 .g-members .pa-sec{padding-top:0}
 /* UNSLOP ⑤ 글씨: 카드 제목은 크기로만 구분(굵기 500, 자간 0), 알림 띠 제목도 같은 크기 */
