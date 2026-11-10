@@ -10,6 +10,7 @@ body.intranet-light {
   --gold:var(--accent); --gold-hi:var(--accent-hover); --gold-soft:var(--accent-soft); --on-gold:#ffffff;
   --success:#17633e; --success-soft:#edf7f0; --danger:#a52323; --danger-soft:#fff1f0;
   --line:#d6dde6; --line-2:#bac6d4; --control-border:#7b899b;
+  --ease:cubic-bezier(.22,1,.36,1); /* UNSLOP ⑨ 움직임 곡선 하나 */
   --signature:#9a793a; /* UNSLOP: 로고 금색의 가는 선 — '지금 있는 곳'과 가입 3단계 연결선에만(흰 바탕 대비 4.06:1) */
   --sky:#30668f; --glass:#ffffff; --glass-line:var(--line); --glass-bar:#ffffff;
   --dialog-backdrop:rgba(17,35,56,.45); --blur:none;
@@ -48,10 +49,10 @@ body.intranet-light .g-nav.pa-site-nav .pa-nav-bar { border-radius:16px; }
 body.intranet-light :is(.pa-site-nav #pa-nav-menu>[aria-current],.g-menu a.on,.g-tabbar a.on) { background:transparent; color:var(--accent); text-decoration-line:underline; text-decoration-color:var(--signature); text-decoration-thickness:2px; text-underline-offset:8px; text-decoration-skip-ink:none; }
 body.intranet-light :is(.pa-site-nav #pa-nav-menu>a:hover,.pa-site-nav #pa-nav-menu>button:hover,.pa-site-nav #pa-nav-toggle:hover,.g-menu a:hover,.g-tabbar a:hover) { background:var(--bg-2); color:var(--text); }
 body.intranet-light .g-tabbar .g-bar { background:var(--bg-1); border-color:var(--line-2); border-radius:16px; box-shadow:var(--shadow-2); padding:8px; }
-body.intranet-light .g-tabbar a { border-radius:8px; }
+body.intranet-light .g-tabbar a { border-radius:8px; transition:background-color .15s var(--ease),color .15s var(--ease); }
 body.intranet-light .g-foot { color:var(--text-3); }
 body.intranet-light .g-foot a { display:inline-flex; min-height:44px; align-items:center; padding:8px 0; }
-body.intranet-light .g-btn { border-radius:10px; min-height:44px; white-space:normal; padding:12px 20px; font-weight:500; }
+body.intranet-light .g-btn { border-radius:10px; min-height:44px; white-space:normal; padding:12px 20px; font-weight:500; transition:background-color .15s var(--ease),border-color .15s var(--ease),color .15s var(--ease); }
 body.intranet-light .g-btn--lg { min-height:48px; padding:12px 32px; font-size:16px; }
 body.intranet-light .g-btn--sm { padding:8px 16px; }
 body.intranet-light .pa-row { gap:8px; }
@@ -209,7 +210,12 @@ body.intranet-light :is(.pa-ask-answer-actions,.ask-account-actions)>* { max-wid
 
 body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button,.pa-site-nav #pa-nav-toggle,.g-tabbar.pa-site-tabs a) { font-size:16px; }
 /* UNSLOP 2026-11-10 ① 간격: 메뉴 막대·휴대폰 메뉴를 4의 배수로(공유 glass.css는 그대로 두고 여기서 덮어씀) */
-body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button,.pa-site-nav #pa-nav-toggle) { gap:8px; padding:8px 12px; border-radius:8px; } /* ⑦ 막대 16 − 안쪽 8 = 8 */
+body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button,.pa-site-nav #pa-nav-toggle) { gap:8px; padding:8px 12px; border-radius:8px; transition:background-color .15s var(--ease),color .15s var(--ease); } /* ⑦ 막대 16 − 안쪽 8 = 8 */
+/* UNSLOP ⑨ 움직임: 좁은 화면 메뉴가 열릴 때만 0.18초 동안 8px 떠오르며 나타남(반복 없음, 움직임 줄이기 설정이면 없음) */
+@media (max-width:1100px) {
+  body.intranet-light .pa-site-nav.is-open #pa-nav-menu { animation:pa-menu-in .18s var(--ease) both; }
+}
+@keyframes pa-menu-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 @media (max-width:720px) {
   body.intranet-light .g-nav { padding:0 8px; }
   body.intranet-light .g-nav .g-bar { padding:8px 8px 8px 16px; }
