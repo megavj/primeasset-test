@@ -2,7 +2,7 @@
 .g-members .pa-aiqa-home { font-size:16px; }
 .g-members .pa-aiqa-home button { font-size:1rem; min-height:44px; }
 .g-members .pa-aiqa-home .pa-home-head { display:flex; align-items:flex-end; justify-content:flex-start; text-align:left; margin:0 0 16px; }
-.g-members .pa-aiqa-home .pa-home-title { color:var(--text); font-size:clamp(1.3rem,3vw,1.85rem); overflow-wrap:anywhere; margin:0; }
+.g-members .pa-aiqa-home .pa-home-title { color:var(--text); font-size:28px; line-height:1.3; letter-spacing:0; overflow-wrap:anywhere; margin:0; }
 .g-members .pa-aiqa-home .pa-note,
 .g-members .pa-aiqa-home .pa-lock-state,
 .g-members .pa-aiqa-home .pa-req-msg,
@@ -17,19 +17,19 @@
 .g-members .pa-aiqa-home .pa-locked-name { font-size:1rem; }
 .g-members .pa-aiqa-home .pa-open-label { margin-left:auto; }
 .g-members .pa-aiqa-home .pa-home-notice { display:block; padding:20px; }
-.g-members .pa-aiqa-home .pa-home-notice h2 { font-size:1.2rem; }
+.g-members .pa-aiqa-home .pa-home-notice h2 { font-size:20px; line-height:1.4; }
 .g-members .pa-aiqa-home .pa-section-heading>a { font-size:1rem; }
 .g-members .pa-aiqa-home .pa-qa-new { margin:0; gap:0; }
 .g-members .pa-aiqa-home .pa-qa-new li { padding:12px 0; border-top:1px solid var(--line); }
 .g-members .pa-aiqa-home .pa-qa-new li:last-child { padding-bottom:0; }
 .g-members .pa-aiqa-home .pa-qa-new a { display:block; min-height:44px; padding:8px 0; border:0; line-height:1.5; font-size:1rem; }
-.g-members .pa-aiqa-home .pa-qa-new time { display:block; color:var(--text-3); font-size:1rem; }
+.g-members .pa-aiqa-home .pa-qa-new time { display:block; color:var(--text-3); font-size:1rem; font-variant-numeric:tabular-nums; }
 .pa-ask { padding:24px; background:var(--bg-1); border:1px solid var(--line); border-radius:16px; box-shadow:none; min-width:0; }
 .pa-ask * { box-sizing:border-box; }
 .pa-ask [hidden] { display:none !important; }
 .pa-ask-heading { display:flex; align-items:baseline; justify-content:space-between; gap:8px 20px; flex-wrap:wrap; margin-bottom:16px; }
-.pa-ask-heading h2 { font-size:clamp(1.2rem,2.2vw,1.45rem); font-weight:650; letter-spacing:-.025em; line-height:1.5; margin:0; }
-.pa-ask-quota { font-size:1rem; color:var(--text-3); font-weight:600; margin:0; }
+.pa-ask-heading h2 { font-size:20px; font-weight:500; letter-spacing:0; line-height:1.4; margin:0; }
+.pa-ask-quota { font-size:1rem; color:var(--text-3); font-weight:400; font-variant-numeric:tabular-nums; margin:0; }
 .g-members .pa-ask .pa-ask-input { display:block; width:100%; min-width:0; min-height:124px; resize:vertical; margin:0; padding:16px; background:var(--bg-2); border:1px solid var(--control-border); color:var(--text); font-family:inherit; font-size:1rem; line-height:1.65; border-radius:10px; }
 .pa-ask-input::placeholder { color:var(--text-3); opacity:1; }
 .pa-ask-help { margin:8px 0; color:var(--text-2); font-size:1rem; line-height:1.6; }
@@ -43,11 +43,11 @@
 .pa-ask-progress { border-top:1px solid var(--line); margin-top:20px; padding-top:20px; }
 .pa-ask-steps { display:flex; list-style:none; gap:8px; margin:0 0 8px; padding:0; }
 .pa-ask-steps li { flex:1; background:var(--bg-2); color:var(--text-3); border-radius:8px; padding:8px; text-align:center; font-size:1rem; }
-.pa-ask-steps .is-current { background:var(--accent-soft); color:var(--accent); font-weight:600; }
+.pa-ask-steps .is-current { background:var(--accent-soft); color:var(--accent); font-weight:500; }
 .pa-ask-status { font-size:1rem; color:var(--text-2); line-height:1.6; margin:0; }
 .pa-ask-answer { margin-top:24px; padding-top:20px; border-top:1px solid var(--line); min-width:0; }
-.pa-ask-answer h3 { font-size:1.3rem; color:var(--text); margin:0 0 16px; }
-.pa-ask-answer h4 { font-size:1rem; margin:20px 0 8px; }
+.pa-ask-answer h3 { font-size:20px; font-weight:500; line-height:1.4; color:var(--text); margin:0 0 16px; }
+.pa-ask-answer h4 { font-size:1rem; font-weight:500; margin:20px 0 8px; }
 .pa-ask-answer-text { white-space:pre-wrap; overflow-wrap:anywhere; font-size:1rem; line-height:1.8; color:var(--text); }
 .pa-ask-sources { padding-left:24px; margin:0; }
 .pa-ask-sources li { overflow-wrap:anywhere; padding:4px 0; font-size:1rem; line-height:1.6; }
@@ -58,12 +58,12 @@
 .pa-ask :is(button,a,textarea):focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
 /* TASK-ADM: AI 질문 이용 권한이 없는 등급 안내 */
 .pa-ask-lock { padding:16px; border:1px solid var(--line); border-radius:10px; background:var(--bg-0); }
-.pa-ask-lock-title { margin:0 0 4px; font-size:1.05rem; font-weight:650; color:var(--text); line-height:1.55; }
+.pa-ask-lock-title { margin:0 0 4px; font-size:1rem; font-weight:500; color:var(--text); line-height:1.55; }
 .pa-ask-lock .pa-ask-help { margin-bottom:0; }
 @media (max-width:700px) {
   .g-members .pa-aiqa-home .pa-work-group { display:block; }
   .g-members .pa-aiqa-home .pa-work-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,max(9rem,calc(50% - 4px))),1fr)); }
-  .g-members .pa-aiqa-home .pa-work-group>h3 { min-height:44px; font-size:1.05rem; }
+  .g-members .pa-aiqa-home .pa-work-group>h3 { min-height:44px; font-size:1rem; }
   .g-members .pa-aiqa-home .pa-home-notice { padding:16px; }
   .pa-ask { padding:16px; }
   .pa-ask-heading { gap:8px; }
@@ -101,15 +101,15 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
 @media (max-width:760px) { .g-members .pa-aiqa-home .pa-work-link b { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; } }
 
 /* IM: safe answer emphasis and a separate deeper answer. */
-.pa-ask-answer-text :is(b,strong){font-weight:750;color:inherit}
-.pa-ask-answer-text :is(.pa-hl-key,.pa-hl-warning){background:none;font-weight:750;padding:0}
+.pa-ask-answer-text :is(b,strong){font-weight:600;color:inherit}
+.pa-ask-answer-text :is(.pa-hl-key,.pa-hl-warning){background:none;font-weight:600;padding:0}
 .pa-ask-answer-text .pa-hl-key{color:var(--accent)}
 .pa-ask-answer-text .pa-hl-warning{color:#9b410b}
 .pa-ask-answer-text p{margin:.6em 0}
 .pa-ask-answer-text ul{margin:.6em 0;padding-left:1.4em}
 .pa-ask-deep{margin-top:24px;padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--bg-0)}
-.pa-ask-deep>h4{margin:0 0 16px;color:var(--text);font-size:1.15rem}
-.pa-ask-deep-status{color:var(--text-2);font-weight:600;line-height:1.7}
+.pa-ask-deep>h4{margin:0 0 16px;color:var(--text);font-size:1rem;font-weight:500}
+.pa-ask-deep-status{color:var(--text-2);font-weight:500;line-height:1.7}
 @media(max-width:700px){.pa-ask-deep{padding:16px}}
 
 /* UNSLOP 2026-11-10 ③ 아이콘: 자물쇠는 한 가지(16px·선 1.5·옅은 글자색), 글자와 8 간격 */
@@ -122,3 +122,10 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
 /* UNSLOP 2026-11-10 ④ 문구에 따른 새 요소: 이름·본부 한 줄, 제목 옆 개수(옅은 숫자) */
 .g-members .pa-aiqa-home .pa-home-meta { margin:0; color:var(--text-2); font-size:16px; line-height:1.5; }
 .pa-count { font-size:16px; font-weight:400; color:var(--text-3); font-variant-numeric:tabular-nums; }
+
+/* UNSLOP 2026-11-10 ⑤ 글씨: 크기 4가지(28 페이지 제목 · 20 묶음 제목 · 16 본문 · 14 작은 글), 휴대폰은 24·18 */
+.pa-ask-suggestions :is(a,p) b { font-weight:500; }
+@media (max-width:720px) {
+  .g-members .pa-aiqa-home .pa-home-title { font-size:24px; }
+  .pa-ask-heading h2,.g-members .pa-aiqa-home .pa-home-notice h2,.pa-ask-answer h3 { font-size:18px; }
+}
