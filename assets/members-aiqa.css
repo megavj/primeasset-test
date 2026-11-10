@@ -1,7 +1,7 @@
 /* TASK29B: bright, readable member home; all rules are scoped to this page. */
 .g-members .pa-aiqa-home { font-size:16px; }
 .g-members .pa-aiqa-home button { font-size:1rem; min-height:44px; }
-.g-members .pa-aiqa-home .pa-home-head { display:flex; align-items:flex-end; justify-content:flex-start; text-align:left; margin:0 0 16px; }
+.g-members .pa-aiqa-home .pa-home-head { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:4px 16px; text-align:left; margin:0 0 16px; } /* ⑥ 제목 왼쪽 · 이름·본부 오른쪽 */
 .g-members .pa-aiqa-home .pa-home-title { color:var(--text); font-size:28px; line-height:1.3; letter-spacing:0; overflow-wrap:anywhere; margin:0; }
 .g-members .pa-aiqa-home .pa-note,
 .g-members .pa-aiqa-home .pa-lock-state,
@@ -9,7 +9,7 @@
 .g-members .pa-aiqa-home .pa-req { font-size:1rem; }
 .g-members .pa-aiqa-home .pa-work-group { grid-template-columns:104px minmax(0,1fr); }
 .g-members .pa-aiqa-home .pa-work-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr)); }
-.g-members .pa-aiqa-home .pa-work-card { padding:8px 16px 12px; background:var(--bg-1); } /* 위 8: 44px 누름 칸이 이름 위에 약 11px 여유를 이미 둠 */
+.g-members .pa-aiqa-home .pa-work-card { padding:8px 16px 12px; background:var(--bg-1); align-items:flex-start; align-content:flex-start; } /* ⑥ 모든 칸의 이름이 맨 위 같은 높이에서 시작 */ /* 위 8: 44px 누름 칸이 이름 위에 약 11px 여유를 이미 둠 */
 .g-members .pa-aiqa-home .pa-work-link { min-height:48px; }
 /* UNSLOP ② 색: 잠긴 칸은 실선 + 한 단계 옅은 바탕, 누를 수 없으니 마우스를 올려도 그대로 */
 .g-members .pa-aiqa-home .pa-work-card.is-locked,.g-members .pa-aiqa-home .pa-work-card.is-locked:hover { background:var(--bg-0); border-color:var(--line); }
@@ -98,7 +98,7 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
 .g-members .pa-aiqa-home .pa-work-grid { grid-auto-rows:1fr; }
 .g-members .pa-aiqa-home .pa-work-link b { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .g-members .pa-aiqa-home .pa-tool-purpose { margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-@media (max-width:760px) { .g-members .pa-aiqa-home .pa-work-link b { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; } }
+@media (max-width:760px) { .g-members .pa-aiqa-home :is(.pa-work-link b,.pa-tool-purpose) { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; } } /* ⑥ 결정 4: 휴대폰은 이름·설명 두 줄까지, PC 설명은 한 줄 */
 
 /* IM: safe answer emphasis and a separate deeper answer. */
 .pa-ask-answer-text :is(b,strong){font-weight:600;color:inherit}
@@ -128,4 +128,13 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
 @media (max-width:720px) {
   .g-members .pa-aiqa-home .pa-home-title { font-size:24px; }
   .pa-ask-heading h2,.g-members .pa-aiqa-home .pa-home-notice h2,.pa-ask-answer h3 { font-size:18px; }
+}
+
+/* UNSLOP 2026-11-10 ⑥ 배치: 휴대폰 제목·이름 줄은 왼쪽 정렬(오른쪽 붙음 오류 수정), 잠긴 칸 이름도 44px 줄 가운데(열린 칸 이름과 같은 높이),
+   최근 보험자료는 PC에서 질문과 날짜를 한 줄에(날짜는 오른쪽 첫 줄 높이), 휴대폰은 날짜를 아래로 */
+.g-members .pa-aiqa-home .pa-locked-name { display:flex; align-items:center; min-height:44px; }
+.g-members .pa-aiqa-home .pa-qa-new li { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:baseline; column-gap:16px; }
+@media (max-width:720px) {
+  .g-members .pa-aiqa-home .pa-home-head { flex-direction:column; align-items:flex-start; gap:4px; }
+  .g-members .pa-aiqa-home .pa-qa-new li { display:block; }
 }
