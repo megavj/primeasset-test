@@ -10,7 +10,7 @@
 .pa-wait-msg:empty{display:none}
 
 /* ② 오류 안내 */
-.pa-linkerr .pa-row,.pa-fail .pa-head-btns{margin:14px 0 0}
+.pa-linkerr .pa-row,.pa-fail .pa-head-btns{margin:16px 0 0}
 .pa-send[disabled]{opacity:.75;cursor:default;font-variant-numeric:tabular-nums}
 
 /* ③ 카카오톡 안 브라우저 */
@@ -59,12 +59,12 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-search-field kbd{position:absolute;right:16px;border:1px solid var(--line-2);border-radius:5px;min-width:25px;text-align:center;font:inherit;font-size:14px;color:var(--text-3);pointer-events:none}
 .g-members .pa-search-clear{position:absolute;right:48px;min-width:44px;min-height:44px;border:0;background:transparent;color:var(--text-2);font:inherit;font-size:14px;cursor:pointer;padding:0 6px}
 .g-members .pa-search-help{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--text-3);margin:8px 0 0}
-.g-members .pa-home-block{margin:20px 0 0;min-width:0;scroll-margin-top:110px}
-.g-members .pa-section-heading{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;margin:0 0 8px}
+.g-members .pa-home-block{margin:32px 0 0;min-width:0;scroll-margin-top:110px}
+.g-members .pa-section-heading{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;margin:0 0 12px}
 .g-members .pa-section-heading h2{font-size:21px;font-weight:500;letter-spacing:-.025em}
 .g-members .pa-section-heading>a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;color:var(--text-2);text-decoration:none}
 .g-members .pa-home-block>.pa-note{margin:0 0 12px;font-size:14px}
-.g-members .pa-work-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.g-members .pa-work-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .g-members .pa-work-card{position:relative;min-width:0;padding:8px 10px 8px 14px;background:var(--bg-1);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;transition:border-color .15s}
 .g-members .pa-work-card:hover,.g-members .pa-work-card:focus-within{border-color:var(--line-2)}
 .g-members .pa-work-meta{order:2;display:flex;align-items:center;margin-left:auto;flex:none}
@@ -94,11 +94,11 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-filters{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
 .g-members .pa-filter{min-height:44px;padding:8px 14px;border:1px solid var(--line-2);border-radius:8px;background:var(--bg-1);color:var(--text-2);font:inherit;font-size:14px;cursor:pointer}
 .g-members .pa-filter[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:var(--on-gold);font-weight:500}
-.g-members .pa-work-group{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:start;gap:12px;border-top:1px solid var(--line);padding:12px 0}
+.g-members .pa-work-group{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:start;gap:12px;border-top:1px solid var(--line);padding:16px 0}
 .g-members .pa-work-group>h3{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;min-height:44px;font-size:17px;font-weight:500;margin:0}
 .g-members .pa-work-group>h3 small{font-size:14px;color:var(--text-3);font-weight:400}
-.g-members .pa-home-notice{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:start;gap:8px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg-1);padding:16px 18px;margin-top:20px;min-width:0;scroll-margin-top:110px}
-.g-members .pa-home-notice h2{font-size:18px;font-weight:500;padding-top:2px}
+.g-members .pa-home-notice{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:start;gap:8px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg-1);padding:16px 18px;margin-top:32px;min-width:0;scroll-margin-top:110px}
+.g-members .pa-home-notice h2{font-size:18px;font-weight:500;padding-top:0}
 .g-members .pa-notice-body{min-width:0}
 .g-members .pa-notice-body p{font-size:15px;line-height:1.6;color:var(--text-2);margin:0}
 .g-members .pa-text-button{font:inherit;font-size:14px;color:var(--text-2);background:transparent;border:0;cursor:pointer;min-height:44px;padding:8px 0;text-decoration:underline;text-underline-offset:4px}
@@ -120,14 +120,20 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-card .pa-note a,.g-members .pa-foot a{display:inline-flex;align-items:center;min-height:44px}
 .g-members .g-btn--sm{min-height:44px}
 .g-members .g-foot{padding-top:20px;padding-bottom:24px}
+/* UNSLOP 2026-11-10 ① 간격: 카드 문단 4/12, 마지막 문단 0, 비어 있는 상태 문구는 여백 없음(낭독 영역은 그대로 둠), 홈 첫 줄 위 6px 제거 */
+.g-members .pa-card p{margin:4px 0 12px}
+.g-members .pa-card p:last-child{margin-bottom:0}
+.g-members .pa-card p.pa-note:empty{margin:0}
+.g-members .pa-card p a{padding:8px 0}
+.g-members .pa-sec{padding-top:0}
 .g-members .g-foot a{display:inline-flex;align-items:center;min-height:44px}
 
 /* 로그인과 승인 대기 화면의 입력·안내 */
-.g-members .pa-email-login{margin-top:20px;border-top:1px solid var(--line);padding-top:18px}
+.g-members .pa-email-login{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}
 .g-members .pa-email-login h3{font-size:16px;font-weight:var(--fw-label);margin:0 0 12px}
-.g-members .pa-otp-form{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.g-members .pa-otp-form{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
 .g-members .pa-otp-form>label{font-size:16px;font-weight:var(--fw-label)}
-.g-members .pa-otp-form .pa-note{margin:6px 0 10px}
+.g-members .pa-otp-form .pa-note{margin:4px 0 8px}
 .g-members .pa-email-login .pa-row .pa-in{min-width:0;flex-basis:200px}
 .g-members #pa-otp{font-variant-numeric:tabular-nums;letter-spacing:.08em}
 .g-members .pa-switch-email{display:inline-block;margin-top:8px;font-size:14px}
@@ -149,20 +155,20 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
  .g-members .pa-search-field kbd{display:none}
  .g-members .pa-search-clear{right:6px}
  .g-members .pa-search-help{font-size:14px;gap:4px;margin-top:6px}
- .g-members .pa-home-block{margin-top:16px}
+ .g-members .pa-home-block{margin-top:24px}
  .g-members .pa-section-heading{gap:4px 12px}
  .g-members .pa-section-heading h2{font-size:20px}
  .g-members .pa-section-heading>a{font-size:14px}
  .g-members .pa-work-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
  .g-members .pa-work-card{padding:6px 8px 6px 10px}
- .g-members .pa-work-group{display:block;padding:8px 0 12px}
+ .g-members .pa-work-group{display:block;padding:12px 0 16px}
  .g-members .pa-work-group>h3{min-height:36px}
  .g-members .pa-work-link b,.g-members .pa-locked-name{font-size:16px}
  .g-members .pa-pin{margin-right:0;width:44px;min-height:44px}
  .g-members .pa-open-label{display:none}
  .g-members .pa-search-results{padding:12px 10px}
  .g-members .pa-filter{font-size:14px;padding:8px 12px}
- .g-members .pa-home-notice{grid-template-columns:1fr;gap:8px;padding:14px;margin-top:16px}
+ .g-members .pa-home-notice{grid-template-columns:1fr;gap:8px;padding:16px;margin-top:24px}
  .g-members .pa-home-notice h2{font-size:18px;padding-top:0}
  .g-members .pa-me{padding:16px}
  .g-members .pa-me dl{grid-template-columns:auto minmax(0,1fr);gap:6px 12px;font-size:15px}
