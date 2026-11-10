@@ -55,7 +55,7 @@
       moreMenu.addEventListener('keydown', e => {
         if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) { e.preventDefault(); pinAction.focus(); }
         if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeMenu(true); }
-        if (e.key === 'Tab') closeMenu();
+        if (e.key === 'Tab') closeMenu(true);
       });
       function openMenu(trigger, item) {
         const same = menuTrigger === trigger && !moreMenu.hidden;
