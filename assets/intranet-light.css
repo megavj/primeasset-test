@@ -10,6 +10,7 @@ body.intranet-light {
   --gold:var(--accent); --gold-hi:var(--accent-hover); --gold-soft:var(--accent-soft); --on-gold:#ffffff;
   --success:#17633e; --success-soft:#edf7f0; --danger:#a52323; --danger-soft:#fff1f0;
   --line:#d6dde6; --line-2:#bac6d4; --control-border:#7b899b;
+  --signature:#9a793a; /* UNSLOP: 로고 금색의 가는 선 — '지금 있는 곳'과 가입 3단계 연결선에만(흰 바탕 대비 4.06:1) */
   --sky:#30668f; --glass:#ffffff; --glass-line:var(--line); --glass-bar:#ffffff;
   --dialog-backdrop:rgba(17,35,56,.45); --blur:none;
   --shadow-1:0 2px 8px rgba(23,40,61,.05); --shadow-2:0 8px 24px rgba(23,40,61,.09);
@@ -66,7 +67,7 @@ body.intranet-light .pa-sk-fade { transition:none; }
 body.intranet-light .pa-card--hero { padding:16px 20px; background:transparent; border:0; margin-bottom:8px; }
 body.intranet-light .pa-login .pa-pitch { font-size:24px; line-height:1.4; text-align:left; }
 body.intranet-light .pa-tool .pa-no { background:var(--bg-2); }
-body.intranet-light .pa-work-card { border-color:var(--line-2); }
+body.intranet-light .pa-work-card { border-color:var(--line); }
 body.intranet-light .pa-work-card:hover { background:var(--bg-2); }
 body.intranet-light .pa-work-link { min-height:48px; }
 body.intranet-light .pa-notice-x:hover { background:var(--bg-2); }
@@ -219,13 +220,13 @@ body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>bu
 /* TASK44: 가입 → 승인 → 이용. 밝은 면에 네이비 번호와 골드 연결선.
    안내 안에만 적용하며, 장식은 DOM의 aria-hidden 요소로 그립니다. */
 body.intranet-light .pa-signup-guide {
-  margin:20px 0; padding:32px; border:1px solid #dce2e8; border-radius:20px;
-  background:linear-gradient(135deg,#fff 0%,#f8f7f3 100%); color:#17283d;
-  box-shadow:0 6px 24px rgba(23,40,61,.035);
+  margin:20px 0; padding:32px; border:1px solid var(--line); border-radius:20px;
+  background:var(--bg-1); color:var(--text);
+  box-shadow:none;
 }
-body.intranet-light .pa-signup-guide .pa-signup-eyebrow { margin-bottom:8px; color:#765818; font-size:16px; }
-body.intranet-light .pa-signup-guide h2 { color:#17283d; font-size:clamp(24px,2.3vw,30px); line-height:1.4; overflow-wrap:anywhere; }
-body.intranet-light .pa-signup-guide .pa-signup-intro { margin-top:8px; color:#46586c; font-size:16px; line-height:1.7; overflow-wrap:anywhere; }
+body.intranet-light .pa-signup-guide .pa-signup-eyebrow { margin-bottom:8px; color:var(--text-3); font-size:16px; }
+body.intranet-light .pa-signup-guide h2 { color:var(--text); font-size:clamp(24px,2.3vw,30px); line-height:1.4; overflow-wrap:anywhere; }
+body.intranet-light .pa-signup-guide .pa-signup-intro { margin-top:8px; color:var(--text-2); font-size:16px; line-height:1.7; overflow-wrap:anywhere; }
 body.intranet-light .pa-signup-guide .pa-signup-steps { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:24px; }
 body.intranet-light .pa-signup-guide .pa-signup-steps > li {
   position:relative; display:grid; grid-template-rows:36px auto; align-content:start; gap:12px;
@@ -233,18 +234,18 @@ body.intranet-light .pa-signup-guide .pa-signup-steps > li {
 }
 body.intranet-light .pa-signup-guide .pa-signup-number {
   position:relative; display:grid; place-items:center; width:36px; height:36px;
-  border:1px solid #9a793a; border-radius:50%; background:#193b60; color:#fff;
+  border:0; border-radius:50%; background:var(--accent); color:var(--on-gold);
   font-size:15px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums;
 }
 body.intranet-light .pa-signup-guide .pa-signup-connector {
   position:absolute; top:17px; left:36px; width:calc(100% + 16px - 36px); height:2px;
-  background:#a18345; pointer-events:none;
+  background:var(--signature); pointer-events:none;
 }
 body.intranet-light .pa-signup-guide .pa-signup-content { min-width:0; }
-body.intranet-light .pa-signup-guide .pa-signup-step { display:flex; align-items:center; gap:8px; color:#765818; font-size:16px; line-height:1.5; }
+body.intranet-light .pa-signup-guide .pa-signup-step { display:flex; align-items:center; gap:8px; color:var(--text); font-size:16px; line-height:1.5; }
 body.intranet-light .pa-signup-guide .pa-signup-icon { display:block; flex:0 0 20px; width:20px; height:20px; }
-body.intranet-light .pa-signup-guide .pa-signup-steps h3 { margin:8px 0 4px; color:#17283d; font-size:18px; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere; }
-body.intranet-light .pa-signup-guide .pa-signup-steps p { color:#46586c; font-size:16px; line-height:1.65; }
+body.intranet-light .pa-signup-guide .pa-signup-steps h3 { margin:8px 0 4px; color:var(--text); font-size:18px; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere; }
+body.intranet-light .pa-signup-guide .pa-signup-steps p { color:var(--text-2); font-size:16px; line-height:1.65; }
 @media (max-width:680px) {
   body.intranet-light .pa-signup-guide { padding:24px 16px; border-radius:16px; }
   body.intranet-light .pa-signup-guide .pa-signup-steps { grid-template-columns:minmax(0,1fr); gap:0; margin-top:24px; }

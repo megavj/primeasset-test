@@ -78,8 +78,8 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-open-label{font-size:14px;line-height:1.5;color:var(--text-2)}
 .g-members .pa-locked-name{order:1;flex:1;min-width:0}
 .g-members .pa-open-label{flex:none}
-.g-members .pa-work-card.is-locked{border-style:dashed}
-.g-members .pa-lock-state{order:3;flex-basis:100%;padding-top:2px;font-size:14px;color:var(--text-2)}
+.g-members .pa-work-card.is-locked{border-style:solid}
+.g-members .pa-lock-state{order:3;flex-basis:100%;padding-top:2px;font-size:14px;color:var(--text-3)}
 .g-members .pa-lock-state .pa-req-row{margin-top:6px}
 .g-members .pa-lock-state .pa-req{min-height:44px;max-width:100%}
 .g-members .pa-work-card .pa-req-msg{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
