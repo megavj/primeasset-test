@@ -133,6 +133,8 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
 /* UNSLOP 2026-11-10 ⑥ 배치: 휴대폰 제목·이름 줄은 왼쪽 정렬(오른쪽 붙음 오류 수정), 잠긴 칸 이름도 44px 줄 가운데(열린 칸 이름과 같은 높이),
    최근 보험자료는 PC에서 질문과 날짜를 한 줄에(날짜는 오른쪽 첫 줄 높이), 휴대폰은 날짜를 아래로 */
 .g-members .pa-aiqa-home .pa-locked-name { display:flex; align-items:center; min-height:44px; }
+/* ⑥ 보완: 이름이 한 줄이든 두 줄이든 첫 줄이 칸 위에서 같은 높이(20px)에서 시작 — 누르는 영역은 44px 이상 그대로 */
+.g-members .pa-aiqa-home .pa-work-link,.g-members .pa-aiqa-home .pa-locked-name { align-items:flex-start; padding:12px 0 8px; }
 .g-members .pa-aiqa-home .pa-qa-new li { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:baseline; column-gap:16px; }
 @media (max-width:720px) {
   .g-members .pa-aiqa-home .pa-home-head { flex-direction:column; align-items:flex-start; gap:4px; }
