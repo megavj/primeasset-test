@@ -18,7 +18,7 @@ body.intranet-light {
   --navy:var(--accent); --navy-2:var(--accent-hover); --navy-soft:var(--accent-soft);
   --glass-2:var(--bg-1); --shadow:var(--shadow-1); --shadow-sm:var(--shadow-1);
   --fs-body:16px; --lh-body:1.75; --fs-cap:14px;
-  --r-panel:16px; --r-card:14px; --r-tile:10px; --r-in:10px;
+  --r-panel:16px; --r-card:16px; --r-tile:12px; --r-in:10px; /* UNSLOP ⑦ 모서리 4단계: 큰 상자 16 · 도구 칸 12 · 버튼·입력칸 10 · 메뉴 항목 8 */
   --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   font-family:var(--font); font-size:16px; line-height:1.75;
   color:var(--text); background:var(--bg-0); overflow-wrap:anywhere;
@@ -42,30 +42,32 @@ body.intranet-light :is(.g-card,.pa-card,.g-tile,.pa-list li,.pa-tool,.pa-steps 
 body.intranet-light :is(.g-card,.g-tile,.pa-tool):hover { transform:none; box-shadow:none; background:var(--bg-2); }
 body.intranet-light .g-strip { color:#735416; background:#fbf7e9; border-color:#ddd1b2; padding:8px 12px; }
 body.intranet-light .g-nav { top:8px; }
-body.intranet-light .g-nav .g-bar { background:var(--bg-1); border-color:var(--line); border-radius:14px; box-shadow:var(--shadow-1); padding:8px 8px 8px 20px; }
-body.intranet-light .g-nav.pa-site-nav .pa-nav-bar { border-radius:14px; }
-body.intranet-light :is(.pa-site-nav #pa-nav-menu>[aria-current],.g-menu a.on,.g-tabbar a.on) { background:var(--accent-soft); color:var(--accent); }
+body.intranet-light .g-nav .g-bar { background:var(--bg-1); border-color:var(--line); border-radius:16px; box-shadow:var(--shadow-1); padding:8px 8px 8px 20px; }
+body.intranet-light .g-nav.pa-site-nav .pa-nav-bar { border-radius:16px; }
+/* UNSLOP ⑦ 이 회사만의 표시: '지금 있는 곳'은 칠 대신 로고 금색의 가는 밑줄(위 메뉴·휴대폰 아래 메뉴 공통) */
+body.intranet-light :is(.pa-site-nav #pa-nav-menu>[aria-current],.g-menu a.on,.g-tabbar a.on) { background:transparent; color:var(--accent); text-decoration-line:underline; text-decoration-color:var(--signature); text-decoration-thickness:2px; text-underline-offset:8px; text-decoration-skip-ink:none; }
 body.intranet-light :is(.pa-site-nav #pa-nav-menu>a:hover,.pa-site-nav #pa-nav-menu>button:hover,.pa-site-nav #pa-nav-toggle:hover,.g-menu a:hover,.g-tabbar a:hover) { background:var(--bg-2); color:var(--text); }
 body.intranet-light .g-tabbar .g-bar { background:var(--bg-1); border-color:var(--line-2); border-radius:16px; box-shadow:var(--shadow-2); padding:8px; }
-body.intranet-light .g-tabbar a { border-radius:10px; }
+body.intranet-light .g-tabbar a { border-radius:8px; }
 body.intranet-light .g-foot { color:var(--text-3); }
 body.intranet-light .g-foot a { display:inline-flex; min-height:44px; align-items:center; padding:8px 0; }
-body.intranet-light .g-btn { border-radius:9px; min-height:44px; white-space:normal; padding:12px 20px; font-weight:500; }
+body.intranet-light .g-btn { border-radius:10px; min-height:44px; white-space:normal; padding:12px 20px; font-weight:500; }
 body.intranet-light .g-btn--lg { min-height:48px; padding:12px 32px; font-size:16px; }
 body.intranet-light .g-btn--sm { padding:8px 16px; }
 body.intranet-light .pa-row { gap:8px; }
-body.intranet-light .g-skip { padding:12px 16px; }
+body.intranet-light .g-skip { padding:12px 16px; border-radius:10px; }
 body.intranet-light .g-btn--ghost { border-color:var(--control-border); }
 body.intranet-light .g-btn--ghost:hover { background:var(--bg-2); border-color:var(--accent); }
 body.intranet-light .g-btn--pri { color:var(--on-gold); background:var(--accent); }
 body.intranet-light .g-btn--pri:hover { background:var(--accent-hover); }
 body.intranet-light .g-btn:active { transform:none; }
-body.intranet-light .pa-in:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); outline:2px solid var(--accent); outline-offset:2px; }
+/* UNSLOP ⑦ 입력칸을 누르면 남색 테두리 한 줄(2px)만. 고대비 모드에서는 투명 외곽선이 대신 보임. 다른 요소의 3px 키보드 표시는 그대로 */
+body.intranet-light :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),select,textarea).pa-in:focus { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); outline:2px solid transparent; outline-offset:0; }
 body.intranet-light :is(.pa-card.pa-banner,.pa-card.pa-notice,.pa-kakao,.pa-news .pa-card,.cl-notice,.it-notice) { border-color:var(--line-2); }
 body.intranet-light .pa-sk .sk { background:#dde4ec; animation:none; }
 body.intranet-light .pa-sk-fade { transition:none; }
 body.intranet-light .pa-card.pa-card--hero { padding:0; background:transparent; border:0; margin:0 0 16px; } /* ⑥ 로그인 첫 줄은 상자 없는 제목(명시도를 올려 흰 상자 규칙을 이김) */
-body.intranet-light .pa-login .pa-pitch { font-size:28px; line-height:1.3; letter-spacing:0; text-align:left; }
+body.intranet-light .pa-login .pa-pitch { font-size:28px; line-height:1.3; letter-spacing:0; text-align:left; color:var(--text); } /* ⑦ 페이지 제목은 홈 제목과 같은 글자색 */
 body.intranet-light .pa-tool .pa-no { background:var(--bg-2); }
 body.intranet-light .pa-work-card { border-color:var(--line); }
 body.intranet-light .pa-work-card:hover { background:var(--bg-2); }
@@ -84,10 +86,10 @@ body.intranet-light :is(.cl-hero,.it-hero,.coach-hero) { margin:0 0 20px; }
 body.intranet-light :is(.cl-hero h1,.it-hero h1,.coach-hero h1) { font-size:clamp(26px,3vw,34px); line-height:1.35; }
 body.intranet-light :is(.cl-eyebrow,.it-eyebrow,.coach-eyebrow) { margin:0 0 4px; }
 body.intranet-light :is(.cl-eyebrow a,.it-eyebrow a,.coach-eyebrow a,.qa-eyebrow a) { display:inline-flex; align-items:center; min-height:44px; }
-body.intranet-light :is(.cl-chip,.it-chip) { border-color:var(--control-border); border-radius:9px; min-height:44px; font-size:16px; }
+body.intranet-light :is(.cl-chip,.it-chip) { border-color:var(--control-border); border-radius:10px; min-height:44px; font-size:16px; }
 body.intranet-light :is(.cl-q,.it-q) { min-height:160px; }
 body.intranet-light .cl-file { font-size:16px; }
-body.intranet-light .cl-file::file-selector-button { min-height:44px; border-color:var(--control-border); border-radius:9px; }
+body.intranet-light .cl-file::file-selector-button { min-height:44px; border-color:var(--control-border); border-radius:10px; }
 body.intranet-light :is(.cl-table,.it-table,.px-table-wrap,.coach-table,.pa-scroll,.adm-table-scroll) { max-width:100%; overscroll-behavior-inline:contain; }
 body.intranet-light :is(.cl-table,.it-table) { border:1px solid var(--line-2); border-radius:8px; }
 body.intranet-light :is(.cl-answer th,.it-answer th,.px-table-wrap th) { background:var(--bg-2); }
@@ -207,7 +209,7 @@ body.intranet-light :is(.pa-ask-answer-actions,.ask-account-actions)>* { max-wid
 
 body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button,.pa-site-nav #pa-nav-toggle,.g-tabbar.pa-site-tabs a) { font-size:16px; }
 /* UNSLOP 2026-11-10 ① 간격: 메뉴 막대·휴대폰 메뉴를 4의 배수로(공유 glass.css는 그대로 두고 여기서 덮어씀) */
-body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button,.pa-site-nav #pa-nav-toggle) { gap:8px; padding:8px 12px; }
+body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>button,.pa-site-nav #pa-nav-toggle) { gap:8px; padding:8px 12px; border-radius:8px; } /* ⑦ 막대 16 − 안쪽 8 = 8 */
 @media (max-width:720px) {
   body.intranet-light .g-nav { padding:0 8px; }
   body.intranet-light .g-nav .g-bar { padding:8px 8px 8px 16px; }
@@ -220,7 +222,7 @@ body.intranet-light :is(.pa-site-nav #pa-nav-menu>a,.pa-site-nav #pa-nav-menu>bu
 /* TASK44: 가입 → 승인 → 이용. 밝은 면에 네이비 번호와 골드 연결선.
    안내 안에만 적용하며, 장식은 DOM의 aria-hidden 요소로 그립니다. */
 body.intranet-light .pa-signup-guide {
-  margin:20px 0; padding:32px; border:1px solid var(--line); border-radius:20px;
+  margin:20px 0; padding:32px; border:1px solid var(--line); border-radius:var(--r-panel);
   background:var(--bg-1); color:var(--text);
   box-shadow:none;
 }
@@ -245,6 +247,7 @@ body.intranet-light .pa-signup-guide .pa-signup-icon { display:block; flex:0 0 1
 /* UNSLOP ④: 단계 이름은 아이콘 + 이름 한 줄(h3) — 예전의 작은 머리글과 광고형 제목을 하나로 */
 body.intranet-light .pa-signup-guide .pa-signup-steps h3.pa-signup-step { display:flex; align-items:center; gap:8px; margin:0 0 4px; color:var(--text); font-size:16px; font-weight:500; letter-spacing:0; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere; }
 body.intranet-light .pa-signup-guide .pa-signup-steps p { color:var(--text-2); font-size:16px; line-height:1.7; }
+body.intranet-light .pa-signup-guide :is(.pa-signup-intro,.pa-signup-steps p) { text-wrap:pretty; } /* ⑦ 마지막 줄에 한 단어만 남지 않게(지원하는 브라우저) */
 @media (max-width:680px) {
   body.intranet-light .pa-signup-guide { padding:24px 16px; border-radius:16px; }
   body.intranet-light .pa-signup-guide h2 { font-size:18px; }

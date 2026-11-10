@@ -27,7 +27,7 @@ html.pa-sk-show .pa-sk-fade{opacity:1;transition:opacity .25s ease}
 html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르기: members/index.html <head> 스크립트 */
 .pa-sk .sk{display:block;height:16px;border-radius:8px;background:rgba(255,255,255,.06);margin:0 0 12px}
 .pa-sk .sk-h{height:22px;width:38%;margin-bottom:16px}
-.pa-sk .sk-btn{height:56px;border-radius:999px;margin:18px 0}
+.pa-sk .sk-btn{height:48px;border-radius:var(--r-in);margin:16px 0}
 .pa-sk .sk-who{height:26px;width:280px;max-width:70%;margin:6px 0}
 .pa-sk .sk-input{height:52px;border-radius:var(--r-in);margin:0}
 .pa-sk .sk-title{height:30px;width:220px;margin:26px 0 14px}
@@ -65,7 +65,7 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-section-heading>a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;color:var(--text-2);text-decoration:none}
 .g-members .pa-home-block>.pa-note{margin:0 0 12px;font-size:14px}
 .g-members .pa-work-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.g-members .pa-work-card{position:relative;min-width:0;padding:8px 10px 8px 14px;background:var(--bg-1);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;gap:4px;flex-wrap:wrap;transition:border-color .15s}
+.g-members .pa-work-card{position:relative;min-width:0;padding:8px 10px 8px 14px;background:var(--bg-1);border:1px solid var(--line);border-radius:var(--r-tile);display:flex;align-items:center;gap:4px;flex-wrap:wrap;transition:border-color .15s}
 .g-members .pa-work-card:hover,.g-members .pa-work-card:focus-within{border-color:var(--line-2)}
 .g-members .pa-work-meta{order:2;display:flex;align-items:center;margin-left:auto;flex:none}
 .g-members .pa-work-meta>span{min-width:0;line-height:1.4}
@@ -97,7 +97,7 @@ html.pa-in .pa-sk-out,html:not(.pa-in) .pa-sk-in{display:none} /* 모양 고르�
 .g-members .pa-work-group{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:start;gap:12px;border-top:1px solid var(--line);padding:16px 0}
 .g-members .pa-work-group>h3{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;min-height:44px;font-size:16px;font-weight:500;color:var(--text-2);margin:0}
 .g-members .pa-work-group>h3 small{font-size:14px;color:var(--text-3);font-weight:400}
-.g-members .pa-home-notice{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:start;gap:8px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg-1);padding:16px 18px;margin-top:32px;min-width:0;scroll-margin-top:110px}
+.g-members .pa-home-notice{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:start;gap:8px 16px;border:1px solid var(--line);border-radius:var(--r-panel);background:var(--bg-1);padding:16px 18px;margin-top:32px;min-width:0;scroll-margin-top:110px}
 .g-members .pa-home-notice h2{font-size:20px;line-height:1.4;font-weight:500;padding-top:0}
 .g-members .pa-notice-body{min-width:0}
 .g-members .pa-notice-body p{font-size:15px;line-height:1.6;color:var(--text-2);margin:0}
