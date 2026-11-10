@@ -238,10 +238,40 @@
       if (!context) return;
       const body = el('div', {}, note('내 질문 기록을 불러오는 중…'));
       root.removeAttribute('aria-busy'); root.classList.add('ask-account-stack');
-      root.replaceChildren(profileCard(context), card('내 AI 질문 기록', body));
+      const pCard = profileCard(context); pCard.id = 'account-info';
+      const qCard = card('내 AI 질문 기록', body); qCard.id = 'ask-history';
+      const panes = [['account-info', '계정정보', pCard], ['ask-history', 'AI질문기록', qCard]];
       loadStats(context, body);
       // TASK-ART: 작성글모음에서 보관한 글(내 글 보관함). 쓸 수 없는 등급이고 보관한 글도 없으면 칸이 스스로 숨는다.
-      if (window.PA_ART_LOCKER && context.profile.status === 'active') root.append(window.PA_ART_LOCKER.mount(context));
+      if (window.PA_ART_LOCKER && context.profile.status === 'active') panes.push(['art-locker', '보관함', window.PA_ART_LOCKER.mount(context)]);
+      // 상단 탭(2026-11-10 대표 요청): 계정정보 / AI질문기록 / 보관함 — 누른 탭의 내용만 보인다. 주소 #해시로 바로 열기.
+      const tabs = el('div', { class: 'me-tabs', role: 'tablist', 'aria-label': '내 정보 메뉴' });
+      const show = (id, push) => {
+        const live = panes.filter(([, , n]) => n.isConnected);
+        if (!live.some(([k]) => k === id)) id = live[0][0];
+        panes.forEach(([k, , n]) => { n.hidden = k !== id; });
+        tabs.querySelectorAll('[role=tab]').forEach((b) => { const on = b.dataset.pane === id; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+        if (push && location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+      };
+      panes.forEach(([k, label, n]) => {
+        n.setAttribute('role', 'tabpanel');
+        const b = el('button', { type: 'button', role: 'tab', class: 'me-tab', 'data-pane': k, 'aria-controls': k }, label);
+        b.addEventListener('click', () => show(k, true));
+        tabs.append(b);
+      });
+      tabs.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        const bs = [...tabs.querySelectorAll('[role=tab]:not([hidden])')], i = bs.indexOf(document.activeElement);
+        if (i < 0) return; const nb = bs[(i + (e.key === 'ArrowRight' ? 1 : bs.length - 1)) % bs.length]; nb.focus(); nb.click();
+      });
+      root.replaceChildren(tabs, ...panes.map(([, , n]) => n));
+      show((location.hash || '').slice(1), false);
+      window.addEventListener('hashchange', () => show(location.hash.slice(1), false));
+      // 보관함 칸이 스스로 숨으면(쓸 수 없는 등급) 탭도 숨긴다
+      new MutationObserver(() => {
+        panes.forEach(([k, , n]) => { const b = tabs.querySelector(`[data-pane="${k}"]`); if (b) b.hidden = !n.isConnected; });
+        const cur = tabs.querySelector('[aria-selected=true]'); if (cur && cur.hidden) show('account-info', false);
+      }).observe(root, { childList: true });
     } catch (error) { U.gate(root, '내 정보를 불러오지 못했습니다', error.message || '연결을 확인한 뒤 다시 시도해 주세요.', boot); }
   }
   boot();
