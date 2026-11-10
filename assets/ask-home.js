@@ -49,7 +49,7 @@
           q, suggestions,
           el('div', { class: 'pa-ask-controls' }, submit), out, retry, retryNote);
       const node = el('section', { class: 'pa-ask', 'aria-labelledby': 'pa-ask-title' },
-        el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, '업무가 막힐 때, AI에게 물어보세요'), quota),
+        el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, 'AI 업무 질문'), quota),
         form, lockBox, progress, answer);
       function lock() {
         if (!alive) return;
@@ -159,7 +159,7 @@
         };
         const references = sources => {
           const list = Array.isArray(sources) ? sources : [];
-          return el('div', {}, el('h4', {}, `근거 자료 (${list.length})`), list.length
+          return el('div', {}, el('h4', {}, '근거 자료 ', el('span', { class: 'pa-count' }, `${list.length}개`)), list.length
             ? el('ol', { class: 'pa-ask-sources' }, ...list.map(source => {
               const title = window.PA_ASK.maskResidentId(String(source.title || '참고 자료') + (source.page ? ` · ${source.page}쪽` : ''));
               const url = safeLink(source.url);

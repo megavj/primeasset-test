@@ -118,3 +118,7 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
 .pa-ask-lock-title { display:flex; align-items:center; gap:8px; }
 .pa-ask-suggestions p { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; min-height:44px; }
 .pa-ask-locked { display:inline-flex; align-items:center; gap:8px; color:var(--text-3); }
+
+/* UNSLOP 2026-11-10 ④ 문구에 따른 새 요소: 이름·본부 한 줄, 제목 옆 개수(옅은 숫자) */
+.g-members .pa-aiqa-home .pa-home-meta { margin:0; color:var(--text-2); font-size:16px; line-height:1.5; }
+.pa-count { font-size:16px; font-weight:400; color:var(--text-3); font-variant-numeric:tabular-nums; }

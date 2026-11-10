@@ -231,7 +231,7 @@
         mailBox,
         out),
       signup.guide(),
-      el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "연락처"), N("가입·승인 문의."),
+      el("div", { class: "pa-card" }, el("h2", { class: "pa-h3" }, "연락처"), N("가입·승인 문의"),
         el("p", {}, "프라임에셋 이사 김상현 · 전화 ", el("a", { href: "tel:010-8714-9262" }, "010-8714-9262"), " · ",
           el("a", { href: "https://open.kakao.com/o/sFMF26y", target: "_blank", rel: "noopener" }, "카카오 오픈채팅")))));
     viewKey = "login";
@@ -364,7 +364,7 @@
     const tile = r => el("article", { class: "pa-work-card" + (!r.unlocked ? " is-locked" : ""), "data-resource-key": r.key },
       available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, ...(r.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {}) }, el("b", {}, r.name)) : el("b", { class: "pa-locked-name" }, r.name),
       r.description ? el("p", { class: "pa-tool-purpose" }, r.description) : null,
-      !r.unlocked ? el("div", { class: "pa-lock-state" }, lockIcon(), el("span", {}, pending ? "승인 후 열림" : "관리자가 등급에 따라 열어 드립니다")) : !r.url ? N("주소 준비 중입니다.") : null);
+      !r.unlocked ? el("div", { class: "pa-lock-state" }, lockIcon(), el("span", {}, pending ? "승인 후 열림" : "잠김")) : !r.url ? N("주소 준비 중입니다.") : null);
     const directory = el("div", { id: "pa-directory" }, ...works.map(w => {
       const items = tools.filter(r => r.work === w);
       return el("section", { class: "pa-work-group", "aria-label": w }, el("h3", {}, w), el("div", { class: "pa-work-grid" }, ...items.map(tile)), items.length ? null : N("등록된 도구가 없습니다."));
@@ -393,15 +393,17 @@
         noticeBody.replaceChildren(recent.length
           ? el("ul", { class: "pa-qa-new" }, ...recent.map(x => {
             const date = String(x.datePublished || x.date || "").slice(0, 10);
-            return el("li", {}, el("a", { href: "/qa/?p=" + encodeURIComponent(x.slug) }, x.question), el("time", { datetime: date }, date ? "등록일 " + date.replace(/-/g, ".") : "등록일 미정"));
+            return el("li", {}, el("a", { href: "/qa/?p=" + encodeURIComponent(x.slug) }, x.question), date ? el("time", { datetime: date }, date.replace(/-/g, ".")) : null);
           })) : el("p", { class: "pa-qa-empty" }, p.status === "active" ? "등록된 보험자료가 없습니다." : "보험자료는 가입 승인 후 볼 수 있습니다."));
       } catch (e) {
         if (!alive) return;
         noticeBody.replaceChildren(N("보험자료를 불러오지 못했습니다. 연결을 확인하고 다시 시도해 주세요."), el("button", { class: "pa-text-button", type: "button", onclick: loadNotice }, "다시 시도"));
       }
     };
-    const head = el("header", { class: "pa-home-head" }, el("h2", { class: "pa-home-title" }, `${p.name || "회원"}님, 안녕하세요`));
-    const browse = el("section", { id: "directory", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", { id: "pa-directory-title", tabindex: "-1" }, `업무 도구 (${tools.length})`)),
+    // UNSLOP 2026-11-10 ④ 문구: 인사말 대신 이 화면의 이름, 옆(휴대폰은 아래)에 이름·본부 한 줄. 개수는 제목과 떨어진 옅은 숫자
+    const who = [p.name, p.branch].filter(Boolean).join(" · ");
+    const head = el("header", { class: "pa-home-head" }, el("h2", { class: "pa-home-title" }, "설계사 인트라넷"), who ? el("p", { class: "pa-home-meta" }, who) : null);
+    const browse = el("section", { id: "directory", class: "pa-home-block" }, el("div", { class: "pa-section-heading" }, el("h2", { id: "pa-directory-title", tabindex: "-1" }, "업무 도구 ", el("span", { class: "pa-count" }, `${tools.length}개`))),
       tools.length ? directory : N("등록된 업무 도구가 없습니다."));
     show(el("section", { class: "pa-sec pa-aiqa-home", id: "home" }, head, pending ? pendingCard() : banner, ask.node, browse, noticeBox));
     disposeView = () => { alive = false; ask.dispose(); };
@@ -491,7 +493,7 @@
     clearDraft(storageOwner);
     if (p.status === "suspended") return show(msg("이용이 정지된 계정입니다", "문의는 관리자에게 해 주세요."), logoutBtn());
     if (p.status === "pending") return intranetView(p, null, epoch, storageOwner); // 안내·요청 버튼은 intranetView 가 메뉴 목록과 함께 그림(pendingCard)
-    return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("Guest 등급입니다", "잠긴 메뉴는 등급이 정해지면 열립니다.") : null, epoch, storageOwner);
+    return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("게스트 등급입니다", "잠긴 메뉴는 관리자가 등급에 따라 열어 드립니다") : null, epoch, storageOwner);
   }
   sb.auth.onAuthStateChange((ev, nextSession) => {
     if (!["SIGNED_IN", "SIGNED_OUT", "TOKEN_REFRESHED"].includes(ev)) return;

@@ -50,7 +50,8 @@
   function guide() {
     const node = (tag, className, text) => { const el = document.createElement(tag); if (className) el.className = className; if (text) el.textContent = text; return el; };
     const section = node('section', 'pa-signup-guide'); section.setAttribute('aria-label', '가입 → 승인 → 이용 안내');
-    section.append(node('p', 'pa-signup-eyebrow', '설계사의 일에 집중하는 공간'), node('h2', '', '질문부터 업무 자료까지, 한곳에서'), node('p', 'pa-signup-intro', 'AI 질문, 업무 도구, 보험자료를 필요한 순간 가까이. 가입 정보를 남기고 나의 업무 공간을 준비하세요.'));
+    // UNSLOP 2026-11-10 ④ 문구: 광고 문구 대신 이 사이트에 이미 적힌 사실만(소개 = 페이지 설명문, 단계 = 실제 절차)
+    section.append(node('h2', '', '가입부터 이용까지 3단계'), node('p', 'pa-signup-intro', '프라임에셋 프리미엄 설계사 전용입니다. 로그인하고 승인받으면 업무 도구를 한곳에서 이용할 수 있습니다.'));
     const steps = node('ol', 'pa-signup-steps'); steps.setAttribute('role', 'list');
     // 장식은 낭독에서 제외하고, 단계 순서는 ol의 목록 구조로 전달합니다.
     const iconPaths = [
@@ -58,9 +59,9 @@
       ['M12 3 4 6v6c0 4 4 7 8 9 4-2 8-5 8-9V6Z', 'm8 12 3 3 5-6'],
       ['M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z', 'M3 9h18M8 9v11', 'M12 13h5m-5 3h3']
     ];
-    [['가입', '나를 알리고 시작하세요', '로그인 후 이름·휴대폰·소속 본부를 입력하고 개인정보 수집·이용에 동의하면 가입 신청이 접수됩니다.'],
-      ['승인', '확인 후 함께합니다', '관리자가 가입 정보를 확인합니다. 승인되면 부여된 등급에 맞는 도구를 이용할 수 있습니다.'],
-      ['이용', '상담과 업무에 집중하세요', 'AI에 질문하고, 업무 도구와 보험자료를 찾아 일상 업무에 활용하세요.']].forEach(([label, title, text], i) => {
+    [['가입 정보 입력', '로그인 후 이름·휴대폰·소속 본부를 입력하고 개인정보 수집·이용에 동의하면 가입 신청이 접수됩니다.'],
+      ['관리자 승인', '관리자가 가입 정보를 확인합니다. 승인되면 부여된 등급에 맞는 도구를 이용할 수 있습니다.'],
+      ['업무 도구 이용', 'AI 질문과 업무 도구는 등급에 따라 열리고, 보험자료는 승인 후 볼 수 있습니다.']].forEach(([title, text], i) => {
       const item = node('li', '');
       if (i < iconPaths.length - 1) {
         const connector = node('span', 'pa-signup-connector'); connector.setAttribute('aria-hidden', 'true'); item.append(connector);
@@ -73,8 +74,8 @@
       icon.setAttribute('stroke-width', '1.5'); icon.setAttribute('stroke-linecap', 'round'); icon.setAttribute('stroke-linejoin', 'round');
       icon.setAttribute('aria-hidden', 'true'); icon.setAttribute('focusable', 'false');
       iconPaths[i].forEach(d => { const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', d); icon.append(path); });
-      const heading = node('span', 'pa-signup-step'); heading.append(icon, node('span', '', label));
-      const content = node('div', 'pa-signup-content'); content.append(heading, node('h3', '', title), node('p', '', text));
+      const heading = node('h3', 'pa-signup-step'); heading.append(icon, node('span', '', title)); // 단계 이름 하나(아이콘 + 이름)
+      const content = node('div', 'pa-signup-content'); content.append(heading, node('p', '', text));
       item.append(number, content); steps.append(item);
     });
     section.append(steps); return section;

@@ -224,7 +224,6 @@ body.intranet-light .pa-signup-guide {
   background:var(--bg-1); color:var(--text);
   box-shadow:none;
 }
-body.intranet-light .pa-signup-guide .pa-signup-eyebrow { margin-bottom:8px; color:var(--text-3); font-size:16px; }
 body.intranet-light .pa-signup-guide h2 { color:var(--text); font-size:clamp(24px,2.3vw,30px); line-height:1.4; overflow-wrap:anywhere; }
 body.intranet-light .pa-signup-guide .pa-signup-intro { margin-top:8px; color:var(--text-2); font-size:16px; line-height:1.7; overflow-wrap:anywhere; }
 body.intranet-light .pa-signup-guide .pa-signup-steps { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:24px; }
@@ -242,9 +241,9 @@ body.intranet-light .pa-signup-guide .pa-signup-connector {
   background:var(--signature); pointer-events:none;
 }
 body.intranet-light .pa-signup-guide .pa-signup-content { min-width:0; }
-body.intranet-light .pa-signup-guide .pa-signup-step { display:flex; align-items:center; gap:8px; color:var(--text); font-size:16px; line-height:1.5; }
 body.intranet-light .pa-signup-guide .pa-signup-icon { display:block; flex:0 0 18px; width:18px; height:18px; color:var(--text-3); }
-body.intranet-light .pa-signup-guide .pa-signup-steps h3 { margin:8px 0 4px; color:var(--text); font-size:18px; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere; }
+/* UNSLOP ④: 단계 이름은 아이콘 + 이름 한 줄(h3) — 예전의 작은 머리글과 광고형 제목을 하나로 */
+body.intranet-light .pa-signup-guide .pa-signup-steps h3.pa-signup-step { display:flex; align-items:center; gap:8px; margin:0 0 4px; color:var(--text); font-size:18px; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere; }
 body.intranet-light .pa-signup-guide .pa-signup-steps p { color:var(--text-2); font-size:16px; line-height:1.65; }
 @media (max-width:680px) {
   body.intranet-light .pa-signup-guide { padding:24px 16px; border-radius:16px; }
@@ -253,8 +252,7 @@ body.intranet-light .pa-signup-guide .pa-signup-steps p { color:var(--text-2); f
   body.intranet-light .pa-signup-guide .pa-signup-steps > li:last-child { padding-bottom:0; }
   body.intranet-light .pa-signup-guide .pa-signup-number { width:32px; height:32px; }
   body.intranet-light .pa-signup-guide .pa-signup-connector { top:32px; bottom:0; left:15px; width:2px; height:auto; }
-  body.intranet-light .pa-signup-guide .pa-signup-step { min-height:32px; }
-  body.intranet-light .pa-signup-guide .pa-signup-steps h3 { margin-top:4px; }
+  body.intranet-light .pa-signup-guide .pa-signup-steps h3.pa-signup-step { min-height:32px; margin-top:0; }
 }
 /* 전환·진입 애니메이션 없이, 움직임 줄이기 설정에서도 같은 안내를 유지합니다. */
 @media (prefers-reduced-motion:reduce) {
