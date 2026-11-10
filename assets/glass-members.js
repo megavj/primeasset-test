@@ -1,6 +1,6 @@
 /* 설계사 인트라넷: 회원 메뉴의 권한·활성 상태를 유지하며 업무별로 표시합니다.
    이름으로 메뉴를 숨기지 않습니다. 관리자가 숨긴 메뉴와 빈 분류는 데이터에 따라 제외됩니다.
-   AI 질문·도구 이름(초성) 제안. 기존 즐겨찾기 저장값은 읽거나 지우지 않습니다.
+   AI 질문·도구 이름(초성) 제안. 승인 회원 홈의 기존 즐겨찾기는 같은 브라우저 저장값으로 고정 목록에 표시합니다.
    TASK-ADM(2026-11-09 대표 지시): 회원 쪽 '승인 요청' 버튼 폐지 — 권한은 관리자가 등급으로만 정합니다(서버 요청 함수·기록은 그대로 둠). */
 /* AUDIT-20261103: 다른 사이트가 이 화면을 보이지 않는 액자(iframe)로 띄워 클릭을 유도하는 것(클릭재킹) 방지.
    GitHub Pages는 X-Frame-Options 헤더를 못 주므로, 다른 출처 액자 안이면 화면을 숨긴다. 같은 사이트 안 액자는 허용. */
@@ -369,13 +369,25 @@
       const items = tools.filter(r => r.work === w);
       return el("section", { class: "pa-work-group", "aria-label": w }, el("h3", {}, w), el("div", { class: "pa-work-grid" }, ...items.map(tile)), items.length ? null : N("등록된 도구가 없습니다."));
     }));
-    const ask = window.PA_ASK_HOME && window.PA_ASK ? window.PA_ASK_HOME.create({ sb, approved: p.status === "active", tools, choRx, owner: storageOwner,
+    let chatLayout = null;
+    const useChat = p.status === "active" && window.PA_MEMBERS_CHAT && window.PA_ASK_HOME && window.PA_ASK;
+    const ask = window.PA_ASK_HOME && window.PA_ASK ? window.PA_ASK_HOME.create({ sb, approved: p.status === "active", tools, choRx, owner: storageOwner, chat: !!useChat, onHistoryChange: () => { if (chatLayout) chatLayout.refreshHistory(); },
       onAuthFailure: () => {
         if (!ask.node.isConnected) return;
         mode(false); show(msg("로그인·이용 권한을 확인해 주세요", "이전 질문과 답변을 비웠습니다. 다시 확인하거나 로그인한 뒤 이용해 주세요."),
           el("button", { type: "button", class: "g-btn g-btn--pri", onclick: boot }, "다시 확인"), logoutBtn());
       }
     }) : { node: msg("AI 질문창을 불러오지 못했습니다", "화면을 새로고침해 주세요."), dispose: () => {} };
+    if (useChat) {
+      chatLayout = window.PA_MEMBERS_CHAT.create({ sb, ask, tools, choRx, owner: storageOwner, profile: p, banner, onAuthFailure: () => boot() });
+      show(chatLayout.node);
+      chatLayout.mount();
+      disposeView = () => { chatLayout.dispose(); ask.dispose(); };
+      viewKey = key;
+      markTab();
+      if (goto) { jump(goto); goto = null; }
+      return;
+    }
     let alive = true;
     const noticeBody = el("div", { class: "pa-notice-body" }, N("보험자료를 불러오는 중…"));
     const noticeBox = el("section", { class: "pa-home-notice pa-home-block", id: "news", "aria-labelledby": "pa-news-title" },
@@ -417,6 +429,11 @@
   function jump(id, moveFocus = false) {
     id = sectionFor(id) || id;
     if (id === "me") { location.assign("/members/me/"); return; }
+    if (document.body.classList.contains("pa-chat-layout")) {
+      if (id === "directory" || id === "news") window.dispatchEvent(new CustomEvent("pa:chat-section", { detail: id }));
+      if (location.hash !== "#" + id) history.replaceState(null, "", location.pathname + "#" + id);
+      markTab(); return;
+    }
     const t = document.getElementById(id);
     if (!t) return;
     if (location.hash !== "#" + id) history.replaceState(null, "", location.pathname + "#" + id);
@@ -448,7 +465,7 @@
   document.addEventListener("keydown", e => {
     if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey || e.isComposing || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || e.target.isContentEditable) return;
     const input = document.getElementById("pa-q");
-    if (input) { e.preventDefault(); input.focus(); input.scrollIntoView({ block: "center", behavior: "instant" }); }
+    if (input) { e.preventDefault(); input.focus(); if (!document.body.classList.contains("pa-chat-layout")) input.scrollIntoView({ block: "center", behavior: "instant" }); }
   });
 
   let logged = false, currentOwner = null, authTimer = null;

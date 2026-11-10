@@ -26,7 +26,7 @@
   };
   const uuid = () => typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : 'ask-' + Date.now() + '-' + Math.random().toString(36).slice(2);
   window.PA_ASK_HOME = Object.freeze({
-    create({ sb, approved, tools, choRx, owner, onAuthFailure }) {
+    create({ sb, approved, tools, choRx, owner, onAuthFailure, chat = false, onHistoryChange }) {
       const api = window.PA_ASK.create(sb);
       let alive = true, busy = false, last = null, timer = null, resumePause = null, retryKind = '', quotaKnown = false, remaining = null;
       let deepTimer = null, answerGeneration = 0, limit = null, access = approved ? 'checking' : 'pending';
@@ -38,7 +38,9 @@
       const status = el('p', { class: 'pa-ask-status', role: 'status', 'aria-live': 'polite' });
       const steps = el('ol', { class: 'pa-ask-steps', 'aria-label': '답변 진행 단계' }, ...['접수', '찾는 중', '작성 중'].map(t => el('li', {}, t)));
       const progress = el('div', { class: 'pa-ask-progress', hidden: '' }, steps, status);
-      const answer = el('section', { class: 'pa-ask-answer', hidden: '', 'aria-labelledby': 'pa-ask-answer-title' });
+      let answerIndex = 0;
+      const makeAnswer = () => el('section', { class: 'pa-ask-answer', hidden: '' });
+      let answer = makeAnswer();
       const retryNote = el('p', { class: 'pa-ask-help', hidden: '' });
       const retry = el('button', { class: 'g-btn g-btn--ghost', type: 'button', hidden: '', onclick: () => run(retryKind === 'new') }, '결과 다시 확인');
       // TASK-ADM: 등급에 'AI 질문' 권한이 없으면 질문창 대신 짧은 안내만 보여 줍니다(요청 버튼 없음 — 권한은 관리자가 등급으로 정함). 서버도 같은 기준으로 막습니다.
@@ -51,6 +53,48 @@
       const node = el('section', { class: 'pa-ask', 'aria-labelledby': 'pa-ask-title' },
         el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, 'AI 업무 질문'), quota),
         form, lockBox, progress, answer);
+      const thread = el('div', { class: 'pa-chat-thread', role: 'region', 'aria-label': '업무 질문 대화', tabindex: '0' });
+      const welcome = el('div', { class: 'pa-chat-welcome' }, el('h2', {}, '무엇을 도와드릴까요?'));
+      const examples = el('div', { class: 'pa-chat-examples', 'aria-label': '예시 질문' },
+        ...['실손의료비 청구에 필요한 서류는 무엇인가요?', '계약 전 알릴 의무를 설명해 주세요.', '보험금 청구 절차를 알려 주세요.'].map(text => el('button', { type: 'button', onclick: () => { q.value = text; matchTools(); q.focus(); } }, text)));
+      const body = el('div', { class: 'pa-chat-body' }, welcome, thread);
+      if (chat) {
+        node.classList.add('pa-chat');
+        q.placeholder = '업무 질문을 입력하세요 · 도구 이름이나 초성으로 찾기';
+        node.replaceChildren(el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, 'AI 업무 질문'), quota), body, lockBox, form, examples);
+      }
+      function beginTurn(question) {
+        node.classList.add('has-turn'); welcome.hidden = true; examples.hidden = true;
+        answer = makeAnswer();
+        const turn = el('article', { class: 'pa-chat-turn' }, el('div', { class: 'pa-chat-question' }, el('span', { class: 'sr' }, '내 질문: '), question), progress, answer);
+        thread.append(turn);
+        thread.scrollTop = turn.offsetTop - thread.offsetTop;
+      }
+      function resetChat() {
+        if (!chat || busy || !alive) return false;
+        answerGeneration++; clearTimeout(deepTimer); last = null; retryKind = '';
+        thread.replaceChildren(); answer = makeAnswer(); q.value = ''; out.textContent = '';
+        suggestions.hidden = true; suggestions.replaceChildren(); progress.hidden = true; retry.hidden = true; retryNote.hidden = true;
+        node.classList.remove('has-turn'); welcome.hidden = false; examples.hidden = false; q.focus();
+        return true;
+      }
+      async function openHistory(item) {
+        if (!chat || busy || !alive) return false;
+        busy = true; controls(); out.textContent = ''; suggestions.hidden = true;
+        answerGeneration++; clearTimeout(deepTimer); thread.replaceChildren();
+        last = { id: item.id, question: window.PA_ASK.maskResidentId(item.question || '저장된 질문') };
+        beginTurn(last.question); progress.hidden = false; status.textContent = '저장된 답변을 불러오는 중…';
+        try {
+          await verifySession();
+          // 기록 조회는 읽기만 합니다. 새 접수·답변 생성 요청은 보내지 않습니다.
+          const response = await api.request('askStatus', { id: item.id });
+          if (!alive) return false;
+          if (['done', 'completed'].includes(response.status)) renderAnswer(response.result || response, response.deep, response.deepQuota);
+          else { progress.hidden = true; answer.hidden = false; answer.append(el('p', {}, ['error', 'failed'].includes(response.status) ? '답변을 완성하지 못한 질문입니다.' : '저장된 답변이 아직 없습니다. 내 정보에서 진행 상태를 확인해 주세요.')); }
+          return true;
+        } catch (error) { if (!invalidateAuth(error) && alive) { progress.hidden = true; out.textContent = error.message; } return false; }
+        finally { busy = false; if (alive) controls(); }
+      }
       function lock() {
         if (!alive) return;
         access = 'denied';
@@ -78,7 +122,7 @@
         if (!alive) return true;
         alive = false; answerGeneration++; clearTimeout(deepTimer); clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause();
         api.dispose(); q.value = ''; last = null; q.disabled = true; submit.disabled = true;
-        answer.replaceChildren(); answer.hidden = true; progress.hidden = true; suggestions.replaceChildren(); suggestions.hidden = true;
+        answer.replaceChildren(); thread.replaceChildren(); answer.hidden = true; progress.hidden = true; suggestions.replaceChildren(); suggestions.hidden = true;
         retry.hidden = true; retryNote.hidden = true; quota.textContent = '로그인·이용 권한 확인 필요';
         out.textContent = '이전 질문과 답변을 비웠습니다. 로그인·이용 권한을 확인한 뒤 다시 열어 주세요.';
         if (onAuthFailure) onAuthFailure();
@@ -149,7 +193,8 @@
       }
       function renderAnswer(result, initialDeep, initialDeepQuota) {
         clearTimeout(deepTimer);
-        const generation = ++answerGeneration, questionId = last.id;
+        const generation = ++answerGeneration, questionId = last.id, responseNode = answer, suffix = ++answerIndex;
+        const contentId = 'pa-ask-answer-content-' + suffix, titleId = 'pa-ask-answer-title-' + suffix;
         const current = () => alive && answerGeneration === generation && last && last.id === questionId;
         const fmt = window.PA_ASK_FORMAT;
         const richBody = raw => {
@@ -173,14 +218,14 @@
           const text = window.PA_ASK.maskResidentId(fmt.text(value.answer || '') + (includeSources ? '\n\n근거 자료\n' + (refs || '근거 자료 없음') : ''));
           try {
             await verifySession();
-            if (!current()) return;
+            if (!alive || !responseNode.isConnected) return;
             if (navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text);
             else {
               const focus = document.activeElement, field = el('textarea', { class: 'pa-copy-field', readonly: '' }, text); document.body.append(field); field.select();
               const copied = document.execCommand('copy'); field.remove(); if (focus && focus.isConnected) focus.focus(); if (!copied) throw new Error('copy_failed');
             }
-            if (current()) note.textContent = includeSources ? '답변과 근거를 복사했습니다.' : '답변을 복사했습니다.';
-          } catch (error) { if (!invalidateAuth(error) && current()) note.textContent = '복사하지 못했습니다. 답변을 선택하여 복사해 주세요.'; }
+            if (alive && responseNode.isConnected) note.textContent = includeSources ? '답변과 근거를 복사했습니다.' : '답변을 복사했습니다.';
+          } catch (error) { if (!invalidateAuth(error) && alive && responseNode.isConnected) note.textContent = '복사하지 못했습니다. 답변을 선택하여 복사해 주세요.'; }
         };
         const body = richBody(result.answer), sources = Array.isArray(result.sources) ? result.sources : [];
         const feedNote = el('p', { class: 'pa-ask-help', role: 'status' });
@@ -239,12 +284,13 @@
         });
         const seconds = result.elapsedMs != null && result.elapsedMs !== '' && Number.isFinite(Number(result.elapsedMs)) ? Number(result.elapsedMs) / 1000 : null;
         const copyNote = el('p', { class: 'pa-ask-help', role: 'status', 'aria-live': 'polite' });
-        const content = el('div', { id: 'pa-ask-answer-content' }, body, references(sources),
+        const content = el('div', { id: contentId }, body, references(sources),
           el('p', { class: 'pa-ask-help' }, seconds !== null ? `응답 시간 ${seconds.toFixed(1)}초 · 세부 내용은 원문과 함께 확인해 주세요.` : '응답 시간 기록 없음 · 세부 내용은 원문과 함께 확인해 주세요.'));  // 2026-11-07 평가·다시답변 화면 제거(기록 보관)
-        const collapse = el('button', { type: 'button', class: 'g-btn g-btn--ghost', 'aria-expanded': 'true', 'aria-controls': 'pa-ask-answer-content', onclick: () => {
+        const collapse = el('button', { type: 'button', class: 'g-btn g-btn--ghost', 'aria-expanded': 'true', 'aria-controls': contentId, onclick: () => {
           content.hidden = !content.hidden; collapse.setAttribute('aria-expanded', String(!content.hidden)); collapse.textContent = content.hidden ? '답변 펼치기' : '답변 접기';
         } }, '답변 접기');
-        answer.replaceChildren(el('h3', { id: 'pa-ask-answer-title', tabindex: '-1' }, 'AI 답변'),
+        answer.setAttribute('aria-labelledby', titleId);
+        answer.replaceChildren(el('h3', { id: titleId, tabindex: '-1' }, 'AI 답변'),
           el('div', { class: 'pa-ask-answer-actions' },
             el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copyAnswer(result, false, copyNote) }, '답변 복사'),
             el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copyAnswer(result, true, copyNote) }, '근거 포함 복사'), collapse), copyNote, content);
@@ -262,7 +308,7 @@
         if (fresh) last = { question, requestId: uuid(), id: null };
         if (!last) return;
         busy = true; controls(); out.textContent = ''; retry.hidden = true; retryNote.hidden = true;
-        if (fresh) { answerGeneration++; clearTimeout(deepTimer); answer.hidden = true; answer.replaceChildren(); }
+        if (fresh) { answerGeneration++; clearTimeout(deepTimer); if (chat) beginTurn(last.question); else { answer.hidden = true; answer.replaceChildren(); } }
         stage(last.id ? 'searching' : 'queued');
         try {
           await verifySession();
@@ -276,14 +322,14 @@
             const result = await api.request('askStatus', { id: last.id });
             if (!alive) return;
             setQuota(result.quota);
-            if (result.status === 'done') { renderAnswer(result.result || result, result.deep, result.deepQuota); return; }
+            if (result.status === 'done') { renderAnswer(result.result || result, result.deep, result.deepQuota); if (chat) q.value = ''; if (onHistoryChange) onHistoryChange(); return; }
             if (result.status === 'error') { const failure = new Error(window.PA_ASK.maskResidentId(result.message || '답변을 완성하지 못했습니다. 다시 질문해 주세요.')); failure.code = 'answer_failed'; throw failure; }
             if (result.status === 'ready') {
               stage('writing');
               const written = await api.request('askAnswer', { id: last.id });
               if (!alive) return;
               setQuota(written.quota);
-              if (written.status === 'done' || written.answer) { renderAnswer(written.result || written, written.deep, written.deepQuota); return; }
+              if (written.status === 'done' || written.answer) { renderAnswer(written.result || written, written.deep, written.deepQuota); if (chat) q.value = ''; if (onHistoryChange) onHistoryChange(); return; }
               stage('writing'); await pause(2000); continue;
             }
             stage(result.status); await pause(2000);
@@ -314,7 +360,7 @@
       };
       scheduleQuotaReset();
       controls(); checkAccess().then(loadQuota);
-      return { node, dispose() { alive = false; answerGeneration++; clearTimeout(deepTimer); clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause(); window.removeEventListener('focus', refreshQuota); document.removeEventListener('visibilitychange', refreshQuota); api.dispose(); } };
+      return { node, resetChat, openHistory, get busy() { return busy; }, dispose() { alive = false; answerGeneration++; clearTimeout(deepTimer); clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause(); window.removeEventListener('focus', refreshQuota); document.removeEventListener('visibilitychange', refreshQuota); api.dispose(); } };
     }
   });
 })();
