@@ -111,3 +111,10 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
 .pa-ask-deep>h4{margin:0 0 16px;color:var(--text);font-size:1.15rem}
 .pa-ask-deep-status{color:var(--text-2);font-weight:600;line-height:1.7}
 @media(max-width:700px){.pa-ask-deep{padding:16px}}
+
+/* UNSLOP 2026-11-10 ③ 아이콘: 자물쇠는 한 가지(16px·선 1.5·옅은 글자색), 글자와 8 간격 */
+.pa-lock-icon { flex:none; width:16px; height:16px; color:var(--text-3); }
+.g-members .pa-aiqa-home .pa-lock-state { display:flex; align-items:center; gap:8px; }
+.pa-ask-lock-title { display:flex; align-items:center; gap:8px; }
+.pa-ask-suggestions p { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; min-height:44px; }
+.pa-ask-locked { display:inline-flex; align-items:center; gap:8px; color:var(--text-3); }

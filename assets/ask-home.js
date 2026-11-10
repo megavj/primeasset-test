@@ -11,6 +11,16 @@
     children.forEach(c => { if (c != null) n.append(c.nodeType ? c : document.createTextNode(String(c))); });
     return n;
   };
+  // UNSLOP 2026-11-10 ③ 아이콘: 자물쇠 그림 문자 대신 가는 선 자물쇠 하나(lucide 'lock', ISC). 16px·선 1.5·옆 글자 색, 낭독은 옆 글자로
+  const lockIcon = () => {
+    const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+    [['class', 'pa-lock-icon'], ['viewBox', '0 0 24 24'], ['width', '16'], ['height', '16'], ['fill', 'none'], ['stroke', 'currentColor'], ['stroke-width', '1.5'], ['stroke-linecap', 'round'], ['stroke-linejoin', 'round'], ['aria-hidden', 'true'], ['focusable', 'false']].forEach(([k, v]) => svg.setAttribute(k, v));
+    const body = document.createElementNS(ns, 'rect');
+    [['x', '3'], ['y', '11'], ['width', '18'], ['height', '11'], ['rx', '2']].forEach(([k, v]) => body.setAttribute(k, v));
+    const shackle = document.createElementNS(ns, 'path'); shackle.setAttribute('d', 'M7 11V7a5 5 0 0 1 10 0v4');
+    svg.append(body, shackle);
+    return svg;
+  };
   const safeLink = value => {
     try { const u = new URL(value); return /^https?:$/.test(u.protocol) ? u.href : null; } catch { return null; }
   };
@@ -33,7 +43,7 @@
       const retry = el('button', { class: 'g-btn g-btn--ghost', type: 'button', hidden: '', onclick: () => run(retryKind === 'new') }, '결과 다시 확인');
       // TASK-ADM: 등급에 'AI 질문' 권한이 없으면 질문창 대신 짧은 안내만 보여 줍니다(요청 버튼 없음 — 권한은 관리자가 등급으로 정함). 서버도 같은 기준으로 막습니다.
       const lockBox = el('div', { class: 'pa-ask-lock', hidden: '', role: 'note' },
-        el('p', { class: 'pa-ask-lock-title' }, '🔒 현재 등급에서는 AI 질문을 이용할 수 없습니다'),
+        el('p', { class: 'pa-ask-lock-title' }, lockIcon(), '현재 등급에서는 AI 질문을 이용할 수 없습니다'),
         el('p', { class: 'pa-ask-help' }, '이용 범위는 관리자가 등급에 따라 정합니다. 업무 도구와 보험자료는 그대로 이용할 수 있습니다.'));
       const form = el('form', { class: 'pa-ask-form', onsubmit: event => { event.preventDefault(); run(true); } },
           q, suggestions,
@@ -124,7 +134,7 @@
         suggestions.hidden = !found.length;
         suggestions.replaceChildren(...found.map(tool => tool.unlocked && tool.url
           ? el('a', { href: tool.url, ...(tool.internal ? {} : { target: '_blank', rel: 'noopener noreferrer' }) }, el('b', {}, tool.name), el('span', {}, tool.internal ? '이 도구 열기 →' : '이 도구 열기 · 새 창 ↗'))
-          : el('p', {}, tool.name, ' · 🔒 이용 권한 필요')));
+          : el('p', {}, el('b', {}, tool.name), ' ', el('span', { class: 'pa-ask-locked' }, lockIcon(), '이용 권한 필요'))));
       }
       q.addEventListener('input', matchTools);
       q.addEventListener('keydown', event => {

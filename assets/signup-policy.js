@@ -68,9 +68,9 @@
       const number = node('span', 'pa-signup-number', String(i + 1)); number.setAttribute('aria-hidden', 'true');
       const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       icon.setAttribute('class', 'pa-signup-icon'); icon.setAttribute('viewBox', '0 0 24 24');
-      icon.setAttribute('width', '20'); icon.setAttribute('height', '20');
+      icon.setAttribute('width', '18'); icon.setAttribute('height', '18');
       icon.setAttribute('fill', 'none'); icon.setAttribute('stroke', 'currentColor');
-      icon.setAttribute('stroke-width', '1.6'); icon.setAttribute('stroke-linecap', 'round'); icon.setAttribute('stroke-linejoin', 'round');
+      icon.setAttribute('stroke-width', '1.5'); icon.setAttribute('stroke-linecap', 'round'); icon.setAttribute('stroke-linejoin', 'round');
       icon.setAttribute('aria-hidden', 'true'); icon.setAttribute('focusable', 'false');
       iconPaths[i].forEach(d => { const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', d); icon.append(path); });
       const heading = node('span', 'pa-signup-step'); heading.append(icon, node('span', '', label));

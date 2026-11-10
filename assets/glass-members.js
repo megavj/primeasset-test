@@ -17,6 +17,16 @@
     for (const k of kids) if (k != null) e.append(k.nodeType ? k : document.createTextNode(String(k)));
     return e;
   };
+  // UNSLOP 2026-11-10 ③ 아이콘: 자물쇠 그림 문자 대신 가는 선 자물쇠 하나(lucide 'lock', ISC). 16px·선 1.5·옆 글자 색. 낭독은 옆 글자로(그림은 제외)
+  const lockIcon = () => {
+    const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg");
+    [["class", "pa-lock-icon"], ["viewBox", "0 0 24 24"], ["width", "16"], ["height", "16"], ["fill", "none"], ["stroke", "currentColor"], ["stroke-width", "1.5"], ["stroke-linecap", "round"], ["stroke-linejoin", "round"], ["aria-hidden", "true"], ["focusable", "false"]].forEach(([k, v]) => svg.setAttribute(k, v));
+    const body = document.createElementNS(ns, "rect");
+    [["x", "3"], ["y", "11"], ["width", "18"], ["height", "11"], ["rx", "2"]].forEach(([k, v]) => body.setAttribute(k, v));
+    const shackle = document.createElementNS(ns, "path"); shackle.setAttribute("d", "M7 11V7a5 5 0 0 1 10 0v4");
+    svg.append(body, shackle);
+    return svg;
+  };
   const box = $("#pa-app");
   let viewKey = null, disposeView = null;
   const show = (...nodes) => { if (disposeView) disposeView(); disposeView = null; viewKey = null; box.removeAttribute("aria-busy"); document.body.classList.add("pa-hero-off"); box.replaceChildren(...nodes); }; // 실제 상태 전환 때만 화면 교체
@@ -317,7 +327,7 @@
   // 가입 정보를 저장한 승인 대기 회원에게만 접수 안내를 표시합니다. 실제 알림 발송 여부는 서버에서 확인합니다.
   function pendingCard() {
     return el("div", { class: "pa-card pa-banner pa-wait" }, el("h2", { class: "pa-h3" }, "승인 대기 중 — 관리자 확인 후 열립니다"),
-      el("p", {}, "가입 신청이 접수됐어요. 관리자가 가입 정보를 확인하고 승인하면 🔒 표시 메뉴가 열립니다. 그동안 인트라넷은 둘러보실 수 있어요."));
+      el("p", {}, "가입 신청이 접수됐어요. 관리자가 가입 정보를 확인하고 승인하면 잠긴 메뉴가 열립니다. 그동안 인트라넷은 둘러보실 수 있어요."));
   }
 
   // TASK-MENU(2026-11-09): 메뉴의 묶음·쉬운 설명·주소·순서·새 창 여부는 관리자 화면 '메뉴 관리'에서 정해 DB(my_menu)로 온다.
@@ -354,7 +364,7 @@
     const tile = r => el("article", { class: "pa-work-card" + (!r.unlocked ? " is-locked" : ""), "data-resource-key": r.key },
       available(r) ? el("a", { class: "pa-work-link", href: r.url, title: r.description || r.name, ...(r.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {}) }, el("b", {}, r.name)) : el("b", { class: "pa-locked-name" }, r.name),
       r.description ? el("p", { class: "pa-tool-purpose" }, r.description) : null,
-      !r.unlocked ? el("div", { class: "pa-lock-state" }, el("span", {}, pending ? "🔒 승인 후 열림" : "🔒 관리자가 등급에 따라 열어 드립니다")) : !r.url ? N("주소 준비 중입니다.") : null);
+      !r.unlocked ? el("div", { class: "pa-lock-state" }, lockIcon(), el("span", {}, pending ? "승인 후 열림" : "관리자가 등급에 따라 열어 드립니다")) : !r.url ? N("주소 준비 중입니다.") : null);
     const directory = el("div", { id: "pa-directory" }, ...works.map(w => {
       const items = tools.filter(r => r.work === w);
       return el("section", { class: "pa-work-group", "aria-label": w }, el("h3", {}, w), el("div", { class: "pa-work-grid" }, ...items.map(tile)), items.length ? null : N("등록된 도구가 없습니다."));
@@ -481,7 +491,7 @@
     clearDraft(storageOwner);
     if (p.status === "suspended") return show(msg("이용이 정지된 계정입니다", "문의는 관리자에게 해 주세요."), logoutBtn());
     if (p.status === "pending") return intranetView(p, null, epoch, storageOwner); // 안내·요청 버튼은 intranetView 가 메뉴 목록과 함께 그림(pendingCard)
-    return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("Guest 등급입니다", "🔒 표시 메뉴는 등급이 정해지면 열립니다.") : null, epoch, storageOwner);
+    return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("Guest 등급입니다", "잠긴 메뉴는 등급이 정해지면 열립니다.") : null, epoch, storageOwner);
   }
   sb.auth.onAuthStateChange((ev, nextSession) => {
     if (!["SIGNED_IN", "SIGNED_OUT", "TOKEN_REFRESHED"].includes(ev)) return;

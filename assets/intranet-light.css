@@ -243,7 +243,7 @@ body.intranet-light .pa-signup-guide .pa-signup-connector {
 }
 body.intranet-light .pa-signup-guide .pa-signup-content { min-width:0; }
 body.intranet-light .pa-signup-guide .pa-signup-step { display:flex; align-items:center; gap:8px; color:var(--text); font-size:16px; line-height:1.5; }
-body.intranet-light .pa-signup-guide .pa-signup-icon { display:block; flex:0 0 20px; width:20px; height:20px; }
+body.intranet-light .pa-signup-guide .pa-signup-icon { display:block; flex:0 0 18px; width:18px; height:18px; color:var(--text-3); }
 body.intranet-light .pa-signup-guide .pa-signup-steps h3 { margin:8px 0 4px; color:var(--text); font-size:18px; line-height:1.5; word-break:keep-all; overflow-wrap:anywhere; }
 body.intranet-light .pa-signup-guide .pa-signup-steps p { color:var(--text-2); font-size:16px; line-height:1.65; }
 @media (max-width:680px) {
