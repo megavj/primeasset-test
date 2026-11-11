@@ -5,10 +5,18 @@
 (function () {
   'use strict';
   const DAY = 86400000, RECENT_DAYS = 30, DORMANT_DAYS = 30, PAGE = 50;
-  const CHIPS = [['', '전체'], ['pending', '승인 대기'], ['recent', '최근 가입'], ['dormant', '오래 미접속'], ['admin', '관리자'], ['suspended', '정지']];
-  const CHIP_HELP = { pending: '가입 정보를 모두 넣고 승인을 기다리는 회원', recent: `최근 ${RECENT_DAYS}일 안에 가입한 회원`, dormant: `사용 중이지만 ${DORMANT_DAYS}일 넘게 접속하지 않은(또는 접속 기록이 없는) 회원`, admin: '관리자 권한이 있는 회원', suspended: '이용을 정지한 회원' };
-  const SORTS = [['joined-desc', '가입일 · 최근 가입이 위'], ['joined-asc', '가입일 · 오래된 가입이 위'], ['name-asc', '이름 · 가나다순'], ['name-desc', '이름 · 가나다 역순'], ['seen-desc', '최근 접속 · 최근이 위'], ['seen-asc', '최근 접속 · 오래된 순']];
-  let activity = null, activityAt = null, activityError = false, usage = null, usageState = 'idle', usageAt = null, lastBulk = null, urlRead = false;
+  const CHIPS = [['', '전체'], ['active', '사용 중'], ['pending', '승인 대기'], ['incomplete', '정보 미입력'], ['recent', '최근 가입'], ['dormant', '오래 미접속'], ['admin', '관리자'], ['suspended', '정지']];
+  const CHIP_HELP = { active: '현재 인트라넷을 사용할 수 있는 회원', pending: '가입 정보를 모두 넣고 승인을 기다리는 회원', incomplete: '가입 정보를 아직 완성하지 않아 승인할 수 없는 회원', recent: `최근 ${RECENT_DAYS}일 안에 가입한 회원`, dormant: `사용 중이지만 ${DORMANT_DAYS}일 넘게 접속하지 않은(또는 접속 기록이 없는) 회원`, admin: '관리자 권한이 있는 회원', suspended: '이용을 정지한 회원' };
+  const SORTS = [['joined-desc', '가입일 · 최신순'], ['joined-asc', '가입일 · 오래된순'], ['name-asc', '이름 · 가나다순'], ['name-desc', '이름 · 가나다 역순'], ['seen-desc', '접속일 · 최신순'], ['seen-asc', '접속일 · 오래된순']];
+  let activity = null, activityAt = null, activityError = false, activityRequest = null, activityVersion = 0;
+  let usage = null, usageState = 'idle', usageAt = null, usageRequest = null, lastBulk = null, urlRead = false;
+  function withDeadline(work) {
+    let timer;
+    return Promise.race([
+      Promise.resolve().then(work),
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('timeout')), 15000); })
+    ]).finally(() => clearTimeout(timer));
+  }
 
   window.PA_ADMIN_MEMBERS = function (ctx) {
     const { sb, S, el, button, input, empty, toast, mutate, num, gname, badge, filters, profileComplete, checkedUpdate, setDirty, go } = ctx;
@@ -21,11 +29,14 @@
       return d <= 0 ? '오늘' : d === 1 ? '어제' : d < 30 ? `${d}일 전` : d < 365 ? `${Math.floor(d / 30)}개월 전` : `${Math.floor(d / 365)}년 전`;
     };
     const stateOf = m => m.status === 'suspended' ? ['suspended', '정지'] : m.status === 'active' ? ['active', '사용 중'] : (m.status === 'pending' && profileComplete(m)) ? ['pending', '승인 대기'] : ['incomplete', '정보 미입력'];
+    const stateBadge = state => { const b = badge(state[1]); b.classList.add('adm-badge--' + state[0]); return b; };
     const seen = m => activity && activity.get(m.id) || null;
     const isMe = m => !!(S.profile && m.email && m.email === S.profile.email);
     const match = {
       '': () => true,
+      active: m => m.status === 'active',
       pending: m => stateOf(m)[0] === 'pending',
+      incomplete: m => stateOf(m)[0] === 'incomplete',
       recent: m => m.created_at && Date.now() - Date.parse(m.created_at) <= RECENT_DAYS * DAY,
       dormant: m => m.status === 'active' && activity && (!seen(m) || Date.now() - Date.parse(seen(m)) > DORMANT_DAYS * DAY),
       admin: m => !!m.is_admin,
@@ -56,23 +67,35 @@
       if (location.hash !== next) history.replaceState(null, '', next);
     }
 
-    async function loadActivity(redraw) {
-      if (activityAt === S.loadedAt && (activity || activityError)) return;
-      activityAt = S.loadedAt;
-      try {
-        const r = await sb.rpc('admin_member_activity'); if (r.error) throw r.error;
-        activity = new Map((r.data || []).map(x => [x.member_id, x.last_seen])); activityError = false;
-      } catch (_) { activity = null; activityError = true; }
+    async function loadActivity(redraw, force) {
+      if (!force && activityAt === S.loadedAt && (activity || activityError)) return;
+      if (!force && activityAt === S.loadedAt && activityRequest) { await activityRequest; redraw(); return; }
+      const version = ++activityVersion;
+      activityAt = S.loadedAt; activity = null; activityError = false;
+      activityRequest = (async () => {
+        try {
+          const r = await withDeadline(() => sb.rpc('admin_member_activity')); if (r.error) throw r.error;
+          if (version !== activityVersion) return;
+          activity = new Map((r.data || []).map(x => [x.member_id, x.last_seen])); activityError = false;
+        } catch (_) { if (version === activityVersion) { activity = null; activityError = true; } }
+        finally { if (version === activityVersion) activityRequest = null; }
+      })();
+      await activityRequest;
       redraw();
     }
     async function loadUsage(force) {
-      if (!force && (usageState === 'loading' || (usageState === 'ok' && usageAt && Date.now() - usageAt < 120000))) return;
+      if (usageRequest) return usageRequest;
+      if (!force && usageState === 'ok' && usageAt && Date.now() - usageAt < 120000) return;
       const client = ctx.askClient(); if (!client) { usageState = 'error'; return; }
       usageState = 'loading';
-      try {
-        const r = await client.request('askAdminUsage', {});
-        usage = { day: r.day, users: new Map((r.users || []).map(u => [u.memberId, u])) }; usageState = 'ok'; usageAt = Date.now();
-      } catch (_) { usageState = 'error'; }
+      usageRequest = (async () => {
+        try {
+          const r = await withDeadline(() => client.request('askAdminUsage', {}));
+          usage = { day: r.day, users: new Map((r.users || []).map(u => [u.memberId, u])) }; usageState = 'ok'; usageAt = Date.now();
+        } catch (_) { usageState = 'error'; }
+        finally { usageRequest = null; }
+      })();
+      return usageRequest;
     }
 
     // 회원 등급으로 볼 수 있는 메뉴(회원 화면에 보이는 메뉴만). 관리자는 모두.
@@ -97,8 +120,9 @@
     }
 
     function dialog(title, ...kids) {
+      const previous = document.activeElement;
       const d = el('dialog', { class: 'adm-dialog', 'aria-labelledby': 'adm-dlg-title' }, el('h3', { id: 'adm-dlg-title' }, title), ...kids);
-      const close = () => { if (d.open) d.close(); d.remove(); };
+      const close = () => { if (d.open) d.close(); d.remove(); if (previous?.isConnected) previous.focus(); };
       d.addEventListener('cancel', e => { e.preventDefault(); close(); });
       document.body.append(d);
       if (typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open', '');
@@ -112,11 +136,14 @@
       if (!urlRead) { urlRead = true; readUrl(f); }
       const selected = new Set();
       let detailOpen = null;
+      let searchTimer = null, composing = false;
       const root = el('div', { class: 'adm-stack adm-mm' });
-      const status = el('p', { class: 'adm-note', role: 'status' });
-      const listBox = el('div', { class: 'adm-mm-list' });
+      const status = el('p', { class: 'adm-note', id: 'adm-mm-result-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' });
+      const listBox = el('div', { class: 'adm-mm-list', id: 'adm-mm-results', 'aria-describedby': 'adm-mm-result-status' });
+      const activeFilters = el('div', { class: 'adm-mm-active-filters', role: 'group', 'aria-label': '현재 적용한 검색 조건', hidden: '' });
+      const activityNotice = el('div', { class: 'adm-callout adm-mm-activity-note', role: 'status', hidden: '' });
       const bulkBar = el('div', { class: 'adm-mm-bulk', role: 'region', 'aria-label': '선택한 회원 한 번에 바꾸기', hidden: '' });
-      const q = input('회원 찾기', f.q || '', { type: 'search', placeholder: '이름 · 이메일 · 소속 · 메모로 찾기', class: 'adm-input adm-mm-search' });
+      const q = input('회원 찾기', f.q || '', { type: 'search', placeholder: '이름 · 이메일 · 소속 · 연락처 · 메모', class: 'adm-input adm-mm-search', 'aria-controls': 'adm-mm-results', autocomplete: 'off', spellcheck: 'false' });
       q.removeAttribute('data-draft'); q.classList.add('adm-filter');
       const sort = el('select', { class: 'adm-input adm-filter', 'aria-label': '정렬' }, ...SORTS.map(([v, t]) => el('option', { value: v, selected: v === f.sort }, t)));
       const grade = el('select', { class: 'adm-input adm-filter', 'aria-label': '등급으로 거르기' }, el('option', { value: '' }, '모든 등급'), ...S.grades.map(g => el('option', { value: String(g.id), selected: String(g.id) === String(f.grade) }, g.name)));
@@ -141,23 +168,47 @@
             { class: 'adm-button adm-button--secondary adm-mm-chip', 'aria-pressed': String(f.status === k), 'data-chip': k, title: CHIP_HELP[k] || '모든 회원' });
         }));
       }
+      function resetFilters() {
+        clearTimeout(searchTimer);
+        Object.assign(f, { q: '', status: '', grade: '', sort: 'joined-desc', page: 1 });
+        q.value = ''; sort.value = f.sort; grade.value = ''; selected.clear(); draw();
+      }
+      function drawFilterTags() {
+        const tags = [];
+        const tag = (text, label, clear) => button(el('span', {}, text, el('span', { 'aria-hidden': 'true' }, ' ×')), () => {
+          clearTimeout(searchTimer); clear(); f.page = 1; selected.clear(); draw(); q.focus();
+        }, 'secondary', { class: 'adm-button adm-button--secondary adm-mm-filter-tag', 'aria-label': label });
+        if (f.q) tags.push(tag('검색: ' + f.q, '검색어 지우기', () => { f.q = ''; q.value = ''; }));
+        if (f.status) tags.push(tag(CHIPS.find(c => c[0] === f.status)?.[1] || f.status, '상태 필터 지우기', () => { f.status = ''; }));
+        if (f.grade) tags.push(tag('등급: ' + gname(+f.grade), '등급 필터 지우기', () => { f.grade = ''; grade.value = ''; }));
+        activeFilters.hidden = !tags.length;
+        activeFilters.replaceChildren(...tags);
+        reset.disabled = !tags.length && f.sort === 'joined-desc' && f.page === 1;
+      }
+      function retryActivity() {
+        loadActivity(() => { if (root.isConnected) draw(); }, true);
+        draw();
+      }
 
       function bulkRender(list) {
         const chosen = S.members.filter(m => selected.has(m.id));
         bulkBar.hidden = !chosen.length;
         if (!chosen.length) { bulkBar.replaceChildren(); return; }
         const to = el('select', { class: 'adm-input', 'aria-label': '바꿀 등급' }, el('option', { value: '' }, '바꿀 등급 고르기'), ...S.grades.map(g => el('option', { value: String(g.id) }, g.name)));
-        bulkBar.replaceChildren(el('p', { class: 'adm-mm-bulk-text' }, `전체 ${num(list.length)}명 중 ${num(chosen.length)}명 선택됨`),
+        bulkBar.replaceChildren(el('p', { class: 'adm-mm-bulk-text', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' }, `전체 ${num(list.length)}명 중 ${num(chosen.length)}명 선택됨`),
           el('div', { class: 'adm-actions' }, to, button('등급 바꾸기', () => { if (!to.value) { toast('바꿀 등급을 먼저 골라 주세요.', true); to.focus(); return; } bulkGrade(chosen, +to.value); }, 'primary'),
             button('이용 정지', () => bulkSuspend(chosen), 'danger'), button('정지 풀기', () => bulkResume(chosen)), button('선택 해제', () => { selected.clear(); draw(); })));
       }
       async function runBulk(items, action, done, after) {
         const failed = [];
+        let started = false;
         await mutate(async () => {
+          started = true;
           for (const m of items) { try { const r = await action(m); if (r?.error) throw r.error; } catch (e) { failed.push(m); } }
           if (after) after(failed); // 목록을 다시 그리기 전에 결과를 남겨 둔다(되돌리기 안내).
           return {};
         }, null);
+        if (!started) return { ok: 0, failed: [], cancelled: true };
         selected.clear();
         const ok = items.length - failed.length;
         toast(`${num(items.length)}명 중 ${num(ok)}명 ${done}${failed.length ? ` · 처리하지 못한 회원: ${nameList(failed)} (목록에서 상태를 확인해 주세요)` : ''}`, !!failed.length);
@@ -230,7 +281,7 @@
         if (m.status === 'suspended') actions.push(button('정지 풀기', () => { close(); bulkResume([m]); }, 'primary'));
         else if (m.status === 'active' && !m.is_admin && !isMe(m)) actions.push(button('이용 정지', () => { close(); bulkSuspend([m]); }, 'danger'));
         panel.append(
-          el('div', { class: 'adm-dialog-head' }, el('div', {}, el('h3', { id: 'adm-mm-detail-title' }, m.name || '이름 미입력'), el('p', { class: 'adm-note' }, badge(st[1]), m.is_admin ? badge('관리자') : null, isMe(m) ? badge('내 계정') : null)), button('닫기', close)),
+          el('div', { class: 'adm-dialog-head' }, el('div', {}, el('h3', { id: 'adm-mm-detail-title' }, m.name || '이름 미입력'), el('p', { class: 'adm-note' }, stateBadge(st), m.is_admin ? badge('관리자') : null, isMe(m) ? badge('내 계정') : null)), button('닫기', close)),
           el('section', {}, el('h4', {}, '기본 정보'), el('dl', { class: 'adm-mm-dl' },
             el('dt', {}, '이메일'), el('dd', {}, m.email || '—'), el('dt', {}, '휴대폰'), el('dd', {}, phone(m.phone) || '—'), el('dt', {}, '소속'), el('dd', {}, m.branch || '—'),
             el('dt', {}, '가입일'), el('dd', {}, fmtTime(m.created_at)), el('dt', {}, '승인일'), el('dd', {}, fmtTime(m.approved_at)),
@@ -262,13 +313,17 @@
 
       function row(m, list) {
         const st = stateOf(m), s = seen(m);
-        const box = el('input', { type: 'checkbox', checked: selected.has(m.id), 'aria-label': `${m.name || m.email} 선택`, onchange: e => { e.target.checked ? selected.add(m.id) : selected.delete(m.id); bulkRender(list); syncAll(list); } });
+        const box = el('input', { type: 'checkbox', checked: selected.has(m.id), 'aria-label': `${m.name || m.email} 선택`, onchange: e => {
+          e.target.checked ? selected.add(m.id) : selected.delete(m.id);
+          e.target.closest('.adm-mm-tr,.adm-mm-card')?.classList.toggle('is-selected', e.target.checked);
+          bulkRender(list); syncAll(list);
+        } });
         const open = el('button', { type: 'button', class: 'adm-mm-name', 'data-member': m.id, onclick: () => openDetail(m) }, el('strong', {}, m.name || '이름 미입력'), el('span', {}, m.branch || '소속 미입력'), el('small', {}, m.email || '이메일 없음'));
         const seenText = activity ? (s ? ago(s) : '기록 없음') : activityError ? '확인 못 함' : '확인 중…';
         if (media.matches) return el('li', { class: 'adm-mm-card' + (selected.has(m.id) ? ' is-selected' : ''), onclick: rowOpen(m, openDetail) }, el('label', { class: 'adm-check' }, box), open,
-          el('div', { class: 'adm-mm-card-meta' }, badge(gname(m.grade_id)), badge(st[1]), m.is_admin ? badge('관리자') : null, el('small', {}, `가입 ${fmtDate(m.created_at)} · 접속 ${seenText}`)));
+          el('div', { class: 'adm-mm-card-meta' }, badge(gname(m.grade_id)), stateBadge(st), m.is_admin ? badge('관리자') : null, el('small', {}, `가입 ${fmtDate(m.created_at)} · 접속 ${seenText}`)));
         return el('tr', { class: 'adm-mm-tr' + (selected.has(m.id) ? ' is-selected' : ''), onclick: rowOpen(m, openDetail) }, el('td', { class: 'adm-mm-pick' }, el('label', { class: 'adm-check' }, box)), el('td', {}, open),
-          el('td', {}, gname(m.grade_id), m.is_admin ? el('div', {}, badge('관리자')) : null), el('td', {}, badge(st[1])),
+          el('td', {}, gname(m.grade_id), m.is_admin ? el('div', {}, badge('관리자')) : null), el('td', {}, stateBadge(st)),
           el('td', {}, fmtDate(m.created_at)), el('td', { title: s ? fmtTime(s) : '' }, seenText));
       }
       let pageAll = null;
@@ -279,13 +334,19 @@
         pageAll.indeterminate = !pageAll.checked && page.some(m => selected.has(m.id));
       }
       function draw() {
+        clearTimeout(searchTimer);
         const list = filtered(), pages = Math.max(1, Math.ceil(list.length / PAGE));
         f.page = Math.min(Math.max(1, f.page || 1), pages);
         const page = list.slice((f.page - 1) * PAGE, f.page * PAGE);
-        drawChips(); writeUrl(f);
+        drawChips(); drawFilterTags(); writeUrl(f);
         const help = f.status ? CHIP_HELP[f.status] : '';
-        status.textContent = `전체 회원 ${num(S.members.length)}명 · 조건에 맞는 회원 ${num(list.length)}명${list.length ? ` · ${num((f.page - 1) * PAGE + 1)}~${num((f.page - 1) * PAGE + page.length)}번째 표시` : ''}${help ? ' · ' + help : ''}${f.status === 'dormant' && !activity ? ' · 접속 기록을 확인하는 중입니다' : ''}`;
-        pageAll = el('input', { type: 'checkbox', 'aria-label': '이 쪽에 보이는 회원 모두 선택', onchange: e => { page.forEach(m => e.target.checked ? selected.add(m.id) : selected.delete(m.id)); draw(); } });
+        const activityMissing = f.status === 'dormant' && !activity;
+        status.textContent = `전체 회원 ${num(S.members.length)}명 · ${activityMissing ? (activityError ? '접속 기록 조회 실패' : '접속 기록 확인 중') : `조건에 맞는 회원 ${num(list.length)}명`}${list.length ? ` · ${num((f.page - 1) * PAGE + 1)}~${num((f.page - 1) * PAGE + page.length)}번째 표시` : ''}${help ? ' · ' + help : ''}`;
+        activityNotice.hidden = !activityError || activityMissing;
+        activityNotice.replaceChildren(...(activityError && !activityMissing ? [el('p', { class: 'adm-note' }, '최근 접속을 확인하지 못했습니다. 회원 기본 정보와 다른 관리 기능은 계속 사용할 수 있습니다.'), button('접속 기록 다시 확인', retryActivity)] : []));
+        listBox.setAttribute('aria-busy', String(activityMissing && !activityError));
+        csv.disabled = !list.length || activityMissing;
+        pageAll = el('input', { type: 'checkbox', 'aria-label': '이 쪽에 보이는 회원 모두 선택', onchange: e => { page.forEach(m => e.target.checked ? selected.add(m.id) : selected.delete(m.id)); draw(); pageAll.focus(); } });
         const pager = pages > 1 ? el('div', { class: 'adm-pagination' }, el('span', { class: 'adm-note' }, `${f.page} / ${pages}쪽`),
           button('이전', () => { f.page--; draw(); root.scrollIntoView({ block: 'start' }); }, 'secondary', { disabled: f.page <= 1 }),
           button('다음', () => { f.page++; draw(); root.scrollIntoView({ block: 'start' }); }, 'secondary', { disabled: f.page >= pages })) : null;
@@ -297,7 +358,13 @@
           }, 'secondary', { class: 'adm-mm-sort', 'aria-label': `${label}으로 정렬` }));
         };
         let content;
-        if (!list.length) content = empty('조건에 맞는 회원이 없습니다', '검색어를 지우거나 다른 빠른 필터를 눌러 보세요.');
+        if (activityMissing) {
+          content = empty(activityError ? '최근 접속을 확인하지 못했습니다' : '최근 접속 기록을 확인하는 중입니다', activityError ? '오래 미접속한 회원을 구분하려면 접속 기록이 필요합니다. 다시 확인하거나 다른 필터를 선택해 주세요.' : '접속 기록을 확인한 뒤 오래 미접속한 회원을 표시합니다.');
+          if (activityError) content.append(button('접속 기록 다시 확인', retryActivity));
+        } else if (!list.length) {
+          content = empty(S.members.length ? '조건에 맞는 회원이 없습니다' : '등록된 회원이 없습니다', S.members.length ? '검색어, 상태 또는 등급 조건을 조정해 보세요.' : '회원이 가입하면 이곳에서 검색하고 관리할 수 있습니다.');
+          if (f.q || f.grade || f.status) content.append(button('조건 지우고 전체 회원 보기', () => { resetFilters(); q.focus(); }));
+        }
         else if (media.matches) content = el('div', {}, el('label', { class: 'adm-select-page' }, pageAll, el('span', {}, `이 쪽 ${num(page.length)}명 모두 선택`)), el('ul', { class: 'adm-mm-cards' }, ...page.map(m => row(m, list))));
         else content = el('div', { class: 'adm-table-scroll adm-matrix adm-mm-table', tabindex: '0', role: 'region', 'aria-label': '회원 목록' },
           el('table', { class: 'adm-table' }, el('caption', { class: 'sr' }, '회원 목록'),
@@ -316,7 +383,16 @@
           lastBulk = null;
           await runBulk(back.map(([id, gid, name]) => ({ id, gid, name })), x => checkedUpdate(x.id, { grade_id: x.gid }), '등급을 되돌렸습니다');
         }), button('닫기', () => { lastBulk = null; undoBox.hidden = true; }));
-      q.addEventListener('input', () => { f.q = q.value; f.page = 1; selected.clear(); draw(); });
+      const search = () => {
+        f.q = q.value; f.page = 1; selected.clear(); clearTimeout(searchTimer);
+        if (!composing) searchTimer = setTimeout(() => { if (root.isConnected) draw(); }, 160);
+      };
+      q.addEventListener('compositionstart', () => { composing = true; clearTimeout(searchTimer); });
+      q.addEventListener('compositionend', () => { composing = false; search(); });
+      q.addEventListener('input', search);
+      q.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && q.value && !composing) { e.preventDefault(); e.stopPropagation(); q.value = ''; f.q = ''; f.page = 1; selected.clear(); draw(); }
+      });
       sort.addEventListener('change', () => { f.sort = sort.value; f.page = 1; draw(); });
       grade.addEventListener('change', () => { f.grade = grade.value; f.page = 1; selected.clear(); draw(); });
       const csv = button('엑셀로 내려받기', () => {
@@ -328,17 +404,17 @@
           el('p', { class: 'adm-note' }, '엑셀에서 한글이 깨지지 않게 저장합니다. 내려받은 기록(시각·인원 수)은 변경 기록에 남습니다.'),
           el('div', { class: 'adm-actions adm-dialog-actions' }, button(`${num(list.length)}명 내려받기`, () => { close(); csvDownload(list, memoBox.checked); toast(`회원 ${num(list.length)}명 파일을 내려받았습니다. 다 쓰면 지워 주세요.`); }, 'primary', { disabled: !list.length }), button('취소', () => close())));
       });
-      const reset = button('조건 모두 지우기', () => { Object.assign(f, { q: '', status: '', grade: '', sort: 'joined-desc', page: 1 }); q.value = ''; sort.value = f.sort; grade.value = ''; selected.clear(); draw(); });
+      const reset = button('조건 모두 지우기', () => { resetFilters(); q.focus(); });
       const onMedia = () => { if (root.isConnected) draw(); else media.removeEventListener('change', onMedia); };
       media.addEventListener('change', onMedia);
       setDirty(false);
-      draw();
       loadActivity(() => { if (root.isConnected) draw(); });
+      draw();
       root.append(
         el('div', { class: 'adm-mm-tools' }, el('label', { class: 'adm-field adm-mm-searchfield' }, el('span', {}, '회원 찾기'), q),
           el('label', { class: 'adm-field' }, el('span', {}, '정렬'), sort), el('label', { class: 'adm-field' }, el('span', {}, '등급'), grade)),
-        chipBox, el('div', { class: 'adm-mm-toolrow' }, status, el('div', { class: 'adm-actions' }, reset, csv)),
-        undoBox, bulkBar, listBox,
+        chipBox, activeFilters, el('div', { class: 'adm-mm-toolrow' }, status, el('div', { class: 'adm-actions' }, reset, csv)),
+        activityNotice, undoBox, bulkBar, listBox,
         el('p', { class: 'adm-note' }, `이름을 누르면 옆에 상세 창이 열립니다. 여러 명을 고르면 위에 한 번에 바꾸기 막대가 나옵니다. 한 쪽에 ${PAGE}명씩 보입니다.`));
       return root;
     }

@@ -21,6 +21,25 @@
     };
     const report = (message, control) => { toast(message, true); if (control) control.focus(); return false; };
     const failedRead = (error) => errorText(error) || "불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
+    let reviewId = 0;
+    function reviewChanges(title, changes, help) {
+      const text = (value) => value === true ? "표시" : value === false ? "숨김" : value == null || value === "" ? "없음" : String(value);
+      return new Promise((resolve) => {
+        const id = "adm-settings-review-" + (++reviewId);
+        const previous = document.activeElement;
+        const dialog = el("dialog", { class: "adm-dialog adm-review", "aria-labelledby": id });
+        const close = (accepted) => { if (dialog.open) dialog.close(); dialog.remove(); if (previous?.isConnected) previous.focus(); resolve(accepted); };
+        dialog.append(el("h3", { id }, title), note(help),
+          el("div", { class: "adm-review-list" }, ...changes.map(([label, before, after]) => el("div", { class: "adm-review-row" },
+            el("strong", {}, label), el("p", { class: "before" }, el("span", {}, "변경 전 "), text(before)), el("p", { class: "after" }, el("span", {}, "변경 후 "), text(after))))),
+          note("저장한 뒤 되돌리려면 변경 전 값을 다시 입력해 저장해 주세요."),
+          actions(button("편집 계속하기", () => close(false)), button("확인하고 저장", () => close(true), "primary")));
+        dialog.addEventListener("cancel", (event) => { event.preventDefault(); close(false); });
+        document.body.append(dialog);
+        if (typeof dialog.showModal === "function") { dialog.showModal(); dialog.querySelector("button").focus(); }
+        else close(confirmAction(title + "\n\n" + changes.map(([label, before, after]) => `${label}: ${text(before)} → ${text(after)}`).join("\n") + "\n\n저장할까요?"));
+      });
+    }
 
     function notice() {
       const content = input("새 소식 내용", "", { maxlength: "200", placeholder: "회원에게 전할 소식을 200자 이내로 입력하세요.", disabled: true });
@@ -147,6 +166,8 @@
             if ("name" in patch && !value) return report("등급 이름을 입력해 주세요.", nameInput);
             if ("sort" in patch && sort === null) return report("표시 순서는 정수로 입력해 주세요.", sortInput);
             if ("name" in patch && S.grades.some((other) => !sameId(other.id, g.id) && other.name === value)) return report("이미 있는 등급 이름입니다.", nameInput);
+            const labels = { name: "등급 이름", sort: "표시 순서" };
+            if (!await reviewChanges("등급 변경을 확인해 주세요", Object.entries(patch).map(([key, next]) => [labels[key], original[key], next]), `이 등급에 속한 회원 ${memberCount}명에게 변경된 이름이 표시됩니다. 메뉴 권한은 유지됩니다.`)) return;
             await mutate(() => sb.from("grades").update(patch).eq("id", g.id), "등급 변경을 저장했습니다.");
           }, "primary", { "aria-label": `${g.name} 등급 변경 저장` }), button("삭제", async () => {
             if (!confirmAction(`'${g.name}' 등급을 삭제할까요? 이 등급에 지정한 메뉴 권한도 함께 확인해 주세요.`)) return;
@@ -182,6 +203,8 @@
               if (!Object.keys(patch).length) return unchanged();
               if ("url" in patch && !validUrl(address)) return report("주소는 https:// 또는 http://로 시작하거나 /로 시작하는 사이트 경로를 입력해 주세요.", link);
               if ("sort" in patch && order === null) return report("표시 순서는 정수로 입력해 주세요.", sort);
+              const labels = { url: "연결 주소", sort: "표시 순서", visible: "메인 표시" };
+              if (!await reviewChanges(`${branch.no}본부 설정 변경`, Object.entries(patch).map(([key, next]) => [labels[key], original[key], next]), "저장하면 '함께하는 본부' 화면에 바로 적용됩니다.")) return;
               await mutate(() => sb.from("branches").update({ ...patch, updated_at: new Date().toISOString() }).eq("no", branch.no), "본부 설정을 저장했습니다.");
             }, "primary", { "aria-label": `${branch.no}본부 설정 저장` }), button("삭제", async () => {
               if (!confirmAction(`${branch.no}본부를 목록에서 삭제할까요?`)) return;

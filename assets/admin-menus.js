@@ -46,7 +46,9 @@
     }
 
     function openDialog(dialog, onClose) {
+      const previous = document.activeElement;
       dialog.addEventListener('cancel', e => { e.preventDefault(); onClose(); });
+      dialog.addEventListener('close', () => { if (previous?.isConnected) previous.focus({ preventScroll: true }); }, { once: true });
       document.body.append(dialog);
       if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
     }
@@ -56,7 +58,8 @@
       const adding = !r;
       const id = 'mn' + (++uid);
       const dialog = el('dialog', { class: 'adm-dialog adm-mn-dialog', 'aria-labelledby': id + '-title' });
-      let saving = false, tabTouched = !adding;
+      let saving = false, tabTouched = !adding, reviewed = '';
+      const review = el('section', { class: 'adm-mn-review', hidden: '', 'aria-label': '저장 전 변경 내용' });
       const startUrl = r ? r.url || '' : '';
       const startKind = !r ? 'site' : !startUrl ? 'none' : isExternal(startUrl) ? 'link' : 'site';
       const err = el('p', { class: 'adm-mn-error', role: 'alert', hidden: '' });
@@ -103,6 +106,7 @@
       // 회원 화면 미리보기
       const pv = el('div', { class: 'adm-mn-pv', 'aria-hidden': 'true' });
       function paint() {
+        if (reviewed && reviewed !== before()) { reviewed = ''; review.hidden = true; saveBtn.textContent = adding ? '추가 내용 확인' : '변경 내용 확인'; }
         const k = kind();
         url.disabled = k === 'none';
         url.placeholder = k === 'link' ? 'https://로 시작하는 전체 주소' : k === 'site' ? '/로 시작하는 사이트 안 주소(예: /members/articles/)' : '';
@@ -139,7 +143,7 @@
       const close = () => { dialog.close(); dialog.remove(); };
       const cancel = () => { if (saving) return; if (before() !== initial && !window.confirm('적은 내용을 저장하지 않고 닫을까요?')) return; close(); };
       const fail = (text, control) => { err.textContent = text; err.hidden = false; if (control) control.focus(); return false; };
-      const saveBtn = button(adding ? '메뉴 추가' : '저장', async () => {
+      const saveBtn = button(adding ? '추가 내용 확인' : '변경 내용 확인', async () => {
         if (saving) return;
         err.hidden = true;
         const k = kind(), n = name.value.trim(), u = k === 'none' ? '' : url.value.trim();
@@ -153,7 +157,28 @@
         if (!gname) return fail('새 묶음 이름을 적어 주세요.', newGroup);
         const [mode, after] = where.value.split(':');
         const grades = gradeBoxes.filter(b => b.checked).map(b => Number(b.value));
-        if (adding && !grades.length && !window.confirm('볼 수 있는 등급을 하나도 고르지 않았습니다. 관리자만 보게 될까요?\n(나중에 메뉴 권한 표에서 켤 수 있습니다)')) return;
+        if (adding && !grades.length && reviewed !== before() && !window.confirm('볼 수 있는 등급을 하나도 고르지 않았습니다. 관리자만 보게 될까요?\n(나중에 메뉴 권한 표에서 켤 수 있습니다)')) return;
+        const changes = [
+          ['메뉴 이름', r?.name || '', n], ['연결 주소', r?.url || '', u], ['묶음', r?.category || '', gname],
+          ['설명', r?.description || '', desc.value.trim()], ['열리는 방식', r ? (r.open_new_tab !== false ? '새 창' : '같은 창') : '', newTab.checked ? '새 창' : '같은 창'],
+          ['회원 화면', r ? (r.active !== false ? '보임' : '숨김') : '', show.checked ? '보임' : '숨김'],
+          ['관리자 메모', r?.admin_memo || '', memo.value.trim()],
+          ...(mode !== 'keep' ? [['순서', r ? '현재 자리' : '', where.selectedOptions[0]?.textContent || '묶음 맨 아래']] : []),
+          ...(adding ? [['볼 수 있는 등급', '', S.grades.filter(g => grades.includes(g.id)).map(g => g.name).join(' · ') || '관리자만']] : [])
+        ].filter(([, oldValue, nextValue]) => oldValue !== nextValue);
+        if (!changes.length) return toast('변경한 내용이 없습니다.');
+        if (reviewed !== before()) {
+          reviewed = before();
+          review.replaceChildren(el('h4', {}, adding ? '이 내용으로 메뉴를 추가합니다' : '이렇게 바뀝니다'),
+            el('div', { class: 'adm-review-list' }, ...changes.map(([label, oldValue, nextValue]) => el('div', { class: 'adm-review-row' },
+              el('strong', {}, label), el('p', { class: 'before' }, el('span', {}, '변경 전 '), oldValue || '없음'),
+              el('p', { class: 'after' }, el('span', {}, '변경 후 '), nextValue || '없음')))),
+            el('p', { class: 'adm-note' }, '확인하고 저장하면 회원 화면에 바로 반영됩니다. 되돌리려면 변경 전 값을 다시 입력해 저장해 주세요.'));
+          review.hidden = false;
+          saveBtn.textContent = '확인하고 저장';
+          review.scrollIntoView({ block: 'nearest' });
+          return;
+        }
         saving = true; saveBtn.disabled = true; saveBtn.textContent = '저장하는 중…';
         try {
           const res = await sb.rpc('admin_menu_save', {
@@ -167,7 +192,7 @@
           await mutate(async () => ({}), adding ? `'${n}' 메뉴를 추가했습니다. 회원 업무 도구 화면에 바로 반영됩니다.` : `'${n}' 메뉴를 저장했습니다. 회원 화면에 바로 반영됩니다.`);
         } catch (e) {
           fail(menuError(e));
-        } finally { saving = false; saveBtn.disabled = false; saveBtn.textContent = adding ? '메뉴 추가' : '저장'; }
+        } finally { saving = false; saveBtn.disabled = false; saveBtn.textContent = reviewed ? '확인하고 저장' : adding ? '추가 내용 확인' : '변경 내용 확인'; }
       }, 'primary');
       const lbl = (forId, text, req) => el('label', { for: forId }, text, req ? el('span', { class: 'adm-mn-req', 'aria-hidden': 'true' }, ' *') : null);
       dialog.append(
@@ -191,7 +216,7 @@
           el('details', { class: 'adm-mn-more', open: r && r.admin_memo ? '' : null }, el('summary', {}, '관리자 메모(회원에게 안 보임)'),
             el('div', { class: 'adm-field' }, lbl(id + '-memo', '메모'), memo, el('small', { class: 'adm-note' }, '확인한 내용·예전 주소 등 관리자끼리 알아 둘 점'))),
           pv),
-        err,
+        review, err,
         el('div', { class: 'adm-actions adm-dialog-actions' }, saveBtn, button('취소', cancel)));
       fillWhere(); paint(); initial = before();
       openDialog(dialog, cancel);
@@ -296,7 +321,7 @@
           el('p', { class: 'adm-mn-desc' + (r.description ? '' : ' is-empty') }, r.description || '설명이 비어 있습니다 — 회원 화면에 설명 줄이 없습니다'),
           r.url ? el('p', { class: 'adm-mn-url' }, el('a', { href: r.url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': `${r.name} 주소 열기 (새 창)` }, shortUrl(r.url) + ' ↗')) : el('p', { class: 'adm-mn-url' }, "회원 화면에는 '주소 준비 중'으로 보입니다"),
           el('p', { class: 'adm-mn-grades-line' }, el('span', {}, '볼 수 있는 등급 '), el('b', {}, names.length ? `${names.length}개` : '없음'), ' · ', names.join(' · ') || '관리자만 봄'),
-          r.admin_memo ? el('p', { class: 'adm-mn-memo' }, '메모: ' + r.admin_memo) : null),
+          r.admin_memo ? el('details', { class: 'adm-mx-details' }, el('summary', {}, '관리자 메모'), el('p', { class: 'adm-mn-memo' }, r.admin_memo)) : null),
         el('div', { class: 'adm-mn-actions' },
           el('label', { class: 'adm-mx-switch' }, sw, el('span', { class: 'adm-mx-switch-ui', 'aria-hidden': 'true' }), el('span', { class: 'adm-mx-switch-text', 'aria-hidden': 'true' }, r.active ? '보임' : '숨김')),
           button('수정', () => editor(r), 'secondary', { class: 'adm-button adm-button--secondary adm-mn-edit', 'aria-label': `${r.name} 수정` }),

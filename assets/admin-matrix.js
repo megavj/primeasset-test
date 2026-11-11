@@ -40,9 +40,17 @@
       const seeCount = g => rows.filter(x => visible(x) && want.has(key(g, x.r))).length;
       const totalVisible = rows.filter(visible).length;
       const counters = new Map(), cells = new Map(), limitInputs = new Map();
+      const detailState = new Set();
+      const detail = row => {
+        const node = el('details', { class: 'adm-mx-details', open: detailState.has(row.r.id) ? '' : null },
+          el('summary', {}, row.r.admin_memo ? '설명 · 관리자 메모' : '메뉴 설명'),
+          el('div', { class: 'adm-mx-detail-body' }, el('p', { class: 'adm-mx-desc' }, descOf(row.r)), checkNote(row.r), row.why ? el('small', { class: 'adm-mx-why' }, row.why) : null));
+        node.addEventListener('toggle', () => { if (node.open) detailState.add(row.r.id); else detailState.delete(row.r.id); });
+        return node;
+      };
       const shown = () => {
         const q = (f.q || '').toLocaleLowerCase('ko-KR').replace(/\s/g, '');
-        return rows.filter(x => !q || [x.r.name, descOf(x.r), GROUPS.find(g => g[0] === x.group)[1]].join(' ').toLocaleLowerCase('ko-KR').replace(/\s/g, '').includes(q));
+        return rows.filter(x => (!f.group || x.group === f.group) && (!q || [x.r.name, descOf(x.r), x.r.admin_memo, GROUPS.find(g => g[0] === x.group)?.[1]].join(' ').toLocaleLowerCase('ko-KR').replace(/\s/g, '').includes(q)));
       };
 
       const bar = el('div', { class: 'adm-mx-savebar', role: 'region', 'aria-label': '바뀐 내용 저장', hidden: '' });
@@ -77,7 +85,7 @@
         remember(limitInputs, g.id, { input: box, wrap });
         return wrap;
       }
-      const memberNote = el('p', { class: 'adm-note' });
+      const memberNote = el('p', { class: 'adm-note', role: 'status' });
 
       // PC: 표(줄 = 메뉴, 칸 = 등급)
       function desktop(list) {
@@ -95,7 +103,7 @@
           if (!items.length) return;
           body.push(el('tr', { class: 'adm-mx-group' + (gk === 'hidden' ? ' is-hidden-group' : '') }, el('th', { scope: 'rowgroup', colspan: String(grades.length + 1) }, el('span', {}, title), el('small', {}, ` · ${items.length}개 · ${sub}`))));
           items.forEach(row => body.push(el('tr', { class: gk === 'hidden' ? 'is-muted' : '' },
-            el('th', { scope: 'row' }, el('div', { class: 'adm-mx-name' }, el('strong', {}, row.r.name), previewLink(row), editLink(row.r)), el('p', { class: 'adm-mx-desc' }, descOf(row.r)), checkNote(row.r), row.why ? el('small', { class: 'adm-mx-why' }, row.why) : null),
+            el('th', { scope: 'row' }, el('div', { class: 'adm-mx-name' }, el('strong', {}, row.r.name), previewLink(row), editLink(row.r)), detail(row)),
             ...grades.map(g => {
               const k = key(g, row.r);
               const box = el('input', { type: 'checkbox', checked: want.has(k), 'aria-label': `${g.name} · ${row.r.name} 볼 수 있음`, onchange: e => toggle(g, row, e.target.checked) });
@@ -124,7 +132,7 @@
             const sw = el('input', { type: 'checkbox', role: 'switch', checked: want.has(k), 'aria-label': `${row.r.name} 볼 수 있음`, onchange: e => { toggle(g, row, e.target.checked); state.textContent = e.target.checked ? '켬' : '끔'; } });
             const state = el('span', { class: 'adm-mx-switch-text', 'aria-hidden': 'true' }, want.has(k) ? '켬' : '끔');
             const li = el('li', { class: 'adm-mx-item' + (gk === 'hidden' ? ' is-muted' : '') },
-              el('div', { class: 'adm-mx-item-text' }, el('strong', {}, row.r.name), el('p', { class: 'adm-mx-desc' }, descOf(row.r)), checkNote(row.r), el('div', { class: 'adm-mx-item-links' }, previewLink(row), editLink(row.r), changedTag())),
+              el('div', { class: 'adm-mx-item-text' }, el('strong', {}, row.r.name), detail(row), el('div', { class: 'adm-mx-item-links' }, previewLink(row), editLink(row.r), changedTag())),
               el('label', { class: 'adm-mx-switch' }, sw, el('span', { class: 'adm-mx-switch-ui', 'aria-hidden': 'true' }), state),
               row.group === 'ai' ? limitField(g) : null);
             remember(cells, k, li);
@@ -141,10 +149,12 @@
       function draw() {
         counters.clear(); cells.clear(); limitInputs.clear();
         const list = shown();
-        body.replaceChildren(list.length ? (media.matches ? mobile(list) : desktop(list)) : empty('찾는 메뉴가 없습니다', '검색어를 바꿔 보세요.'));
+        body.replaceChildren(list.length ? (media.matches ? mobile(list) : desktop(list)) : empty('조건에 맞는 메뉴가 없습니다', '검색어나 묶음을 바꾸거나 조건을 초기화해 주세요.'));
         chipBar.hidden = !media.matches;
         gradeField.hidden = media.matches;
-        memberNote.textContent = `회원 화면에 보이는 메뉴 ${totalVisible}개 · 숨김 ${rows.length - totalVisible}개. 관리자는 체크와 관계없이 모든 메뉴를 볼 수 있습니다.`;
+        gradeSelect.value = f.grade || '';
+        resetBtn.hidden = !f.q && !f.group && (media.matches || !f.grade);
+        memberNote.textContent = `전체 ${num(rows.length)}개 중 ${num(list.length)}개 표시 · 회원 화면 ${num(totalVisible)}개 · 숨김 ${num(rows.length - totalVisible)}개. 관리자는 모든 메뉴를 볼 수 있습니다.`;
         sync();
       }
 
@@ -168,16 +178,17 @@
         const dialog = el('dialog', { class: 'adm-dialog', 'aria-labelledby': 'adm-mx-confirm-title' });
         const close = () => { dialog.close(); dialog.remove(); saveBtn.focus(); };
         dialog.append(el('h3', { id: 'adm-mx-confirm-title' }, '이렇게 바뀝니다'),
-          el('p', { class: 'adm-note' }, '저장하면 해당 등급의 모든 회원에게 바로 적용됩니다.'),
+          el('p', { class: 'adm-note' }, '저장하면 해당 등급의 모든 회원에게 바로 적용됩니다. 취소하면 편집 화면으로 돌아갑니다.'),
           ...parts.map(p => el('section', { class: 'adm-mx-change' }, el('h4', {}, `${p.g.name} (회원 ${num(memberCount(p.g))}명)`),
             el('ul', {}, p.on.length ? el('li', {}, el('b', { class: 'is-on' }, '볼 수 있게: '), p.on.join(', ')) : null,
               p.off.length ? el('li', {}, el('b', { class: 'is-off' }, '안 보이게: '), p.off.join(', ')) : null,
               p.lim ? el('li', {}, el('b', {}, 'AI 하루 질문 횟수: '), `${num(p.g.ask_daily_limit ?? 20)}회 → ${num(p.lim[1])}회`) : null))),
-          el('div', { class: 'adm-actions adm-dialog-actions' }, button(`${num(d.count)}곳 바꾸기`, async () => { close(); await save(d); }, 'primary'), button('취소', close)));
+          el('p', { class: 'adm-note' }, '저장한 뒤 되돌리려면 이전 권한과 질문 횟수로 다시 설정해 저장해 주세요.'),
+          el('div', { class: 'adm-actions adm-dialog-actions' }, button(`${num(d.count)}곳 확인하고 저장`, async () => { close(); await save(d); }, 'primary'), button('편집 계속하기', close)));
         dialog.addEventListener('cancel', e => { e.preventDefault(); close(); });
         document.body.append(dialog);
-        if (typeof dialog.showModal === 'function') dialog.showModal();
-        else if (window.confirm(parts.map(p => `${p.g.name}: 켬 ${p.on.length} · 끔 ${p.off.length}${p.lim ? ' · 하루 ' + p.lim[1] + '회' : ''}`).join('\n') + '\n저장할까요?')) { dialog.remove(); save(d); }
+        if (typeof dialog.showModal === 'function') { dialog.showModal(); dialog.querySelector('.adm-dialog-actions button:last-child')?.focus(); }
+        else { dialog.remove(); if (window.confirm(parts.map(p => `${p.g.name}: 켬 ${p.on.length} · 끔 ${p.off.length}${p.lim ? ' · 하루 ' + p.lim[1] + '회' : ''}`).join('\n') + '\n저장할까요?')) save(d); }
       }
       async function save(d) {
         let done = 0;
@@ -223,13 +234,20 @@
       const gradeSelect = el('select', { class: 'adm-input adm-filter', 'aria-label': '표에 보일 등급' }, el('option', { value: '' }, '모든 등급'), ...S.grades.map(g => el('option', { value: String(g.id), selected: String(g.id) === String(f.grade) }, g.name)));
       gradeSelect.addEventListener('change', () => { f.grade = gradeSelect.value; draw(); });
       const gradeField = el('label', { class: 'adm-field' }, el('span', {}, '보일 등급'), gradeSelect);
+      const groupSelect = el('select', { class: 'adm-input adm-filter', 'aria-label': '메뉴 묶음' },
+        el('option', { value: '' }, '모든 묶음'), ...GROUPS.filter(([id]) => rows.some(row => row.group === id)).map(([id, title]) => el('option', { value: id, selected: f.group === id }, title)));
+      if (f.group && !GROUPS.some(([id]) => id === f.group)) f.group = '';
+      groupSelect.value = f.group || '';
+      groupSelect.addEventListener('change', () => { f.group = groupSelect.value; draw(); });
+      const resetBtn = button('조건 초기화', () => { f.q = ''; f.group = ''; f.grade = ''; q.value = ''; groupSelect.value = ''; gradeSelect.value = ''; draw(); q.focus(); });
       const onMedia = () => { if (body.isConnected) draw(); else media.removeEventListener('change', onMedia); };
       media.addEventListener('change', onMedia);
       draw();
       return el('div', { class: 'adm-stack adm-mx-view' },
-        el('p', { class: 'adm-callout' }, '✓ 표시한 메뉴를 그 등급 회원이 볼 수 있습니다. 바꾼 칸은 색으로 표시되고, 아래 [바뀐 내용 확인 후 저장]을 눌러야 적용됩니다. 메뉴 자체의 추가·이름·주소·순서·삭제는 [메뉴 관리]에서 합니다.'),
-        el('div', { class: 'adm-toolbar' }, el('label', { class: 'adm-field' }, el('span', {}, '메뉴 찾기'), q), gradeField,
-          button('＋ 메뉴 추가', () => go('resources', { open: 'new' }), 'secondary'), button('메뉴 관리', () => go('resources'), 'secondary')),
+        el('p', { class: 'adm-callout' }, '체크한 메뉴를 해당 등급이 볼 수 있습니다. 바꾼 내용은 저장 전 확인할 수 있고, [모두 되돌리기]로 취소할 수 있습니다.'),
+        el('div', { class: 'adm-toolbar adm-mx-filters' }, el('label', { class: 'adm-field' }, el('span', {}, '메뉴 찾기'), q),
+          el('label', { class: 'adm-field' }, el('span', {}, '메뉴 묶음'), groupSelect), gradeField, resetBtn,
+          button('메뉴 관리', () => go('resources'), 'secondary'), button('＋ 메뉴 추가', () => go('resources', { open: 'new' }), 'secondary')),
         chipBar, memberNote, body, bar);
     }
     return { matrix };

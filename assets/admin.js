@@ -37,7 +37,8 @@
   };
   const toast = (text, bad = false) => {
     const region = document.getElementById('admin-feedback');
-    region.replaceChildren(el('div', {class:'adm-feedback' + (bad ? ' adm-feedback--error' : '')}, text));
+    region.setAttribute('role', bad ? 'alert' : 'status');
+    region.replaceChildren(el('div', {class:'adm-feedback' + (bad ? ' adm-feedback--error' : '')}, el('span',{},text), button('닫기',() => region.replaceChildren(),'secondary',{'aria-label':'알림 닫기'})));
   };
   const errorText = e => {
     const m = String(e?.message || e || '');
@@ -59,12 +60,12 @@
   let askClient = null, sessionOwner;
   let tab = 'tasks', busy = false, dirty = false, ready = false, loadVersion = 0;
   const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'yes',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''},resources:{q:'',view:'list',open:null}};
-  const TABS = {tasks:['요약','이번 달 AI 이용 현황과 현재 처리할 일을 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['지난 요청','예전에 회원이 보낸 이용 요청 중 아직 정리하지 않은 것입니다. 이제 회원 화면에는 요청 버튼이 없습니다.'],members:['회원 관리','이름을 누르면 상세 창이 열리고, 여러 명을 고르면 등급 변경·정지·정지 풀기를 한 번에 할 수 있습니다.'],matrix:['메뉴 권한','등급마다 회원이 볼 수 있는 메뉴와 AI 질문 횟수를 정합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['메뉴 관리','회원 업무 도구 화면의 메뉴를 추가·수정·숨김·삭제하고, 지운 메뉴를 30일 안에 되살립니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],articles:['작성글모음','AI가 쓴 글의 남은 수·보관 기록을 보고, 필요 없는 글을 지웁니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
+  const TABS = {tasks:['업무 요약','승인할 회원과 필요한 관리 업무를 한눈에 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['지난 요청','예전에 회원이 보낸 이용 요청 중 아직 정리하지 않은 것입니다. 이제 회원 화면에는 요청 버튼이 없습니다.'],members:['회원 관리','이름을 누르면 상세 창이 열리고, 여러 명을 고르면 등급 변경·정지·정지 풀기를 한 번에 할 수 있습니다.'],matrix:['메뉴 권한','등급마다 회원이 볼 수 있는 메뉴와 AI 질문 횟수를 정합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['메뉴 관리','회원 업무 도구 화면의 메뉴를 추가·수정·숨김·삭제하고, 지운 메뉴를 30일 안에 되살립니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],articles:['작성글모음','AI가 쓴 글의 남은 수·보관 기록을 보고, 필요 없는 글을 지웁니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
 
   const confirmAction = message => window.confirm(message);
   const discard = () => !dirty || confirmAction('저장하지 않은 변경이 있습니다. 변경을 버리고 이동할까요?');
   function go(next, values = {}) {
-    if (busy || !TABS[next] || !discard()) return;
+    if (busy || !TABS[next] || !discard()) return false;
     dirty = false; edited.clear(); tab = next;
     if (filters[next]) {
       if (values.q !== undefined && next === 'members') Object.assign(filters[next],{grade:'',status:''});
@@ -72,7 +73,7 @@
       if (next === 'pending') Object.assign(filters[next], {q:'',complete:'yes'});
       Object.assign(filters[next], {page:1}, values);
     }
-    history.replaceState(null, '', '#' + tab); render(true);
+    history.replaceState(null, '', '#' + tab); render(true); return true;
   }
   function setBusy(value) {
     busy = value; box.setAttribute('aria-busy', String(value));
@@ -160,6 +161,7 @@
     loadVersion++; ready = false; dirty = false; edited.clear(); S.profile = null;
     Object.assign(S,{grades:[],members:[],resources:[],trash:[],groups:[],branches:[],perms:new Set(),requests:[],requestError:null});
     document.getElementById('admin-feedback')?.replaceChildren();
+    document.querySelectorAll('.admin-command,.adm-dialog,.adm-drawer').forEach(d => { if (d.open) d.close(); d.remove(); });
     box.replaceChildren(el('section',{class:'adm-gate'},empty(title,description),el('div',{class:'adm-actions'},el('a',{class:'adm-button',href:signup ? '/members/#signup' : '/members/#login'},signup ? '가입 정보 입력' : '인트라넷 로그인'),retry ? button('다시 시도',boot,'primary') : null),window.PA_SIGNUP?.guide()));
   }
   async function boot() {
@@ -196,9 +198,9 @@
     const count = key => key === 'pending' ? pending : key === 'requests' ? (S.requestError ? '—' : S.requests.length) : null;
     const nav = window.PA_ADMIN_NAV.create(tab, go, {pending:count('pending'), requests:count('requests')});
     const view = (modules[tab] || views[tab] || settings[tab])();
-    const main = el('section',{class:'adm-content','aria-labelledby':'admin-view-title'},
-      el('div',{class:'adm-section-head'},el('div',{},el('h2',{id:'admin-view-title',tabindex:'-1'},TABS[tab][0]),el('p',{class:'adm-note'},TABS[tab][1])),button('새로고침',() => { if (discard()) { dirty = false; edited.clear(); boot(); } },'secondary',{'aria-label':'관리 자료 새로고침'})),view);
-    box.replaceChildren(el('fieldset',{id:'admin-lock',class:'adm-lock',disabled:busy},el('legend',{class:'sr'},'관리자 업무'),nav,el('div',{class:'adm-layout'},main)));
+    const main = el('section',{class:'adm-content','aria-labelledby':'admin-view-title','data-admin-view':tab},
+      el('div',{class:'adm-section-head'},el('div',{},el('h2',{id:'admin-view-title',tabindex:'-1'},TABS[tab][0]),el('p',{class:'adm-note'},TABS[tab][1])),button('새로고침',() => { if (discard()) { dirty = false; edited.clear(); boot(); } },'secondary',{'aria-label':'관리 자료 새로고침'})),el('p',{id:'admin-draft-note',class:'adm-draft-note',role:'status',hidden:true},'저장하지 않은 변경이 있습니다. 이 화면의 저장 버튼으로 적용해 주세요.'),view);
+    box.replaceChildren(el('fieldset',{id:'admin-lock',class:'adm-lock adm-shell',disabled:busy},el('legend',{class:'sr'},'관리자 업무'),nav,el('div',{class:'adm-layout'},main)));
     if (tab === 'tasks' && window.PA_ADMIN_SUMMARY && window.PA_ASK) {
       if (!askClient) askClient = window.PA_ASK.create(sb);
       window.PA_ADMIN_SUMMARY.mount(document.getElementById('admin-ai-summary'), askClient);
@@ -234,13 +236,13 @@
   const views = {
     tasks() {
       const pending = pendingMembers(), preview = pending.slice(0,20), incomplete = incompleteMembers();
-      const stat = (label,value,next,detail) => button(el('span',{class:'adm-stat-inner'},el('span',{},label),el('strong',{},value),el('small',{},detail)),() => go(next),'stat');
+      const stat = (label,value,next,detail,values = {}) => button(el('span',{class:'adm-stat-inner'},el('span',{},label),el('strong',{},value),el('small',{},detail)),() => go(next,values),'stat');
       const featured = el('div',{class:'adm-task-panel'},el('div',{class:'adm-panel-heading'},el('div',{},el('p',{class:'adm-eyebrow'},'먼저 확인하세요'),el('h3',{},pending.length ? '가입을 기다리는 회원이 있습니다' : '가입 승인 대기를 모두 확인했습니다')),button('가입 승인 열기',() => go('pending'),'primary')),
         pending.length ? el('div',{},el('p',{class:'adm-note',role:'status'},`가입 승인 대기 전체 ${num(pending.length)}명 · 현재 ${num(preview.length)}명 표시${pending.length > preview.length ? ` · 나머지 ${num(pending.length - preview.length)}명은 가입 승인 전체 목록에서 확인할 수 있습니다(첫 화면 최대 20명).` : ''}`),el('div',{class:'adm-task-list'},...preview.map(m => el('div',{class:'adm-task-row'},person(m),el('div',{class:'adm-task-meta'},badge(profileComplete(m) ? '정보 입력 완료' : '정보 미입력'),el('span',{class:'adm-note'},fmt(m.created_at)),button('검토',() => go('pending',{q:m.email || m.name}))))))) : el('p',{class:'adm-note'},'새 가입 신청이 도착하면 이곳에서 확인할 수 있습니다.'));
-      return el('div',{class:'adm-stack'},el('section',{id:'admin-ai-summary',class:'adm-panel','aria-label':'이번 달 AI 이용 현황'}),el('div',{},el('h3',{},'현재 처리할 일'),el('p',{class:'adm-note'},'AI 조회 기간과 관계없는 현재 상태입니다. 메뉴·AI 이용 범위는 회원 요청 없이 등급으로 정합니다.')),el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보 확인 → 승인'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`)),featured,incomplete.length ? el('section',{class:'adm-panel'},el('h3',{},`정보 미입력 ${num(incomplete.length)}명`),el('p',{class:'adm-note'},'가입 정보를 아직 완료하지 않은 계정입니다. 승인 대기 인원에 포함하지 않으며 승인할 수 없습니다.'),button('미입력 계정 보기',() => go('pending',{complete:'no'}))) : null,
+      return el('div',{class:'adm-stack adm-overview'},el('div',{class:'adm-stats'},stat('가입 승인 대기',num(pending.length),'pending','가입 정보를 확인하고 승인'),stat('사용 중인 회원',num(S.members.filter(m => m.status === 'active').length),'members',`전체 회원 ${num(S.members.length)}명`,{status:'active',q:'',grade:''}),stat('정보 미입력',num(incomplete.length),'pending','정보 입력 후 승인 가능',{complete:'no'})),featured,incomplete.length ? el('section',{class:'adm-panel'},el('h3',{},`정보 미입력 ${num(incomplete.length)}명`),el('p',{class:'adm-note'},'가입 정보를 아직 완료하지 않은 계정입니다. 승인 대기 인원에 포함하지 않으며 승인할 수 없습니다.'),button('미입력 계정 보기',() => go('pending',{complete:'no'}))) : null,
         // TASK-ADM: 회원 요청 버튼을 없앴으므로 요청 카드 대신, 예전 요청이 남아 있을 때만 정리 안내를 보여 준다.
         S.requests.length ? el('p',{class:'adm-callout'},`정리하지 않은 지난 이용 요청 ${num(S.requests.length)}건이 남아 있습니다. `,button('지난 요청 정리',() => go('requests'))) : null,
-        el('div',{},el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['resources','메뉴 추가·정리','이름·주소·순서·지운 메뉴'],['articles','작성글모음 현황','남은 글·보관 기록'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
+        el('section',{id:'admin-ai-summary',class:'adm-panel','aria-label':'이번 달 AI 이용 현황'}),el('div',{},el('section',{class:'adm-panel'},el('h3',{},'자주 하는 관리'),el('div',{class:'adm-quick-links'},...[[ 'matrix','메뉴 권한 조정','등급별 페이지·도구 접근'],['resources','메뉴 추가·정리','이름·주소·순서·지운 메뉴'],['articles','작성글모음 현황','남은 글·보관 기록'],['notice','새 소식 작성','인트라넷에 보일 한 줄'],['hits','방문 합계 확인','날짜별 방문·문의 클릭']].map(([key,title,detail]) => button(el('span',{},el('strong',{},title),el('small',{},detail)),() => go(key),'quick'))))));
     },
     pending() {
       const f = filters.pending, selected = new Set(), rowGrades = new Map();
@@ -321,18 +323,20 @@
       return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('집계 기간',days)),el('p',{class:'adm-note'},'메인·성장 스토리·인트라넷·개인정보처리방침의 페이지 방문 횟수입니다. 방문자 수와 다르며, IP·쿠키·기기 식별값은 저장하지 않습니다.'),body);
     }
   };
-  const remember = control => {originals.set(control,controlValue(control));edited.delete(control);dirty=edited.size>0;};
+  const updateDraftNotice = () => { const note = document.getElementById('admin-draft-note'); if (note) note.hidden = !dirty; };
+  const remember = control => {originals.set(control,controlValue(control));edited.delete(control);dirty=edited.size>0;updateDraftNotice();};
   // TASK-ADM: 메뉴 권한(admin-matrix.js)·회원 관리(admin-members.js)는 따로 둔 화면 모듈이 같은 공용 도구를 씁니다.
   const ctx = {sb,S,el,button,field,input,select,table,empty,toast,mutate,go,fmt,gname,confirmAction,errorText,remember,num,badge,person,filters,profileComplete,checkedUpdate,load,
-    setDirty:value => { dirty = !!value; }, isBusy:() => busy, askClient:() => { if (!askClient && window.PA_ASK) askClient = window.PA_ASK.create(sb); return askClient; }};
+    setDirty:value => { dirty = !!value; updateDraftNotice(); }, isBusy:() => busy, askClient:() => { if (!askClient && window.PA_ASK) askClient = window.PA_ASK.create(sb); return askClient; }};
   const settings = window.PA_ADMIN_SETTINGS ? window.PA_ADMIN_SETTINGS(ctx) : {};
   const modules = Object.assign({}, window.PA_ADMIN_MATRIX ? window.PA_ADMIN_MATRIX(ctx) : {}, window.PA_ADMIN_MEMBERS ? window.PA_ADMIN_MEMBERS(ctx) : {}, window.PA_ADMIN_ARTICLES ? window.PA_ADMIN_ARTICLES(ctx) : {}, window.PA_ADMIN_MENUS ? window.PA_ADMIN_MENUS(ctx) : {}); // TASK-ART: 작성글모음(admin-articles.js) · TASK-MENU: 메뉴 관리(admin-menus.js)
   box.addEventListener('click',e=>{const b=e.target.closest('button');if(b){actionScope=b.closest('tr,details,.adm-panel') || b.closest('.adm-content');savesDraft=/저장|추가/.test(b.textContent);}},true);
-  const trackDraft = e => {if(e.target.matches('[data-draft="true"]:not(.adm-filter)')){controlValue(e.target)===originals.get(e.target)?edited.delete(e.target):edited.add(e.target);dirty=edited.size>0;}};
+  const trackDraft = e => {if(e.target.matches('[data-draft="true"]:not(.adm-filter)')){controlValue(e.target)===originals.get(e.target)?edited.delete(e.target):edited.add(e.target);dirty=edited.size>0;updateDraftNotice();}};
   box.addEventListener('input',trackDraft);
   box.addEventListener('change',trackDraft);
   window.addEventListener('beforeunload',e=>{if(dirty || busy){e.preventDefault();e.returnValue='';}});
-  document.addEventListener('keydown',e=>{if(e.key==='/' && ready && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input,textarea,select,[contenteditable]')){const q=box.querySelector('input[type="search"]');if(q){e.preventDefault();q.focus();}}});
+  document.addEventListener('keydown',e=>{if(e.key==='/' && ready && !e.isComposing && !document.querySelector('dialog[open]') && !e.ctrlKey && !e.metaKey && !e.altKey && !e.target.closest('input,textarea,select,[contenteditable]')){const q=box.querySelector('input[type="search"]');if(q){e.preventDefault();q.focus();}}});
+  window.addEventListener('hashchange', () => { const next = location.hash.slice(1).split('?')[0]; if (ready && TABS[next] && next !== tab) { go(next); if (tab !== next) history.replaceState(null,'','#' + tab); } });
   sb.auth.onAuthStateChange?.((event,session)=>{if(event==='SIGNED_OUT'||(event!=='INITIAL_SESSION'&&sessionOwner!==undefined&&(session?.user?.id||null)!==sessionOwner)){loadVersion++;setBusy(false);gate('로그인 정보가 바뀌었습니다','다른 계정의 관리 정보가 남지 않도록 화면을 비웠습니다. 인트라넷에서 다시 로그인해 주세요.');}});
   boot();
 })();
