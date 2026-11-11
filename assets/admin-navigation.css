@@ -3,16 +3,16 @@
 .admin-navigation>summary{padding:13px 16px;min-height:48px;cursor:pointer;overflow-wrap:anywhere;list-style:none;align-items:center;gap:10px}
 .admin-navigation>summary::-webkit-details-marker{display:none}
 .admin-navigation-toggle{margin-right:9px;font-weight:400}
-.admin-navigation-hint{float:right;font-size:13px;color:#52647a;font-weight:400}
+.admin-navigation-hint{float:right;font-size:13px;color:#4b5563;font-weight:400}
 .admin-navigation nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;padding:16px}
 .admin-navigation-group{min-width:0}
-.admin-navigation-group p{font-size:13px;font-weight:650;margin:0 0 6px;padding:0 10px;color:#62738a;letter-spacing:.03em}
+.admin-navigation-group p{font-size:13px;font-weight:650;margin:0 0 6px;padding:0 10px;color:#4b5563;letter-spacing:.03em}
 .admin-navigation a{display:flex;justify-content:space-between;align-items:center;gap:6px;min-height:40px;padding:8px 10px;border-radius:7px;font-size:14px;line-height:1.45;color:#43546b;text-decoration:none;overflow-wrap:anywhere}
 .admin-navigation a:hover{background:#f3f6f9;color:#172b46}
 .admin-navigation a[aria-current=page]{background:#e8eff6;color:#193d61;font-weight:650;box-shadow:inset 3px 0 #264f74}
-.admin-navigation-count{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;min-width:20px;text-align:center;background:#fff;border:1px solid #dce3eb;border-radius:5px;padding:1px 5px}
-.admin-command-trigger{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0;padding:11px 10px;border:1px solid #dce3eb;background:#fff;border-radius:7px;color:#52647a;font:inherit;font-size:13px;cursor:pointer}
-.admin-command-trigger kbd{font:inherit;font-size:12px;white-space:nowrap;border:1px solid #dce3eb;border-radius:4px;padding:1px 4px}
+.admin-navigation-count{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;min-width:20px;text-align:center;background:#fff;border:1px solid #dce3eb;border-radius:5px;padding:1px 5px}
+.admin-command-trigger{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0;padding:11px 10px;border:1px solid #dce3eb;background:#fff;border-radius:7px;color:#4b5563;font:inherit;font-size:13px;cursor:pointer}
+.admin-command-trigger kbd{font:inherit;font-size:13px;white-space:nowrap;border:1px solid #dce3eb;border-radius:4px;padding:1px 4px}
 .admin-navigation :focus-visible,.admin-command :focus-visible{outline:3px solid #466995;outline-offset:2px}
 .admin-command{box-sizing:border-box;width:min(560px,calc(100vw - 32px));max-width:calc(100vw - 32px);max-height:calc(100dvh - 48px);margin:10vh auto auto;padding:20px;border:1px solid #dce3eb;border-radius:14px;color:#172b46;background:#fff;box-shadow:0 20px 80px #152c4929;overflow:auto;font-family:inherit}
 .admin-command::backdrop{background:#14263e66}
@@ -20,12 +20,17 @@
 .admin-command h2{font-size:19px;margin:0}
 .admin-command-close{border:0;border-radius:6px;background:#f1f4f7;color:#43546b;min-height:40px;padding:7px 10px;font:inherit;font-size:13px;cursor:pointer}
 .admin-command input{box-sizing:border-box;width:100%;min-width:0;min-height:48px;border:1px solid #a9b8ca;border-radius:8px;padding:10px 12px;font:inherit;font-size:16px;color:#172b46;background:#fff}
-.admin-command-help{font-size:13px;color:#62738a;margin:10px 0}
+.admin-command-help{font-size:13px;color:#4b5563;margin:10px 0}
 .admin-command-results{display:grid;gap:4px;max-height:48vh;overflow:auto;padding:3px}
 .admin-command-result{display:flex;justify-content:space-between;gap:12px;align-items:center;min-height:44px;padding:10px;border:0;border-radius:7px;background:#fff;color:#172b46;font:inherit;font-size:14px;text-align:left;cursor:pointer}
-.admin-command-result small{color:#62738a;font-size:13px;flex-shrink:0}
+.admin-command-label{display:flex;align-items:center;gap:8px;min-width:0}
+.admin-command-result small{color:#4b5563;font-size:13px;flex-shrink:0}
 .admin-command-result:hover,.admin-command-result:focus{background:#edf2f8}
 @media(min-width:1001px){.admin-navigation>summary{display:none!important}.admin-navigation:not([open])>nav{display:grid}}
 @media(max-width:1000px){.admin-navigation nav{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-navigation:not([open])>nav{display:none}.admin-navigation a{min-height:44px}.admin-navigation>summary{display:block}.admin-navigation[open]>summary{border-bottom:1px solid #e2e8ef;margin-bottom:0}}
 @media(max-width:600px){.admin-navigation a,.admin-command-trigger,.admin-command-close,.admin-command-result{font-size:15px}.admin-command-close{min-height:44px}}
 @media(max-width:360px){.admin-navigation-hint{display:none}}
+
+/* POLISH: shared administrator-only text token, including the separate AI cost page. */
+body.ask-admin-page.intranet-light{--text-3:#4b5563}
+body.ask-admin-page .ask-admin-users tbody td::before{color:#4b5563}

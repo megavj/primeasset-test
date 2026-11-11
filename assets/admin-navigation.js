@@ -14,6 +14,13 @@
   const href = key => key === 'ask' ? '/members/admin/ask/' : '/members/admin/#' + key;
   const visible = key => key !== 'requests' || currentKey === key || Number(currentCounts.requests) > 0;
   media.addEventListener('change', event => document.querySelectorAll('.admin-navigation').forEach(wrap => { wrap.open = event.matches; }));
+  function countBadge(key) {
+    const value = currentCounts[key];
+    if (!(Number(value) > 0)) return null;
+    const badge = make('span', String(value), 'admin-navigation-count');
+    badge.setAttribute('aria-label', value + '건');
+    return badge;
+  }
   function create(current, select, counts) {
     currentSelect = select; currentKey = current; currentCounts = counts || {};
     const wrap = make('details', null, 'admin-navigation');
@@ -28,7 +35,7 @@
         if (!visible(key)) return;
         const link = make('a'); link.href = href(key); link.dataset.tab = key;
         link.append(make('span', text));
-        if (counts && counts[key] != null) { const count = make('span', String(counts[key]), 'admin-navigation-count'); count.setAttribute('aria-label', counts[key] + '건'); link.append(count); }
+        const count = countBadge(key); if (count) link.append(count);
         if (current === key) link.setAttribute('aria-current', 'page');
         if (select && key !== 'ask') link.addEventListener('click', event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); select(key); });
         section.append(link);
@@ -59,7 +66,9 @@
       const results = entries.filter(e => (e.label + e.group).toLocaleLowerCase().replace(/\s/g, '').includes(term));
       list.replaceChildren(...results.map(e => {
         const b = make('button', null, 'admin-command-result'); b.type = 'button';
-        b.append(make('span', e.label), make('small', e.key === currentKey ? '현재 메뉴' : e.group));
+        const label = make('span', e.label, 'admin-command-label');
+        const count = countBadge(e.key); if (count) label.append(count);
+        b.append(label, make('small', e.key === currentKey ? '현재 메뉴' : e.group));
         b.addEventListener('click', () => {
           restoreFocus = false; dialog.close();
           if (currentSelect && e.key !== 'ask') { if (currentSelect(e.key) === false) restoreFocus = true; }

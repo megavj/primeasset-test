@@ -167,3 +167,15 @@ body.intranet-light .art-view-title:focus,body.intranet-light .art-view-title:fo
 .art-adnote strong{display:block;margin:0 0 4px;color:#a3000f;font-size:16px}
 .art-adnote p{margin:0 0 4px;font-size:15px;line-height:1.6;color:var(--text-2)}
 .art-adnote mark{background:#fff3b0;padding:0 3px}
+
+/* ART7: 저장된 검색어·시리즈, 원문을 보존하는 최신 내용 반영 요청 */
+.art-search-meta{display:grid;gap:6px;margin:10px 0}
+.art-series{margin:0;color:var(--accent);font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.art-hashtags{margin:0;color:var(--text-2);font-size:14px;line-height:1.7;overflow-wrap:anywhere}
+.art-tags li.is-draft{background:#e2f0ff;color:#174b78}
+.art-refresh{display:grid;gap:10px;margin:0 0 18px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-tile);background:var(--bg-2);min-width:0}
+.art-refresh-result a{font-size:15px;font-weight:700;color:var(--accent)}
+.art-locker .art-refresh{grid-column:1/-1;margin:0}
+.art-locker>li>div{min-width:0}
+.g-admin .adm-art-viewer .art-refresh{margin-top:12px}
+.g-admin .adm-art-viewer .art-actions{margin:10px 0}

@@ -298,8 +298,106 @@
   }
   function tagChips(tags) {
     const t = tags || {}, list = [t.insurance, t.format, t.length].filter(v => typeof v === 'string' && v);
-    const items = (isProduct(t) ? [el('li', { class: 'is-product' }, PRODUCT_LABEL)] : []).concat(list.map(v => el('li', {}, v)));
+    const items = (t.draft || t.revision?.is_draft ? [el('li', { class: 'is-draft' }, '최신 내용 반영 초안')] : []).concat(isProduct(t) ? [el('li', { class: 'is-product' }, PRODUCT_LABEL)] : [], list.map(v => el('li', {}, v)));
     return items.length ? el('ul', { class: 'art-tags', 'aria-label': '글 분류' }, ...items) : null;
+  }
+  // ART7: 저장된 검색어·시리즈만 보여 준다. 예전 글의 태그를 화면에서 임의로 만들어 넣지 않는다.
+  function hashtags(meta) {
+    const values = Array.isArray(meta?.hashtags) ? meta.hashtags : [];
+    const tags = [...new Set(values.filter(v => typeof v === 'string' && /^#[가-힣A-Za-z0-9]{2,50}$/.test(v)))].slice(0, 10);
+    return tags.length >= 5 ? tags : [];
+  }
+  function seriesLabel(meta) {
+    const s = meta?.series;
+    if (!s || typeof s.name !== 'string' || !s.name.trim() || !Number.isInteger(Number(s.number)) || Number(s.number) < 1) return '';
+    return `${s.name} · ${Number(s.number)}편${Number(s.total) >= Number(s.number) ? ` / ${Number(s.total)}편` : ''}`;
+  }
+  function searchMeta(meta) {
+    const label = seriesLabel(meta), tags = hashtags(meta);
+    if (!label && !tags.length) return null;
+    return el('div', { class: 'art-search-meta' },
+      label ? el('p', { class: 'art-series' }, label) : null,
+      tags.length ? el('p', { class: 'art-hashtags', 'aria-label': '해시태그' }, tags.join(' ')) : null);
+  }
+  const copyHashtags = getArticle => copyWith(getArticle, a => {
+    const tags = hashtags(a.meta || a.tags);
+    if (!tags.length) throw new Error('art_no_hashtags');
+    return { text: tags.join(' ') };
+  }, false);
+
+  // ART7: 버튼은 요청만 대기열에 넣는다. 생성·심의·원문대조·새 초안 저장은 맥 생성기가 한다.
+  // 기능 확인이 성공해야 활성화하므로 SQL 미적용 상태에서 요청을 성공했다고 표시하지 않는다.
+  const refreshCapabilities = new WeakMap();
+  function refreshError(e) {
+    const code = `${e?.code || ''} ${e?.message || ''}`;
+    if (/PGRST202|42883|function.*not.*exist|schema cache/i.test(code)) return '최신 내용 반영 기능은 준비 중입니다. 관리자에게 기능 설정을 확인해 달라고 알려 주세요.';
+    if (/42501|art_forbidden|refresh_forbidden|401|JWT|stale_session/i.test(code)) return '요청 권한이나 로그인 상태를 확인할 수 없습니다. 다시 로그인한 뒤 확인해 주세요.';
+    if (/art_not_found|refresh_source|P0002/i.test(code)) return '원래 글을 확인할 수 없습니다. 보관함을 새로 열어 주세요.';
+    return '요청 상태를 확인하지 못했습니다. 연결을 확인하고 상태를 새로고침해 주세요.';
+  }
+  function refreshControls(sb, article, opts = {}) {
+    const info = el('p', { class: 'art-lock-note' }, '원래 글은 그대로 두고, 같은 주제·검색어를 최신 자료로 다시 확인한 새 초안을 내 보관함에 추가합니다. 생성과 검사가 끝날 때까지 기다려 주세요. 새 초안도 광고심의 후 게시하세요.');
+    const status = el('p', { class: 'art-status', role: 'status', 'aria-live': 'polite' }, '최신 내용 반영 기능을 확인하는 중…');
+    const result = el('span', { class: 'art-refresh-result' });
+    const request = el('button', { type: 'button', class: 'g-btn g-btn--ghost art-act', disabled: true }, '최신 내용 반영판 만들기');
+    const reload = el('button', { type: 'button', class: 'g-btn g-btn--ghost art-act', disabled: true }, '요청 상태 새로고침');
+    const box = el('section', { class: 'art-refresh', 'aria-label': '최신 내용 반영판 만들기' }, el('div', { class: 'art-row' }, request, reload, result), info, status);
+    let current = null, requestKey = null, working = false;
+    const valid = () => { if (opts.check) opts.check(); };
+    const active = () => current && ['queued', 'processing'].includes(current.status);
+    const uuid = () => {
+      if (crypto.randomUUID) return crypto.randomUUID();
+      const b = crypto.getRandomValues(new Uint8Array(16)); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+      return [...b].map((v, i) => ([4, 6, 8, 10].includes(i) ? '-' : '') + v.toString(16).padStart(2, '0')).join('');
+    };
+    const show = row => {
+      current = row || null; result.replaceChildren();
+      const messages = {
+        queued: '요청을 접수했습니다. 맥 생성기가 처리할 차례를 기다리고 있습니다. 원래 글은 그대로 보관됩니다.',
+        processing: '최신 자료를 확인하고 새 초안을 만드는 중입니다. 원래 글은 그대로 보관됩니다.',
+        succeeded: '새 초안을 만들었습니다. 내용과 출처를 확인한 뒤 광고심의를 받고 게시하세요.',
+        failed: '새 초안을 완성하지 못했습니다. 원래 글은 그대로 있습니다. 다시 요청할 수 있습니다.'
+      };
+      status.textContent = row ? messages[row.status] || '요청 상태를 확인해 주세요.' : '요청하면 대기열에 접수됩니다. 원래 글을 덮어쓰거나 게시하지 않습니다.';
+      if (row?.status === 'succeeded' && /^[0-9a-f-]{36}$/i.test(row.result_article_id || '')) result.append(el('a', { href: '/members/articles/#a=' + row.result_article_id }, '새 초안 보기 →'));
+      if (row && ['succeeded', 'failed'].includes(row.status)) requestKey = null;
+      request.disabled = !!active();
+    };
+    async function load(force = false) {
+      if (working) return;
+      working = true; request.disabled = true; reload.disabled = true;
+      try {
+        if (opts.verify) await opts.verify(); valid();
+        if (force) refreshCapabilities.delete(sb);
+        if (!refreshCapabilities.has(sb)) refreshCapabilities.set(sb, sb.rpc('art_refresh_capabilities').then(r => {
+          if (r.error) throw r.error;
+          if (!r.data?.enabled || Number(r.data.version) < 7) throw new Error('art_refresh_function_not_exist');
+          return r.data;
+        }).catch(e => { refreshCapabilities.delete(sb); throw e; }));
+        await refreshCapabilities.get(sb); valid();
+        const r = await sb.rpc('art_refresh_status', { p_article_id: article.id }); valid();
+        if (r.error) throw r.error;
+        show(r.data);
+      } catch (e) { request.disabled = true; status.textContent = refreshError(e); }
+      finally { working = false; reload.disabled = false; }
+    }
+    request.addEventListener('click', async () => {
+      if (working || active() || request.disabled) return;
+      working = true; request.disabled = true; reload.disabled = true;
+      status.textContent = '요청을 접수하는 중…';
+      try {
+        if (opts.verify) await opts.verify(); valid();
+        if (!requestKey) requestKey = uuid();
+        const r = await sb.rpc('art_request_refresh', { p_article_id: article.id, p_request_key: requestKey }); valid();
+        if (r.error) throw r.error;
+        if (!r.data?.id || !['queued', 'processing', 'succeeded', 'failed'].includes(r.data.status)) throw new Error('invalid_refresh_response');
+        show(r.data);
+      } catch (e) { status.textContent = refreshError(e) + ' 접수 여부를 모를 때는 상태 새로고침을 먼저 눌러 주세요.'; request.disabled = true; }
+      finally { working = false; reload.disabled = false; }
+    });
+    reload.addEventListener('click', () => load(true));
+    load();
+    return box;
   }
   const kDate = v => { const d = new Date(v); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' }); };
   const daysLeft = v => { const d = Date.parse(v); return Number.isNaN(d) ? null : Math.max(0, Math.ceil((d - Date.now()) / 86400000)); };
@@ -310,14 +408,15 @@
     const say = t => { if (status) status.textContent = t; };
     const mk = (label, title, fn) => el('button', { type: 'button', class: 'g-btn g-btn--ghost art-act', disabled: locked, title, onclick: async ev => {
       const b = ev.currentTarget; b.disabled = true;
-      try { await fn(b); } catch (e) { console.debug('[art action]', e); say(/image_/.test(e && e.message) ? '그림을 받지 못했습니다. 잠시 후 다시 눌러 주세요.' : '하지 못했습니다. 다시 눌러 주세요. 계속 안 되면 글을 직접 선택해 복사해 주세요.'); }
+      try { await fn(b); } catch (e) { console.debug('[art action]', e); say(e?.message === 'art_no_hashtags' ? '이 글에는 저장된 해시태그가 없습니다. 최신 내용 반영판을 만들면 새 초안에 해시태그가 포함됩니다.' : /image_/.test(e && e.message) ? '그림을 받지 못했습니다. 잠시 후 다시 눌러 주세요.' : '하지 못했습니다. 다시 눌러 주세요. 계속 안 되면 글을 직접 선택해 복사해 주세요.'); }
       finally { b.disabled = locked; }
     } }, label);
     const a = mk('HTML 복사', '홈페이지·워드프레스의 HTML(코드) 편집 칸에 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyHtml(getArticle); say('HTML을 복사했습니다. 홈페이지의 HTML 편집 칸, 워드프레스는 \'사용자 정의 HTML\' 블록(또는 코드 편집기), 티스토리는 HTML 모드에 붙여 넣으세요. 그림 주소도 들어 있습니다.'); });
     const b = mk('서식 그대로 복사', '네이버 블로그 편집기에 그대로 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyRich(getArticle); say('서식째 복사했습니다. 네이버 블로그 글쓰기 본문에 붙여 넣으세요(제목은 제목 칸에 따로). 그림이 안 들어오면 ▲ 설명 줄 위에 [그림 내려받기]로 받은 사진을 올려 주세요.'); });
     const c = mk('그림 내려받기', '글에 들어간 그림 파일을 모두 내려받기', async () => { const art = await Promise.resolve(getArticle()); const n = await downloadImages(art, (i, all) => say(`그림 ${i}/${all}장 내려받는 중…`)); say(n ? `그림 ${n}장을 내려받았습니다.` : '이 글에는 내려받을 그림이 없습니다.'); });
-    return el('div', { class: 'art-actions', role: 'group', 'aria-label': '글 가져가기' }, a, b, c);
+    const d = mk('해시태그 복사', '저장된 검색어형 해시태그 5~10개를 복사하기', async () => { await copyHashtags(getArticle); say('해시태그를 복사했습니다. 블로그의 태그 입력 칸에 붙여 넣으세요.'); });
+    return el('div', { class: 'art-actions', role: 'group', 'aria-label': '글 가져가기' }, ...(o.hashtagsOnly ? [d] : [a, b, c, d]));
   }
 
-  window.PA_ART_CORE = { STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, actionButtons, kDate, daysLeft, fileBase };
+  window.PA_ART_CORE = { STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, copyHashtags, hashtags, seriesLabel, searchMeta, refreshControls, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, actionButtons, kDate, daysLeft, fileBase };
 })();

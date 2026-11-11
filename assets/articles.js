@@ -129,6 +129,7 @@
         x.thumb ? el('a', { class: 'art-thumb', href: open, tabindex: '-1', 'aria-hidden': 'true' }, el('img', { class: 'art-thumb-bg', src: x.thumb, alt: '', loading: 'lazy', decoding: 'async' }), el('img', { src: x.thumb, alt: '', loading: 'lazy', decoding: 'async', width: '600', height: '400' })) : null,   // ART3: 비율이 달라도 자르지 않음(뒤는 흐린 같은 그림)
         el('div', { class: 'art-card-body' },
           tagChips(x.tags),
+          K.seriesLabel(x.tags) ? el('p', { class: 'art-series' }, K.seriesLabel(x.tags)) : null,
           el('h2', { class: 'art-card-title' }, el('a', { href: open }, x.title)),
           x.summary ? el('p', { class: 'art-card-sum' }, x.summary) : null,
           el('p', { class: 'art-card-meta' }, [x.chars ? `약 ${Number(x.chars).toLocaleString('ko-KR')}자` : null, `${kDate(x.created_at)} 작성`, left != null ? `${left}일 뒤 자동 삭제` : null].filter(Boolean).join(' · ')),
@@ -155,12 +156,12 @@
     if (r.error) return failed(r.error, '글을 불러오지 못했습니다');
     const a = (r.data || [])[0];
     if (!a) return failed({ message: S.quota && S.quota.allowed === false ? 'art_forbidden' : 'art_not_found' });
-    const mine = a.mine === true, open = a.status === 'open';
+    const mine = a.mine === true, open = a.status === 'open', draft = a.status === 'draft';
     const status = el('p', { class: 'art-status', role: 'status', 'aria-live': 'polite' });
     const left = daysLeft(a.expires_at);
     const imgs = (a.images || []).length;
     const meta = el('p', { class: 'art-view-meta' }, [a.meta && a.meta.chars ? `약 ${Number(a.meta.chars).toLocaleString('ko-KR')}자` : null, `그림 ${imgs}장`, `${kDate(a.created_at)} 작성`,
-      mine ? `${kDate(a.claimed_at)} 보관` : open && left != null ? `${left}일 뒤 자동 삭제` : null].filter(Boolean).join(' · '));
+      draft ? '최신 내용 반영 초안 · 광고심의 후 게시' : mine ? `${kDate(a.claimed_at)} 보관` : open && left != null ? `${left}일 뒤 자동 삭제` : null].filter(Boolean).join(' · '));
     const back = el('p', { class: 'art-back' }, mine ? el('a', { href: '/members/me/#art-locker' }, '← 내 보관함') : el('a', { href: '/members/articles/' }, '← 작성글모음 목록'));
     let actions;
     if (mine) actions = el('div', { class: 'art-actbar' }, K.actionButtons(() => a, status), status);
@@ -175,9 +176,10 @@
     busy(false);
     root.replaceChildren(back,
       el('article', { class: 'art-view' },
-        el('header', { class: 'art-view-head' }, tagChips(a.meta), el('h2', { class: 'art-view-title', tabindex: '-1' }, a.title), meta),
+        el('header', { class: 'art-view-head' }, tagChips(a.meta), el('h2', { class: 'art-view-title', tabindex: '-1' }, a.title), meta, K.searchMeta(a.meta)),
         K.adNote(a.meta),   // ART4 상품광고 표시·심의필 자리
         actions,
+        mine ? K.refreshControls(S.sb, a, { check: () => { if (epoch !== S.epoch || !S.owner) throw new Error('stale_session'); } }) : null,
         mine ? K.postingGuide(a.meta) : null,
         body,
         null),
