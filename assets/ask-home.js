@@ -35,7 +35,7 @@
       const submit = el('button', { class: 'g-btn g-btn--pri', type: 'submit' }, '질문하기');
       const out = el('p', { class: 'pa-ask-message', role: 'alert' });
       const suggestions = el('div', { class: 'pa-ask-suggestions', hidden: '', 'aria-label': '입력과 맞는 업무 도구' });
-      let status, steps, progress, thinking, thinkingText, partial, elapsed, elapsedTimer = null, elapsedStart = 0, activeStage = 'queued';
+      let status, steps, progress, thinking, thinkingText, partial, elapsed, elapsedTimer = null, elapsedStart = 0;
       function stopElapsed() { clearInterval(elapsedTimer); elapsedTimer = null; }
       function makeProgress() {
         stopElapsed(); elapsedStart = 0;
@@ -200,14 +200,16 @@
         const follow = chat && thread.scrollHeight - thread.scrollTop - thread.clientHeight < 120;
         progress.hidden = false;
         const info = state && state.progress, mapped = info && info.stage || (value === 'ready' || value === 'writing' ? 'thinking' : value);
-        activeStage = mapped;
         progress.setAttribute('aria-busy', String(mapped !== 'done'));
         const index = { queued: 0, searching: 1, found: 2, thinking: 3, writing: 4, done: 5 }[mapped] ?? 1;
         const count = Number(info ? info.evidenceCount : state && state.evidenceCount);
         if (Number.isFinite(count) && index >= 2) steps.children[2].textContent = `관련 자료 ${count}건 찾음`;
         [...steps.children].forEach((item, i) => { item.classList.toggle('is-current', i === index); item.classList.toggle('is-complete', i < index); if (i === index) item.setAttribute('aria-current', 'step'); else item.removeAttribute('aria-current'); });
         status.textContent = { queued: '질문을 받았습니다. 차례를 기다리고 있습니다.', searching: '보험자료에서 관련 근거를 찾고 있습니다.', found: `관련 자료 ${Number.isFinite(count) ? count : 0}건을 찾았습니다.`, thinking: '찾은 자료를 검토하며 답변을 준비하고 있습니다.', writing: '답변을 작성하고 있습니다.', done: '답변을 완성했습니다.' }[mapped] || '진행 상태를 확인하고 있습니다.';
-        if (state && Number.isFinite(Number(state.elapsedMs))) elapsedStart = Date.now() - Number(state.elapsedMs);
+        if (state && Number.isFinite(Number(state.elapsedMs))) {
+          const serverStart = Date.now() - Number(state.elapsedMs);
+          elapsedStart = elapsedStart ? Math.min(elapsedStart, serverStart) : serverStart;
+        }
         if (!elapsedStart) elapsedStart = Date.now();
         const tick = () => { elapsed.textContent = `${Math.max(0, Math.floor((Date.now() - elapsedStart) / 1000))}초`; };
         tick();
@@ -323,7 +325,7 @@
             el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copyAnswer(result, false, copyNote) }, '답변 복사'),
             el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copyAnswer(result, true, copyNote) }, '근거 포함 복사'), collapse), copyNote, content);
         renderDeep(initialDeep || result.deep, initialDeepQuota || result.deepQuota);
-        answer.hidden = false; stage('done', { elapsedMs: result.elapsedMs, evidenceCount: sources.length }); retry.hidden = true; retryNote.hidden = true; retryKind = '';
+        answer.hidden = false; stage('done', { elapsedMs: elapsedStart ? Math.max(Number(result.elapsedMs) || 0, Date.now() - elapsedStart) : result.elapsedMs, evidenceCount: sources.length }); retry.hidden = true; retryNote.hidden = true; retryKind = '';
       }
       function pause(ms) { return new Promise(resolve => { resumePause = resolve; timer = setTimeout(() => { resumePause = null; resolve(); }, ms); }); }
       async function run(fresh) {
