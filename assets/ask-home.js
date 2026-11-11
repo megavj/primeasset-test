@@ -35,17 +35,21 @@
       const submit = el('button', { class: 'g-btn g-btn--pri', type: 'submit' }, '질문하기');
       const out = el('p', { class: 'pa-ask-message', role: 'alert' });
       const suggestions = el('div', { class: 'pa-ask-suggestions', hidden: '', 'aria-label': '입력과 맞는 업무 도구' });
-      let status, steps, progress, thinking, thinkingText, partial, elapsed, elapsedTimer = null, elapsedStart = 0;
+      let status, steps, progress, thinking, thinkingText, partial, elapsed, liveText, liveLog, liveLast = '', elapsedTimer = null, elapsedStart = 0;
       function stopElapsed() { clearInterval(elapsedTimer); elapsedTimer = null; }
       function makeProgress() {
         stopElapsed(); elapsedStart = 0;
         status = el('p', { class: 'pa-ask-status', role: 'status', 'aria-live': 'polite' });
         elapsed = el('span', { class: 'pa-ask-elapsed', 'aria-label': '경과 시간', 'aria-live': 'off' }, '0초');
-        steps = el('ol', { class: 'pa-ask-steps', 'aria-label': '답변 진행 단계' }, ...['질문 받음', '보험자료 찾는 중', '관련 자료 찾음', '생각하는 중', '답변 작성 중', '완료'].map(t => el('li', {}, t)));
+        // 2026-11-11 이사님 요청: 단계 칸 대신 실제 진행 문장이 실시간으로 바뀌며 보이도록.
+        liveText = el('span', { class: 'pa-ask-live-text' }, '질문을 보내고 있어요');
+        liveLog = el('ol', { class: 'pa-ask-live-log', 'aria-label': '지나온 진행 과정' });
+        liveLast = '';
+        steps = el('div', { class: 'pa-ask-live', 'aria-label': '답변 진행 상황' }, el('span', { class: 'pa-ask-live-dot', 'aria-hidden': 'true' }), liveText);
         thinkingText = el('p', { class: 'pa-ask-thinking-text' });
         thinking = el('details', { class: 'pa-ask-thinking', open: '', hidden: '' }, el('summary', {}, '생각 과정'), el('p', { class: 'pa-ask-help' }, '답변 준비 상황을 간단히 보여 드립니다.'), thinkingText);
         partial = el('div', { class: 'pa-ask-partial', hidden: '', 'aria-label': '작성 중인 답변', 'aria-live': 'off' });
-        return el('div', { class: 'pa-ask-progress', hidden: '' }, steps, el('div', { class: 'pa-ask-progress-line' }, status, elapsed), thinking, partial);
+        return el('div', { class: 'pa-ask-progress', hidden: '' }, el('div', { class: 'pa-ask-progress-line' }, steps, elapsed), liveLog, status, partial);
       }
       progress = makeProgress();
       let answerIndex = 0;
@@ -203,9 +207,15 @@
         progress.setAttribute('aria-busy', String(mapped !== 'done'));
         const index = { queued: 0, searching: 1, found: 2, thinking: 3, writing: 4, done: 5 }[mapped] ?? 1;
         const count = Number(info ? info.evidenceCount : state && state.evidenceCount);
-        if (Number.isFinite(count) && index >= 2) steps.children[2].textContent = `관련 자료 ${count}건 찾음`;
-        [...steps.children].forEach((item, i) => { item.classList.toggle('is-current', i === index); item.classList.toggle('is-complete', i < index); if (i === index) item.setAttribute('aria-current', 'step'); else item.removeAttribute('aria-current'); });
-        status.textContent = { queued: '질문을 받았습니다. 차례를 기다리고 있습니다.', searching: '보험자료에서 관련 근거를 찾고 있습니다.', found: `관련 자료 ${Number.isFinite(count) ? count : 0}건을 찾았습니다.`, thinking: '찾은 자료를 검토하며 답변을 준비하고 있습니다.', writing: '답변을 작성하고 있습니다.', done: '답변을 완성했습니다.' }[mapped] || '진행 상태를 확인하고 있습니다.';
+        const fallback = { queued: '질문을 받았습니다. 차례를 기다리고 있습니다.', searching: '보험자료에서 관련 근거를 찾고 있습니다.', found: `관련 자료 ${Number.isFinite(count) ? count : 0}건을 찾았습니다.`, thinking: '찾은 자료를 검토하며 답변을 준비하고 있습니다.', writing: '답변을 작성하고 있습니다.', done: '답변을 완성했습니다.' }[mapped] || '진행 상태를 확인하고 있습니다.';
+        const nowText = mapped === 'done' ? '답변을 완성했어요' : window.PA_ASK.maskResidentId(String(info && info.thinking || fallback));
+        if (nowText !== liveLast) {
+          if (liveLast) { liveLog.append(el('li', {}, liveLast.replace(/^질문을 받았습니다.*$/, '질문 접수').replace(/(검색|검토|확인|분석|정리) ?중(?=$| ·| \()/g, '$1 완료').replace(/(찾|읽)는 중/g, m => m[0] === '찾' ? '찾음' : '읽음').replace(/하고 있어요$/, '했어요').replace(/있습니다\.$/, '있었습니다.'))); while (liveLog.children.length > 6) liveLog.firstChild.remove(); }
+          liveLast = nowText; liveText.textContent = nowText;
+          liveText.classList.remove('is-new'); void liveText.offsetWidth; liveText.classList.add('is-new');
+        }
+        steps.classList.toggle('is-done', mapped === 'done');
+        status.textContent = mapped === 'done' ? '답변을 완성했습니다.' : '';
         if (state && Number.isFinite(Number(state.elapsedMs))) {
           const serverStart = Date.now() - Number(state.elapsedMs);
           elapsedStart = elapsedStart ? Math.min(elapsedStart, serverStart) : serverStart;
@@ -214,11 +224,10 @@
         const tick = () => { elapsed.textContent = `${Math.max(0, Math.floor((Date.now() - elapsedStart) / 1000))}초`; };
         tick();
         if (!elapsedTimer && mapped !== 'done') elapsedTimer = setInterval(tick, 1000);
-        if (info && info.thinking) { thinkingText.textContent = window.PA_ASK.maskResidentId(info.thinking); thinking.hidden = false; }
         if (info && typeof info.partialAnswer === 'string' && info.partialAnswer) {
           partial.textContent = window.PA_ASK.maskResidentId(info.partialAnswer); partial.hidden = false;
         }
-        if (mapped === 'done') { stopElapsed(); thinking.open = false; partial.textContent = ''; partial.hidden = true; }
+        if (mapped === 'done') { stopElapsed(); liveLog.hidden = true; partial.textContent = ''; partial.hidden = true; }
         if (follow) thread.scrollTop = thread.scrollHeight;
       }
       function renderAnswer(result, initialDeep, initialDeepQuota) {

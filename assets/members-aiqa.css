@@ -154,3 +154,18 @@ body .pa-qa-empty.pa-qa-empty{font-size:16px;line-height:1.6}
   .g-members .pa-aiqa-home .pa-home-head { flex-direction:column; align-items:flex-start; gap:4px; }
   .g-members .pa-aiqa-home .pa-qa-new li { display:block; }
 }
+
+/* 2026-11-11 실시간 진행 문장 (단계 칸 대체) */
+.pa-ask-progress-line { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.pa-ask-live { display:flex; align-items:flex-start; gap:10px; min-height:28px; flex:1; min-width:0; }
+.pa-ask-live-dot { flex:none; width:8px; height:8px; margin-top:.55em; border-radius:50%; background:var(--accent); animation:pa-live-pulse 1.4s ease-in-out infinite; }
+.pa-ask-live.is-done .pa-ask-live-dot { animation:none; background:var(--text-3); }
+.pa-ask-live-text { font-size:1rem; line-height:1.6; color:var(--text-1, inherit); font-weight:500; overflow-wrap:anywhere; }
+.pa-ask-live-text.is-new { animation:pa-live-in .35s ease-out; }
+.pa-ask-live-log { list-style:none; margin:6px 0 0 18px; padding:0; display:grid; gap:2px; }
+.pa-ask-live-log li { font-size:.875rem; line-height:1.55; color:var(--text-3); overflow-wrap:anywhere; }
+.pa-ask-live-log li::before { content:'✓ '; color:var(--text-3); }
+.pa-ask-live-log:empty { display:none; }
+@keyframes pa-live-pulse { 0%,100% { opacity:.35; transform:scale(.85); } 50% { opacity:1; transform:scale(1); } }
+@keyframes pa-live-in { from { opacity:0; transform:translateY(3px); } to { opacity:1; transform:none; } }
+@media (prefers-reduced-motion: reduce) { .pa-ask-live-dot, .pa-ask-live-text.is-new { animation:none; } }
