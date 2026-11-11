@@ -347,6 +347,7 @@
           }
           const until = Date.now() + 600000;
           while (alive && Date.now() < until) {
+            const pollStart = Date.now();
             const result = await api.request('askStatus', { id: last.id });
             if (!alive) return;
             setQuota(result.quota);
@@ -358,9 +359,9 @@
               if (!alive) return;
               setQuota(written.quota);
               if (written.status === 'done' || written.answer) { renderAnswer(written.result || written, written.deep, written.deepQuota); if (chat) q.value = ''; if (onHistoryChange) onHistoryChange(); return; }
-              stage('writing', written); await pause(1500); continue;
+              stage('writing', written); await pause(Math.max(0, 2000 - (Date.now() - pollStart))); continue;
             }
-            stage(result.status, result); await pause(1500);
+            stage(result.status, result); await pause(Math.max(0, 2000 - (Date.now() - pollStart)));
           }
           if (alive) { const timeout = new Error('아직 처리 중입니다. 결과 다시 확인을 눌러 이어서 확인해 주세요.'); timeout.code = 'timeout'; throw timeout; }
         } catch (e) {
