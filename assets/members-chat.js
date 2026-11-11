@@ -100,7 +100,9 @@
         if (isMobile()) setDrawer(true); else { collapsed = false; write(collapseKey, false); syncSidebar(); close.focus(); }
       } }, icon('menu'));
       const backdrop = el('button', { type: 'button', class: 'pa-side-backdrop', tabindex: '-1', hidden: '', 'aria-label': '사이드바 닫기', onclick: () => setDrawer(false) });
-      const center = el('div', { class: 'pa-chat-center' }, el('div', { class: 'pa-chat-toolbar' }, opener, el('span', {}, '설계사 인트라넷')), ask.node);
+      const center = el('div', { class: 'pa-chat-center' }, el('div', { class: 'pa-chat-toolbar' }, opener), ask.node);
+      // 2026-11-11 대표 지시: 환영 문구에 이름 ('김상현님 무엇을 도와드릴까요?'), 빈 열을 만들던 '설계사 인트라넷' 글자 제거
+      { const hi = ask.node.querySelector('.pa-chat-welcome h2'); if (hi && profile.name) hi.textContent = profile.name + '님 무엇을 도와드릴까요?'; }
       const node = el('section', { class: 'pa-chat-shell', id: 'home', 'aria-label': '설계사 인트라넷' }, backdrop, sidebar, center, announce);
       sidebar.append(moreMenu);
       function syncSidebar() {

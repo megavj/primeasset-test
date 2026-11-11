@@ -92,3 +92,6 @@ body.pa-chat-layout :is(.g-foot,.g-tabbar) { display:none; }
 }
 @media (max-height:650px) { .pa-chat-examples { display:none; } .pa-chat-welcome { margin-bottom:16px; } .pa-chat .pa-ask-form #pa-q { min-height:48px; height:64px; } }
 @media (prefers-reduced-motion:reduce) { .pa-chat-shell * { transition:none!important; scroll-behavior:auto!important; } }
+
+/* 2026-11-11 대표 지시: PC에서 사이드바+대화창을 상단 바와 같은 폭·같은 왼쪽 선에 맞춤(사이드바 옆 빈 열 제거) */
+@media (min-width:761px) { body.pa-chat-layout #main { max-width:1208px; margin:0 auto; padding:16px 16px 0; box-sizing:content-box; } }
