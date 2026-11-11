@@ -41,10 +41,24 @@
 .pa-ask-message { color:var(--danger); font-size:1rem; line-height:1.6; overflow-wrap:anywhere; margin:12px 0; }
 .pa-ask-message:empty { display:none; }
 .pa-ask-progress { border-top:1px solid var(--line); margin-top:20px; padding-top:20px; }
-.pa-ask-steps { display:flex; list-style:none; gap:8px; margin:0 0 8px; padding:0; }
+.pa-ask-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); list-style:none; gap:6px; margin:0 0 10px; padding:0; }
 .pa-ask-steps li { flex:1; background:var(--bg-2); color:var(--text-3); border-radius:8px; padding:8px; text-align:center; font-size:1rem; }
 .pa-ask-steps .is-current { background:var(--accent-soft); color:var(--accent); font-weight:500; }
 .pa-ask-status { font-size:1rem; color:var(--text-2); line-height:1.6; margin:0; }
+.pa-ask-steps .is-complete { color:var(--text-2); }
+.pa-ask-progress-line { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+.pa-ask-elapsed { flex-shrink:0; color:var(--text-3); font-size:.875rem; font-variant-numeric:tabular-nums; }
+.pa-ask-thinking { margin-top:12px; padding:12px 14px; border:1px solid var(--line); border-radius:10px; }
+.pa-ask-thinking summary { min-height:44px; display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--text-2); }
+.pa-ask-thinking summary::before { content:'▸'; }
+.pa-ask-thinking[open] summary::before { content:'▾'; }
+.pa-ask-thinking-text { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.7; }
+.pa-ask-partial { margin-top:16px; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.8; }
+.pa-ask-partial::after { content:''; display:inline-block; width:2px; height:1em; margin-left:3px; vertical-align:text-bottom; background:var(--accent); }
+@media (max-width:540px) {
+  .pa-ask-steps { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .pa-ask-steps li { font-size:.875rem; }
+}
 .pa-ask-answer { margin-top:24px; padding-top:20px; border-top:1px solid var(--line); min-width:0; }
 .pa-ask-answer h3 { font-size:20px; font-weight:500; line-height:1.4; color:var(--text); margin:0 0 16px; }
 .pa-ask-answer h4 { font-size:1rem; font-weight:500; margin:20px 0 8px; }

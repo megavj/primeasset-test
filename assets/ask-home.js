@@ -35,9 +35,19 @@
       const submit = el('button', { class: 'g-btn g-btn--pri', type: 'submit' }, '질문하기');
       const out = el('p', { class: 'pa-ask-message', role: 'alert' });
       const suggestions = el('div', { class: 'pa-ask-suggestions', hidden: '', 'aria-label': '입력과 맞는 업무 도구' });
-      const status = el('p', { class: 'pa-ask-status', role: 'status', 'aria-live': 'polite' });
-      const steps = el('ol', { class: 'pa-ask-steps', 'aria-label': '답변 진행 단계' }, ...['접수', '찾는 중', '작성 중'].map(t => el('li', {}, t)));
-      const progress = el('div', { class: 'pa-ask-progress', hidden: '' }, steps, status);
+      let status, steps, progress, thinking, thinkingText, partial, elapsed, elapsedTimer = null, elapsedStart = 0, activeStage = 'queued';
+      function stopElapsed() { clearInterval(elapsedTimer); elapsedTimer = null; }
+      function makeProgress() {
+        stopElapsed(); elapsedStart = 0;
+        status = el('p', { class: 'pa-ask-status', role: 'status', 'aria-live': 'polite' });
+        elapsed = el('span', { class: 'pa-ask-elapsed', 'aria-label': '경과 시간', 'aria-live': 'off' }, '0초');
+        steps = el('ol', { class: 'pa-ask-steps', 'aria-label': '답변 진행 단계' }, ...['질문 받음', '보험자료 찾는 중', '관련 자료 찾음', '생각하는 중', '답변 작성 중', '완료'].map(t => el('li', {}, t)));
+        thinkingText = el('p', { class: 'pa-ask-thinking-text' });
+        thinking = el('details', { class: 'pa-ask-thinking', open: '', hidden: '' }, el('summary', {}, '생각 과정'), el('p', { class: 'pa-ask-help' }, '답변 준비 상황을 간단히 보여 드립니다.'), thinkingText);
+        partial = el('div', { class: 'pa-ask-partial', hidden: '', 'aria-label': '작성 중인 답변', 'aria-live': 'off' });
+        return el('div', { class: 'pa-ask-progress', hidden: '' }, steps, el('div', { class: 'pa-ask-progress-line' }, status, elapsed), thinking, partial);
+      }
+      progress = makeProgress();
       let answerIndex = 0;
       const makeAnswer = () => el('section', { class: 'pa-ask-answer', hidden: '' });
       let answer = makeAnswer();
@@ -65,6 +75,7 @@
       }
       function beginTurn(question) {
         node.classList.add('has-turn'); welcome.hidden = true; examples.hidden = true;
+        progress = makeProgress();
         answer = makeAnswer();
         const turn = el('article', { class: 'pa-chat-turn' }, el('div', { class: 'pa-chat-question' }, el('span', { class: 'sr' }, '내 질문: '), question), progress, answer);
         thread.append(turn);
@@ -72,7 +83,7 @@
       }
       function resetChat() {
         if (!chat || busy || !alive) return false;
-        answerGeneration++; clearTimeout(deepTimer); last = null; retryKind = '';
+        answerGeneration++; clearTimeout(deepTimer); stopElapsed(); last = null; retryKind = '';
         thread.replaceChildren(); answer = makeAnswer(); q.value = ''; out.textContent = '';
         suggestions.hidden = true; suggestions.replaceChildren(); progress.hidden = true; retry.hidden = true; retryNote.hidden = true;
         node.classList.remove('has-turn'); welcome.hidden = false; examples.hidden = false; q.focus();
@@ -120,7 +131,7 @@
       function invalidateAuth(error) {
         if (!['unauthorized', 'forbidden', 'login_required', 'invalid_token', 'expired', 'not_active', 'stale_session'].includes(error.code)) return false;
         if (!alive) return true;
-        alive = false; answerGeneration++; clearTimeout(deepTimer); clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause();
+        alive = false; answerGeneration++; clearTimeout(deepTimer); stopElapsed(); clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause();
         api.dispose(); q.value = ''; last = null; q.disabled = true; submit.disabled = true;
         answer.replaceChildren(); thread.replaceChildren(); answer.hidden = true; progress.hidden = true; suggestions.replaceChildren(); suggestions.hidden = true;
         retry.hidden = true; retryNote.hidden = true; quota.textContent = '로그인·이용 권한 확인 필요';
@@ -185,11 +196,28 @@
         if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { event.preventDefault(); if (!submit.disabled) run(true); }
         if (event.key === 'Escape') suggestions.hidden = true;
       });
-      function stage(value) {
+      function stage(value, state) {
+        const follow = chat && thread.scrollHeight - thread.scrollTop - thread.clientHeight < 120;
         progress.hidden = false;
-        const index = value === 'writing' ? 2 : value === 'queued' ? 0 : 1;
-        [...steps.children].forEach((item, i) => { item.classList.toggle('is-current', i === index); if (i === index) item.setAttribute('aria-current', 'step'); else item.removeAttribute('aria-current'); });
-        status.textContent = value === 'queued' ? '질문을 접수했습니다. 자료 검색을 기다리고 있습니다.' : value === 'writing' ? '찾은 자료를 바탕으로 답변을 작성하고 있습니다.' : '업무 자료에서 관련 근거를 찾고 있습니다.';
+        const info = state && state.progress, mapped = info && info.stage || (value === 'ready' || value === 'writing' ? 'thinking' : value);
+        activeStage = mapped;
+        progress.setAttribute('aria-busy', String(mapped !== 'done'));
+        const index = { queued: 0, searching: 1, found: 2, thinking: 3, writing: 4, done: 5 }[mapped] ?? 1;
+        const count = Number(info ? info.evidenceCount : state && state.evidenceCount);
+        if (Number.isFinite(count) && index >= 2) steps.children[2].textContent = `관련 자료 ${count}건 찾음`;
+        [...steps.children].forEach((item, i) => { item.classList.toggle('is-current', i === index); item.classList.toggle('is-complete', i < index); if (i === index) item.setAttribute('aria-current', 'step'); else item.removeAttribute('aria-current'); });
+        status.textContent = { queued: '질문을 받았습니다. 차례를 기다리고 있습니다.', searching: '보험자료에서 관련 근거를 찾고 있습니다.', found: `관련 자료 ${Number.isFinite(count) ? count : 0}건을 찾았습니다.`, thinking: '찾은 자료를 검토하며 답변을 준비하고 있습니다.', writing: '답변을 작성하고 있습니다.', done: '답변을 완성했습니다.' }[mapped] || '진행 상태를 확인하고 있습니다.';
+        if (state && Number.isFinite(Number(state.elapsedMs))) elapsedStart = Date.now() - Number(state.elapsedMs);
+        if (!elapsedStart) elapsedStart = Date.now();
+        const tick = () => { elapsed.textContent = `${Math.max(0, Math.floor((Date.now() - elapsedStart) / 1000))}초`; };
+        tick();
+        if (!elapsedTimer && mapped !== 'done') elapsedTimer = setInterval(tick, 1000);
+        if (info && info.thinking) { thinkingText.textContent = window.PA_ASK.maskResidentId(info.thinking); thinking.hidden = false; }
+        if (info && typeof info.partialAnswer === 'string' && info.partialAnswer) {
+          partial.textContent = window.PA_ASK.maskResidentId(info.partialAnswer); partial.hidden = false;
+        }
+        if (mapped === 'done') { stopElapsed(); thinking.open = false; partial.textContent = ''; partial.hidden = true; }
+        if (follow) thread.scrollTop = thread.scrollHeight;
       }
       function renderAnswer(result, initialDeep, initialDeepQuota) {
         clearTimeout(deepTimer);
@@ -295,7 +323,7 @@
             el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copyAnswer(result, false, copyNote) }, '답변 복사'),
             el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copyAnswer(result, true, copyNote) }, '근거 포함 복사'), collapse), copyNote, content);
         renderDeep(initialDeep || result.deep, initialDeepQuota || result.deepQuota);
-        answer.hidden = false; progress.hidden = true; retry.hidden = true; retryNote.hidden = true; retryKind = '';
+        answer.hidden = false; stage('done', { elapsedMs: result.elapsedMs, evidenceCount: sources.length }); retry.hidden = true; retryNote.hidden = true; retryKind = '';
       }
       function pause(ms) { return new Promise(resolve => { resumePause = resolve; timer = setTimeout(() => { resumePause = null; resolve(); }, ms); }); }
       async function run(fresh) {
@@ -308,7 +336,7 @@
         if (fresh) last = { question, requestId: uuid(), id: null };
         if (!last) return;
         busy = true; controls(); out.textContent = ''; retry.hidden = true; retryNote.hidden = true;
-        if (fresh) { answerGeneration++; clearTimeout(deepTimer); if (chat) beginTurn(last.question); else { answer.hidden = true; answer.replaceChildren(); } }
+        if (fresh) { answerGeneration++; clearTimeout(deepTimer); if (chat) beginTurn(last.question); else { const previous = progress; progress = makeProgress(); previous.replaceWith(progress); answer.hidden = true; answer.replaceChildren(); } }
         stage(last.id ? 'searching' : 'queued');
         try {
           await verifySession();
@@ -325,19 +353,19 @@
             if (result.status === 'done') { renderAnswer(result.result || result, result.deep, result.deepQuota); if (chat) q.value = ''; if (onHistoryChange) onHistoryChange(); return; }
             if (result.status === 'error') { const failure = new Error(window.PA_ASK.maskResidentId(result.message || '답변을 완성하지 못했습니다. 다시 질문해 주세요.')); failure.code = 'answer_failed'; throw failure; }
             if (result.status === 'ready') {
-              stage('writing');
+              stage('ready', result);
               const written = await api.request('askAnswer', { id: last.id });
               if (!alive) return;
               setQuota(written.quota);
               if (written.status === 'done' || written.answer) { renderAnswer(written.result || written, written.deep, written.deepQuota); if (chat) q.value = ''; if (onHistoryChange) onHistoryChange(); return; }
-              stage('writing'); await pause(2000); continue;
+              stage('writing', written); await pause(1500); continue;
             }
-            stage(result.status); await pause(2000);
+            stage(result.status, result); await pause(1500);
           }
           if (alive) { const timeout = new Error('아직 처리 중입니다. 결과 다시 확인을 눌러 이어서 확인해 주세요.'); timeout.code = 'timeout'; throw timeout; }
         } catch (e) {
           if (!alive || invalidateAuth(e)) return;
-          progress.hidden = true;
+          stopElapsed(); partial.replaceChildren(); partial.hidden = true; thinking.open = false; progress.hidden = true;
           if (e.code === 'ask_forbidden') { out.textContent = ''; lock(); return; }
           out.textContent = e.message;
           if (e.quota) setQuota(e.quota);
@@ -360,7 +388,7 @@
       };
       scheduleQuotaReset();
       controls(); checkAccess().then(loadQuota);
-      return { node, resetChat, openHistory, get busy() { return busy; }, dispose() { alive = false; answerGeneration++; clearTimeout(deepTimer); clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause(); window.removeEventListener('focus', refreshQuota); document.removeEventListener('visibilitychange', refreshQuota); api.dispose(); } };
+      return { node, resetChat, openHistory, get busy() { return busy; }, dispose() { alive = false; answerGeneration++; stopElapsed(); clearTimeout(deepTimer); clearTimeout(timer); clearTimeout(quotaTimer); if (resumePause) resumePause(); window.removeEventListener('focus', refreshQuota); document.removeEventListener('visibilitychange', refreshQuota); api.dispose(); } };
     }
   });
 })();

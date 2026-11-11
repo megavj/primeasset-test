@@ -42,7 +42,7 @@
           if (action === 'askSubmit' && typeof dataToSend.question === 'string') dataToSend.question = maskResidentId(dataToSend.question);
           const controller = new AbortController(); active.add(controller);
           let timedOut = false;
-          const timer = setTimeout(() => { timedOut = true; controller.abort(); }, action === 'askAnswer' ? 360000 : 45000);
+          const timer = setTimeout(() => { timedOut = true; controller.abort(); }, action === 'askAnswer' ? 480000 : 45000);
           try {
             const response = await fetch(url, {
               method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, credentials: 'omit', redirect: 'follow',
