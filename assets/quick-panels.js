@@ -10,7 +10,7 @@
       else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
       else n.setAttribute(k, v === true ? '' : v);
     });
-    kids.flat().forEach(k => { if (k != null && k !== false) n.append(k.nodeType ? k : document.createTextNode(String(k))); });
+    kids.flat(Infinity).forEach(k => { if (k != null && k !== false) n.append(k.nodeType ? k : document.createTextNode(String(k))); });
     return n;
   };
   const read = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (_) { return d; } };
@@ -107,9 +107,9 @@
     ui.on(draw); draw();
     ui.foot.append(el('span', {}, '기준일 ' + doc.asof),
       doc.has_file ? el('button', { type: 'button', class: 'pa-qp-dl', onclick: async e => {
-        e.currentTarget.disabled = true;
+        const btn = e.currentTarget; btn.disabled = true;
         const { data, error } = await sb.rpc('my_shared_file', { p_key: 'contacts' });
-        e.currentTarget.disabled = false;
+        btn.disabled = false;
         if (error || !data) return toast('내려받지 못했습니다.');
         const bin = Uint8Array.from(atob(data.b64), c => c.charCodeAt(0));
         const a = el('a', { href: URL.createObjectURL(new Blob([bin], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })), download: data.name });
