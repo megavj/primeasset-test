@@ -179,3 +179,7 @@ body.intranet-light .art-view-title:focus,body.intranet-light .art-view-title:fo
 .art-locker>li>div{min-width:0}
 .g-admin .adm-art-viewer .art-refresh{margin-top:12px}
 .g-admin .adm-art-viewer .art-actions{margin:10px 0}
+
+/* 2026-11-12 보관 취소 버튼 */
+.art-unclaim{min-height:40px;font-size:14px;color:var(--ink-2,#555)}
+.art-locker .art-locker-undo{grid-column:1/-1;display:flex;justify-content:flex-end}

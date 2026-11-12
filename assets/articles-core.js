@@ -416,5 +416,21 @@
     return el('div', { class: 'art-actions', role: 'group', 'aria-label': '글 가져가기' }, ...(o.hashtagsOnly ? [d] : o.copyOnly ? [a, b] : [a, b, c, d]));   // copyOnly: 작성글모음 글 안(2026-11-12 이사님: 그림 내려받기·해시태그 복사 삭제)
   }
 
-  window.PA_ART_CORE = { STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, copyHashtags, hashtags, seriesLabel, searchMeta, refreshControls, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, actionButtons, kDate, daysLeft, fileBase };
+  // 2026-11-12 이사님: [보관 취소] — 내 보관함 글을 작성글모음으로 되돌림(art_unclaim, 보관 횟수는 돌아오지 않음)
+  function unclaimButton(sb, id, status, onDone, check) {
+    const say = t => { if (status) status.textContent = t; };
+    return el('button', { type: 'button', class: 'g-btn g-btn--ghost art-act art-unclaim', title: '이 글을 작성글모음으로 되돌립니다', onclick: async ev => {
+      if (!window.confirm('이 글의 보관을 취소하고 작성글모음으로 되돌릴까요?\n되돌리면 다른 설계사가 가져갈 수 있고, 오늘 보관 횟수는 돌아오지 않습니다.')) return;
+      const b = ev.currentTarget; b.disabled = true; say('되돌리는 중…');
+      try {
+        const r = await sb.rpc('art_unclaim', { p_id: id }); if (check) check();
+        if (r.error) throw r.error;
+        const row = (r.data || [])[0];
+        if (!row || !row.ok) { say('되돌리지 못했습니다. 이미 되돌렸거나 내 보관 글이 아닙니다.'); b.disabled = false; return; }
+        say('작성글모음으로 되돌렸습니다.'); if (onDone) onDone();
+      } catch (e) { console.debug('[art unclaim]', e); say('되돌리지 못했습니다. 다시 눌러 주세요.'); b.disabled = false; }
+    } }, '보관 취소');
+  }
+
+  window.PA_ART_CORE = { unclaimButton, STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, copyHashtags, hashtags, seriesLabel, searchMeta, refreshControls, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, actionButtons, kDate, daysLeft, fileBase };
 })();
