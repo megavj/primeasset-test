@@ -179,7 +179,7 @@
         el('header', { class: 'art-view-head' }, tagChips(a.meta), el('h2', { class: 'art-view-title', tabindex: '-1' }, a.title), meta, K.searchMeta(a.meta)),
         K.adNote(a.meta),   // ART4 상품광고 표시·심의필 자리
         actions,
-        mine ? K.refreshControls(S.sb, a, { check: () => { if (epoch !== S.epoch || !S.owner) throw new Error('stale_session'); } }) : null,
+        // 2026-11-12 이사님: 최신내용 반영판 만들기·요청상태 새로고침 삭제
         mine ? K.postingGuide(a.meta) : null,
         body,
         null),
