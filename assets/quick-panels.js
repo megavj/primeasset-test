@@ -54,17 +54,17 @@
     const ordered = branch ? [...blocks.filter(mine), ...blocks.filter(b => !mine(b))] : blocks;
     return el('div', { class: 'pa-qp-val' }, ordered.map(b => el('div', { class: 'pa-qp-block' + (mine(b) ? ' is-mine' : '') },
       mine(b) ? el('span', { class: 'pa-qp-mine' }, '내 본부') : null,
-      b.split('\n').map(l => el('div', { class: 'pa-qp-line' }, richLine(l, isFax, terms))))));
+      b.split('\n').filter(l => !/^\s*[-─=_]{3,}\s*$/.test(l)).map(l => el('div', { class: 'pa-qp-line' }, richLine(l, isFax, terms))))));
   }
 
-  function shell(title, sub) {
+  function shell(title, sub, hint) {
     if (dlg) dlg.remove();
     const body = el('div', { class: 'pa-qp-body', tabindex: '-1' });
-    const search = el('input', { class: 'pa-qp-search', type: 'search', placeholder: '보험사·본부·이름 검색', 'aria-label': title + ' 검색', autocomplete: 'off' });
+    const search = el('input', { class: 'pa-qp-search', type: 'search', placeholder: hint || '보험사 검색', 'aria-label': title + ' 검색', autocomplete: 'off' });
     const tabs = el('div', { class: 'pa-qp-tabs', role: 'tablist' }, ['전체', '손해', '생명'].map((t, i) => el('button', { type: 'button', role: 'tab', 'aria-selected': String(i === 0), 'data-kind': t }, t === '전체' ? t : t + '보험')));
     const tools = el('div', { class: 'pa-qp-tools' });
     const foot = el('div', { class: 'pa-qp-foot' });
-    dlg = el('dialog', { class: 'pa-qp', 'aria-label': title },
+    dlg = el('dialog', { class: 'pa-qp' + (hint ? '' : ' is-simple'), 'aria-label': title },
       el('header', { class: 'pa-qp-head' }, el('div', {}, el('h2', {}, title), sub ? el('p', {}, sub) : null),
         el('button', { type: 'button', class: 'pa-qp-close', 'aria-label': '닫기', onclick: () => dlg.close() }, '✕')),
       el('div', { class: 'pa-qp-bar' }, search, tabs, tools), body, foot);
@@ -82,7 +82,7 @@
   }
 
   async function openContacts(sb, profile) {
-    const ui = shell('손생보 연락망', '전화번호를 누르면 바로 걸리고, 팩스·메일은 눌러서 복사됩니다.');
+    const ui = shell('손생보 연락망', '번호를 누르면 전화, 팩스·메일은 복사', '보험사·본부·이름 검색');
     const def = String((profile && profile.branch) || '').match(/\d{3}/);
     let branch = read(BRANCH_KEY, def ? def[0] : '');
     const bInput = el('input', { class: 'pa-qp-branch', inputmode: 'numeric', maxlength: '3', placeholder: '내 본부', value: branch, 'aria-label': '내 본부 번호' });
@@ -118,12 +118,12 @@
   }
 
   function openPortals() {
-    const ui = shell('원수사 전산접속', '버튼을 누르면 새 탭으로 열립니다. ☆를 누르면 맨 위에 고정됩니다.');
+    const ui = shell('원수사 전산접속', '누르면 새 탭으로 열림 · ☆로 맨 위 고정');
     let fav = read(FAV_KEY, []);
     const all = window.PA_PORTALS || [];
     const btn = p => el('div', { class: 'pa-qp-portal' + (fav.includes(p.name) ? ' is-fav' : '') },
       el('a', { href: p.url, target: '_blank', rel: 'noopener noreferrer', title: p.url },
-        el('span', { class: 'pa-qp-pname' }, p.name), el('span', { class: 'pa-qp-pkind' }, p.kind + (p.url.startsWith('http:') ? ' · 보안연결 아님' : ''))),
+        el('span', { class: 'pa-qp-pname' }, p.name), el('span', { class: 'pa-qp-pkind' }, p.kind, p.url.startsWith('http:') ? el('span', { class: 'pa-qp-warn', title: '보험사 주소가 https가 아니라 브라우저에 주의 표시가 나올 수 있습니다' }, ' · 보안연결 아님') : null)),
       el('button', { type: 'button', class: 'pa-qp-star', 'aria-label': p.name + (fav.includes(p.name) ? ' 고정 해제' : ' 맨 위 고정'), 'aria-pressed': String(fav.includes(p.name)),
         onclick: () => { fav = fav.includes(p.name) ? fav.filter(n => n !== p.name) : [...fav, p.name]; write(FAV_KEY, fav); draw(); } }, fav.includes(p.name) ? '★' : '☆'));
     function draw() {
