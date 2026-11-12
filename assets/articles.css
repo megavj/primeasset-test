@@ -76,7 +76,7 @@ body.intranet-light .art-view-title:focus,body.intranet-light .art-view-title:fo
 
 /* 글 본문 */
 .art-body{font-size:17px;line-height:1.85;color:var(--text);word-break:keep-all;overflow-wrap:anywhere}
-.art-body.is-preview{-webkit-user-select:none;user-select:none}
+/* 2026-11-12 이사님: 글 안 드래그(선택) 허용 — 미리보기 선택 막기 해제 */
 .art-body>:first-child{margin-top:0}
 .art-body h2{font-size:23px;line-height:1.4;margin:38px 0 12px;letter-spacing:-.01em}
 .art-body h3{font-size:19px;line-height:1.45;margin:26px 0 8px}
