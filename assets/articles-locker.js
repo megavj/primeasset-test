@@ -20,7 +20,7 @@
         const items = list.data || [], q = (quota.data || [])[0] || null;
         if (!items.length && !(q && q.allowed)) { node.remove(); return; } // 쓸 수 없는 등급이고 보관한 글도 없으면 칸을 숨김
         const head = el('div', { class: 'art-locker-head' },
-          U.note('보관한 글은 나만 볼 수 있습니다. 고객 상황에 맞게 고치고 본인 경험 한두 줄을 더한 뒤, 회사 광고심의를 받고 게시하세요.'),
+          U.note('보관한 글은 나만 볼 수 있습니다. 필요한 부분을 고친 뒤 회사 광고심의를 받고 게시하세요.'),
           q && q.allowed ? el('p', { class: 'ask-account-note' }, q.remaining > 0 ? `오늘 ${q.remaining}개 더 보관할 수 있어요 (하루 ${q.daily_limit}개 · 한국시간 자정 초기화) · ` : `오늘은 ${q.daily_limit}개를 모두 보관했어요 · `,
             el('a', { href: '/members/articles/' }, '작성글모음에서 글 고르기 →')) : null);
         body.replaceChildren(head, items.length ? el('ol', { class: 'art-locker' }, ...items.map(item)) : U.note('아직 보관한 글이 없습니다.'));
