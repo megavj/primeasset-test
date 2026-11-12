@@ -15,7 +15,7 @@
     const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
     Object.entries({ viewBox: '0 0 24 24', width: '20', height: '20', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false' }).forEach(([k,v]) => svg.setAttribute(k,v));
     const path = document.createElementNS(ns, 'path');
-    path.setAttribute('d', ({ tool: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z', qa: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7', ask: 'M4 4h16v12H9l-5 4z', menu: 'M4 6h16M4 12h16M4 18h16', collapse: 'M15 5l-7 7 7 7', plus: 'M12 5v14M5 12h14', close: 'M6 6l12 12M18 6L6 18', lock: 'M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z' })[type] || 'M4 4h16v16H4z');
+    path.setAttribute('d', ({ tool: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z', qa: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7', ask: 'M4 4h16v12H9l-5 4z', phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2', portal: 'M4 5h16v11H4zM8 20h8M12 16v4', menu: 'M4 6h16M4 12h16M4 18h16', collapse: 'M15 5l-7 7 7 7', plus: 'M12 5v14M5 12h14', close: 'M6 6l12 12M18 6L6 18', lock: 'M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z' })[type] || 'M4 4h16v16H4z');
     svg.append(path); return svg;
   };
   const read = (k, fallback) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? fallback : v; } catch (_) { return fallback; } };
@@ -81,6 +81,11 @@
       const query = el('input', { class: 'pa-side-search pa-in', type: 'search', placeholder: '도구 찾기 · 초성 가능', 'aria-label': '업무 도구 찾기', 'aria-controls': 'pa-side-tools', autocomplete: 'off', oninput: () => drawTools() });
       toolsBody.id = 'pa-side-tools';
       const toolsSection = section('directory', '업무 도구', el('div', {}, query, toolsBody));
+      // 2026-11-12 이사님 승인: 빠른 확인 창 두 개(손생보 연락망 · 원수사 전산접속)
+      const quickBtn = (label, glyph, fn) => el('div', { class: 'pa-side-row' }, el('button', { type: 'button', class: 'pa-side-link', onclick: () => { if (!window.PA_QUICK) return; if (isMobile()) setDrawer(false); fn(); } }, icon(glyph), el('span', { class: 'pa-side-label' }, label)));
+      const quickSection = section('pa-quick', '빠른 확인', el('div', { class: 'pa-side-items pa-side-quick' },
+        quickBtn('손생보 연락망', 'phone', () => window.PA_QUICK.openContacts(sb, profile)),
+        quickBtn('원수사 전산접속', 'portal', () => window.PA_QUICK.openPortals())));
       const postSection = section('news', '최근 등록 보험자료', postBody, el('a', { class: 'pa-side-all', href: '/qa/' }, '전체 보기'));
       const historySection = section('pa-chat-history', '최근 AI 질문', historyBody, el('a', { class: 'pa-side-all', href: '/members/me/#ask-history' }, '전체 내역'));
       const newChat = el('button', { type: 'button', class: 'pa-side-new', onclick: () => {
@@ -92,7 +97,7 @@
       } }, icon('collapse'));
       const sidebar = el('aside', { class: 'pa-chat-sidebar', id: 'pa-chat-sidebar', 'aria-label': '업무 바로가기' },
         el('div', { class: 'pa-side-top' }, newChat, close),
-        el('div', { class: 'pa-side-scroll' }, pinSection, toolsSection, postSection, historySection,
+        el('div', { class: 'pa-side-scroll' }, pinSection, quickSection, toolsSection, postSection, historySection,
           banner ? el('div', { class: 'pa-side-access' }, banner) : null),
         el('div', { class: 'pa-side-account' }, el('a', { href: '/members/me/' }, [profile.name, profile.branch].filter(Boolean).join(' · ') || '내 정보'),
           el('a', { class: 'pa-side-privacy', href: '/privacy/' }, '개인정보처리방침')));
