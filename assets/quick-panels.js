@@ -123,7 +123,7 @@
     const all = window.PA_PORTALS || [];
     const btn = p => el('div', { class: 'pa-qp-portal' + (fav.includes(p.name) ? ' is-fav' : '') },
       el('a', { href: p.url, target: '_blank', rel: 'noopener noreferrer', title: p.url },
-        el('span', { class: 'pa-qp-pname' }, p.name), el('span', { class: 'pa-qp-pkind' }, p.kind, p.url.startsWith('http:') ? el('span', { class: 'pa-qp-warn', title: '보험사 주소가 https가 아니라 브라우저에 주의 표시가 나올 수 있습니다' }, ' · 보안연결 아님') : null)),
+        el('span', { class: 'pa-qp-pname' }, p.name), el('span', { class: 'pa-qp-pkind' }, p.kind)),
       el('button', { type: 'button', class: 'pa-qp-star', 'aria-label': p.name + (fav.includes(p.name) ? ' 고정 해제' : ' 맨 위 고정'), 'aria-pressed': String(fav.includes(p.name)),
         onclick: () => { fav = fav.includes(p.name) ? fav.filter(n => n !== p.name) : [...fav, p.name]; write(FAV_KEY, fav); draw(); } }, fav.includes(p.name) ? '★' : '☆'));
     function draw() {
