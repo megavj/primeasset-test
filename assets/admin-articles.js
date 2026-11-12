@@ -68,7 +68,7 @@
       head.querySelector('h3').textContent = a.title;
       const finlaw = internal.finlaw || m.finlaw || null;
       const dl = el('dl', { class: 'adm-mm-dl adm-art-dl' },
-        el('dt', {}, '상태'), el('dd', {}, needsFix(m) ? '올리기 전 고침 필요 · 관리자 전용 보류' : a.status === 'open' ? `남은 글 · ${fmtDay(a.created_at)} 작성 · 보관 안 되면 ${fmtDay(new Date(Date.parse(a.created_at) + (st.stats?.keep_days || 60) * 86400000))} 자동 삭제` : a.status === 'draft' ? `최신 내용 반영 초안 · ${who?.name || '요청 회원'} · ${fmtTime(a.created_at)} 작성 · 광고심의 후 게시` : `보관됨 · ${claim ? `${claim.member_name || '이름 없음'}(${claim.grade_name || '등급 없음'})` : who ? who.name : '탈퇴 회원'} · ${fmtTime(a.claimed_at)}`),
+        el('dt', {}, '상태'), el('dd', {}, needsFix(m) ? '올리기 전 고침 필요 · 관리자 전용 보류' : a.status === 'open' ? `남은 글 · ${fmtDay(a.created_at)} 작성 · 자동 삭제 없음` : a.status === 'draft' ? `최신 내용 반영 초안 · ${who?.name || '요청 회원'} · ${fmtTime(a.created_at)} 작성 · 광고심의 후 게시` : `보관됨 · ${claim ? `${claim.member_name || '이름 없음'}(${claim.grade_name || '등급 없음'})` : who ? who.name : '탈퇴 회원'} · ${fmtTime(a.claimed_at)}`),
         ...META_LABELS.filter(([k]) => m[k] != null && m[k] !== '').flatMap(([k, label]) => [el('dt', {}, label), el('dd', {}, k === 'chars' ? `약 ${num(m[k])}자` : String(m[k]))]),
         internal.effort ? [el('dt', {}, '생각 깊이'), el('dd', {}, `${internal.model || ''} · ${internal.effort}`)] : null,
         internal.materials ? [el('dt', {}, '재료'), el('dd', {}, (internal.materials || []).join(', '))] : null,
@@ -126,7 +126,7 @@
       function drawStats() {
         const s = st.stats || {};
         statsBox.replaceChildren(
-          stat('남은 글', num(s.open), `회원 목록에 보이는 글 · 7일 안에 자동 삭제 ${num(s.expiring_7d)}개`, 'open'),
+          stat('남은 글', num(s.open), '회원 목록에 보이는 글 · 자동 삭제 없음', 'open'),
           stat('보관된 글', num(s.claimed), `전체 보관 기록 ${num(s.claims_total)}건`, 'claimed'),
           stat('오늘 생성', num(s.today_created), `오늘 보관 ${num(s.today_claimed)}개 · 한국시간 기준`, 'log'));
       }
@@ -148,14 +148,14 @@
           const list = (st.rows || []).filter(a => a.status === status && (!k || norm([a.title, a.meta?.insurance, a.meta?.format, a.meta?.situation].join(' ')).includes(k)));
           const all = el('input', { type: 'checkbox', 'aria-label': '보이는 글 모두 선택', checked: list.length > 0 && list.every(a => selected.has(a.id)), onchange: e => { list.forEach(a => e.target.checked ? selected.add(a.id) : selected.delete(a.id)); paint(); } });
           box.replaceChildren(el('p', { class: 'adm-note', role: 'status' }, `${statusName} ${num(list.length)}개`),
-            list.length ? ctx.table([el('label', { class: 'adm-check' }, all, el('span', { class: 'sr' }, '모두 선택')), '글', status === 'open' ? '만든 날 · 자동 삭제' : status === 'draft' ? '요청 회원 · 만든 시각' : '보관한 회원 · 시각', '보기'], list.map(a => {
+            list.length ? ctx.table([el('label', { class: 'adm-check' }, all, el('span', { class: 'sr' }, '모두 선택')), '글', status === 'open' ? '만든 날' : status === 'draft' ? '요청 회원 · 만든 시각' : '보관한 회원 · 시각', '보기'], list.map(a => {
               const claim = (st.log || []).find(x => x.article_id === a.id), who = claim ? `${claim.member_name || '이름 없음'} · ${claim.grade_name || ''}` : (memberOf(a.claimed_by)?.name || '—');
               const left = Math.ceil((Date.parse(a.created_at) + (st.stats?.keep_days || 60) * 86400000 - Date.now()) / 86400000);
               return el('tr', {},
                 el('td', {}, el('label', { class: 'adm-check' }, el('input', { type: 'checkbox', checked: selected.has(a.id), 'aria-label': `${a.title} 선택`, onchange: e => { e.target.checked ? selected.add(a.id) : selected.delete(a.id); sync(); } }), el('span', { class: 'sr' }, a.title))),
                 el('td', {}, el('div', { class: 'adm-art-title' }, a.images?.[0]?.url ? el('img', { src: a.images[0].url, alt: '', loading: 'lazy', width: '72', height: '48' }) : null,
                   el('div', {}, el('strong', {}, a.title), needsFix(a.meta) ? badge('올리기 전 고침 필요') : null, el('small', { class: 'adm-note' }, [a.meta?.ad_type === 'product' ? '상품광고(협회 심의 필요)' : null, a.meta?.insurance, a.meta?.format, a.meta?.length, a.meta?.chars ? `약 ${num(a.meta.chars)}자` : null, K?.seriesLabel(a.meta)].filter(Boolean).join(' · '))))),
-                el('td', {}, status === 'open' ? `${fmtDay(a.created_at)} · ${left}일 남음` : `${who} · ${fmtTime(status === 'draft' ? a.created_at : a.claimed_at)}`),
+                el('td', {}, status === 'open' ? `${fmtDay(a.created_at)}` : `${who} · ${fmtTime(status === 'draft' ? a.created_at : a.claimed_at)}`),
                 el('td', {}, button('원문 보기', () => openViewer(a.id))));
             }), `${statusName} 목록`) : empty(`${statusName}이 없습니다`, status === 'open' ? '생성기가 글을 올리면 이곳과 회원 화면에 보입니다.' : status === 'draft' ? '원문 보기에서 최신 내용 반영판을 요청하면 검사 통과 후 이곳과 요청한 회원의 보관함에 새 초안이 추가됩니다.' : '회원이 보관하면 이곳에 보입니다.'));
           sync();
@@ -163,7 +163,7 @@
         q.addEventListener('input', () => { f.q = q.value; paint(); });
         paint();
         return [el('div', { class: 'adm-toolbar' }, ctx.field('글 찾기', q)), bar, box,
-          el('p', { class: 'adm-note' }, status === 'open' ? `아무도 보관하지 않은 글은 만든 날부터 ${num(st.stats?.keep_days || 60)}일 뒤 매일 새벽 그림과 함께 자동으로 지워집니다.` : status === 'draft' ? '새 초안은 요청한 회원과 관리자만 볼 수 있습니다. 원래 글은 그대로 보존되며, 새 초안도 광고심의 후 게시해야 합니다.' : '보관된 글은 자동으로 지워지지 않습니다. 지우면 그 회원의 보관함에서도 사라집니다.')];
+          el('p', { class: 'adm-note' }, status === 'open' ? '자동 삭제는 꺼져 있습니다(2026-11-12 이사님 지시). 필요 없는 글은 관리자가 직접 지웁니다.' : status === 'draft' ? '새 초안은 요청한 회원과 관리자만 볼 수 있습니다. 원래 글은 그대로 보존되며, 새 초안도 광고심의 후 게시해야 합니다.' : '보관된 글은 자동으로 지워지지 않습니다. 지우면 그 회원의 보관함에서도 사라집니다.')];
       }
       function logView() {
         const members = [...new Map((st.log || []).map(x => [x.member_id, x.member_name || memberOf(x.member_id)?.name || '이름 없음'])).entries()].sort((a, b) => String(a[1]).localeCompare(String(b[1]), 'ko'));

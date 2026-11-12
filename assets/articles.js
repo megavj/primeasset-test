@@ -132,7 +132,7 @@
           K.seriesLabel(x.tags) ? el('p', { class: 'art-series' }, K.seriesLabel(x.tags)) : null,
           el('h2', { class: 'art-card-title' }, el('a', { href: open }, x.title)),
           x.summary ? el('p', { class: 'art-card-sum' }, x.summary) : null,
-          el('p', { class: 'art-card-meta' }, [x.chars ? `약 ${Number(x.chars).toLocaleString('ko-KR')}자` : null, `${kDate(x.created_at)} 작성`, left != null ? `${left}일 뒤 자동 삭제` : null].filter(Boolean).join(' · ')),
+          el('p', { class: 'art-card-meta' }, [x.chars ? `약 ${Number(x.chars).toLocaleString('ko-KR')}자` : null, `${kDate(x.created_at)} 작성`].filter(Boolean).join(' · ')),
           el('div', { class: 'art-row' }, el('a', { class: 'g-btn g-btn--ghost art-sm', href: open }, '글 보기'),
             el('button', { type: 'button', class: 'g-btn g-btn--pri art-sm', disabled: !(S.quota && S.quota.remaining > 0), onclick: () => claim(x, ok => {
               if (ok === true) { S.list = S.list.filter(y => y.id !== x.id); location.hash = '#a=' + x.id; }
@@ -144,7 +144,7 @@
     drawChips(); draw();
     busy(false);
     root.replaceChildren(quotaBar(), el('div', { class: 'art-tools' }, search, chips), status, grid,
-      el('p', { class: 'art-foot-note' }, '보관하지 않은 글은 만든 날부터 60일이 지나면 그림과 함께 자동으로 지워집니다. 보관한 글은 지워지지 않습니다.'));
+      el('p', { class: 'art-foot-note' }, '글은 자동으로 지워지지 않습니다. 보관한 글은 내 보관함에서 계속 쓸 수 있습니다.'));
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
@@ -161,7 +161,7 @@
     const left = daysLeft(a.expires_at);
     const imgs = (a.images || []).length;
     const meta = el('p', { class: 'art-view-meta' }, [a.meta && a.meta.chars ? `약 ${Number(a.meta.chars).toLocaleString('ko-KR')}자` : null, `그림 ${imgs}장`, `${kDate(a.created_at)} 작성`,
-      draft ? '최신 내용 반영 초안 · 광고심의 후 게시' : mine ? `${kDate(a.claimed_at)} 보관` : open && left != null ? `${left}일 뒤 자동 삭제` : null].filter(Boolean).join(' · '));
+      draft ? '최신 내용 반영 초안 · 광고심의 후 게시' : mine ? `${kDate(a.claimed_at)} 보관` : null].filter(Boolean).join(' · '));
     const back = el('p', { class: 'art-back' }, mine ? el('a', { href: '/members/me/#art-locker' }, '← 내 보관함') : el('a', { href: '/members/articles/' }, '← 작성글모음 목록'));
     let actions;
     if (mine) actions = el('div', { class: 'art-actbar' }, K.actionButtons(() => a, status, { copyOnly: true }),
