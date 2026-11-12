@@ -83,9 +83,10 @@
       const toolsSection = section('directory', '업무 도구', el('div', {}, query, toolsBody));
       // 2026-11-12 이사님 승인: 빠른 확인 창 두 개(손생보 연락망 · 원수사 전산접속)
       const quickBtn = (label, glyph, fn) => el('div', { class: 'pa-side-row' }, el('button', { type: 'button', class: 'pa-side-link', onclick: () => { if (!window.PA_QUICK) return; if (isMobile()) setDrawer(false); fn(); } }, icon(glyph), el('span', { class: 'pa-side-label' }, label)));
-      const quickSection = section('pa-quick', '빠른 확인', el('div', { class: 'pa-side-items pa-side-quick' },
+      // 2026-11-12 이사님 지시: 빠른 확인 두 개를 '새 대화' 위로(맨 위 고정)
+      const quickSection = el('div', { class: 'pa-side-items pa-side-quick pa-side-quicktop', id: 'pa-quick' },
         quickBtn('손생보 연락망', 'phone', () => window.PA_QUICK.openContacts(sb, profile)),
-        quickBtn('원수사 전산접속', 'portal', () => window.PA_QUICK.openPortals())));
+        quickBtn('원수사 전산접속', 'portal', () => window.PA_QUICK.openPortals()));
       const postSection = section('news', '최근 등록 보험자료', postBody, el('a', { class: 'pa-side-all', href: '/qa/' }, '전체 보기'));
       const historySection = section('pa-chat-history', '최근 AI 질문', historyBody, el('a', { class: 'pa-side-all', href: '/members/me/#ask-history' }, '전체 내역'));
       const newChat = el('button', { type: 'button', class: 'pa-side-new', onclick: () => {
@@ -96,8 +97,9 @@
         if (isMobile()) setDrawer(false); else { collapsed = true; write(collapseKey, true); syncSidebar(); opener.focus(); }
       } }, icon('collapse'));
       const sidebar = el('aside', { class: 'pa-chat-sidebar', id: 'pa-chat-sidebar', 'aria-label': '업무 바로가기' },
+        quickSection,
         el('div', { class: 'pa-side-top' }, newChat, close),
-        el('div', { class: 'pa-side-scroll' }, pinSection, quickSection, toolsSection, postSection, historySection,
+        el('div', { class: 'pa-side-scroll' }, pinSection, toolsSection, postSection, historySection,
           banner ? el('div', { class: 'pa-side-access' }, banner) : null),
         el('div', { class: 'pa-side-account' }, el('a', { href: '/members/me/' }, [profile.name, profile.branch].filter(Boolean).join(' · ') || '내 정보'),
           el('a', { class: 'pa-side-privacy', href: '/privacy/' }, '개인정보처리방침')));
