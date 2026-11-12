@@ -164,12 +164,12 @@
       draft ? '최신 내용 반영 초안 · 광고심의 후 게시' : mine ? `${kDate(a.claimed_at)} 보관` : open && left != null ? `${left}일 뒤 자동 삭제` : null].filter(Boolean).join(' · '));
     const back = el('p', { class: 'art-back' }, mine ? el('a', { href: '/members/me/#art-locker' }, '← 내 보관함') : el('a', { href: '/members/articles/' }, '← 작성글모음 목록'));
     let actions;
-    if (mine) actions = el('div', { class: 'art-actbar' }, K.actionButtons(() => a, status), status);
+    if (mine) actions = el('div', { class: 'art-actbar' }, K.actionButtons(() => a, status, { copyOnly: true }), status);
     else if (open) {
       const claimBtn = el('button', { type: 'button', class: 'g-btn g-btn--pri', disabled: !(S.quota && S.quota.remaining > 0), onclick: () => claim(a, ok => { if (ok === true || ok === false) viewArticle(id, S.epoch); else route(); }) }, '보관하기');
       actions = el('div', { class: 'art-actbar' }, el('div', { class: 'art-row' }, claimBtn, el('span', { class: 'art-quota-inline' }, quotaText(S.quota))),
-        K.actionButtons(() => a, status, { locked: true }),
-        el('p', { class: 'art-lock-note' }, '복사·그림 내려받기는 보관한 뒤에 쓸 수 있습니다. 같은 글이 여러 블로그에 올라가면 검색에서 불리해서, 한 글은 한 사람만 가져갈 수 있습니다.'), status);
+        K.actionButtons(() => a, status, { locked: true, copyOnly: true }),
+        el('p', { class: 'art-lock-note' }, '복사는 보관한 뒤에 쓸 수 있습니다. 같은 글이 여러 블로그에 올라가면 검색에서 불리해서, 한 글은 한 사람만 가져갈 수 있습니다.'), status);
     } else actions = el('p', { class: 'art-lock-note' }, '관리자 보기 — 다른 회원이 보관한 글입니다. 보관 기록은 관리자 화면에서 확인합니다.');
     const body = K.render(a);
     if (open) body.classList.add('is-preview');

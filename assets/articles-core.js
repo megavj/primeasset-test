@@ -415,7 +415,7 @@
     const b = mk('서식 그대로 복사', '네이버 블로그 편집기에 그대로 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyRich(getArticle); say('서식째 복사했습니다. 네이버 블로그 글쓰기 본문에 붙여 넣으세요(제목은 제목 칸에 따로). 그림이 안 들어오면 ▲ 설명 줄 위에 [그림 내려받기]로 받은 사진을 올려 주세요.'); });
     const c = mk('그림 내려받기', '글에 들어간 그림 파일을 모두 내려받기', async () => { const art = await Promise.resolve(getArticle()); const n = await downloadImages(art, (i, all) => say(`그림 ${i}/${all}장 내려받는 중…`)); say(n ? `그림 ${n}장을 내려받았습니다.` : '이 글에는 내려받을 그림이 없습니다.'); });
     const d = mk('해시태그 복사', '저장된 검색어형 해시태그 5~10개를 복사하기', async () => { await copyHashtags(getArticle); say('해시태그를 복사했습니다. 블로그의 태그 입력 칸에 붙여 넣으세요.'); });
-    return el('div', { class: 'art-actions', role: 'group', 'aria-label': '글 가져가기' }, ...(o.hashtagsOnly ? [d] : [a, b, c, d]));
+    return el('div', { class: 'art-actions', role: 'group', 'aria-label': '글 가져가기' }, ...(o.hashtagsOnly ? [d] : o.copyOnly ? [a, b] : [a, b, c, d]));   // copyOnly: 작성글모음 글 안(2026-11-12 이사님: 그림 내려받기·해시태그 복사 삭제)
   }
 
   window.PA_ART_CORE = { STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, copyHashtags, hashtags, seriesLabel, searchMeta, refreshControls, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, actionButtons, kDate, daysLeft, fileBase };
