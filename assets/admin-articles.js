@@ -3,6 +3,7 @@
    원문 보기(보관된 글 포함). 표 읽기는 관리자 전용 읽기 정책, 지우기는 art_admin_delete(서버가 관리자 확인·변경 기록·그림 정리). */
 (function () {
   'use strict';
+  const needsFix = m => !!(m?.publication_blocked || (Array.isArray(m?.needs_fix) ? m.needs_fix.length : m?.needs_fix) || m?.internal?.art9_checks_complete === false);
   const VIEWS = [['open', '남은 글'], ['claimed', '보관된 글'], ['draft', '최신 내용 반영 초안'], ['log', '보관 기록']];
   const META_LABELS = [['insurance', '보험 종류'], ['situation', '고객 상황'], ['question', '궁금증'], ['format', '글 형식'], ['tone', '말투'], ['length', '길이'], ['image_style', '그림 스타일'], ['chars', '글자 수']];
   let viewerOpen = null;
@@ -67,7 +68,7 @@
       head.querySelector('h3').textContent = a.title;
       const finlaw = internal.finlaw || m.finlaw || null;
       const dl = el('dl', { class: 'adm-mm-dl adm-art-dl' },
-        el('dt', {}, '상태'), el('dd', {}, a.status === 'open' ? `남은 글 · ${fmtDay(a.created_at)} 작성 · 보관 안 되면 ${fmtDay(new Date(Date.parse(a.created_at) + (st.stats?.keep_days || 60) * 86400000))} 자동 삭제` : a.status === 'draft' ? `최신 내용 반영 초안 · ${who?.name || '요청 회원'} · ${fmtTime(a.created_at)} 작성 · 광고심의 후 게시` : `보관됨 · ${claim ? `${claim.member_name || '이름 없음'}(${claim.grade_name || '등급 없음'})` : who ? who.name : '탈퇴 회원'} · ${fmtTime(a.claimed_at)}`),
+        el('dt', {}, '상태'), el('dd', {}, needsFix(m) ? '올리기 전 고침 필요 · 관리자 전용 보류' : a.status === 'open' ? `남은 글 · ${fmtDay(a.created_at)} 작성 · 보관 안 되면 ${fmtDay(new Date(Date.parse(a.created_at) + (st.stats?.keep_days || 60) * 86400000))} 자동 삭제` : a.status === 'draft' ? `최신 내용 반영 초안 · ${who?.name || '요청 회원'} · ${fmtTime(a.created_at)} 작성 · 광고심의 후 게시` : `보관됨 · ${claim ? `${claim.member_name || '이름 없음'}(${claim.grade_name || '등급 없음'})` : who ? who.name : '탈퇴 회원'} · ${fmtTime(a.claimed_at)}`),
         ...META_LABELS.filter(([k]) => m[k] != null && m[k] !== '').flatMap(([k, label]) => [el('dt', {}, label), el('dd', {}, k === 'chars' ? `약 ${num(m[k])}자` : String(m[k]))]),
         internal.effort ? [el('dt', {}, '생각 깊이'), el('dd', {}, `${internal.model || ''} · ${internal.effort}`)] : null,
         internal.materials ? [el('dt', {}, '재료'), el('dd', {}, (internal.materials || []).join(', '))] : null,
@@ -75,7 +76,7 @@
         internal.similarity ? [el('dt', {}, '유사도'), el('dd', {}, internal.similarity)] : null);
       const sources = Array.isArray(m.sources) ? m.sources : [];
       const copyStatus = el('p', { class: 'art-status', role: 'status', 'aria-live': 'polite' });
-      bodyBox.replaceChildren(dl, ...[K.searchMeta(m)].filter(Boolean), K.actionButtons(() => a, copyStatus, { hashtagsOnly: true }), copyStatus,
+      bodyBox.replaceChildren(needsFix(m) ? el('div', { role: 'note', class: 'adm-note' }, '올리기 전 고침 필요 · 게시와 설계사 노출이 차단된 초안입니다.', ...(Array.isArray(m.needs_fix) ? m.needs_fix : []).map(x => el('p', {}, [x.stage, x.reason, (x.items || []).map(i => typeof i === 'object' ? (i.id || i.reason || JSON.stringify(i)) : i).join(', ')].filter(Boolean).join(' · ')))) : null, dl, ...[K.searchMeta(m)].filter(Boolean), K.actionButtons(() => a, copyStatus, { hashtagsOnly: true }), copyStatus,
         K.refreshControls(sb, a),
         el('h4', {}, `그림 ${(a.images || []).length}장 · 본문`), K.render(a),
         sources.length ? el('details', { class: 'adm-art-src' }, el('summary', {}, `참고 자료 ${sources.length}개`), el('ul', {}, ...sources.map(s => el('li', {}, s.url ? el('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer' }, s.title || s.url) : (s.title || '자료'))))) : null);
@@ -153,7 +154,7 @@
               return el('tr', {},
                 el('td', {}, el('label', { class: 'adm-check' }, el('input', { type: 'checkbox', checked: selected.has(a.id), 'aria-label': `${a.title} 선택`, onchange: e => { e.target.checked ? selected.add(a.id) : selected.delete(a.id); sync(); } }), el('span', { class: 'sr' }, a.title))),
                 el('td', {}, el('div', { class: 'adm-art-title' }, a.images?.[0]?.url ? el('img', { src: a.images[0].url, alt: '', loading: 'lazy', width: '72', height: '48' }) : null,
-                  el('div', {}, el('strong', {}, a.title), el('small', { class: 'adm-note' }, [a.meta?.ad_type === 'product' ? '상품광고(협회 심의 필요)' : null, a.meta?.insurance, a.meta?.format, a.meta?.length, a.meta?.chars ? `약 ${num(a.meta.chars)}자` : null, K?.seriesLabel(a.meta)].filter(Boolean).join(' · '))))),
+                  el('div', {}, el('strong', {}, a.title), needsFix(a.meta) ? badge('올리기 전 고침 필요') : null, el('small', { class: 'adm-note' }, [a.meta?.ad_type === 'product' ? '상품광고(협회 심의 필요)' : null, a.meta?.insurance, a.meta?.format, a.meta?.length, a.meta?.chars ? `약 ${num(a.meta.chars)}자` : null, K?.seriesLabel(a.meta)].filter(Boolean).join(' · '))))),
                 el('td', {}, status === 'open' ? `${fmtDay(a.created_at)} · ${left}일 남음` : `${who} · ${fmtTime(status === 'draft' ? a.created_at : a.claimed_at)}`),
                 el('td', {}, button('원문 보기', () => openViewer(a.id))));
             }), `${statusName} 목록`) : empty(`${statusName}이 없습니다`, status === 'open' ? '생성기가 글을 올리면 이곳과 회원 화면에 보입니다.' : status === 'draft' ? '원문 보기에서 최신 내용 반영판을 요청하면 검사 통과 후 이곳과 요청한 회원의 보관함에 새 초안이 추가됩니다.' : '회원이 보관하면 이곳에 보입니다.'));
