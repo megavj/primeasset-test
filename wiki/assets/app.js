@@ -344,12 +344,12 @@ document.getElementById('openPal').addEventListener('click',openPal);
 
 /* ================= AUTH (demo) ================= */
 var loginScrim=document.getElementById('loginScrim');
-/* 홈페이지 로그인 공유(2026-11-03 위키를 test.primeasset.info/wiki/ 로 이전): 같은 주소의 로그인 정보를 읽어 버튼만 바꿈. 권한 판정은 회원 페이지(RLS)가 함. */
+/* 홈페이지 로그인 공유(2026-11-03 위키를 www.primeasset.info/wiki/ 로 이전): 같은 주소의 로그인 정보를 읽어 버튼만 바꿈. 권한 판정은 회원 페이지(RLS)가 함. */
 function signedIn(){try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!/^sb-[a-z0-9]+-auth-token$/.test(k))continue;var v=JSON.parse(localStorage.getItem(k)||'null');if(v&&v.access_token&&(v.refresh_token||(v.expires_at||0)*1000>Date.now()))return true;}}catch(_){}return false;}
-var MEMBER_WIKI='https://test.primeasset.info/members/wiki/';
+var MEMBER_WIKI='https://www.primeasset.info/members/wiki/';
 function updateAuthBtn(){var b=document.getElementById('authBtn');var on=signedIn();b.innerHTML=on?'<span class="member-dot"></span>설계사 인트라넷':'설계사 로그인';b.classList.toggle('ghost',on);}
 function setMember(){member=false;toast('전용 자료는 승인된 설계사 로그인 후 열립니다.');}
-document.getElementById('authBtn').addEventListener('click',function(){if(signedIn())location.href='https://test.primeasset.info/members/#home';else openDialog(loginScrim);});
+document.getElementById('authBtn').addEventListener('click',function(){if(signedIn())location.href='https://www.primeasset.info/members/#home';else openDialog(loginScrim);});
 document.getElementById('demoLogin').addEventListener('click',function(){location.href=MEMBER_WIKI;});
 loginScrim.addEventListener('click',function(e){if(e.target===loginScrim||e.target.hasAttribute('data-close'))closeDialog(loginScrim);});
 

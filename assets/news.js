@@ -130,7 +130,7 @@
   });
   function recordVisit() {
     // 로컬 검증에서 실제 방문 기록을 늘리지 않습니다. 기존과 같은 네 항목만 전송합니다.
-    if (location.hostname !== 'test.primeasset.info') return;
+    if (location.hostname !== 'www.primeasset.info') return;
     try {
       const key = 'premiumPortalVisitorId'; let visitorId = localStorage.getItem(key);
       if (!visitorId) { visitorId = window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'v-' + Date.now() + '-' + Math.random().toString(36).slice(2); localStorage.setItem(key, visitorId); }

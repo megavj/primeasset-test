@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /members/
+
+Sitemap: https://www.primeasset.info/sitemap.xml

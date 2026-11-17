@@ -6,7 +6,7 @@
 // TASK31(gs1): 메인 '설계사 성장 시스템'(#tools) 적용(growth-sys.css·growth-sys.js·assets/img/growth/*.webp 새 자산). WebP 는 기존 STATIC 규칙(네트워크 우선)대로. 캐시 정책은 그대로.
 // TASK28(cw1): 메인 '왜'·편지·합류 적용(why.css·closing.css·closing.js 새 자산, home-layout.js 막대 동작). 캐시 정책은 그대로.
 // FIX-V2: 오프라인 화면의 개선된 보조 글자 대비를 기존 설치 사용자에게도 갱신. 캐시 정책은 유지.
-var VERSION = 'pa-static-v12-gs1';
+var VERSION = 'pa-static-v13-www';
 var OFFLINE_URL = '/offline.html';
 var STATIC = /\.(css|js|mjs|woff2?|ttf|otf|png|jpe?g|webp|gif|svg|ico|webmanifest)$/i;
 
