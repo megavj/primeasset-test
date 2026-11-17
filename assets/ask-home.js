@@ -74,7 +74,7 @@
       const body = el('div', { class: 'pa-chat-body' }, welcome, thread);
       if (chat) {
         node.classList.add('pa-chat');
-        q.placeholder = '업무 질문을 입력하세요 · 도구 이름이나 초성으로 찾기';
+        q.placeholder = '질문이나 도구 이름을 입력하세요';   // 2026-11-17 UX: 휴대폰에서 두 줄로 넘치던 안내를 한 줄로
         node.replaceChildren(el('div', { class: 'pa-ask-heading' }, el('h2', { id: 'pa-ask-title' }, 'AI 업무 질문'), quota), body, lockBox, form, examples);
       }
       function beginTurn(question) {
@@ -112,14 +112,14 @@
       }
       function lock() {
         if (!alive) return;
-        access = 'denied';
+        access = 'denied'; node.classList.add('is-locked');   // 2026-11-17 UX: 잠겼을 때는 예시 질문도 숨김(눌러도 질문할 수 없으므로)
         form.hidden = true; lockBox.hidden = false; progress.hidden = true;
         quota.textContent = 'AI 질문 이용 권한 없음';
         controls();
       }
       function unlock() {
         if (!alive || access === 'allowed') return;
-        access = 'allowed'; form.hidden = false; lockBox.hidden = true; controls();
+        access = 'allowed'; node.classList.remove('is-locked'); form.hidden = false; lockBox.hidden = true; controls();
       }
       async function checkAccess() {
         if (!approved) return;
@@ -163,12 +163,12 @@
         if (value.exempt === true) { quota.textContent = '관리자 계정 · 질문 횟수 제한 없음'; quotaKnown = true; remaining = null; controls(); return; }
         const parsed = Number(value.remaining);
         if (value.remaining == null || value.remaining === '' || !Number.isFinite(parsed) || parsed < 0) {
-          quota.textContent = `남은 질문 수를 확인하지 못했습니다. ${limitText()} · 한국시간 자정 초기화`;
+          quota.textContent = `남은 질문 수를 확인하지 못했습니다 · ${limitText()}`;
           return;
         }
         quotaKnown = true;
         remaining = Math.max(0, Math.floor(parsed));
-        quota.textContent = limit ? `오늘 남은 질문 ${remaining}/${limit}회 · 한국시간 자정 초기화` : `오늘 남은 질문 ${remaining}회 · 한국시간 자정 초기화`;
+        quota.textContent = limit ? `오늘 남은 질문 ${remaining}/${limit}회` : `오늘 남은 질문 ${remaining}회`;   // 2026-11-17 UX: '한국시간 자정 초기화'는 늘 붙어 있을 필요가 없어 뺌(내 정보에는 남김)
         if (remaining === 0) out.textContent = `오늘 질문 한도${limit ? `(${limit}회)` : ''}를 모두 쓰셨습니다. 업무 도구와 저장된 답변은 계속 이용할 수 있습니다.`;
         else if (out.textContent.startsWith('오늘 질문 한도')) out.textContent = '';
         controls();
@@ -179,7 +179,7 @@
         catch (e) {
           if (invalidateAuth(e)) return;
           if (e.code === 'ask_forbidden') { lock(); return; }
-          if (alive && !quotaKnown && access !== 'denied') quota.textContent = e.code === 'ask_policy_unavailable' ? '이용 권한을 확인하지 못했습니다. 잠시 후 다시 확인합니다.' : `남은 질문 수를 확인하지 못했습니다. ${limitText()} · 한국시간 자정 초기화`;
+          if (alive && !quotaKnown && access !== 'denied') quota.textContent = e.code === 'ask_policy_unavailable' ? '이용 권한을 확인하지 못했습니다. 잠시 후 다시 확인합니다.' : `남은 질문 수를 확인하지 못했습니다 · ${limitText()}`;
         }
       }
       function matchTools() {
@@ -216,6 +216,7 @@
         }
         steps.classList.toggle('is-done', mapped === 'done');
         status.textContent = mapped === 'done' ? '답변을 완성했습니다.' : '';
+        status.classList.toggle('sr', mapped === 'done');   // 바로 위 줄('답변을 완성했어요')과 같은 말이라 화면에서는 한 번만(낭독용으로는 남김)
         if (state && Number.isFinite(Number(state.elapsedMs))) {
           const serverStart = Date.now() - Number(state.elapsedMs);
           elapsedStart = elapsedStart ? Math.min(elapsedStart, serverStart) : serverStart;
@@ -381,7 +382,7 @@
           if (e.code === 'ask_forbidden') { out.textContent = ''; lock(); return; }
           out.textContent = e.message;
           if (e.quota) setQuota(e.quota);
-          if (e.code === 'daily_limit') { remaining = 0; quota.textContent = limit ? `오늘 남은 질문 0/${limit}회 · 한국시간 자정 초기화` : '오늘 남은 질문 0회 · 한국시간 자정 초기화'; }
+          if (e.code === 'daily_limit') { remaining = 0; quota.textContent = limit ? `오늘 남은 질문 0/${limit}회` : '오늘 남은 질문 0회'; }
           retryKind = ['answer_failed', 'not_found', 'invalid_question'].includes(e.code) ? 'new' : 'resume';
           retry.textContent = retryKind === 'new' ? '새 질문으로 접수' : last.id ? '기존 결과 확인' : '접수·결과 다시 확인';
           retryNote.textContent = retryKind === 'new' ? '새 질문으로 접수하며 하루 질문 횟수를 사용합니다.' : last.id ? '새 질문 횟수 차감 없음. 기존 질문의 진행 상태와 결과를 확인합니다.' : '같은 접수 번호로 확인합니다. 이미 접수된 질문은 횟수를 다시 차감하지 않습니다.';

@@ -15,7 +15,7 @@
     const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
     Object.entries({ viewBox: '0 0 24 24', width: '20', height: '20', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false' }).forEach(([k,v]) => svg.setAttribute(k,v));
     const path = document.createElementNS(ns, 'path');
-    path.setAttribute('d', ({ tool: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z', qa: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7', ask: 'M4 4h16v12H9l-5 4z', phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2', portal: 'M4 5h16v11H4zM8 20h8M12 16v4', menu: 'M4 6h16M4 12h16M4 18h16', collapse: 'M15 5l-7 7 7 7', plus: 'M12 5v14M5 12h14', close: 'M6 6l12 12M18 6L6 18', lock: 'M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z' })[type] || 'M4 4h16v16H4z');
+    path.setAttribute('d', ({ tool: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z', qa: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7', ask: 'M4 4h16v12H9l-5 4z', phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2', portal: 'M4 5h16v11H4zM8 20h8M12 16v4', menu: 'M4 6h16M4 12h16M4 18h16', collapse: 'M15 5l-7 7 7 7', plus: 'M12 5v14M5 12h14', close: 'M6 6l12 12M18 6L6 18', lock: 'M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z', article: 'M5 4h14v16H5zM9 8h6M9 12h6M9 16h3', keep: 'M7 3h10v18l-5-4-5 4z' })[type] || 'M4 4h16v16H4z');
     svg.append(path); return svg;
   };
   const read = (k, fallback) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? fallback : v; } catch (_) { return fallback; } };
@@ -87,6 +87,17 @@
       const quickSection = el('div', { class: 'pa-side-items pa-side-quick pa-side-quicktop', id: 'pa-quick' },
         quickBtn('손생보 연락망', 'phone', () => window.PA_QUICK.openContacts(sb, profile)),
         quickBtn('원수사 전산접속', 'portal', () => window.PA_QUICK.openPortals()));
+      // 2026-11-17 UX: 가운데(질문창 아래) 바로가기 — 휴대폰에서는 사이드바가 접혀 있어 자주 쓰는 것이 두 번 눌러야 나왔다.
+      //   작성글모음·내 보관함은 서버가 내려준 메뉴(my_menu)에 작성글모음 주소가 '열림'으로 있을 때만 보인다(권한 판정은 그대로 서버·관리자 메뉴 설정).
+      const pathOf = url => { try { return new URL(url, location.origin).pathname; } catch (_) { return ''; } };
+      const artTool = tools.find(t => t.unlocked && t.url && t.internal && pathOf(t.url) === '/members/articles/');
+      const shortBtn = (label, glyph, fn) => el('button', { type: 'button', class: 'pa-home-short-item', 'data-in-sidebar': '', onclick: () => { if (window.PA_QUICK) fn(); } }, icon(glyph), el('span', {}, label));
+      const shortLink = (label, glyph, href) => el('a', { class: 'pa-home-short-item', href }, icon(glyph), el('span', {}, label));
+      const shortcuts = el('nav', { class: 'pa-home-short', 'aria-label': '바로가기' },
+        shortBtn('손생보 연락망', 'phone', () => window.PA_QUICK.openContacts(sb, profile)),
+        shortBtn('원수사 전산접속', 'portal', () => window.PA_QUICK.openPortals()),
+        artTool ? shortLink('작성글모음', 'article', artTool.url) : null,
+        artTool ? shortLink('내 보관함', 'keep', '/members/me/#art-locker') : null);
       const postSection = section('news', '최근 등록 보험자료', postBody, el('a', { class: 'pa-side-all', href: '/qa/' }, '전체 보기'));
       const historySection = section('pa-chat-history', '최근 AI 질문', historyBody, el('a', { class: 'pa-side-all', href: '/members/me/#ask-history' }, '전체 내역'));
       const newChat = el('button', { type: 'button', class: 'pa-side-new', onclick: () => {
@@ -101,15 +112,18 @@
         el('div', { class: 'pa-side-top' }, newChat, close),
         el('div', { class: 'pa-side-scroll' }, pinSection, toolsSection, postSection, historySection,
           banner ? el('div', { class: 'pa-side-access' }, banner) : null),
-        el('div', { class: 'pa-side-account' }, el('a', { href: '/members/me/' }, [profile.name, profile.branch].filter(Boolean).join(' · ') || '내 정보'),
+        el('div', { class: 'pa-side-account' },
+          el('div', { class: 'pa-side-me' }, el('a', { href: '/members/me/', title: '내 정보' }, [profile.name, profile.branch].filter(Boolean).join(' · ') || '내 정보'),
+            artTool ? el('a', { class: 'pa-side-keep', href: '/members/me/#art-locker' }, '내 보관함') : null),
           el('a', { class: 'pa-side-privacy', href: '/privacy/' }, '개인정보처리방침')));
       const opener = el('button', { type: 'button', class: 'pa-chat-icon pa-side-open', 'aria-label': '사이드바 펼치기', 'aria-controls': sidebar.id, 'aria-expanded': 'false', onclick: () => {
         if (isMobile()) setDrawer(true); else { collapsed = false; write(collapseKey, false); syncSidebar(); close.focus(); }
-      } }, icon('menu'));
+      } }, icon('menu'), el('span', { class: 'pa-side-open-label' }, '업무 도구'));   // 2026-11-17 UX: 휴대폰에서 이름 없는 ☰ 가 위 '메뉴'와 헷갈려 글자를 붙임
       const backdrop = el('button', { type: 'button', class: 'pa-side-backdrop', tabindex: '-1', hidden: '', 'aria-label': '사이드바 닫기', onclick: () => setDrawer(false) });
       const center = el('div', { class: 'pa-chat-center' }, el('div', { class: 'pa-chat-toolbar' }, opener), ask.node);
       // 2026-11-11 대표 지시: 환영 문구에 이름 ('김상현님 무엇을 도와드릴까요?'), 빈 열을 만들던 '설계사 인트라넷' 글자 제거
       { const hi = ask.node.querySelector('.pa-chat-welcome h2'); if (hi && profile.name) hi.textContent = profile.name + '님 무엇을 도와드릴까요?'; }
+      { const ex = ask.node.querySelector('.pa-chat-examples'); if (ex) ex.before(shortcuts); else ask.node.append(shortcuts); }
       const node = el('section', { class: 'pa-chat-shell', id: 'home', 'aria-label': '설계사 인트라넷' }, backdrop, sidebar, center, announce);
       sidebar.append(moreMenu);
       function syncSidebar() {

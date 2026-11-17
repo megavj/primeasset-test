@@ -136,7 +136,7 @@
         list.length ? '' : el('p', { class: 'pa-qp-note' }, '맞는 보험사가 없습니다.'));
     }
     ui.on(draw); draw();
-    ui.foot.append(el('span', {}, '보험사 ' + all.length + '곳 · 인트라넷 안에서는 보험사 보안 정책상 바로 열 수 없어 새 탭으로 엽니다.'));
+    ui.foot.append(el('span', {}, '보험사 ' + all.length + '곳'));   // 2026-11-17 UX: '새 탭으로 엽니다'는 창 제목 아래에 이미 있어 한 번만
   }
 
   window.PA_QUICK = Object.freeze({ openContacts, openPortals });

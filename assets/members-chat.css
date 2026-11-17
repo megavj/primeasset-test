@@ -95,3 +95,35 @@ body.pa-chat-layout :is(.g-foot,.g-tabbar) { display:none; }
 
 /* 2026-11-11 대표 지시: PC에서 사이드바+대화창을 상단 바와 같은 폭·같은 왼쪽 선에 맞춤(사이드바 옆 빈 열 제거) */
 @media (min-width:761px) { body.pa-chat-layout #main { max-width:1208px; margin:0 auto; padding:16px 16px 0; box-sizing:content-box; } }
+
+/* 2026-11-17 UX: 바로가기(질문창 아래) · 휴대폰 맨 윗줄 정리 · 대화 중 입력칸 줄이기 · 답변 버튼 한 줄 */
+.pa-side-open-label { display:none; font-size:15px; font-weight:500; color:var(--text); white-space:nowrap; }
+.pa-home-short { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; width:100%; max-width:800px; margin:16px auto 0; }
+.pa-chat-shell .pa-home-short-item { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:8px 14px; border:1px solid var(--line-2); border-radius:10px; background:var(--bg-1); color:var(--text); font-size:15px; font-weight:500; line-height:1.4; text-decoration:none; transition:background-color .15s var(--ease),border-color .15s var(--ease); }
+.pa-home-short-item svg { flex:none; color:var(--accent); }
+.pa-chat-shell .pa-home-short-item:hover { background:var(--bg-2); border-color:var(--accent); }
+.pa-chat.has-turn .pa-home-short,.pa-chat.is-locked .pa-chat-examples { display:none; }
+.pa-home-short + .pa-chat-examples { margin-top:8px; }
+.pa-chat .pa-ask-answer-actions .g-btn { flex:0 1 auto; }
+.pa-side-me { display:flex; align-items:center; justify-content:space-between; gap:12px; min-width:0; }
+.pa-side-me a:first-child { min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; display:block; line-height:44px; }
+.pa-side-account .pa-side-keep { flex:none; color:var(--accent); font-size:15px; font-weight:500; text-decoration:underline; text-underline-offset:4px; }
+/* PC에서 사이드바가 펼쳐져 있으면 사이드바 맨 위에 이미 있는 두 개(연락망·전산접속)는 가운데에 다시 보이지 않는다 */
+@media (min-width:761px) { .pa-chat-shell:not(.is-collapsed) .pa-home-short-item[data-in-sidebar] { display:none; } }
+@media (max-width:760px) {
+  .pa-chat-center { position:relative; }
+  .pa-chat-shell .pa-side-open { gap:6px; padding:8px 12px 8px 10px; border:1px solid var(--line); background:var(--bg-1); }
+  .pa-side-open-label { display:inline; }
+  /* 맨 윗줄 하나로: 왼쪽 [업무 도구], 오른쪽 오늘 남은 질문. 'AI 업무 질문' 제목은 낭독용으로만(바로 아래 인사말·입력칸이 같은 뜻) */
+  .pa-chat .pa-ask-heading { position:absolute; top:0; right:14px; width:auto; max-width:calc(100% - 150px); min-height:56px; margin:0; padding:0; align-items:center; justify-content:flex-end; text-align:right; }
+  .pa-chat .pa-ask-heading h2 { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  .pa-chat .pa-ask-quota { line-height:1.4; }
+  .pa-home-short { display:grid; grid-template-columns:1fr 1fr; margin-top:12px; }
+  .pa-chat-shell .pa-home-short-item { padding:8px 10px; font-size:15px; }
+  /* 대화가 시작되면 입력칸을 한 줄 높이로 줄이고 [질문하기]를 옆에 둔다(답변이 더 많이 보이게) */
+  .pa-chat.has-turn .pa-ask-form { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:0 8px; }
+  .pa-chat.has-turn .pa-ask-form>* { grid-column:1/-1; }
+  .pa-chat.has-turn .pa-ask-form #pa-q { grid-column:1; grid-row:1; min-height:48px; height:48px; }
+  .pa-chat.has-turn .pa-ask-form .pa-ask-controls { grid-column:2; grid-row:1; margin:0; }
+}
+@media (max-width:760px) and (max-height:650px) { .pa-home-short { margin-top:8px; } }
