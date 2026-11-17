@@ -309,8 +309,8 @@
     return f.startsWith(ch + ' · ') ? f.slice(ch.length + 3) : (f === ch ? '' : f);
   }
   function tagChips(tags) {
-    const t = tags || {}, ch = channelOf(t), list = [t.insurance, formatRest(t), t.length].filter(v => typeof v === 'string' && v);
-    const items = (t.draft || t.revision?.is_draft ? [el('li', { class: 'is-draft' }, '최신 내용 반영 초안')] : []).concat(isProduct(t) ? [el('li', { class: 'is-product' }, PRODUCT_LABEL)] : [], ch ? [el('li', { class: 'is-ch' }, ch)] : [], list.map(v => el('li', {}, v)));
+    const t = tags || {}, ch = channelOf(t), list = [[t.insurance, 'is-ins'], [formatRest(t), 'is-form'], [t.length, 'is-len']].filter(([v]) => typeof v === 'string' && v);
+    const items = (t.draft || t.revision?.is_draft ? [el('li', { class: 'is-draft' }, '최신 내용 반영 초안')] : []).concat(isProduct(t) ? [el('li', { class: 'is-product' }, PRODUCT_LABEL)] : [], ch ? [el('li', { class: 'is-ch' }, ch)] : [], list.map(([v, c]) => el('li', { class: c }, v)));
     return items.length ? el('ul', { class: 'art-tags', 'aria-label': '글 분류' }, ...items) : null;
   }
   // ART7: 저장된 검색어·시리즈만 보여 준다. 예전 글의 태그를 화면에서 임의로 만들어 넣지 않는다.
@@ -329,7 +329,7 @@
     if (!label && !tags.length) return null;
     return el('div', { class: 'art-search-meta' },
       label ? el('p', { class: 'art-series' }, label) : null,
-      tags.length ? el('p', { class: 'art-hashtags', 'aria-label': '해시태그' }, tags.join(' ')) : null);
+      tags.length ? el('p', { class: 'art-hashtags', 'aria-label': '해시태그' }, ...tags.flatMap((t, i) => [i ? ' ' : null, el('span', {}, t)])) : null);
   }
   const copyHashtags = getArticle => copyWith(getArticle, a => {
     const tags = hashtags(a.meta || a.tags);
@@ -411,6 +411,8 @@
     load();
     return box;
   }
+  // 오늘 남은 보관 수 한 줄(작성글모음·내 보관함 공용). '(하루 3개)'는 줄이 바뀌어도 갈라지지 않게 묶는다
+  const quotaLine = q => !q ? [] : q.remaining > 0 ? [`오늘 ${q.remaining}개 더 보관할 수 있어요 `, el('span', {}, `(하루 ${q.daily_limit}개)`)] : [`오늘은 ${q.daily_limit}개를 모두 보관했어요. `, el('span', {}, '자정이 지나면'), ' 다시 보관할 수 있어요.'];
   const kDate = v => { const d = new Date(v); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' }); };
   const daysLeft = v => { const d = Date.parse(v); return Number.isNaN(d) ? null : Math.max(0, Math.ceil((d - Date.now()) / 86400000)); };
 
@@ -418,17 +420,22 @@
   function actionButtons(getArticle, status, opts) {
     const o = opts || {}, locked = !!o.locked;
     const say = t => { if (status) status.textContent = t; };
-    const mk = (label, title, fn) => el('button', { type: 'button', class: 'g-btn g-btn--ghost art-act', disabled: locked, title, onclick: async ev => {
+    // 2026-11-17 UX: 복사가 되면 누른 버튼 글자도 잠깐 '복사했습니다'로 바뀐다(아래 안내 줄을 못 봐도 알 수 있게)
+    const done = (b, label) => { b.textContent = '복사했습니다'; b.classList.add('is-done'); clearTimeout(b._t); b._t = setTimeout(() => { b.textContent = label; b.classList.remove('is-done'); }, 2500); };
+    const mk = (label, title, fn, copies) => el('button', { type: 'button', class: 'g-btn g-btn--ghost art-act', disabled: locked, title, onclick: async ev => {
       const b = ev.currentTarget; b.disabled = true;
-      try { await fn(b); } catch (e) { console.debug('[art action]', e); say(e?.message === 'art_no_hashtags' ? '이 글에는 저장된 해시태그가 없습니다. 최신 내용 반영판을 만들면 새 초안에 해시태그가 포함됩니다.' : /image_/.test(e && e.message) ? '그림을 받지 못했습니다. 잠시 후 다시 눌러 주세요.' : '하지 못했습니다. 다시 눌러 주세요. 계속 안 되면 글을 직접 선택해 복사해 주세요.'); }
+      try { await fn(b); if (copies) done(b, label); } catch (e) { console.debug('[art action]', e); say(e?.message === 'art_no_hashtags' ? '이 글에는 저장된 해시태그가 없습니다. 최신 내용 반영판을 만들면 새 초안에 해시태그가 포함됩니다.' : /image_/.test(e && e.message) ? '그림을 받지 못했습니다. 잠시 후 다시 눌러 주세요.' : '하지 못했습니다. 다시 눌러 주세요. 계속 안 되면 글을 직접 선택해 복사해 주세요.'); }
       finally { b.disabled = locked; }
     } }, label);
-    const a = mk('HTML 복사', '홈페이지·워드프레스의 HTML(코드) 편집 칸에 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyHtml(getArticle); say('HTML을 복사했습니다. 홈페이지의 HTML 편집 칸, 워드프레스는 \'사용자 정의 HTML\' 블록(또는 코드 편집기), 티스토리는 HTML 모드에 붙여 넣으세요. 그림 주소도 들어 있습니다.'); });
-    const b = mk('서식 그대로 복사', '네이버 블로그 편집기에 그대로 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyRich(getArticle); say('서식째 복사했습니다. 네이버 블로그 글쓰기 본문에 붙여 넣으세요(제목은 제목 칸에 따로). 그림이 안 들어오면 ▲ 설명 줄 위에 [그림 내려받기]로 받은 사진을 올려 주세요.'); });
+    const a = mk('HTML 복사', '홈페이지·워드프레스의 HTML(코드) 편집 칸에 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyHtml(getArticle); say('HTML을 복사했습니다. 홈페이지의 HTML 편집 칸, 워드프레스는 \'사용자 정의 HTML\' 블록(또는 코드 편집기), 티스토리는 HTML 모드에 붙여 넣으세요. 그림 주소도 들어 있습니다.');  }, true);
+    const b = mk('서식 그대로 복사', '네이버 블로그 편집기에 그대로 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyRich(getArticle); say(o.copyOnly ? '서식째 복사했습니다. 네이버 블로그 글쓰기 본문에 붙여 넣으세요(제목은 제목 칸에 따로). 그림이 안 들어오면 글 속 그림을 저장해 ▲ 설명 줄 위에 올려 주세요.' : '서식째 복사했습니다. 네이버 블로그 글쓰기 본문에 붙여 넣으세요(제목은 제목 칸에 따로). 그림이 안 들어오면 ▲ 설명 줄 위에 [그림 내려받기]로 받은 사진을 올려 주세요.'); }, true);
     const c = mk('그림 내려받기', '글에 들어간 그림 파일을 모두 내려받기', async () => { const art = await Promise.resolve(getArticle()); const n = await downloadImages(art, (i, all) => say(`그림 ${i}/${all}장 내려받는 중…`)); say(n ? `그림 ${n}장을 내려받았습니다.` : '이 글에는 내려받을 그림이 없습니다.'); });
-    const d = mk('해시태그 복사', '저장된 검색어형 해시태그 5~10개를 복사하기', async () => { await copyHashtags(getArticle); say('해시태그를 복사했습니다. 블로그의 태그 입력 칸에 붙여 넣으세요.'); });
+    const d = mk('해시태그 복사', '저장된 검색어형 해시태그 5~10개를 복사하기', async () => { await copyHashtags(getArticle); say('해시태그를 복사했습니다. 블로그의 태그 입력 칸에 붙여 넣으세요.');  }, true);
     return el('div', { class: 'art-actions', role: 'group', 'aria-label': '글 가져가기' }, ...(o.hashtagsOnly ? [d] : o.copyOnly ? [a, b] : [a, b, c, d]));   // copyOnly: 작성글모음 글 안(2026-11-12 이사님: 그림 내려받기·해시태그 복사 삭제)
   }
+
+  // 2026-11-17 UX: 두 복사 버튼을 어디에 쓰는지 한 줄(버튼 설명은 마우스를 올려야만 보여 휴대폰에서는 알 수 없었음)
+  const copyHint = () => el('p', { class: 'art-copy-hint' }, '네이버 블로그에는 ', el('b', {}, '서식 그대로 복사'), ', 홈페이지·워드프레스·티스토리에는 ', el('b', {}, 'HTML 복사'), '를 쓰세요.');
 
   // 2026-11-12 이사님: [보관 취소] — 내 보관함 글을 작성글모음으로 되돌림(art_unclaim, 보관 횟수는 돌아오지 않음)
   function unclaimButton(sb, id, status, onDone, check) {
@@ -446,5 +453,5 @@
     } }, '보관 취소');
   }
 
-  window.PA_ART_CORE = { unclaimButton, STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, copyHashtags, hashtags, seriesLabel, searchMeta, refreshControls, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, CHANNELS, channelOf, actionButtons, kDate, daysLeft, fileBase };
+  window.PA_ART_CORE = { unclaimButton, copyHint, quotaLine, STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, copyHashtags, hashtags, seriesLabel, searchMeta, refreshControls, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, CHANNELS, channelOf, actionButtons, kDate, daysLeft, fileBase };
 })();

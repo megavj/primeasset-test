@@ -10,7 +10,6 @@
   const answerPlain = value => window.PA_ASK_FORMAT.text(value || '');
   const answerBody = value => { const body = el('div', { class: 'pa-answer-rich' }); body.append(window.PA_ASK_FORMAT.fragment(value || '저장된 답변 없음')); return body; };
 
-  const timeText = value => value == null || value === '' || !Number.isFinite(Number(value)) ? '기록 없음' : duration(value);
   const safeLink = value => { try { const u = new URL(value); return /^https?:$/.test(u.protocol) ? u.href : null; } catch (_) { return null; } };
   const knownCount = value => value == null || value === '' || !Number.isFinite(Number(value)) ? '집계 없음' : count(value) + '건';
   const phoneDigits = value => String(value || '').replace(/\D/g, '');
@@ -104,7 +103,7 @@
       el('div', { class: 'ask-account-actions' }, edit,
         p.is_admin === true && p.status === 'active' ? el('a', { class: 'g-btn g-btn--ghost', href: '/members/admin/' }, '관리자 화면') : null,
         p.is_admin === true && p.status === 'active' ? el('a', { class: 'g-btn g-btn--ghost', href: '/members/admin/ask/' }, 'AI 질문 통계') : null, logout),
-      note('이름·소속·휴대폰은 직접 수정할 수 있습니다. 등급·승인 상태 변경은 관리자에게 문의해 주세요.'));
+      note('등급·승인 상태는 관리자가 정합니다.'));
   }
   function accessError(ctx, error) {
     if (!['unauthorized', 'forbidden', 'login_required', 'invalid_token', 'expired', 'not_active', 'stale_session'].includes(error.code)) return false;
@@ -151,7 +150,7 @@
           return el('li', {}, url ? el('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, title + ' · 새 창 ↗') : title);
         })) : note('저장된 근거 자료가 없습니다.'),
         el('div', { class: 'ask-account-actions' }, button('근거 포함 복사', () => copyText(answerPlain(result.answer) + '\n\n근거 자료\n' + (refs || '근거 자료 없음'), status, ctx))),
-        note('저장된 답변 조회 · 새 질문 횟수 차감 없음. 내용은 원문과 함께 확인해 주세요.'));
+        note('내용은 원문과 함께 확인해 주세요.'));
       if (false && result.deep && result.deep.status) {  // 2026-11-07 다시답변 화면 제거
         const d = result.deep;
         detail.append(el('h4', {}, '더 깊게 다시 답변'), d.status === 'done' ? answerBody(d.answer) : note(d.status === 'error' ? '다시 답변을 만들지 못했습니다' : '더 깊게 다시 답변하고 있습니다(1~3분)'));
@@ -174,8 +173,8 @@
           if (response.status !== 'done' && response.status !== 'completed') {
             status.textContent = response.status === 'error' || response.status === 'failed'
               ? '처리 실패 · ' + mask(response.message || '답변을 완성하지 못했습니다.')
-              : response.status === 'ready' ? '자료 검색을 마쳤습니다. 저장된 답변이 아직 없습니다. 새 질문 횟수 차감 없음.'
-              : '아직 처리 중입니다. 잠시 후 다시 확인해 주세요. 새 질문 횟수 차감 없음.';
+              : response.status === 'ready' ? '자료 검색을 마쳤습니다. 저장된 답변이 아직 없습니다.'
+              : '아직 처리 중입니다. 잠시 후 다시 확인해 주세요.';
             return;
           }
           cached = Object.assign({}, response.result || response, { deep: response.deep });
@@ -185,14 +184,13 @@
         }
         ctx.check();
         if (copyOnly) await copyText(answerPlain(cached.answer), status, ctx);
-        else { detail.hidden = false; open.textContent = '답변 접기'; open.setAttribute('aria-expanded', 'true'); status.textContent = '저장된 답변을 열었습니다. 새 질문 횟수 차감 없음.'; }
+        else { detail.hidden = false; open.textContent = '답변 접기'; open.setAttribute('aria-expanded', 'true'); status.textContent = ''; }
       } catch (error) {
         if (!accessError(ctx, error)) status.textContent = mask(error.message && /[가-힣]/.test(error.message) ? error.message : '저장된 답변을 불러오지 못했습니다. 다시 확인해 주세요.');
       } finally { loading = false; open.disabled = false; if (copy) copy.disabled = false; }
     }
     return el('li', {}, heading, el('p', {}, mask(item.question || '질문 내용 없음')),
-      el('small', {}, '응답 시간 ' + timeText(item.elapsedMs)),
-      el('div', { class: 'ask-account-actions' }, open, copy), status, detail);
+      el('div', { class: 'ask-account-actions' }, open, copy), status, detail);   // 2026-11-17 UX: 질문마다 붙던 '응답 시간' 줄 삭제(평균은 상세 통계에 있음)
   }
   async function loadStats(ctx, container) {
     if (ctx.profile.status !== 'active') { container.replaceChildren(note('AI 질문 기록은 가입 승인이 완료되면 확인할 수 있습니다.')); return; }
@@ -220,10 +218,10 @@
       container.replaceChildren(
         el('section', { class: 'ask-profile-quota', 'aria-label': '오늘 질문 한도' },
           note(quota.allowed === false ? '현재 등급에서는 AI 질문을 이용할 수 없습니다. 이용 범위는 관리자가 등급에 따라 정합니다.'
-            : quotaKnown ? '오늘 남은 질문 ' + count(quota.remaining) + (Number(quota.limit) > 0 ? '/' + count(quota.limit) : '') + '회 · 한국시간 자정 초기화'
-            : '남은 질문 수를 확인하지 못했습니다.' + (Number(quota.limit) > 0 ? ' 하루 ' + count(quota.limit) + '회' : '') + ' · 한국시간 자정 초기화')),
+            : quotaKnown ? '오늘 남은 질문 ' + count(quota.remaining) + (Number(quota.limit) > 0 ? '/' + count(quota.limit) : '') + '회 · 자정에 초기화'
+            : '남은 질문 수를 확인하지 못했습니다.' + (Number(quota.limit) > 0 ? ' 하루 ' + count(quota.limit) + '회' : '') + ' · 자정에 초기화')),
         el('div', { class: 'ask-profile-section-heading' }, el('h3', {}, '최근 질문 10개'), button('기록 새로고침', () => loadStats(ctx, container))),
-        note('저장된 답변을 다시 보거나 복사해도 새 질문 횟수를 차감하지 않습니다.'), list,
+        note('저장된 답변은 다시 보거나 복사해도 질문 횟수가 줄지 않습니다.'), list,
         el('div', { class: 'ask-account-actions' }, el('a', { class: 'g-btn g-btn--pri', href: '/members/#home' }, '새로 질문하기')),
         details);
     } catch (error) {

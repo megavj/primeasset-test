@@ -20,12 +20,12 @@ body.ask-account .ask-profile-details .ask-account-metrics { grid-template-colum
   .ask-profile-section-heading { align-items:flex-start; }
 }
 
-/* 내 정보 상단 탭 (2026-11-10) */
+/* 내 정보 상단 탭 (2026-11-10 · 2026-11-17: 고르지 않은 탭 글자를 흐리게(투명도) 하던 것을 또렷한 회색으로 — 대비 4.5:1 이상) */
 body.ask-account .me-tabs { display:flex; gap:4px; border-bottom:1px solid var(--line); margin:0 0 4px; overflow-x:auto; scrollbar-width:none; }
 body.ask-account .me-tabs::-webkit-scrollbar { display:none; }
-body.ask-account .me-tab { appearance:none; background:none; border:0; border-bottom:2px solid transparent; margin-bottom:-1px; padding:12px 16px; font:inherit; font-size:15px; font-weight:600; color:inherit; opacity:.55; cursor:pointer; white-space:nowrap; }
-body.ask-account .me-tab:hover { opacity:.85; }
-body.ask-account .me-tab[aria-selected="true"] { opacity:1; border-bottom-color:var(--accent, currentColor); color:var(--accent, inherit); }
+body.ask-account .me-tab { appearance:none; background:none; border:0; border-bottom:2px solid transparent; margin-bottom:-1px; padding:12px 16px; font:inherit; font-size:15px; font-weight:600; color:var(--text-2, inherit); cursor:pointer; white-space:nowrap; }
+body.ask-account .me-tab:hover { color:var(--text, inherit); }
+body.ask-account .me-tab[aria-selected="true"] { border-bottom-color:var(--accent, currentColor); color:var(--accent, inherit); }
 body.ask-account .me-tab:focus-visible { outline:2px solid currentColor; outline-offset:-2px; border-radius:6px; }
 body.ask-account [role="tabpanel"][hidden] { display:none !important; }
 @media (max-width:600px) { body.ask-account .me-tab { flex:1; padding:12px 8px; font-size:14px; } }
