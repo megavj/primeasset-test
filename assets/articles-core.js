@@ -294,9 +294,23 @@
       el('p', {}, `${pr.insurer || ''} 「${pr.name || ''}」 한 상품만 다루는 상품광고입니다. 업무광고와 달리 본사 → 보험사 심의(약 2개월)를 받아야 게시할 수 있습니다.`),
       el('p', {}, '심의필 번호 넣는 자리: 글 맨 아래 노란 칸 ', el('mark', {}, pr.review_no_slot || '보험사 준법감시필 제00000호 (0000.00.00~0000.00.00)'), pr.basis ? ` · 근거 자료: ${pr.basis}` : '', pr.basis_ym ? ` · ${pr.basis_ym} 자료 기준(판매 중지 여부는 자료로 알 수 없음)` : ''));
   }
+  // 2026-11-17 auto2: 채널(네이버형·구글형·AI 인용형). 글 정보의 channel을 쓰고, 목록처럼 channel이 없으면
+  // 형식 앞부분('구글형 · 단계별 안내')에서 읽는다. 화면 표시·거르기만 하며 글 내용은 바꾸지 않는다.
+  const CHANNELS = ['네이버형', '구글형', 'AI 인용형'];
+  function channelOf(t) {
+    if (!t) return '';
+    if (CHANNELS.includes(t.channel)) return t.channel;
+    const head = typeof t.format === 'string' ? t.format.split(' · ')[0].trim() : '';
+    return CHANNELS.includes(head) ? head : '';
+  }
+  function formatRest(t) {
+    const f = typeof t.format === 'string' ? t.format : '', ch = channelOf(t);
+    if (!ch) return f;
+    return f.startsWith(ch + ' · ') ? f.slice(ch.length + 3) : (f === ch ? '' : f);
+  }
   function tagChips(tags) {
-    const t = tags || {}, list = [t.insurance, t.format, t.length].filter(v => typeof v === 'string' && v);
-    const items = (t.draft || t.revision?.is_draft ? [el('li', { class: 'is-draft' }, '최신 내용 반영 초안')] : []).concat(isProduct(t) ? [el('li', { class: 'is-product' }, PRODUCT_LABEL)] : [], list.map(v => el('li', {}, v)));
+    const t = tags || {}, ch = channelOf(t), list = [t.insurance, formatRest(t), t.length].filter(v => typeof v === 'string' && v);
+    const items = (t.draft || t.revision?.is_draft ? [el('li', { class: 'is-draft' }, '최신 내용 반영 초안')] : []).concat(isProduct(t) ? [el('li', { class: 'is-product' }, PRODUCT_LABEL)] : [], ch ? [el('li', { class: 'is-ch' }, ch)] : [], list.map(v => el('li', {}, v)));
     return items.length ? el('ul', { class: 'art-tags', 'aria-label': '글 분류' }, ...items) : null;
   }
   // ART7: 저장된 검색어·시리즈만 보여 준다. 예전 글의 태그를 화면에서 임의로 만들어 넣지 않는다.
@@ -432,5 +446,5 @@
     } }, '보관 취소');
   }
 
-  window.PA_ART_CORE = { unclaimButton, STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, copyHashtags, hashtags, seriesLabel, searchMeta, refreshControls, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, actionButtons, kDate, daysLeft, fileBase };
+  window.PA_ART_CORE = { unclaimButton, STORE, el, sanitize, render, webHtml, naverHtml, plainText, copyHtml, copyRich, copyHashtags, hashtags, seriesLabel, searchMeta, refreshControls, downloadImages, postingGuide, adNote, isProduct, PRODUCT_LABEL, tagChips, CHANNELS, channelOf, actionButtons, kDate, daysLeft, fileBase };
 })();

@@ -7,7 +7,7 @@
   const root = document.getElementById('art-app'), toastBox = document.getElementById('art-toast');
   if (!root || !K) return;
   const { el, kDate, daysLeft, tagChips } = K;
-  const S = { sb: null, owner: null, profile: null, quota: null, list: null, filter: { q: '', ins: '' }, epoch: 0 };
+  const S = { sb: null, owner: null, profile: null, quota: null, list: null, filter: { q: '', ins: '', ch: '' }, epoch: 0 };
   const isUuid = v => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v || '');
   const routeId = () => { const m = location.hash.match(/^#a=([0-9a-f-]{36})$/i); return m && isUuid(m[1]) ? m[1] : null; };
   const busy = on => on ? root.setAttribute('aria-busy', 'true') : root.removeAttribute('aria-busy');
@@ -112,15 +112,21 @@
     if (f.ins && !kinds.includes(f.ins)) f.ins = '';
     const search = el('input', { type: 'search', class: 'pa-in art-search', placeholder: '제목·요약으로 찾기', 'aria-label': '글 찾기', value: f.q });
     const chips = el('div', { class: 'art-chips', role: 'group', 'aria-label': '보험 종류로 거르기' });
+    // 2026-11-17: 채널(네이버형·구글형·AI 인용형)로 거르기 — 채널이 있는 글이 하나라도 있을 때만 보인다.
+    const chOf = x => K.channelOf(x.tags);
+    const chans = K.CHANNELS.filter(c => S.list.some(x => chOf(x) === c));
+    if (f.ch && !chans.includes(f.ch)) f.ch = '';
+    const chChips = el('div', { class: 'art-chips art-chips--ch', role: 'group', 'aria-label': '채널로 거르기' });
     const status = el('p', { class: 'art-count', role: 'status' });
     const grid = el('div', { class: 'art-grid' });
     const drawChips = () => chips.replaceChildren(...[['', '전체'], ...kinds.map(k => [k, k])].map(([v, t]) => el('button', { type: 'button', class: 'art-chip', 'aria-pressed': String(f.ins === v), onclick: () => { f.ins = v; drawChips(); draw(); } }, t + (v ? ` ${S.list.filter(x => x.tags && x.tags.insurance === v).length}` : ` ${S.list.length}`))));
+    const drawChChips = () => chChips.replaceChildren(el('span', { class: 'art-chips-label' }, '채널'), ...[['', '전체'], ...chans.map(c => [c, c])].map(([v, t]) => el('button', { type: 'button', class: 'art-chip', 'aria-pressed': String(f.ch === v), onclick: () => { f.ch = v; drawChChips(); draw(); } }, t + (v ? ` ${S.list.filter(x => chOf(x) === v).length}` : ''))));
     const norm = s => String(s || '').toLocaleLowerCase('ko-KR').replace(/\s/g, '');
     function draw() {
       const q = norm(f.q);
-      const shown = S.list.filter(x => (!f.ins || (x.tags && x.tags.insurance === f.ins)) && (!q || norm(x.title + ' ' + x.summary).includes(q)));
+      const shown = S.list.filter(x => (!f.ins || (x.tags && x.tags.insurance === f.ins)) && (!f.ch || chOf(x) === f.ch) && (!q || norm(x.title + ' ' + x.summary).includes(q)));
       status.textContent = S.list.length ? `가져갈 수 있는 글 ${S.list.length}개${shown.length !== S.list.length ? ` 중 ${shown.length}개 표시` : ''}` : '';
-      grid.replaceChildren(...(shown.length ? shown.map(cardOf) : [el('div', { class: 'art-empty' }, el('h2', { class: 'pa-h3' }, S.list.length ? '조건에 맞는 글이 없습니다' : '지금은 가져갈 글이 없습니다'), el('p', {}, S.list.length ? '검색어나 보험 종류를 바꿔 보세요.' : '새 글이 올라오면 이곳에 보입니다. 이미 보관한 글은 내 보관함에 있습니다.'))]));
+      grid.replaceChildren(...(shown.length ? shown.map(cardOf) : [el('div', { class: 'art-empty' }, el('h2', { class: 'pa-h3' }, S.list.length ? '조건에 맞는 글이 없습니다' : '지금은 가져갈 글이 없습니다'), el('p', {}, S.list.length ? '검색어나 보험 종류·채널을 바꿔 보세요.' : '새 글이 올라오면 이곳에 보입니다. 이미 보관한 글은 내 보관함에 있습니다.'))]));
     }
     function cardOf(x) {
       const left = daysLeft(x.expires_at);
@@ -141,9 +147,9 @@
             }) }, '보관'))));
     }
     search.addEventListener('input', () => { f.q = search.value; draw(); });
-    drawChips(); draw();
+    drawChips(); drawChChips(); draw();
     busy(false);
-    root.replaceChildren(quotaBar(), el('div', { class: 'art-tools' }, search, chips), status, grid,
+    root.replaceChildren(quotaBar(), el('div', { class: 'art-tools' }, search, chips, chans.length ? chChips : null), status, grid,
       el('p', { class: 'art-foot-note' }, '글은 자동으로 지워지지 않습니다. 보관한 글은 내 보관함에서 계속 쓸 수 있습니다.'));
     window.scrollTo({ top: 0, behavior: 'instant' });
   }

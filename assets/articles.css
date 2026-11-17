@@ -183,3 +183,8 @@ body.intranet-light .art-view-title:focus,body.intranet-light .art-view-title:fo
 /* 2026-11-12 보관 취소 버튼 */
 .art-unclaim{min-height:40px;font-size:14px;color:var(--ink-2,#555)}
 .art-locker .art-locker-undo{grid-column:1/-1;display:flex;justify-content:flex-end}
+
+/* 2026-11-17 채널(네이버형·구글형·AI 인용형) 표시·거르기 — 절제된 테두리형 */
+.art-tags li.is-ch{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:2px 9px}
+.art-chips--ch{align-items:center}
+.art-chips-label{font-size:14px;font-weight:700;color:var(--text-2);margin-right:2px}
