@@ -99,9 +99,33 @@
         artTool ? shortLink('작성글모음', 'article', artTool.url) : null,
         artTool ? shortLink('내 보관함', 'keep', '/members/me/#art-locker') : null);
       // Reuse the same authenticated list as 작성글모음. It never includes other members' saved articles.
-      const latestList = el('ul');
+      const latestList = el('ul', { class: 'pa-latest-list' });
       const latest = artTool ? el('section', { class: 'pa-home-latest', hidden: '', 'aria-labelledby': 'pa-home-latest-title' },
-        el('h3', { id: 'pa-home-latest-title' }, '새 작성글'), latestList) : null;
+        el('div', { class: 'pa-latest-head' }, el('h3', { id: 'pa-home-latest-title' }, '새 작성글'),
+          el('a', { class: 'pa-latest-all', href: artTool.url }, '전체 보기', el('span', { 'aria-hidden': 'true' }, '→'))), latestList) : null;
+      const articleStore = 'https://ztypllzgjivutzorhayz.supabase.co/storage/v1/object/public/articles/';
+      const displayDay = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' });
+      function articleCard(row, timestamp) {
+        const fallback = icon('article');
+        const media = el('span', { class: 'pa-latest-media', 'aria-hidden': 'true' }, fallback);
+        // Only the existing article bucket; do not fetch arbitrary image URLs from metadata.
+        if (typeof row.thumb === 'string' && row.thumb.startsWith(articleStore) && !/[\\\s"'<>]/.test(row.thumb)) {
+          try {
+            const src = new URL(row.thumb);
+            if (src.href.startsWith(articleStore) && /\.(?:png|webp|jpe?g|avif)$/i.test(src.pathname)) {
+              const img = el('img', { alt: '', decoding: 'async', loading: 'lazy', referrerpolicy: 'no-referrer' });
+              img.addEventListener('load', () => { fallback.remove(); img.classList.add('is-loaded'); }, { once: true });
+              img.addEventListener('error', () => img.remove(), { once: true });
+              media.append(img);
+              img.src = src.href;
+            }
+          } catch (_) { /* Leave the quiet default cover. */ }
+        }
+        const koreanDay = Number.isFinite(timestamp) ? new Date(timestamp + 9 * 3600000).toISOString().slice(0, 10) : '';
+        return el('li', {}, el('a', { class: 'pa-latest-card', href: '/members/articles/#a=' + row.id }, media,
+          el('span', { class: 'pa-latest-copy' }, el('span', { class: 'pa-latest-title' }, row.title.trim()),
+            koreanDay ? el('time', { class: 'pa-latest-date', datetime: koreanDay }, displayDay.format(timestamp)) : null)));
+      }
       async function loadLatest() {
         if (!latest) return;
         latest.hidden = true;
@@ -111,11 +135,9 @@
           if (!alive || reply.error || !Array.isArray(reply.data)) return;
           const rows = reply.data.filter(row => row && typeof row.title === 'string' && row.title.trim() &&
             typeof row.id === 'string' && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(row.id));
-          const time = row => Date.parse(row.created_at) || 0;
-          rows.sort((a, b) => time(b) - time(a));
-          latestList.replaceChildren(...rows.slice(0, 3).map(row => el('li', {},
-            el('a', { href: '/members/articles/#a=' + row.id }, el('span', { class: 'pa-latest-title' }, row.title),
-              el('span', { class: 'pa-latest-arrow', 'aria-hidden': 'true' }, '›')))));
+          const time = row => Date.parse(row.created_at);
+          rows.sort((a, b) => (time(b) || 0) - (time(a) || 0));
+          latestList.replaceChildren(...rows.slice(0, 3).map(row => articleCard(row, time(row))));
           latest.hidden = !latestList.childElementCount;
         } catch (_) { /* A failed optional list must never block the composer. */ }
       }
