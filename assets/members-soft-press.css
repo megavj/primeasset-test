@@ -1,0 +1,110 @@
+/* Soft Press — /members/ only. Keep layout, actions, and state markup unchanged. */
+body.pa-soft-press {
+  --pa-sp-ink:#34465c;
+  --pa-sp-face:linear-gradient(164deg,#fff 10%,#e9f0f6);
+  --pa-sp-hover:linear-gradient(164deg,#fff 10%,#e1ebf5);
+  --pa-sp-line:#cbd5e0;
+  --pa-sp-depth:inset 0 1px #fff,0 2px #bcc9d9,0 4px 6px #30405820;
+  --pa-sp-lift:inset 0 1px #fff,0 2px #aebfd4,0 4px 8px #30405833;
+  --pa-sp-down:inset 0 1px 2px #1c2e403d;
+  --pa-sp-focus:#395d91;
+}
+/* Links acting as controls share the surface. Prose links and the drawer backdrop do not. */
+body.g-members.intranet-light.pa-soft-press :where(
+  button:not(.pa-side-backdrop), a.g-btn, input:is([type=button],[type=submit]),
+  a.pa-home-short-item, a.pa-side-link, a.pa-side-all, a.pa-latest-all,
+  a.pa-latest-card, .pa-side-menu a, .pa-qp-portal a,
+  .pa-site-nav nav a, .pa-site-tabs a, .pa-ask-references > summary
+) {
+  border:1px solid var(--pa-sp-line);
+  border-radius:10px;
+  background:var(--pa-sp-face);
+  color:var(--pa-sp-ink);
+  box-shadow:var(--pa-sp-depth);
+  transition:transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+  touch-action:manipulation;
+}
+body.g-members.intranet-light.pa-soft-press :where(.g-btn--pri,.pa-side-new) {
+  --pa-sp-ink:#fff;
+  --pa-sp-face:linear-gradient(154deg,#5e748f,#43556f 84%);
+  --pa-sp-hover:linear-gradient(154deg,#5a708c,#384d69 84%);
+  --pa-sp-line:#506783;
+  --pa-sp-depth:inset 0 1px #b5c6db85,0 2px #35455d,0 4px 7px #293e5930;
+  --pa-sp-lift:inset 0 1px #c0cfe085,0 2px #35455d,0 4px 9px #293e5940;
+  --pa-sp-down:inset 0 1px 3px #26354e9c;
+}
+body.g-members.intranet-light.pa-soft-press :where(.pa-chat-shell,.pa-site-nav,.pa-qp,.pa-site-tabs) :where(
+  .pa-side-link,[role=menuitem],.pa-side-more,.pa-side-all,.pa-chat-icon,
+  #pa-nav-menu>a,#pa-nav-menu>button,#pa-nav-toggle,a,.pa-qp-chip,.pa-qp-star,.pa-qp-tabs button
+):not(:where(.pa-home-short-item,.pa-latest-card,.pa-latest-all,.g-btn,.pa-login a,.pa-ask-body a,.pa-ask-references a,.pa-qp-tel,.pa-qp-link,.is-locked)) {
+  --pa-sp-depth:inset 0 1px #fff,0 1px #c9d4e0,0 2px 4px #30405816;
+  --pa-sp-lift:inset 0 1px #fff,0 1px #b8c7d9,0 3px 5px #30405824;
+}
+body.g-members.intranet-light.pa-soft-press :where(
+  .pa-side-link[aria-current]:not([aria-current=false]),.pa-qp-tabs button[aria-selected=true],
+  .pa-site-nav [aria-current=page],.pa-site-tabs .on,button[aria-pressed=true]
+) {
+  --pa-sp-face:linear-gradient(160deg,#edf4ff,#dce8f6);
+  --pa-sp-hover:linear-gradient(160deg,#f2f7ff,#d5e3f4);
+  --pa-sp-line:#aabed6;
+  font-weight:650;
+}
+/* Shared navigation uses ID rules for its hover, current and mobile styles. */
+body.intranet-light.pa-soft-press .pa-site-nav :is(#pa-nav-menu>a,#pa-nav-menu>button,#pa-nav-toggle) {
+  background:var(--pa-sp-face);
+  border-color:var(--pa-sp-line);
+  color:var(--pa-sp-ink);
+}
+body.intranet-light.pa-soft-press .pa-site-nav #pa-nav-menu>[aria-current=page],
+body.g-members.intranet-light.pa-soft-press .pa-site-tabs a.on {
+  text-underline-offset:4px;
+}
+body.g-members.intranet-light.pa-soft-press .pa-qp-portal {
+  column-gap:3px;
+  padding:3px;
+}
+body.g-members.intranet-light.pa-soft-press .pa-qp-star { color:#7b5810; }
+body.g-members.intranet-light.pa-soft-press [aria-disabled=true]:where(.pa-side-link) { cursor:default; }
+
+@media (hover:hover) {
+  body.g-members.intranet-light.pa-soft-press :where(
+    button:not(.pa-side-backdrop),a.g-btn,input:is([type=button],[type=submit]),
+    a.pa-home-short-item,a.pa-side-link,a.pa-side-all,a.pa-latest-all,a.pa-latest-card,
+    .pa-side-menu a,.pa-qp-portal a,.pa-site-nav nav a,.pa-site-tabs a,.pa-ask-references > summary
+  ):hover:not(:disabled):not([aria-disabled=true]),
+  body.intranet-light.pa-soft-press .pa-site-nav :is(#pa-nav-menu>a,#pa-nav-menu>button,#pa-nav-toggle):hover {
+    background:var(--pa-sp-hover);
+    border-color:var(--pa-sp-line);
+    color:var(--pa-sp-ink);
+    box-shadow:var(--pa-sp-lift);
+  }
+}
+body.g-members.intranet-light.pa-soft-press :where(
+  button:not(.pa-side-backdrop),a.g-btn,input:is([type=button],[type=submit]),
+  a.pa-home-short-item,a.pa-side-link,a.pa-side-all,a.pa-latest-all,a.pa-latest-card,
+  .pa-side-menu a,.pa-qp-portal a,.pa-site-nav nav a,.pa-site-tabs a,.pa-ask-references > summary
+):active:not(:disabled):not([aria-disabled=true]) {
+  transform:translateY(2px);
+  box-shadow:var(--pa-sp-down);
+}
+body.g-members.intranet-light.pa-soft-press :where(button,input:is([type=button],[type=submit])):disabled {
+  box-shadow:none;
+  transform:none;
+}
+body.g-members.intranet-light.pa-soft-press :where(
+  button:not(.pa-side-backdrop),a,input:is([type=button],[type=submit]),.pa-ask-references > summary
+):focus-visible {
+  outline:2px solid var(--pa-sp-focus);
+  outline-offset:2px;
+}
+@media (prefers-reduced-motion:reduce) {
+  body.g-members.intranet-light.pa-soft-press :where(
+    button,a,input:is([type=button],[type=submit]),.pa-ask-references > summary
+  ){transition:none;}
+  body.g-members.intranet-light.pa-soft-press :where(
+    button,a,input:is([type=button],[type=submit]),.pa-ask-references > summary
+  ):active:not(:disabled):not([aria-disabled=true]){transform:none;}
+}
+@media (forced-colors:active) {
+  body.g-members.intranet-light.pa-soft-press :where(button,a,summary):focus-visible{outline-color:Highlight;}
+}
