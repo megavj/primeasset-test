@@ -161,6 +161,13 @@
     const insChips = [chip('전체', 'ins', ''), ...kinds.map(k => chip(k, 'ins', k))];
     const chChips = [chip('전체', 'ch', ''), ...chans.map(c => chip(c, 'ch', c))];
     const freshChip = newCount ? chip('오늘 새 글', 'fresh', true) : null;
+    const filterCurrent = el('span', { class: 'art-filter-current', hidden: true });
+    const filter = el('details', { class: 'art-filter' },
+      el('summary', {}, el('span', {}, '분류'), filterCurrent),
+      el('div', { class: 'art-filter-body' },
+        el('div', { class: 'art-chips', role: 'group', 'aria-label': '보험 종류로 거르기' }, el('span', { class: 'art-chips-label' }, '보험 종류'), ...insChips.map(c => c.b)),
+        chans.length ? el('div', { class: 'art-chips art-chips--ch', role: 'group', 'aria-label': '채널로 거르기' }, el('span', { class: 'art-chips-label' }, '채널'), ...chChips.map(c => c.b)) : null,
+        freshChip ? el('div', { class: 'art-chips', role: 'group', 'aria-label': '등록 날짜로 거르기' }, el('span', { class: 'art-chips-label' }, '등록 날짜'), freshChip.b) : null));
     const terms = () => f.q.split(/\s+/).map(norm).filter(Boolean);
     const match = (x, skip, t) => (skip === 'ins' || !f.ins || insOf(x) === f.ins) && (skip === 'ch' || !f.ch || chOf(x) === f.ch) && (skip === 'fresh' || !f.fresh || isNew(x)) && t.every(w => hay.get(x.id).includes(w));
     let shown = [];
@@ -176,7 +183,10 @@
       insChips.forEach(c => { const n = c.value ? insN.get(c.value) || 0 : insBase.length; c.count.textContent = ' ' + n; c.b.setAttribute('aria-pressed', String(f.ins === c.value)); c.b.classList.toggle('is-none', !n && f.ins !== c.value); });
       chChips.forEach(c => { const n = c.value ? chN.get(c.value) || 0 : chBase.length; c.count.textContent = c.value ? ' ' + n : ''; c.b.setAttribute('aria-pressed', String(f.ch === c.value)); c.b.classList.toggle('is-none', !n && f.ch !== c.value); });
       if (freshChip) { freshChip.count.textContent = ' ' + S.list.filter(x => match(x, 'fresh', t) && isNew(x)).length; freshChip.b.setAttribute('aria-pressed', String(!!f.fresh)); }
-      const filtered = !!(f.q.trim() || f.ins || f.ch || f.fresh);
+      const active = [f.ins, f.ch, f.fresh ? '오늘 새 글' : ''].filter(Boolean);
+      filterCurrent.textContent = active.join(' · ');
+      filterCurrent.hidden = !active.length;
+      const filtered = !!(f.q.trim() || active.length);
       reset.hidden = !filtered;
       status.textContent = !S.list.length ? '' : filtered ? `${S.list.length}개 중 ${shown.length}개` : `글 ${S.list.length}개`;
       const page = shown.slice(from, shownCount);
@@ -212,14 +222,9 @@
     busy(false);
     S.view = 'list'; S.shown = () => shownCount;
     document.body.classList.remove('art-reading'); document.body.classList.add('art-on');   // art-on: 제목 옆 [내 보관함] 표시(쓸 수 있는 상태일 때만)
-    root.replaceChildren(quotaBar(),
-      el('div', { class: 'art-tools' }, search,
-        el('div', { class: 'art-chips', role: 'group', 'aria-label': '보험 종류로 거르기' }, ...insChips.map(c => c.b)),
-        chans.length ? el('div', { class: 'art-chips art-chips--ch', role: 'group', 'aria-label': '채널로 거르기' }, el('span', { class: 'art-chips-label' }, '채널'), ...chChips.map(c => c.b)) : null),
-      el('div', { class: 'art-listbar' }, el('div', { class: 'art-listbar-left' }, status, reset), freshChip ? freshChip.b : null), grid, el('div', { class: 'art-more-wrap' }, more));
-    if (freshChip) freshChip.b.classList.add('art-chip--new');
-    // 고른 칩이 가로로 밀려 안 보이면 보이는 곳으로
-    root.querySelectorAll('.art-chips .art-chip[aria-pressed="true"]').forEach(b => { const box = b.parentElement; if (b.offsetLeft + b.offsetWidth > box.scrollLeft + box.clientWidth) box.scrollLeft = Math.max(0, b.offsetLeft - 16); });
+    root.replaceChildren(el('div', { class: 'art-find' }, quotaBar(), search), filter,
+      el('div', { class: 'art-listbar' }, el('div', { class: 'art-listbar-left' }, status, reset)), grid,
+      el('div', { class: 'art-more-wrap' }, more));
     window.scrollTo({ top: back ? back.scroll : 0, behavior: 'instant' });
   }
 

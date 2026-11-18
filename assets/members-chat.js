@@ -98,6 +98,28 @@
         shortBtn('원수사 전산접속', 'portal', () => window.PA_QUICK.openPortals()),
         artTool ? shortLink('작성글모음', 'article', artTool.url) : null,
         artTool ? shortLink('내 보관함', 'keep', '/members/me/#art-locker') : null);
+      // Reuse the same authenticated list as 작성글모음. It never includes other members' saved articles.
+      const latestList = el('ul');
+      const latest = artTool ? el('section', { class: 'pa-home-latest', hidden: '', 'aria-labelledby': 'pa-home-latest-title' },
+        el('h3', { id: 'pa-home-latest-title' }, '새 작성글'), latestList) : null;
+      async function loadLatest() {
+        if (!latest) return;
+        latest.hidden = true;
+        latestList.replaceChildren();
+        try {
+          const reply = await sb.rpc('art_list');
+          if (!alive || reply.error || !Array.isArray(reply.data)) return;
+          const rows = reply.data.filter(row => row && typeof row.title === 'string' && row.title.trim() &&
+            typeof row.id === 'string' && /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(row.id));
+          const time = row => Date.parse(row.created_at) || 0;
+          rows.sort((a, b) => time(b) - time(a));
+          latestList.replaceChildren(...rows.slice(0, 3).map(row => el('li', {},
+            el('a', { href: '/members/articles/#a=' + row.id }, el('span', { class: 'pa-latest-title' }, row.title),
+              el('span', { class: 'pa-latest-arrow', 'aria-hidden': 'true' }, '›')))));
+          latest.hidden = !latestList.childElementCount;
+        } catch (_) { /* A failed optional list must never block the composer. */ }
+      }
+      const onPageShow = event => { if (event.persisted) loadLatest(); };
       const postSection = section('news', '최근 등록 보험자료', postBody, el('a', { class: 'pa-side-all', href: '/qa/' }, '전체 보기'));
       const historySection = section('pa-chat-history', '최근 AI 질문', historyBody, el('a', { class: 'pa-side-all', href: '/members/me/#ask-history' }, '전체 내역'));
       const newChat = el('button', { type: 'button', class: 'pa-side-new', onclick: () => {
@@ -122,8 +144,17 @@
       const backdrop = el('button', { type: 'button', class: 'pa-side-backdrop', tabindex: '-1', hidden: '', 'aria-label': '사이드바 닫기', onclick: () => setDrawer(false) });
       const center = el('div', { class: 'pa-chat-center' }, el('div', { class: 'pa-chat-toolbar' }, opener), ask.node);
       // 2026-11-11 대표 지시: 환영 문구에 이름 ('김상현님 무엇을 도와드릴까요?'), 빈 열을 만들던 '설계사 인트라넷' 글자 제거
-      { const hi = ask.node.querySelector('.pa-chat-welcome h2'); if (hi && profile.name) hi.textContent = profile.name + '님 무엇을 도와드릴까요?'; }
-      { const ex = ask.node.querySelector('.pa-chat-examples'); if (ex) ex.before(shortcuts); else ask.node.append(shortcuts); }
+      const hi = ask.node.querySelector('.pa-chat-welcome h2');
+      if (hi) hi.replaceChildren(el('img', { class: 'pa-welcome-mark', src: '/assets/logo.svg', width: '30', height: '33', alt: '' }),
+        el('span', {}, profile.name ? profile.name + '님 무엇을 도와드릴까요?' : hi.textContent));
+      const ex = ask.node.querySelector('.pa-chat-examples');
+      if (ex) {
+        if (latest) ex.before(latest);
+        ex.after(shortcuts);
+      } else {
+        if (latest) ask.node.append(latest);
+        ask.node.append(shortcuts);
+      }
       const node = el('section', { class: 'pa-chat-shell', id: 'home', 'aria-label': '설계사 인트라넷' }, backdrop, sidebar, center, announce);
       sidebar.append(moreMenu);
       function syncSidebar() {
@@ -250,13 +281,15 @@
           window.visualViewport?.addEventListener('resize', onResize);
           sidebar.querySelector('.pa-side-scroll').addEventListener('scroll', onScroll);
           observer = new ResizeObserver(onResize); observer.observe(document.querySelector('.g-nav'));
-          onResize(); loadPosts(); refreshHistory();
+          window.addEventListener('pageshow', onPageShow);
+          onResize(); loadPosts(); refreshHistory(); loadLatest();
         },
         dispose() {
           alive = false; historyEpoch++; api.dispose(); observer?.disconnect();
           document.body.classList.remove('pa-chat-layout');
           const header = document.querySelector('.g-nav'); if (header) header.inert = false;
           document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', outside);
+          window.removeEventListener('pageshow', onPageShow);
           window.removeEventListener('resize', onResize); window.removeEventListener('pa:chat-section', onSection); window.removeEventListener('storage', onStorage);
           window.visualViewport?.removeEventListener('resize', onResize);
         }
