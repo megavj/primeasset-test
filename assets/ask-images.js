@@ -39,8 +39,23 @@
     return items;
   }
 
-  function render(result) {
-    const items = forSources(result?.sources);
+  function forAnswer(result, question) {
+    const cited = forSources(result?.sources);
+    if (cited.length) return cited;
+    // An original, unnumbered explainer; never represent it as a cited document.
+    const dental = /치[아과]\s*보험/;
+    if (typeof question !== 'string' || typeof result?.answer !== 'string' ||
+        !dental.test(question) || !/(?:간편\s*(?:고지|심사|가입)|유병자|추천|비교)/.test(question) ||
+        !dental.test(result.answer) || !/(?:고지|청약서|임플란트|크라운|면책|감액|보철|보존치료)/.test(result.answer)) return [];
+    return [{
+      url: '/assets/ask-evidence/dental-comparison-checklist.svg',
+      caption: '치아보험 비교 체크리스트 · 참고용',
+      alt: '치아보험 비교 체크리스트: 청약서에서 묻는 고지 항목과 기간, 치료별 보장 범위와 한도, 보장 시작일과 면책·감액 기간을 각각 확인하세요. 특정 상품 추천이나 보장 약속이 아닙니다.'
+    }];
+  }
+
+  function render(result, question) {
+    const items = forAnswer(result, question);
     if (!items.length) return null;
     const gallery = document.createElement('section');
     gallery.className = 'pa-ask-images';
@@ -57,7 +72,7 @@
       dialog.setAttribute('aria-label', caption);
       const close = document.createElement('button'); close.type = 'button';
       close.className = 'pa-ask-image-close'; close.textContent = '닫기'; close.autofocus = true;
-      const large = document.createElement('img'); large.src = image.src; large.alt = caption;
+      const large = document.createElement('img'); large.src = image.src; large.alt = image.alt;
       const label = document.createElement('p'); label.textContent = caption;
       dialog.append(close, large, label);
       close.addEventListener('click', () => dialog.close());
@@ -75,7 +90,7 @@
       const button = document.createElement('button');
       button.className = 'pa-ask-image-tile'; button.type = 'button';
       button.setAttribute('aria-label', caption + ' 확대'); button.setAttribute('aria-haspopup', 'dialog');
-      const image = document.createElement('img'); image.alt = caption; image.decoding = 'async';
+      const image = document.createElement('img'); image.alt = item.alt || caption; image.decoding = 'async';
       image.loading = 'lazy'; image.referrerPolicy = 'no-referrer';
       const text = document.createElement('span'); text.textContent = caption;
       image.addEventListener('error', () => { button.remove(); if (!grid.childElementCount) gallery.remove(); }, { once: true });
@@ -86,5 +101,5 @@
     gallery.hidden = false;
     return gallery;
   }
-  window.PA_ASK_IMAGES = Object.freeze({ render, forSources });
+  window.PA_ASK_IMAGES = Object.freeze({ render, forSources, forAnswer });
 })();

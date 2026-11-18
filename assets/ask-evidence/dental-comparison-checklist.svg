@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="528" viewBox="0 0 720 528">
+  <title>간편고지 치아보험 비교 체크리스트</title>
+  <desc>청약서의 고지 항목과 기간, 치료별 보장 범위와 한도, 면책·감액 기간을 각각 확인하세요. 특정 상품의 추천이나 보장 약속이 아닙니다.</desc>
+  <rect width="720" height="528" rx="20" fill="#f2f6fa"/>
+  <g font-family="'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans CJK KR', sans-serif">
+    <text x="34" y="47" font-size="18" font-weight="700" fill="#246264">가입 전 확인 · 참고 이미지</text>
+    <text x="34" y="94" font-size="37" font-weight="700" fill="#152841">간편고지 치아보험 비교</text>
+    <g fill="#fff" stroke="#dce5ec">
+      <rect x="34" y="120" width="652" height="104" rx="12"/>
+      <rect x="34" y="236" width="652" height="104" rx="12"/>
+      <rect x="34" y="352" width="652" height="104" rx="12"/>
+    </g>
+    <g fill="#e3f1f0">
+      <circle cx="68" cy="154" r="19"/><circle cx="68" cy="270" r="19"/><circle cx="68" cy="386" r="19"/>
+    </g>
+    <g fill="#205c60" text-anchor="middle" font-size="18" font-weight="700">
+      <text x="68" y="160">1</text><text x="68" y="276">2</text><text x="68" y="392">3</text>
+    </g>
+    <g fill="#152841" font-size="25" font-weight="700">
+      <text x="100" y="163">청약서에서 무엇을 묻나요?</text>
+      <text x="100" y="279">필요한 치료가 보장되나요?</text>
+      <text x="100" y="395">언제부터 얼마나 보장되나요?</text>
+    </g>
+    <g fill="#3f5269" font-size="20">
+      <text x="100" y="199">진단·치료 이력 등 상품별 고지 항목과 기간을 확인</text>
+      <text x="100" y="315">충전·크라운·임플란트 등 치료별 보장 범위와 한도를 비교</text>
+      <text x="100" y="431">보장을 시작하는 날과 면책·감액 기간을 각각 확인</text>
+    </g>
+    <text x="34" y="497" fill="#4b5d71" font-size="18">비교용 안내입니다. 가입 조건과 보장은 해당 상품의 약관을 확인하세요.</text>
+  </g>
+</svg>

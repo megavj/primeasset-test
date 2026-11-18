@@ -1,3 +1,7 @@
+.pa-ask-references{margin:14px 0;border:1px solid var(--line);border-radius:8px;background:var(--bg-1);padding:0 12px}
+.pa-ask-references>summary{min-height:44px;align-content:center;cursor:pointer;color:var(--text);font-weight:600}
+.pa-ask-references>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pa-ask-references[open]{padding-bottom:8px}
 .pa-ask-images{margin:18px 0 20px}
 .pa-ask-images .pa-ask-image-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .pa-ask-image-tile{min-width:0;min-height:44px;padding:0;overflow:hidden;border:1px solid var(--line);border-radius:8px;background:var(--bg-1);color:var(--text);cursor:zoom-in;text-align:left;font:inherit}
