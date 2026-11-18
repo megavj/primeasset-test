@@ -244,7 +244,8 @@
         };
         const references = sources => {
           const list = Array.isArray(sources) ? sources : [];
-          return el('div', {}, el('h4', {}, '근거 자료 ', el('span', { class: 'pa-count' }, `${list.length}개`)), list.length
+          return el('details', { class: 'pa-ask-references' },
+            el('summary', {}, '근거자료 ', el('span', { class: 'pa-count' }, `${list.length}개`)), list.length
             ? el('ol', { class: 'pa-ask-sources' }, ...list.map(source => {
               const title = window.PA_ASK.maskResidentId(String(source.title || '참고 자료') + (source.page ? ` · ${source.page}쪽` : ''));
               const url = safeLink(source.url);
@@ -298,7 +299,7 @@
             else deep.append(el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => { deepUntil = Date.now() + 600000; pollDeep(); } }, '다시 답변 결과 확인'));
           } else if (deepStatus === 'done') {
             const note = el('p', { class: 'pa-ask-help', role: 'status' });
-            deep.replaceChildren(title, richBody(value.answer), references(value.sources),
+            deep.replaceChildren(title, richBody(value.answer), window.PA_ASK_IMAGES?.render(value, last.question), references(value.sources),
               el('p', { class: 'pa-ask-help' }, 'Claude Opus 5.5 · 높은 추론 · 첫 답변과 같은 근거 자료를 사용했습니다. 원문과 함께 확인해 주세요.'),
               el('div', { class: 'pa-ask-answer-actions' },
                 el('button', { type: 'button', class: 'g-btn g-btn--ghost', onclick: () => copyAnswer(value, false, note) }, '다시 답변 복사'),
@@ -324,7 +325,7 @@
         });
         const seconds = result.elapsedMs != null && result.elapsedMs !== '' && Number.isFinite(Number(result.elapsedMs)) ? Number(result.elapsedMs) / 1000 : null;
         const copyNote = el('p', { class: 'pa-ask-help', role: 'status', 'aria-live': 'polite' });
-        const content = el('div', { id: contentId }, body, window.PA_ASK_IMAGES?.render(result), references(sources),
+        const content = el('div', { id: contentId }, body, window.PA_ASK_IMAGES?.render(result, last.question), references(sources),
           el('p', { class: 'pa-ask-help' }, seconds !== null ? `응답 시간 ${seconds.toFixed(1)}초 · 세부 내용은 원문과 함께 확인해 주세요.` : '응답 시간 기록 없음 · 세부 내용은 원문과 함께 확인해 주세요.'));  // 2026-11-07 평가·다시답변 화면 제거(기록 보관)
         const collapse = el('button', { type: 'button', class: 'g-btn g-btn--ghost', 'aria-expanded': 'true', 'aria-controls': contentId, onclick: () => {
           content.hidden = !content.hidden; collapse.setAttribute('aria-expanded', String(!content.hidden)); collapse.textContent = content.hidden ? '답변 펼치기' : '답변 접기';
