@@ -59,7 +59,7 @@
   const gname = id => S.grades.find(g => g.id === id)?.name || '등급 없음';
   let askClient = null, sessionOwner;
   let tab = 'tasks', busy = false, dirty = false, ready = false, loadVersion = 0;
-  const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'yes',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''},resources:{q:'',view:'list',open:null}};
+  const filters = {members:{q:'',grade:'',status:'',page:1},pending:{q:'',complete:'',page:1},requests:{q:'',page:1},matrix:{q:'',grade:''},resources:{q:'',view:'list',open:null}};
   const TABS = {tasks:['업무 요약','승인할 회원과 필요한 관리 업무를 한눈에 확인하세요.'],pending:['가입 승인','가입 정보를 확인하고 등급을 지정해 승인합니다.'],requests:['지난 요청','예전에 회원이 보낸 이용 요청 중 아직 정리하지 않은 것입니다. 이제 회원 화면에는 요청 버튼이 없습니다.'],members:['회원 관리','이름을 누르면 상세 창이 열리고, 여러 명을 고르면 등급 변경·정지·정지 풀기를 한 번에 할 수 있습니다.'],matrix:['메뉴 권한','등급마다 회원이 볼 수 있는 메뉴와 AI 질문 횟수를 정합니다.'],grades:['등급 관리','가입 기본 등급과 등급 이름·순서를 관리합니다.'],admins:['관리자 관리','관리자 권한은 회원 등급과 별도로 관리합니다.'],notice:['새 소식','인트라넷 상단에 표시할 한 줄 소식을 작성합니다.'],hits:['방문 합계','날짜별 방문·문의 클릭 현황'],resources:['메뉴 관리','회원 업무 도구 화면의 메뉴를 추가·수정·숨김·삭제하고, 지운 메뉴를 30일 안에 되살립니다.'],branches:['본부 관리','함께하는 본부의 번호·주소·표시 순서를 관리합니다.'],audit:['변경 기록','최근 변경 내역을 확인합니다.'],articles:['작성글모음','AI가 쓴 글의 남은 수·보관 기록을 보고, 필요 없는 글을 지웁니다.'],backup:['백업','회원과 권한표를 파일로 내려받습니다.']};
 
   const confirmAction = message => window.confirm(message);
@@ -301,7 +301,7 @@
         const all = check('현재 페이지 승인 가능한 회원 모두 선택',eligible.length > 0 && eligible.every(m => selected.has(m.id)),e => { eligible.forEach(m => e.target.checked ? selected.add(m.id) : selected.delete(m.id)); draw(); });
         all.querySelector('input').disabled = !eligible.length;
         const shown = list.length ? `${num((f.page - 1) * 20 + 1)}~${num((f.page - 1) * 20 + slice.length)}번째` : '0명';
-        const countNote = `가입 승인 대기 ${num(pending.length)}명 · 정보 미입력 ${num(incomplete.length)}명(승인 불가) · 검색·필터 결과 ${num(list.length)}명 · 현재 ${shown} 표시`;
+        const countNote = `가입 승인 대기 ${num(pending.length)}명 · 정보 미입력 ${num(incomplete.length)}명(정보 직접 입력 후 승인 가능) · 검색·필터 결과 ${num(list.length)}명 · 현재 ${shown} 표시`;
         body.replaceChildren(el('p',{class:'adm-note',role:'status'},countNote),list.length ? el('div',{class:'adm-select-page'},all,el('span',{},'현재 페이지 승인 가능한 회원 선택')) : el('span'),list.length ? table(['선택','가입 정보','가입일·정보 입력','승인 등급','처리'],slice.map(m => {
           const eligibleMember = canApprove(m);
           const gs = filter(gradeSelect(`${m.name || m.email} 승인 등급`,rowGrades.get(m.id) ?? defaultGrade()));
