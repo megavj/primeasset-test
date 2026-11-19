@@ -46,7 +46,7 @@
     if (e?.hint === 'pa-menu' && /[가-힣]/.test(m)) return m; // TASK-MENU: 메뉴 관리 서버 함수의 안내 문구는 그대로 보여 줌
     if (/JWT|token|session|401/i.test(m)) return '로그인이 만료되었습니다. 인트라넷에서 다시 로그인해 주세요.';
     if (/permission|denied|42501|관리자|권한/i.test(m)) return '관리자 권한을 확인하지 못했습니다. 다시 로그인한 뒤 시도해 주세요.';
-    if (/가입 정보|정보 미입력/i.test(m)) return '이름·휴대폰·소속 본부·개인정보 동의를 모두 입력한 회원만 승인할 수 있습니다.';
+    if (/가입 정보|정보 미입력/i.test(m)) return '이름·휴대폰·소속 본부가 있어야 승인할 수 있습니다. 회원이 입력하지 않았으면 [정보 직접 입력]으로 넣어 주세요.';
     if (/duplicate|unique|23505/i.test(m)) return '이미 등록된 내용입니다. 목록을 새로고침해 확인해 주세요.';
     if (/마지막|기본 등급|회원이|pending|대기/i.test(m)) return '현재 상태에서는 처리할 수 없습니다. 마지막 관리자·기본 등급·소속 회원 여부를 확인해 주세요.';
     if (/23503|foreign key/i.test(m)) return '다른 자료에서 사용 중입니다. 연결된 회원과 권한을 먼저 확인해 주세요.';
@@ -101,10 +101,10 @@
   }
   async function checkedUpdate(id, values, pending = false) {
     const member = S.members.find(m => m.id === id);
-    if (values.status === 'active' && !profileComplete(member)) return {error:{message:'가입 정보 미입력'}};
+    if (values.status === 'active' && !approvable(member)) return {error:{message:'가입 정보 미입력'}};
     let query = sb.from('members').update(values).eq('id', id);
     // 확인 뒤 다른 창에서 가입 정보가 바뀌면 승인하지 않는다. 서버 제약은 별도 SQL 초안 참조.
-    if (values.status === 'active') ['name','phone','branch','consent_at'].forEach(key => { query = query.eq(key,member[key]); });
+    if (values.status === 'active') ['name','phone','branch','consent_at'].forEach(key => { query = member[key] == null ? query.is(key,null) : query.eq(key,member[key]); });
     if (pending) query = query.eq('status', 'pending');
     const r = await query.select('id');
     if (!r.error && !r.data?.length) return {error:{message:'상태 변경: 대기 회원을 새로 확인해 주세요'}};
@@ -190,9 +190,12 @@
   const badge = text => el('span',{class:'adm-badge'},text);
   // 신규/기존 미입력 계정은 승인할 신청과 구분한다. DB 원본에는 profile_done 열이 없다.
   const profileComplete = m => !!window.PA_SIGNUP?.complete(m);
+  // 2026-11-19: 관리자가 이름·휴대폰·소속을 직접 넣은 신청도 승인할 수 있다. 개인정보 동의는 대신하지 않고, 회원이 첫 로그인 때 직접 체크한다.
+  const adminFilled = m => { const P = window.PA_SIGNUP; return !!(P && m && m.status === 'pending' && !m.consent_at && P.validName(m.name) && P.validPhone(m.phone) && P.validBranch(m.branch, S.branches)); };
+  const approvable = m => profileComplete(m) || adminFilled(m);
   const unapprovedMembers = () => S.members.filter(m => ['pending','incomplete'].includes(m.status)).sort((a,b) => String(a.created_at).localeCompare(String(b.created_at)) || String(a.id).localeCompare(String(b.id)));
-  const pendingMembers = () => unapprovedMembers().filter(m => m.status === 'pending' && profileComplete(m));
-  const incompleteMembers = () => unapprovedMembers().filter(m => m.status === 'incomplete' || !profileComplete(m));
+  const pendingMembers = () => unapprovedMembers().filter(m => m.status === 'pending' && approvable(m));
+  const incompleteMembers = () => unapprovedMembers().filter(m => m.status === 'incomplete' || !approvable(m));
   function render(focus = false) {
     const pending = pendingMembers().length;
     const count = key => key === 'pending' ? pending : key === 'requests' ? (S.requestError ? '—' : S.requests.length) : null;
@@ -215,6 +218,34 @@
     return el('div',{class:'adm-pagination'},el('span',{class:'adm-note','role':'status'},`${num(list.length)}건 · ${f.page} / ${pages}페이지`),button('이전',() => move(-1),'secondary',{disabled:f.page <= 1}),button('다음',() => move(1),'secondary',{disabled:f.page >= pages}));
   }
   const pageRows = (rows,f) => rows.slice((f.page - 1) * 20,f.page * 20);
+  function fillSignup(m) {
+    const P = window.PA_SIGNUP; if (!P) return toast('가입 정보 도구를 불러오지 못했습니다. 새로고침해 주세요.',true);
+    const previous = document.activeElement;
+    const name = el('input',{class:'adm-input',value:m.name || '',maxlength:'60',autocomplete:'off'});
+    const branch = el('select',{class:'adm-input'},el('option',{value:''},'소속 본부 선택'),...S.branches.filter(b => b.visible !== false).map(b => { const v = String(b.no).trim() + '본부'; return el('option',{value:v,selected:v === String(m.branch || '').trim()},v); }));
+    const phone = el('input',{class:'adm-input',value:m.phone || '',type:'tel',inputmode:'tel',maxlength:'13',placeholder:'01012345678',autocomplete:'off'});
+    const out = el('p',{class:'adm-note',role:'status'});
+    const d = el('dialog',{class:'adm-dialog','aria-labelledby':'adm-fill-title'},el('h3',{id:'adm-fill-title'},'가입 정보 직접 입력'),
+      el('p',{class:'adm-note'},`${m.email || '이메일 없음'} · 가입 ${fmt(m.created_at)}`),
+      field('이름',name),field('소속 본부',branch),field('휴대폰 번호',phone),
+      el('p',{class:'adm-note'},'개인정보 수집·이용 동의는 대신할 수 없어 비워 둡니다. 승인 후 회원이 처음 로그인할 때 입력된 정보를 확인하고 동의에 체크하면 바로 이용할 수 있습니다.'),out);
+    const close = () => { if (d.open) d.close(); d.remove(); if (previous?.isConnected) previous.focus(); };
+    const save = button('저장',async () => {
+      const v = {name:name.value.trim(),branch:branch.value,phone:String(phone.value).replace(/\D/g,'')};
+      if (!P.validName(v.name)) { out.textContent = '이름을 2자 이상 입력해 주세요.'; return name.focus(); }
+      if (!P.validBranch(v.branch, S.branches)) { out.textContent = '소속 본부를 목록에서 골라 주세요.'; return branch.focus(); }
+      if (!P.validPhone(v.phone)) { out.textContent = '010으로 시작하는 휴대폰 번호 11자리를 입력해 주세요.'; return phone.focus(); }
+      const who = S.profile?.name || S.profile?.email || '관리자';
+      const stamp = `[${new Date().toLocaleString('sv-SE',{timeZone:'Asia/Seoul'}).slice(0,16)} ${who} 가입 정보 직접 입력]`;
+      const values = {...v,memo:(m.memo ? m.memo + '\n' : '') + stamp};
+      close();
+      mutate(async () => { const r = await sb.from('members').update(values).eq('id',m.id).eq('status','pending').is('consent_at',null).select('id'); if (!r.error && !r.data?.length) return {error:{message:'상태 변경: 대기 회원을 새로 확인해 주세요'}}; return r; },'가입 정보를 저장했습니다. 이제 승인할 수 있습니다.');
+    },'primary');
+    d.append(el('div',{class:'adm-actions adm-dialog-actions'},save,button('취소',close,'secondary')));
+    d.addEventListener('cancel',e => { e.preventDefault(); close(); });
+    document.body.append(d); if (typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open','');
+    name.focus();
+  }
   function person(m) { return el('div',{class:'adm-person'},el('strong',{},m.name || '이름 미입력'),el('span',{},m.branch || '소속 미입력'),el('span',{},m.phone || '연락처 미입력'),el('small',{},m.email || '이메일 없음')); }
   function check(label, checked, onchange) { return el('label',{class:'adm-check'},el('input',{type:'checkbox',checked,'aria-label':label,onchange}),el('span',{class:'sr'},label)); }
   const defaultGrade = () => S.grades.find(g => g.name === '설계사')?.id || S.grades[0]?.id || '';
@@ -251,7 +282,7 @@
     pending() {
       const f = filters.pending, selected = new Set(), rowGrades = new Map();
       const q = filter(input('대기 회원 검색',f.q,{type:'search',placeholder:'이름 · 소속 · 이메일 · 연락처'}));
-      const complete = filter(select('가입 정보 입력 여부',[['yes','가입 승인 대기 · 입력 완료'],['no','정보 미입력 · 승인 불가'],['','전체 계정']],f.complete));
+      const complete = filter(select('가입 정보 입력 여부',[['yes','가입 승인 대기 · 입력 완료'],['no','정보 미입력'],['','전체 계정']],f.complete));
       const grade = filter(gradeSelect('일괄 승인 등급',defaultGrade()));
       const body = el('div'), summary = el('span',{class:'adm-note','role':'status'});
       const approve = button('선택 회원 승인',() => {
@@ -263,7 +294,7 @@
       const sync = () => { summary.textContent = `${selected.size}명 선택`; approve.disabled = !selected.size || !grade.value; };
       const draw = () => {
         const pending = pendingMembers(), incomplete = incompleteMembers(), allMembers = unapprovedMembers();
-        const canApprove = m => m.status === 'pending' && profileComplete(m);
+        const canApprove = m => m.status === 'pending' && approvable(m);
         const list = allMembers.filter(m => matches(f.q,m.name,m.branch,m.email,m.phone) && (!f.complete || (f.complete === 'yes') === canApprove(m)));
         const paging = pager(list,f,() => {selected.clear();draw();});
         const slice = pageRows(list,f), eligible = slice.filter(canApprove);
@@ -278,13 +309,13 @@
           gs.addEventListener('change',()=>rowGrades.set(m.id,gs.value));
           const selection = check(`${m.name || m.email} 선택`,selected.has(m.id),e => {e.target.checked ? selected.add(m.id) : selected.delete(m.id);sync();all.querySelector('input').checked = eligible.length > 0 && eligible.every(x => selected.has(x.id));});
           selection.querySelector('input').disabled = !eligibleMember;
-          return el('tr',{'data-signup-state':eligibleMember ? 'ready' : 'incomplete'},el('td',{},selection),el('td',{},person(m)),el('td',{},el('span',{},fmt(m.created_at)),el('br'),badge(eligibleMember ? '정보 입력 완료' : '정보 미입력'),!eligibleMember ? el('small',{class:'adm-note'},'본인 정보 입력 후 승인 가능') : null),el('td',{},gs),el('td',{},el('div',{class:'adm-actions'},button('승인',() => { if (!canApprove(m)) return toast('정보 미입력 계정은 승인할 수 없습니다.',true); if (confirmAction(`${m.name || m.email} (${m.email || m.id}) 님을 ${gname(+gs.value)} 등급으로 가입 승인할까요?\n변경 범위: 승인 대기 → 사용 중, 선택한 등급 적용`)) mutate(() => checkedUpdate(m.id,{status:'active',grade_id:+gs.value},true),'가입을 승인했습니다.'); },'primary',{disabled:!eligibleMember || !S.grades.length}),m.status === 'pending' ? button('거절',() => { if (confirmAction(`${m.name || m.email} 님의 가입을 거절하고 계정을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) mutate(() => sb.rpc('reject_member',{p_id:m.id}),'가입을 거절했습니다.'); },'danger') : null)));
+          return el('tr',{'data-signup-state':eligibleMember ? 'ready' : 'incomplete'},el('td',{},selection),el('td',{},person(m)),el('td',{},el('span',{},fmt(m.created_at)),el('br'),badge(eligibleMember ? (adminFilled(m) ? '관리자 입력' : '정보 입력 완료') : '정보 미입력'),adminFilled(m) ? el('small',{class:'adm-note'},'개인정보 동의는 회원이 첫 로그인 때 직접 체크') : !eligibleMember ? el('small',{class:'adm-note'},'본인 입력을 기다리거나 [정보 직접 입력]') : null),el('td',{},gs),el('td',{},el('div',{class:'adm-actions'},button('승인',() => { if (!canApprove(m)) return toast('정보 미입력 계정은 승인할 수 없습니다.',true); if (confirmAction(`${m.name || m.email} (${m.email || m.id}) 님을 ${gname(+gs.value)} 등급으로 가입 승인할까요?\n변경 범위: 승인 대기 → 사용 중, 선택한 등급 적용`)) mutate(() => checkedUpdate(m.id,{status:'active',grade_id:+gs.value},true),'가입을 승인했습니다.'); },'primary',{disabled:!eligibleMember || !S.grades.length}),m.status === 'pending' && !profileComplete(m) ? button(adminFilled(m) ? '입력 정보 고치기' : '정보 직접 입력',() => fillSignup(m),'secondary') : null,m.status === 'pending' ? button('거절',() => { if (confirmAction(`${m.name || m.email} 님의 가입을 거절하고 계정을 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) mutate(() => sb.rpc('reject_member',{p_id:m.id}),'가입을 거절했습니다.'); },'danger') : null)));
         }),'가입 승인 및 정보 미입력 계정') : empty('조건에 맞는 계정이 없습니다','검색어나 정보 입력 필터를 확인해 주세요.'),paging);
         sync();
       };
       q.addEventListener('input',() => { f.q = q.value; f.page = 1; selected.clear(); draw(); }); complete.addEventListener('change',() => {f.complete = complete.value;f.page = 1;selected.clear();draw();});
       draw();
-      return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('대기 회원 검색',q),field('가입 정보',complete),button('검색·필터 초기화',() => go('pending'))),el('p',{class:'adm-note'},'이름·휴대폰·소속 본부·개인정보 동의를 모두 확인한 신청만 승인할 수 있습니다. 정보 미입력 계정은 별도로 분류합니다.'),el('div',{class:'adm-bulk'},summary,field('선택 회원에게 부여할 등급',grade),approve),body);
+      return el('div',{class:'adm-stack'},el('div',{class:'adm-toolbar'},field('대기 회원 검색',q),field('가입 정보',complete),button('검색·필터 초기화',() => go('pending'))),el('p',{class:'adm-note'},'이름·휴대폰·소속 본부가 모두 있는 신청만 승인할 수 있습니다. 회원이 입력하지 않았으면 [정보 직접 입력]으로 넣은 뒤 승인하세요. 이때 개인정보 동의는 회원이 첫 로그인 때 직접 체크합니다.'),el('div',{class:'adm-bulk'},summary,field('선택 회원에게 부여할 등급',grade),approve),body);
     },
     requests() {
       if (S.requestError) return el('div',{class:'adm-panel'},empty('승인 요청을 불러오지 못했습니다','연결 상태 또는 승인 요청 기능의 서버 설정을 확인해 주세요. 다른 관리 기능은 계속 사용할 수 있습니다.'),button('요청 다시 불러오기',() => mutate(async () => {await requestData();if(S.requestError)throw S.requestError;render();return {};},'요청 목록을 확인했습니다.',{reload:false})));
@@ -330,7 +361,7 @@
   const updateDraftNotice = () => { const note = document.getElementById('admin-draft-note'); if (note) note.hidden = !dirty; };
   const remember = control => {originals.set(control,controlValue(control));edited.delete(control);dirty=edited.size>0;updateDraftNotice();};
   // TASK-ADM: 메뉴 권한(admin-matrix.js)·회원 관리(admin-members.js)는 따로 둔 화면 모듈이 같은 공용 도구를 씁니다.
-  const ctx = {sb,S,el,button,field,input,select,table,empty,toast,mutate,go,fmt,gname,confirmAction,errorText,remember,num,badge,person,filters,profileComplete,checkedUpdate,load,
+  const ctx = {sb,S,el,button,field,input,select,table,empty,toast,mutate,go,fmt,gname,confirmAction,errorText,remember,num,badge,person,filters,profileComplete,approvable,checkedUpdate,load,
     setDirty:value => { dirty = !!value; updateDraftNotice(); }, isBusy:() => busy, askClient:() => { if (!askClient && window.PA_ASK) askClient = window.PA_ASK.create(sb); return askClient; }};
   const settings = window.PA_ADMIN_SETTINGS ? window.PA_ADMIN_SETTINGS(ctx) : {};
   const modules = Object.assign({}, window.PA_ADMIN_MATRIX ? window.PA_ADMIN_MATRIX(ctx) : {}, window.PA_ADMIN_MEMBERS ? window.PA_ADMIN_MEMBERS(ctx) : {}, window.PA_ADMIN_ARTICLES ? window.PA_ADMIN_ARTICLES(ctx) : {}, window.PA_ADMIN_MENUS ? window.PA_ADMIN_MENUS(ctx) : {}); // TASK-ART: 작성글모음(admin-articles.js) · TASK-MENU: 메뉴 관리(admin-menus.js)

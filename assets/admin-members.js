@@ -19,7 +19,7 @@
   }
 
   window.PA_ADMIN_MEMBERS = function (ctx) {
-    const { sb, S, el, button, input, empty, toast, mutate, num, gname, badge, filters, profileComplete, checkedUpdate, setDirty, go } = ctx;
+    const { sb, S, el, button, input, empty, toast, mutate, num, gname, badge, filters, profileComplete, approvable, checkedUpdate, setDirty, go } = ctx;
     const media = window.matchMedia('(max-width: 800px)');
     const fmtDate = t => t && !Number.isNaN(Date.parse(t)) ? new Date(t).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
     const fmtTime = t => t && !Number.isNaN(Date.parse(t)) ? new Date(t).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
@@ -28,7 +28,7 @@
       const d = Math.floor((Date.now() - Date.parse(t)) / DAY);
       return d <= 0 ? '오늘' : d === 1 ? '어제' : d < 30 ? `${d}일 전` : d < 365 ? `${Math.floor(d / 30)}개월 전` : `${Math.floor(d / 365)}년 전`;
     };
-    const stateOf = m => m.status === 'suspended' ? ['suspended', '정지'] : m.status === 'active' ? ['active', '사용 중'] : (m.status === 'pending' && profileComplete(m)) ? ['pending', '승인 대기'] : ['incomplete', '정보 미입력'];
+    const stateOf = m => m.status === 'suspended' ? ['suspended', '정지'] : m.status === 'active' ? ['active', '사용 중'] : (m.status === 'pending' && (approvable || profileComplete)(m)) ? ['pending', '승인 대기'] : ['incomplete', '정보 미입력'];
     const stateBadge = state => { const b = badge(state[1]); b.classList.add('adm-badge--' + state[0]); return b; };
     const seen = m => activity && activity.get(m.id) || null;
     const isMe = m => !!(S.profile && m.email && m.email === S.profile.email);

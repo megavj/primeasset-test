@@ -262,7 +262,8 @@
       catch (error) { out.textContent = isNet(error) ? NET_MSG : "계정을 바꾸지 못했어요. 잠시 후 다시 눌러 주세요."; }
       finally { switchEmail.disabled = false; }
     } }, "다른 이메일로 가입하기");
-    const submit = el("button", { class: "g-btn g-btn--pri g-btn--lg", type: "submit" }, "가입 신청");
+    const submitLabel = p.status === "active" ? "확인하고 시작하기" : "가입 신청"; // 관리자가 정보를 넣어 승인한 회원은 동의만 하면 바로 이용
+    const submit = el("button", { class: "g-btn g-btn--pri g-btn--lg", type: "submit" }, submitLabel);
     const form = el("form", { id: "pa-signup-form", novalidate: "", onsubmit: async ev => {
       ev.preventDefault();
       if (saving) return;
@@ -290,7 +291,7 @@
         console.debug("[complete_profile]", error);
         out.textContent = isNet(error) ? NET_MSG : hasKo(error.message) ? error.message + " — 입력 내용을 확인한 뒤 다시 눌러 주세요." : "가입 신청을 보내지 못했어요. 잠시 후 다시 눌러 주세요.";
       } finally {
-        saving = false; [n, b, ph, ok, submit, switchEmail].forEach(input => { input.disabled = false; }); submit.textContent = "가입 신청";
+        saving = false; [n, b, ph, ok, submit, switchEmail].forEach(input => { input.disabled = false; }); submit.textContent = submitLabel;
       }
     } }, el("label", { class: "pa-signup-form-label", for: n.id }, "이름"), n,
       el("label", { class: "pa-signup-form-label", for: ph.id }, "휴대폰 번호"), ph,
