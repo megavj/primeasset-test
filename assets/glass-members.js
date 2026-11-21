@@ -510,6 +510,7 @@
     }
     clearDraft(storageOwner);
     if (p.status === "suspended") return show(msg("이용이 정지된 계정입니다", "문의는 관리자에게 해 주세요."), logoutBtn());
+    if (p.status === "active") { try { const r = JSON.parse(localStorage.getItem("pa_return") || "null"); localStorage.removeItem("pa_return"); if (r && Date.now() - r.t < 30 * 60 * 1000 && /^\/(qa|product|wiki)\/[^\s]*$/.test(r.u) && !r.u.startsWith("//")) { location.replace(r.u); return; } } catch (_) {} } // 2026-11-21 공유 보험자료 → 로그인 → 원래 글로 복귀
     if (p.status === "pending") return intranetView(p, null, epoch, storageOwner); // 안내·요청 버튼은 intranetView 가 메뉴 목록과 함께 그림(pendingCard)
     return intranetView(p, /^(게스트|guest)$/i.test(p.grade || "") ? msg("게스트 등급입니다", "잠긴 메뉴는 관리자가 등급에 따라 열어 드립니다") : null, epoch, storageOwner);
   }

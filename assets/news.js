@@ -129,12 +129,12 @@
     setText('age-main', '만 ' + age + '세 → 보험나이 ' + insuranceAge + '세'); setText('age-tip', ref >= halfPoint ? '생일 6개월 이후 — 현재 보험나이 ' + insuranceAge + '세 적용 중' : '생일 6개월 이전 — ' + daysToHalf + '일 후 ' + (insuranceAge + 1) + '세로 올라갑니다'); $('age-result').hidden = false;
   });
   function recordVisit() {
-    // 로컬 검증에서 실제 방문 기록을 늘리지 않습니다. 기존과 같은 네 항목만 전송합니다.
+    // 로컬 검증에서 실제 방문 기록을 늘리지 않습니다. 기존과 같은 네 항목만 전송합니다. 2026-11-21: 주소는 검색어·# 제외, 이전 사이트는 도메인만.
     if (location.hostname !== 'www.primeasset.info') return;
     try {
       const key = 'premiumPortalVisitorId'; let visitorId = localStorage.getItem(key);
       if (!visitorId) { visitorId = window.crypto && crypto.randomUUID ? crypto.randomUUID() : 'v-' + Date.now() + '-' + Math.random().toString(36).slice(2); localStorage.setItem(key, visitorId); }
-      fetch(API, { method: 'POST', mode: 'no-cors', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ action: 'visit', payload: { visitorId, pageUrl: location.href || '', referrer: document.referrer || '', userAgent: navigator.userAgent || '' } }), keepalive: true }).catch(() => {});
+      fetch(API, { method: 'POST', mode: 'no-cors', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ action: 'visit', payload: { visitorId, pageUrl: location.origin + location.pathname, referrer: (() => { try { return document.referrer ? new URL(document.referrer).origin : ''; } catch (_) { return ''; } })(), userAgent: navigator.userAgent || '' } }), keepalive: true }).catch(() => {});
     } catch (_) { /* 저장 또는 통계 연결이 제한되어도 뉴스는 이용할 수 있습니다. */ }
   }
   filterGroup('news-filters', categories, category, value => { category = value; renderNews(); });

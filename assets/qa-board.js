@@ -141,7 +141,7 @@
     try { sb = await window.paClient(); } catch (_) { gate('로그인 기능을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.'); return; }
     const { data } = await sb.auth.getSession();
     const session = data && data.session;
-    if (!session) { gate('보험자료는 로그인한 회원만 볼 수 있습니다.', '/members/#login', '로그인'); return; }
+    if (!session) { try { localStorage.setItem('pa_return', JSON.stringify({ u: location.pathname + location.search, t: Date.now() })); } catch (_) {} gate('보험자료는 로그인한 회원만 볼 수 있습니다.', '/members/#login', '로그인'); return; }
     const me = await sb.rpc('my_profile').setHeader('Authorization', 'Bearer ' + session.access_token);
     const profile = me.data && me.data[0];
     if (me.error || !profile) { gate('회원 정보를 확인하지 못했습니다. 다시 로그인해 주세요.', '/members/#login', '다시 로그인'); return; }
