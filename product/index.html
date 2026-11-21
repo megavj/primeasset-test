@@ -14,8 +14,9 @@
   <link rel="stylesheet" href="../assets/glass.css?v=16">
   <link rel="stylesheet" href="../assets/product.css?v=20261104-t10">
   <script src="/assets/auth-config.js?v=2" defer></script>
-  <script src="../assets/product-library.js?v=20261104-t10" defer></script>
-  <script src="../assets/product.js?v=20261104-t10" defer></script>
+  <script src="/assets/pa-client.js?v=1" defer></script>
+  <script src="../assets/product-library.js?v=20261121-login" defer></script>
+  <script src="../assets/product.js?v=20261121-login" defer></script>
 <link rel="stylesheet" href="/assets/intranet-light.css?v=20261110-unslop9">
 </head>
 <body class="product-page intranet-light">
@@ -27,9 +28,13 @@
 </header>
   <header class="px-header" role="none">
     <a class="px-brand" href="../" aria-label="상품 통합 분석기 — 프라임에셋 프리미엄 메인으로"><img src="../assets/favicon.svg" width="28" height="28" alt=""><h1>상품 통합 분석기</h1></a>
-    <nav aria-label="페이지 이동"><a href="/members/">인트라넷으로 돌아가기</a><a id="original-app" target="_blank" rel="noopener noreferrer">기존 분석기 <span aria-hidden="true">↗</span></a></nav>
+    <nav aria-label="페이지 이동"><a href="/members/">인트라넷으로 돌아가기</a></nav>
   </header>
-  <main id="main" class="px-workspace" tabindex="-1">
+  <!-- 2026-11-21 로그인 필수: 가입 승인된 설계사만 사용(실제 판정은 서버) -->
+  <section id="px-gate" class="pa-card px-gate" aria-live="polite" style="max-width:720px;margin:24px auto;padding:28px 24px;text-align:center">
+    <p id="px-gate-msg" style="margin:0;font-size:17px;line-height:1.7">로그인 상태를 확인하는 중…</p>
+  </section>
+  <main id="main" class="px-workspace" tabindex="-1" hidden>
     <div class="px-tabs" role="tablist" aria-label="분석기 업무">
       <button id="tab-product" role="tab" aria-selected="true" aria-controls="panel-product" tabindex="0">상품 질문</button>
       <button id="tab-news" role="tab" aria-selected="false" aria-controls="panel-news" tabindex="-1">보험사 소식지</button>

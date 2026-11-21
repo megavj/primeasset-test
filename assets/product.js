@@ -11,9 +11,32 @@
   const sourceList = answer => arr(answer.sources).filter(source => source && typeof source === 'object' && !Array.isArray(source));
   const scroll = node => { node.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start'}); };
   let sequence = 0, active = null, toastTimer, metaBusy = false, metaSignature = '', history = [], answers = new Map();
-  byId('original-app').href = APP_URL;
+  /* 2026-11-21 로그인 필수: 홈페이지 로그인 토큰을 매 요청에 붙이고, 서버(GAS)가 승인 회원인지 확인한다. */
+  let SB = null, gated = false;
+  const AUTH_CODES = new Set(['login_required','invalid_token','expired','not_active','profile_unavailable','auth_unavailable']);
+  const LOGIN_LINK = ' <a href="/members/#login">로그인하기</a>';
+  function gate(html) {
+    gated = true;
+    byId('px-gate').hidden = false; byId('px-gate-msg').innerHTML = html; byId('main').hidden = true;
+  }
+  async function accessToken() {
+    if (!SB) SB = await window.paClient();
+    const r = await SB.auth.getSession(), s = r && r.data && r.data.session;
+    return s ? s.access_token : '';
+  }
 
-  function api(action, params) {
+  async function api(action, params) {
+    if (gated) throw new Error('로그인이 필요합니다.');
+    const token = await accessToken();
+    if (!token) { gate('설계사 로그인 후 쓸 수 있어요.' + LOGIN_LINK); throw new Error('login_required'); }
+    const data = await apiRaw(action, Object.assign({}, params || {}, { token }));
+    if (data && data.ok === false && AUTH_CODES.has(data.code)) {
+      gate(String(data.msg || '로그인이 필요합니다.').replace(/[<>&]/g, '') + (data.code === 'not_active' ? ' <a href="/members/#home">인트라넷으로</a>' : LOGIN_LINK));
+      throw new Error(data.code);
+    }
+    return data;
+  }
+  function apiRaw(action, params) {
     return new Promise((resolve, reject) => {
       const callback = 'paProduct_' + Date.now() + '_' + (++sequence);
       const url = new URL(APP_URL);
@@ -344,12 +367,22 @@
   byId('connection-retry').addEventListener('click',loadMeta);
   byId('clear-history').addEventListener('click',()=>{history=[];answers.clear();if(active)active.forget=true;saveHistory();renderHistory();announce('이 탭의 최근 질문을 지웠습니다.');});
   window.ProductLibrary.init({api,el,byId,copy,share,processor,announce,scroll});
-  loadHistory();fillExamples(fallbackExamples);loadMeta();
-  let heartbeat=setInterval(loadMeta,30000);
+  let heartbeat=0;
+  (async function boot(){
+    let token='';
+    try { token = await accessToken(); } catch (e) { return gate('화면을 불러오지 못했습니다. 잠시 후 <a href="">새로고침</a>해 주세요.'); }
+    if (!token) return gate('상품 통합 분석기는 188 인트라넷에 로그인한 설계사만 쓸 수 있어요.' + LOGIN_LINK);
+    let prof=null;
+    try { const r = await SB.rpc('my_profile'); if (r.error) throw r.error; prof = r.data && r.data[0]; } catch (e) { return gate('회원 정보를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.'); }
+    if (!prof || prof.status !== 'active') return gate(prof && prof.status === 'pending' ? '가입 승인 대기 중이에요. 관리자가 승인하면 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>' : '가입 승인된 설계사만 쓸 수 있어요. <a href="/members/#home">인트라넷으로</a>');
+    byId('px-gate').hidden = true; byId('main').hidden = false;
+    loadHistory();fillExamples(fallbackExamples);loadMeta();
+    heartbeat=setInterval(()=>{ if (!gated) loadMeta(); },30000);
+  })();
   window.addEventListener('pagehide',()=>{stopTimers(active);clearInterval(heartbeat);});
   window.addEventListener('pageshow',event=>{
     if(!event.persisted)return;
-    loadMeta();clearInterval(heartbeat);heartbeat=setInterval(loadMeta,30000);
+    if(gated||byId('main').hidden)return;loadMeta();clearInterval(heartbeat);heartbeat=setInterval(()=>{ if (!gated) loadMeta(); },30000);
     if(active&&active.id&&!active.paused&&!active.ended){stopTimers(active);beginWaiting(active);}
   });
 })();
