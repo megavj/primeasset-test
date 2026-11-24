@@ -12,7 +12,7 @@
   const { el, kDate } = K;
   const leftBox = $('art-topic-left'), mineBtn = $('art-topic-mine'), countBox = $('art-topic-count'), msg = $('art-topic-msg'), listBox = $('art-topic-list'), toastBox = $('art-toast');
   const quotaBox = leftBox ? leftBox.parentNode : null;
-  const LIMIT = 3, MIN = 4, MAX = 60;
+  const LIMIT = 3, MIN = 6, MAX = 46;
   const RETRY = '잠시 후 다시 시도해 주세요.';
   const PII_TEXT = '전화번호·주민번호·이메일처럼 보이는 내용은 보낼 수 없어요. 고객 정보는 빼고 주제만 적어 주세요.';
   const FULL_TEXT = `오늘은 ${LIMIT}개를 모두 요청했어요. 내일 다시 요청할 수 있어요.`;
