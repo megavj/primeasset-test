@@ -80,11 +80,8 @@
     // 다른 페이지 팝업에서 '정보 입력하러 가기'로 넘어온 경우엔 입력 화면에서 같은 팝업을 다시 띄우지 않습니다.
     try { if (isMembers && sessionStorage.getItem('pa_profile_prompt_go')) { sessionStorage.removeItem('pa_profile_prompt_go'); return; } } catch (_) {}
     if (!document.getElementById('pa-profile-prompt-style')) {
-      const style = document.createElement('style'); style.id = 'pa-profile-prompt-style';
-      style.textContent = '.pa-profile-prompt{border:0;border-radius:18px;padding:28px 26px 22px;max-width:min(380px,calc(100vw - 32px));box-shadow:0 18px 50px rgba(15,23,42,.28);text-align:center;color:#0f172a;background:#fff}' +
-        '.pa-profile-prompt::backdrop{background:rgba(15,23,42,.55)}.pa-profile-prompt h2{margin:0 0 10px;font-size:20px;line-height:1.35}' +
-        '.pa-profile-prompt p{margin:0 0 20px;font-size:15px;line-height:1.6;color:#475569;word-break:keep-all}.pa-profile-prompt .g-btn{width:100%;justify-content:center}' +
-        '.pa-profile-prompt .pa-profile-later{margin-top:10px;border:0;background:none;color:#64748b;font-size:14px;cursor:pointer;padding:6px}';
+      const style = document.createElement('link'); style.id = 'pa-profile-prompt-style'; style.rel = 'stylesheet';
+      style.href = '/assets/profile-prompt.css?v=20261124-signup2';
       document.head.appendChild(style);
     }
     const dialog = document.createElement('dialog');
@@ -92,6 +89,7 @@
     dialog.setAttribute('aria-labelledby', 'pa-profile-prompt-title');
     dialog.innerHTML = '<h2 id="pa-profile-prompt-title">가입 정보를 입력해 주세요</h2>' +
       '<p>이름·휴대폰 번호·소속 본부를 입력해야 가입 신청이 접수되고, 승인 후 인트라넷을 사용할 수 있습니다.</p>' +
+      '<p class="pa-profile-countdown" role="timer" aria-live="off" hidden></p>' +
       '<button type="button" class="g-btn g-btn--pri g-btn--lg" data-act="go">' + (isMembers ? '정보 입력하기' : '정보 입력하러 가기') + '</button>' +
       (isMembers ? '' : '<button type="button" class="pa-profile-later" data-act="later">나중에 하기</button>');
     dialog.addEventListener('click', event => {
@@ -103,9 +101,37 @@
       const field = document.getElementById('pa-signup-name');
       if (field) { field.scrollIntoView({ block: 'center' }); field.focus(); }
     });
-    dialog.addEventListener('close', () => dialog.remove());
+    let timer = 0;
+    dialog.addEventListener('close', () => { clearInterval(timer); dialog.remove(); });
     document.body.appendChild(dialog);
     dialog.showModal();
+    // 2026-11-24 이사님 지시: 가입 6시간 안에 정보를 넣지 않으면 자동 거절 — 남은 시간을 보여 줍니다(서버 1분마다 실제 거절).
+    const box = dialog.querySelector('.pa-profile-countdown');
+    loadDeadline().then(deadline => {
+      if (!deadline || !dialog.isConnected) return;
+      const end = Date.parse(deadline);
+      if (!Number.isFinite(end)) return;
+      const two = n => String(n).padStart(2, '0');
+      const tick = () => {
+        const left = Math.floor((end - Date.now()) / 1000);
+        if (left <= 0) { box.textContent = '입력 기한이 지나 가입 신청이 곧 자동 거절됩니다'; clearInterval(timer); return; }
+        box.textContent = '자동 거절까지 ' + Math.floor(left / 3600) + '시간 ' + two(Math.floor(left / 60) % 60) + '분 ' + two(left % 60) + '초';
+      };
+      box.hidden = false; tick(); timer = setInterval(tick, 1000);
+    }).catch(() => {});
+  }
+  async function loadDeadline() {
+    if (!session) return null;
+    if (window.PA_SB) {
+      const response = await window.PA_SB.rpc('signup_reject_deadline');
+      if (response.error) throw response.error;
+      return response.data;
+    }
+    const response = await fetch(config.url + '/rest/v1/rpc/signup_reject_deadline', {
+      method: 'POST', headers: { apikey: config.anonKey, Authorization: 'Bearer ' + session.access_token, 'Content-Type': 'application/json' }, body: '{}'
+    });
+    if (!response.ok) throw new Error('Deadline unavailable');
+    return response.json();
   }
   async function checkRole() {
     if (!session || !config.url || !config.anonKey) return;

@@ -1,0 +1,8 @@
+/* 2026-11-24 가입 정보 미입력 안내 팝업(site-nav.js). 회원 페이지 CSP(style-src 'self')로 인라인 스타일이 막혀 파일로 둡니다. */
+.pa-profile-prompt{border:0;border-radius:18px;padding:28px 26px 22px;max-width:min(380px,calc(100vw - 32px));box-shadow:0 18px 50px rgba(15,23,42,.28);text-align:center;color:#0f172a;background:#fff}
+.pa-profile-prompt::backdrop{background:rgba(15,23,42,.55)}
+.pa-profile-prompt h2{margin:0 0 10px;font-size:20px;line-height:1.35}
+.pa-profile-prompt p{margin:0 0 20px;font-size:15px;line-height:1.6;color:#475569;word-break:keep-all}
+.pa-profile-prompt .g-btn{width:100%;justify-content:center}
+.pa-profile-prompt .pa-profile-countdown{margin:-8px 0 18px;padding:10px 12px;border-radius:12px;background:#fef2f2;color:#b91c1c;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.pa-profile-prompt .pa-profile-later{margin-top:10px;border:0;background:none;color:#64748b;font-size:14px;cursor:pointer;padding:6px}
