@@ -1,0 +1,54 @@
+/* 2026-11-24 이사님 지시: 관리자 화면 여백 줄이기(오밀조밀하게). 색·글꼴·구성은 그대로 두고 간격·높이만 줄입니다.
+   원복: 이 파일 <link> 한 줄 삭제(members/admin/index.html). */
+
+/* 공통: 표 칸·패널·묶음 간격 */
+body.g-admin.intranet-light .adm-table th,
+body.g-admin.intranet-light .adm-table td,
+body.g-admin.intranet-light .adm-mm-table .adm-table td { padding: 8px 10px; }
+body.g-admin.intranet-light .adm-panel,
+body.g-admin.intranet-light .adm-task-panel { padding: 14px 16px; }
+body.g-admin.intranet-light .adm-stack { gap: 12px; }
+body.g-admin.intranet-light .adm-layout { gap: 16px; }
+body.g-admin.intranet-light .adm-shell { gap: 14px; }
+body.g-admin.intranet-light .adm-table .adm-badge { margin: 2px 4px 2px 0; }
+body.g-admin.intranet-light .adm-table .adm-note { margin-top: 2px; }
+body.g-admin.intranet-light .adm-table td > br + .adm-badge { margin-top: 3px; }
+
+/* 위쪽 머리말·검색칸 간격 */
+body.g-admin .g-sec--app { padding-top: 16px; }
+body.g-admin .g-admin-head { margin-bottom: 14px; gap: 10px; }
+body.g-admin .g-admin-head .intranet-back { margin-bottom: 4px; }
+body.g-admin.intranet-light .adm-section-head { margin-bottom: 10px; }
+body.g-admin.intranet-light .adm-toolbar { gap: 8px; }
+body.g-admin.intranet-light .adm-field { gap: 4px; }
+body.g-admin.intranet-light .adm-bulk { padding: 10px; gap: 8px; }
+
+/* 휴대폰: 카드 한 장을 '왼쪽 항목명 · 오른쪽 내용' 한 줄씩으로 */
+@media (max-width: 800px) {
+  body.g-admin .g-sec--app { padding: 10px 10px 32px; }
+  body.g-admin .g-admin-head { margin-bottom: 10px; gap: 6px; }
+  body.g-admin .g-admin-head .intranet-back a { min-height: 32px; }
+  body.g-admin.intranet-light .adm-shell { gap: 10px; }
+  body.g-admin.intranet-light .adm-layout { gap: 12px; }
+  body.g-admin.intranet-light .adm-panel,
+  body.g-admin.intranet-light .adm-task-panel { padding: 12px; }
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) tr { padding: 6px 10px; margin-bottom: 8px; border-radius: 10px; }
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) td {
+    display: grid; grid-template-columns: 76px minmax(0, 1fr); align-items: center;
+    column-gap: 8px; row-gap: 2px; padding: 5px 0; border: 0;
+  }
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) td + td { border-top: 1px solid #eef2f6; }
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) td::before {
+    grid-column: 1; grid-row: 1; align-self: start; padding-top: 3px; font-size: 12px; line-height: 1.35; word-break: keep-all;
+  }
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) td > * { grid-column: 2; justify-self: start; max-width: 100%; }
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) td > br { display: none; }
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) td > .adm-input,
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) td > .adm-actions,
+  body.g-admin.intranet-light .adm-table-scroll:not(.adm-matrix) td > .adm-person { justify-self: stretch; }
+  body.g-admin.intranet-light .adm-table .adm-check { min-height: 30px; min-width: 30px; }
+  body.g-admin.intranet-light .adm-table .adm-person { gap: 0; }
+  body.g-admin.intranet-light .adm-table-scroll .adm-table .adm-input { min-height: 36px; padding: 4px 10px; }
+  body.g-admin.intranet-light .adm-table .adm-actions { gap: 6px; flex-wrap: wrap; }
+  body.g-admin.intranet-light .adm-table .adm-actions .adm-button { min-height: 36px; padding: 5px 12px; }
+}
