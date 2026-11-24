@@ -60,3 +60,10 @@
 
 /* 2026-11-12: 새 대화 위 고정 */
 .pa-side-quicktop { padding:12px 8px 0; }
+
+/* 2026-11-24 이사님 지시: '인트라넷 가이드' 강조 버튼(손생보 연락망 위). 은은한 강조 — 옅은 배경·얇은 테두리, 움직임 없음 */
+.pa-side-guide-row { background:var(--accent-soft,#e9eff6); border:1px solid color-mix(in srgb, var(--accent,#193b60) 22%, transparent); margin-bottom:4px; }
+.pa-side-guide-row:hover,.pa-side-guide-row:focus-within { background:color-mix(in srgb, var(--accent-soft,#e9eff6) 70%, var(--accent,#193b60) 8%); }
+.pa-chat-shell .pa-side-link.pa-side-guide { color:var(--accent,#193b60); font-weight:700; }
+.pa-side-link.pa-side-guide svg { color:var(--accent,#193b60); }
+.pa-side-guide-new { margin-left:auto; margin-right:8px; padding:1px 7px; border-radius:999px; background:var(--accent,#193b60); color:#fff; font-size:11px; font-weight:700; letter-spacing:.04em; line-height:18px; }

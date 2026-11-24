@@ -15,7 +15,7 @@
     const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
     Object.entries({ viewBox: '0 0 24 24', width: '20', height: '20', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false' }).forEach(([k,v]) => svg.setAttribute(k,v));
     const path = document.createElementNS(ns, 'path');
-    path.setAttribute('d', ({ tool: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z', qa: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7', ask: 'M4 4h16v12H9l-5 4z', phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2', portal: 'M4 5h16v11H4zM8 20h8M12 16v4', menu: 'M4 6h16M4 12h16M4 18h16', collapse: 'M15 5l-7 7 7 7', plus: 'M12 5v14M5 12h14', close: 'M6 6l12 12M18 6L6 18', lock: 'M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z', article: 'M5 4h14v16H5zM9 8h6M9 12h6M9 16h3', keep: 'M7 3h10v18l-5-4-5 4z' })[type] || 'M4 4h16v16H4z');
+    path.setAttribute('d', ({ tool: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z', guide: 'M12 6.5C10.3 5 7.8 4.5 4 4.5v14c3.8 0 6.3.5 8 2 1.7-1.5 4.2-2 8-2v-14c-3.8 0-6.3.5-8 2zM12 6.5v14', qa: 'M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7', ask: 'M4 4h16v12H9l-5 4z', phone: 'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2', portal: 'M4 5h16v11H4zM8 20h8M12 16v4', menu: 'M4 6h16M4 12h16M4 18h16', collapse: 'M15 5l-7 7 7 7', plus: 'M12 5v14M5 12h14', close: 'M6 6l12 12M18 6L6 18', lock: 'M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z', article: 'M5 4h14v16H5zM9 8h6M9 12h6M9 16h3', keep: 'M7 3h10v18l-5-4-5 4z' })[type] || 'M4 4h16v16H4z');
     svg.append(path); return svg;
   };
   const read = (k, fallback) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? fallback : v; } catch (_) { return fallback; } };
@@ -85,6 +85,8 @@
       const quickBtn = (label, glyph, fn) => el('div', { class: 'pa-side-row' }, el('button', { type: 'button', class: 'pa-side-link', onclick: () => { if (!window.PA_QUICK) return; if (isMobile()) setDrawer(false); fn(); } }, icon(glyph), el('span', { class: 'pa-side-label' }, label)));
       // 2026-11-12 이사님 지시: 빠른 확인 두 개를 '새 대화' 위로(맨 위 고정)
       const quickSection = el('div', { class: 'pa-side-items pa-side-quick pa-side-quicktop', id: 'pa-quick' },
+        // 2026-11-24 이사님 지시: 손생보 연락망 위에 '인트라넷 가이드' 강조 버튼(안내 페이지 새 탭)
+        el('div', { class: 'pa-side-row pa-side-guide-row' }, el('a', { class: 'pa-side-link pa-side-guide', href: '/guide/intranet/', target: '_blank', rel: 'noopener' }, icon('guide'), el('span', { class: 'pa-side-label' }, '인트라넷 가이드'), el('span', { class: 'pa-side-guide-new', 'aria-hidden': 'true' }, 'NEW'))),
         quickBtn('손생보 연락망', 'phone', () => window.PA_QUICK.openContacts(sb, profile)),
         quickBtn('원수사 전산접속', 'portal', () => window.PA_QUICK.openPortals()));
       // 2026-11-17 UX: 가운데(질문창 아래) 바로가기 — 휴대폰에서는 사이드바가 접혀 있어 자주 쓰는 것이 두 번 눌러야 나왔다.
