@@ -71,6 +71,42 @@
       else item.removeAttribute('aria-current');
     }));
   }
+  // 2026-11-24 이사님 지시: 로그인만 하고 가입 정보(이름·휴대폰·소속)를 넣지 않은 회원에게 안내 팝업 → 정보 입력 화면으로 이동.
+  // 페이지마다 한 번만 띄웁니다. 개인정보처리방침 페이지는 동의 전에 읽어야 하므로 띄우지 않습니다.
+  let prompted = false;
+  function promptProfile() {
+    if (prompted || path === '/privacy' || typeof HTMLDialogElement !== 'function') return;
+    prompted = true;
+    // 다른 페이지 팝업에서 '정보 입력하러 가기'로 넘어온 경우엔 입력 화면에서 같은 팝업을 다시 띄우지 않습니다.
+    try { if (isMembers && sessionStorage.getItem('pa_profile_prompt_go')) { sessionStorage.removeItem('pa_profile_prompt_go'); return; } } catch (_) {}
+    if (!document.getElementById('pa-profile-prompt-style')) {
+      const style = document.createElement('style'); style.id = 'pa-profile-prompt-style';
+      style.textContent = '.pa-profile-prompt{border:0;border-radius:18px;padding:28px 26px 22px;max-width:min(380px,calc(100vw - 32px));box-shadow:0 18px 50px rgba(15,23,42,.28);text-align:center;color:#0f172a;background:#fff}' +
+        '.pa-profile-prompt::backdrop{background:rgba(15,23,42,.55)}.pa-profile-prompt h2{margin:0 0 10px;font-size:20px;line-height:1.35}' +
+        '.pa-profile-prompt p{margin:0 0 20px;font-size:15px;line-height:1.6;color:#475569;word-break:keep-all}.pa-profile-prompt .g-btn{width:100%;justify-content:center}' +
+        '.pa-profile-prompt .pa-profile-later{margin-top:10px;border:0;background:none;color:#64748b;font-size:14px;cursor:pointer;padding:6px}';
+      document.head.appendChild(style);
+    }
+    const dialog = document.createElement('dialog');
+    dialog.className = 'pa-profile-prompt';
+    dialog.setAttribute('aria-labelledby', 'pa-profile-prompt-title');
+    dialog.innerHTML = '<h2 id="pa-profile-prompt-title">가입 정보를 입력해 주세요</h2>' +
+      '<p>이름·휴대폰 번호·소속 본부를 입력해야 가입 신청이 접수되고, 승인 후 인트라넷을 사용할 수 있습니다.</p>' +
+      '<button type="button" class="g-btn g-btn--pri g-btn--lg" data-act="go">' + (isMembers ? '정보 입력하기' : '정보 입력하러 가기') + '</button>' +
+      (isMembers ? '' : '<button type="button" class="pa-profile-later" data-act="later">나중에 하기</button>');
+    dialog.addEventListener('click', event => {
+      const act = event.target && event.target.dataset ? event.target.dataset.act : '';
+      if (act === 'later') dialog.close();
+      if (act !== 'go') return;
+      if (!isMembers) { try { sessionStorage.setItem('pa_profile_prompt_go', '1'); } catch (_) {} location.href = '/members/#signup'; return; }
+      dialog.close();
+      const field = document.getElementById('pa-signup-name');
+      if (field) { field.scrollIntoView({ block: 'center' }); field.focus(); }
+    });
+    dialog.addEventListener('close', () => dialog.remove());
+    document.body.appendChild(dialog);
+    dialog.showModal();
+  }
   async function checkRole() {
     if (!session || !config.url || !config.anonKey) return;
     const token = session.access_token;
@@ -94,6 +130,7 @@
       admin = !!(data && data[0] && data[0].is_admin && data[0].status === 'active');
       incomplete = !!(data && data[0] && data[0].profile_done === false);
       render();
+      if (incomplete) promptProfile();
     } catch (_) {
       if (epoch === roleEpoch) { admin = false; incomplete = false; roleToken = ''; render(); }
     }
