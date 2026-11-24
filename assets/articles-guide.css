@@ -1,0 +1,100 @@
+/* ART-GUIDE 2026-11-24 [작성글 노하우] 안내 — 넓은 화면: 오른쪽 서랍 · 휴대폰(≤640px): 아래에서 올라오는 시트.
+   색·글꼴·모서리는 intranet-light.css 공통 값(--accent·--line·--r-card …)을 그대로 쓴다. 다크모드는 사이트에 없어 만들지 않는다.
+   열고 닫을 때만 짧게 움직이고(@starting-style + allow-discrete), '움직임 줄이기' 설정에서는 움직이지 않는다. 계속 움직이는 효과·두꺼운 그림자 없음. */
+.ag{position:fixed;inset:0 0 0 auto;margin:0;padding:0;width:min(620px,100vw);max-width:100vw;height:100vh;height:100dvh;max-height:none;border:0;border-left:1px solid var(--line-2);border-radius:16px 0 0 16px;background:var(--bg-1);color:var(--text);box-shadow:-8px 0 24px rgba(23,40,61,.10);overflow:hidden;translate:100% 0;
+  transition:translate .3s var(--ease,ease),overlay .3s allow-discrete,display .3s allow-discrete}
+.ag[open]{display:flex;flex-direction:column;translate:0 0}
+@starting-style{.ag[open]{translate:100% 0}}
+.ag::backdrop{background:var(--dialog-backdrop,rgba(17,35,56,.45));opacity:0;transition:opacity .3s ease,overlay .3s allow-discrete,display .3s allow-discrete}
+.ag[open]::backdrop{opacity:1}
+@starting-style{.ag[open]::backdrop{opacity:0}}
+.ag:focus-visible,.ag .ag-body:focus-visible{outline:none}
+
+/* 머리: 제목·닫기·바로가기 — 본문만 스크롤되므로 늘 위에 붙어 있다 */
+.ag-head{flex:none;padding:18px 22px 0;border-bottom:1px solid var(--line);background:var(--bg-1)}
+.ag-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ag-title{margin:0;font-size:22px;font-weight:700;line-height:1.35;letter-spacing:-.02em}
+.ag-sub{margin:2px 0 0;color:var(--text-3);font-size:14px;line-height:1.55;word-break:keep-all}
+.ag .ag-close{flex:none;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:-4px -8px 0 0;padding:0;border:1px solid transparent;border-radius:10px;background:none;color:var(--text-2);cursor:pointer;transition:background-color .15s var(--ease,ease),border-color .15s var(--ease,ease)}
+.ag .ag-close:hover{background:var(--bg-2);border-color:var(--line)}
+.ag-nav{display:flex;gap:2px;margin:10px -22px 0;padding:0 14px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+.ag-nav::-webkit-scrollbar{display:none}
+.ag .ag-nav button{flex:none;min-height:44px;min-width:0;padding:0 9px;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;color:var(--text-2);font:inherit;font-size:15px;font-weight:600;line-height:1.2;white-space:nowrap;cursor:pointer;transition:color .15s var(--ease,ease)}
+.ag .ag-nav button:hover{color:var(--accent)}
+.ag .ag-nav button[aria-current="true"]{color:var(--accent);border-bottom-color:var(--signature,var(--accent))}
+.ag .ag-nav button:focus-visible{outline-offset:-3px}
+.ag-nav-n{font-weight:500;font-variant-numeric:tabular-nums;color:var(--text-3)}
+
+/* 본문 */
+.ag-body{position:relative;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:18px 22px calc(28px + env(safe-area-inset-bottom));font-size:16px;line-height:1.7;word-break:keep-all;overflow-wrap:break-word}
+.ag-sec{padding:26px 0 0}
+.ag-sec h3{margin:0 0 12px;font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-.01em}
+.ag-sec h3:focus,.ag-sec h3:focus-visible{outline:none}
+.ag-sec h4{margin:20px 0 8px;font-size:16px;font-weight:700}
+.ag-lead{margin:0 0 12px;color:var(--text-2)}
+.ag-sec b{font-weight:700;color:var(--text)}
+/* 3분 요약 카드 */
+.ag-sum{padding:18px 20px;border:1px solid #c9d6e4;border-radius:var(--r-card);background:linear-gradient(180deg,var(--accent-soft) 0%,#fff 72%)}
+.ag-kicker{margin:0 0 2px;color:var(--accent);font-size:14px;font-weight:700;letter-spacing:.01em}
+.ag-sum h3{font-size:21px}
+/* 번호 단계 */
+.ag-steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:ag}
+.ag-steps>li{position:relative;padding-left:34px;color:var(--text-2);counter-increment:ag}
+.ag-steps>li::before{content:counter(ag);position:absolute;left:0;top:2px;width:24px;height:24px;border:1px solid #9fb3c9;border-radius:50%;background:var(--bg-1);color:var(--accent);font-size:14px;font-weight:700;line-height:22px;text-align:center;font-variant-numeric:tabular-nums}
+.ag-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ag-list>li{position:relative;padding-left:16px;color:var(--text-2)}
+.ag-list>li::before{content:"";position:absolute;left:2px;top:.72em;width:5px;height:5px;border-radius:50%;background:var(--line-2)}
+.ag-fine{margin:14px 0 0;color:var(--text-3);font-size:14px;line-height:1.6}
+/* 근거 */
+.ag-src{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;margin:16px 0 0;padding:10px 0 0;border-top:1px solid var(--line);color:var(--text-3);font-size:14px;line-height:1.6}
+.ag-src span{font-weight:700;color:var(--text-2)}
+.ag-src em{font-style:normal}
+.ag-src a{display:inline-block;padding:3px 0;color:var(--accent);text-decoration:underline;text-decoration-color:#9fb3c9;text-underline-offset:4px}
+.ag-src a:hover{text-decoration-color:var(--accent)}
+.ag-src a::after{content:"↗";margin-left:2px;font-size:12px;text-decoration:none;display:inline-block}
+/* 점검표 */
+.ag-check{border:1px solid var(--line);border-radius:var(--r-card);padding:14px 16px 12px}
+.ag-check-top{display:flex;align-items:center;gap:12px}
+.ag-check-meter{flex:1;min-width:0}
+.ag-meter{height:6px;border-radius:999px;background:var(--bg-2);overflow:hidden}
+.ag-meter i{display:block;height:100%;border-radius:inherit;background:var(--accent);transform:scaleX(0);transform-origin:left center;transition:transform .25s var(--ease,ease),background-color .25s ease}
+.ag-meter.is-done i{background:var(--success)}
+.ag-meter-text{margin:6px 0 0;color:var(--text-2);font-size:14px;font-weight:600;line-height:1.5;font-variant-numeric:tabular-nums}
+.ag .ag-reset{flex:none;min-height:40px;min-width:0;padding:6px 12px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg-1);color:var(--text-2);font:inherit;font-size:14px;font-weight:600;white-space:nowrap;cursor:pointer}
+.ag .ag-reset:hover:not([disabled]){border-color:var(--accent);color:var(--accent)}
+.ag .ag-reset[disabled]{opacity:.5;cursor:default}
+.ag-checks{list-style:none;margin:10px 0 0;padding:0}
+.ag-checks li{border-top:1px solid var(--line)}
+.ag-checks label{display:flex;align-items:flex-start;gap:12px;min-height:44px;padding:10px 2px;color:var(--text);cursor:pointer}
+.ag-checks input{flex:none;width:20px;height:20px;margin:3px 0 0;accent-color:var(--accent);cursor:pointer}
+.ag-checks input:checked+span{color:var(--text-3)}
+.ag-check .ag-fine{margin-top:8px;padding-top:10px;border-top:1px solid var(--line)}
+/* 고치기 전·후 */
+.ag-ex{margin:0 0 10px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-tile);background:var(--bg-2)}
+.ag-ex p{margin:0 0 10px;color:var(--text-2)}
+.ag-ex p:last-child{margin-bottom:0}
+.ag-ex .ag-ex-label{margin:0 0 6px;color:var(--text-3);font-size:14px;font-weight:700}
+.ag-ex.is-after{border-color:#9fb3c9;background:var(--bg-1)}
+.ag-ex.is-after p{color:var(--text)}
+.ag-ex.is-after .ag-ex-label{color:var(--accent)}
+.ag-ex.is-after+.ag-list{margin-top:14px}
+.ag-tag{display:inline-flex;align-items:center;gap:5px;margin:0 8px 0 0;padding:1px 8px 1px 3px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:14px;font-weight:600;line-height:1.5;white-space:nowrap;vertical-align:1px}
+.ag-tag b{display:inline-block;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;line-height:18px;text-align:center}
+.ag-end{margin:26px 0 0;text-align:center}
+
+@media (max-width:640px){
+  .ag{inset:auto 0 0 0;width:100vw;height:92vh;height:min(92dvh,calc(100dvh - 20px));border-left:0;border-top:1px solid var(--line-2);border-radius:16px 16px 0 0;box-shadow:0 -8px 24px rgba(23,40,61,.10);translate:0 100%}
+  @starting-style{.ag[open]{translate:0 100%}}
+  .ag-head{padding:20px 16px 0}
+  .ag-head::before{content:"";position:absolute;top:8px;left:50%;width:36px;height:4px;margin-left:-18px;border-radius:999px;background:var(--line-2)}
+  .ag-title{font-size:20px}
+  .ag-nav{margin:8px -16px 0;padding:0 8px}
+  .ag-body{padding:14px 16px calc(24px + env(safe-area-inset-bottom))}
+  .ag-sec{padding-top:22px}
+  .ag-sum{padding:16px}
+  html:has(.ag[open]){overflow:hidden}   /* 시트 뒤 화면이 같이 밀리지 않게(휴대폰은 스크롤 막대가 겹쳐 그려져 자리 변화 없음) */
+}
+@media (prefers-reduced-motion:reduce){
+  .ag,.ag::backdrop,.ag-meter i,.ag .ag-close,.ag .ag-nav button{transition:none}
+}
+@media print{.ag{display:none}}

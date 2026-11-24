@@ -16,7 +16,8 @@
 <link rel="stylesheet" href="/assets/glass.css?v=16">
 <link rel="stylesheet" href="/assets/intranet-light.css?v=20261106-t44">
 <link rel="stylesheet" href="/assets/signup-guide.css?v=20261106-t40">
-<link rel="stylesheet" href="/assets/articles.css?v=20261117-ux1">
+<link rel="stylesheet" href="/assets/articles.css?v=20261124-guide1">
+<link rel="stylesheet" href="/assets/articles-guide.css?v=20261124-guide1">
 <link rel="stylesheet" href="/assets/intranet-workspace.css?v=20261118-intranet1">
 </head>
 <body class="g-members intranet-light art-page">
@@ -29,7 +30,24 @@
 <main class="g-sec g-sec--app art-wrap" id="main" tabindex="-1">
   <header class="art-hero">
     <p class="art-eyebrow"><a href="/members/#home">설계사 인트라넷으로</a></p>
-    <div class="art-hero-row"><h1>작성글모음</h1><a class="g-btn g-btn--ghost g-btn--sm art-hero-link" href="/members/me/#art-locker">내 보관함</a></div>
+    <div class="art-hero-row">
+      <h1>작성글모음</h1>
+      <!-- 2026-11-24 이사님: [내 보관함] 왼쪽에 주제 입력칸 + [작성글 노하우]. 목록을 쓸 수 있는 상태(body.art-on)에서만 보이고, 글을 읽는 동안에는 숨긴다 -->
+      <div class="art-hero-tools">
+        <form class="art-topic" id="art-topic" novalidate>
+          <label class="art-sr" for="art-topic-in">원하는 게시글 주제</label>
+          <input class="pa-in art-topic-in" id="art-topic-in" type="text" maxlength="80" placeholder="원하는 게시글 주제를 적어주세요" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" aria-describedby="art-topic-hint art-topic-msg">
+          <button class="g-btn g-btn--pri g-btn--sm art-topic-send" id="art-topic-send" type="submit">요청</button>
+          <div class="art-topic-note">
+            <p class="art-topic-hint" id="art-topic-hint"><span>고객 이름·연락처는 적지 마세요</span><span class="art-topic-quota">하루 3개<span id="art-topic-left"></span></span><button class="art-topic-mine" id="art-topic-mine" type="button" aria-expanded="false" aria-controls="art-topic-list" hidden>내 요청 <b id="art-topic-count">0</b></button></p>
+            <p class="art-topic-msg" id="art-topic-msg" role="status" aria-live="polite"></p>
+          </div>
+          <div class="art-topic-list" id="art-topic-list" role="region" aria-label="내 주제 요청" hidden></div>
+        </form>
+        <button class="g-btn g-btn--ghost g-btn--sm art-guide-btn" id="art-guide-open" type="button" aria-haspopup="dialog" aria-controls="art-guide"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 6.5c-1.6-1.3-3.8-2-6.5-2H4v13h1.5c2.7 0 4.9.7 6.5 2 1.6-1.3 3.8-2 6.5-2H20v-13h-1.5c-2.7 0-4.9.7-6.5 2Z"/><path d="M12 6.5v13"/></svg>작성글 노하우</button>
+        <a class="g-btn g-btn--ghost g-btn--sm art-hero-link" href="/members/me/#art-locker">내 보관함</a>
+      </div>
+    </div>
     <p class="art-lead">작성글은 자동으로 등록됩니다. 원하시는 주제가 있으면 말씀해 주세요.<br>마음에 드는 글은 <b>보관</b>을 누르면 <b>내 정보</b>에서 볼 수 있습니다. 보관한 글은 작성글모음에서 사라져 보관한 분만 쓸 수 있고, 자유롭게 고쳐 쓰셔도 됩니다.</p>
   </header>
   <div id="art-app" aria-busy="true"><div class="pa-card art-gate" role="status">불러오는 중…</div></div>
@@ -42,7 +60,9 @@
 <script src="/assets/vendor/supabase-2.118.0.js" defer></script>
 <script src="/assets/auth-config.js?v=2" defer></script>
 <script src="/assets/articles-core.js?v=20261117-ux1" defer></script>
-<script src="/assets/articles.js?v=20261118-intranet1" defer></script>
+<script src="/assets/articles.js?v=20261124-guide1" defer></script>
+<script src="/assets/articles-topics.js?v=20261124-guide1" defer></script>
+<script src="/assets/articles-guide.js?v=20261124-guide1" defer></script>
 <script src="/assets/site-nav.js?v=20261105-aiqa" defer></script>
 <script src="/assets/members-pwa.js?v=20261105-aiqa" defer></script>
 </body>

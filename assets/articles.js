@@ -73,7 +73,8 @@
   try { history.scrollRestoration = 'manual'; } catch (_) {}
   let lastY = 0;
   window.addEventListener('scroll', () => { if (S.view === 'list') lastY = window.scrollY; }, { passive: true });
-  window.addEventListener('hashchange', () => { S.leftAt = lastY; if (S.profile) route().catch(e => failed(e, '화면을 바꾸지 못했습니다')); });
+  // 2026-11-24: #guide 는 [작성글 노하우] 서랍(articles-guide.js)이 맡는다 — 여기서는 화면을 다시 그리지 않는다(보던 목록·글 그대로).
+  window.addEventListener('hashchange', () => { if (location.hash === '#guide') return; S.leftAt = lastY; if (S.profile) route().catch(e => failed(e, '화면을 바꾸지 못했습니다')); });
 
   // 2026-11-17 UX: 문구를 짧게(하루 개수는 점 3개와 괄호로, '한국시간'은 뺌)
   const quotaText = q => !q ? '' : q.remaining > 0 ? `오늘 ${q.remaining}개 더 보관할 수 있어요 (하루 ${q.daily_limit}개)` : `오늘은 ${q.daily_limit}개를 모두 보관했어요. 자정이 지나면 다시 보관할 수 있어요.`;
