@@ -58,9 +58,8 @@
         }
         draw(0);
         body.replaceChildren(...[notice,
-          el('p', { class: 'geumso', role: 'note' }, '고객에게 보여주거나 보내는 모든 자료(블로그 글·안내문·문자 등)는 반드시 금소법(금융소비자보호법) 심의를 받은 뒤 사용하세요.'),   // 2026-11-24 이사님: 금소법 심의 빨간 문구
           el('div', { class: 'art-locker-head' },
-            U.note('보관한 글은 나만 볼 수 있습니다. 필요한 부분을 고친 뒤 게시하세요.'), K.copyHint()),
+            U.note('보관한 글은 나만 볼 수 있습니다. 필요한 부분을 고친 뒤 금소법 심의를 받고 게시하세요.'), K.copyHint()),
           quotaRow,
           el('div', { class: 'art-locker-bar' }, count, search),
           ol, el('div', { class: 'art-more-wrap' }, more)].filter(Boolean));

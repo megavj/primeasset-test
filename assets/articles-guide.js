@@ -161,7 +161,7 @@
     dlg = el('dialog', { class: 'ag', id: 'art-guide', 'aria-labelledby': 'ag-title', closedby: 'any' },
       el('div', { class: 'ag-head' },
         el('div', { class: 'ag-top' },
-          el('div', {}, el('h2', { class: 'ag-title', id: 'ag-title' }, '작성글 노하우'), el('p', { class: 'ag-sub' }, '작성글모음 활용법과 검색·AI 답변에 더 잘 보이게 고치는 법 · 읽는 데 약 5분'), el('p', { class: 'geumso ag-geumso', role: 'note' }, '고객에게 보여주거나 보내는 모든 자료(블로그 글·안내문·문자 등)는 반드시 금소법(금융소비자보호법) 심의를 받은 뒤 사용하세요.')),
+          el('div', {}, el('h2', { class: 'ag-title', id: 'ag-title' }, '작성글 노하우'), el('p', { class: 'ag-sub' }, '작성글모음 활용법과 검색·AI 답변에 더 잘 보이게 고치는 법 · 읽는 데 약 5분')),
           close),
         el('nav', { class: 'ag-nav', 'aria-label': '안내 바로가기' }, ...navButtons)),
       body);
