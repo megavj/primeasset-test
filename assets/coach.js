@@ -288,10 +288,41 @@
     Array.prototype.forEach.call(a.querySelectorAll('.x'),function(b){ b.onclick=function(){ if(BUSY)return;attachedFiles.splice(+b.getAttribute('data-i'),1); renderAttach(); }; });
   }
   function clearAttach(){ fileGeneration++;attachedFiles=[]; renderAttach(); }
+  // 2026-11-25: AI는 사진 한 장 5MB·8000px를 넘으면 거절합니다. 휴대폰 원본 사진은 보내기 전에 긴 변 2000px JPG로 줄입니다.
+  var IMG_MAX_SIDE=2000, IMG_MAX_B64=3800000, IMG_KEEP_TYPES=/^image\/(jpeg|png|gif|webp)$/;
+  function dataUrlOf(file){ return new Promise(function(ok,no){ var r=new FileReader(); r.onload=function(){ok(String(r.result));}; r.onerror=no; r.readAsDataURL(file); }); }
+  async function decodeImage(file){
+    if(window.createImageBitmap){ try{ return await createImageBitmap(file,{imageOrientation:'from-image'}); }catch(_){} }
+    var url=await dataUrlOf(file);
+    return await new Promise(function(ok,no){ var im=new Image(); im.onload=function(){ok(im);}; im.onerror=no; im.src=url; });
+  }
+  async function shrinkImage(file){
+    var type=file.type||'';
+    var bmp=await decodeImage(file), w=bmp.width||bmp.naturalWidth, h=bmp.height||bmp.naturalHeight;
+    if(!w||!h) throw new Error('size');
+    if(IMG_KEEP_TYPES.test(type) && Math.max(w,h)<=IMG_MAX_SIDE && file.size*1.37<=IMG_MAX_B64){
+      if(bmp.close) bmp.close();
+      return { mime:type, data:(await dataUrlOf(file)).split(',')[1] };
+    }
+    var k=Math.min(1, IMG_MAX_SIDE/Math.max(w,h)), cw=Math.max(1,Math.round(w*k)), ch=Math.max(1,Math.round(h*k));
+    var cv=document.createElement('canvas'); cv.width=cw; cv.height=ch;
+    var cx=cv.getContext('2d'); cx.fillStyle='#fff'; cx.fillRect(0,0,cw,ch); cx.drawImage(bmp,0,0,cw,ch);
+    if(bmp.close) bmp.close();
+    var out='', q=0.85;
+    for(var step=0; step<6; step++){
+      out=cv.toDataURL('image/jpeg',q).split(',')[1];
+      if(out.length<=IMG_MAX_B64) break;
+      if(q>0.55) q-=0.1; else { cw=Math.round(cw*0.75); ch=Math.round(ch*0.75); var c2=document.createElement('canvas'); c2.width=cw; c2.height=ch; var x2=c2.getContext('2d'); x2.fillStyle='#fff'; x2.fillRect(0,0,cw,ch); x2.drawImage(cv,0,0,cw,ch); cv=c2; }
+    }
+    if(!out||out.length>IMG_MAX_B64) throw new Error('big');
+    return { mime:'image/jpeg', data:out };
+  }
   function readFile(file){ return new Promise(function(resolve,reject){
     var name=file.name||'file', type=file.type||'';
     var isImg=/^image\//.test(type)||/\.(png|jpe?g|webp|gif)$/i.test(name), isPdf=type==='application/pdf'||/\.pdf$/i.test(name), isTxt=/^text\//.test(type)||/\.(txt|csv|md)$/i.test(name);
-    if((isImg||isPdf)&&file.size>10*1024*1024){ reject('파일이 너무 큽니다(약 10MB 이하).'); return; }
+    if(isPdf&&file.size>10*1024*1024){ reject('파일이 너무 큽니다(약 10MB 이하).'); return; }
+    if(isImg&&file.size>40*1024*1024){ reject('사진이 너무 큽니다(약 40MB 이하).'); return; }
+    if(isImg){ shrinkImage(file).then(function(img){ resolve({kind:'image',mime:img.mime,name:name,data:img.data}); }, function(){ reject('사진을 읽지 못했습니다. JPG·PNG 사진으로 다시 올려 주세요.'); }); return; }
     var r=new FileReader();
     if(isTxt){ r.onload=function(){ resolve({kind:'text',mime:type,name:name,data:String(r.result).slice(0,200000)}); }; r.onerror=function(){reject('읽기 실패');}; r.readAsText(file); }
     else if(isImg||isPdf){ r.onload=function(){ resolve({kind:isPdf?'pdf':'image',mime:isPdf?'application/pdf':(type||'image/png'),name:name,data:String(r.result).split(',')[1]}); }; r.onerror=function(){reject('읽기 실패');}; r.readAsDataURL(file); }
