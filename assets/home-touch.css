@@ -1,0 +1,44 @@
+/* 손대면 반응하는 움직임(시안 TOUCH-20261127, 메인만). 스크롤 연출·FAQ 펼침·실적 툴팁은 이미 있으므로 겹치지 않는 4가지만.
+   ① 합류 문의 금색 버튼: 마우스가 가까이 오면 최대 6px 끌려옴(자석) + 누를 때 살짝 눌림
+   ② 실적보드·맨 끝 합류 카드: 마우스 위치를 따라 아주 옅은 금빛(바탕) + 테두리 빛
+   ③ 상단 메뉴: 마우스를 올린 메뉴로 옅은 바탕이 미끄러져 이동
+   ④ 컴퓨터에서 '전화로 상담': 누르면 번호가 펼쳐지고 복사(컴퓨터는 전화를 걸 수 없으므로). 휴대폰은 그대로 전화 연결
+   · 마우스가 있는 화면(hover:hover, pointer:fine)에서만. 움직임 줄이기 설정이면 전부 끔(JS 도 시작 안 함). */
+
+/* ① 자석 버튼 */
+.tc-mag{transform:translate3d(var(--tc-mx,0px),var(--tc-my,0px),0);transition:transform .5s cubic-bezier(.22,1,.36,1),background-color .2s ease}
+.tc-mag.is-near{transition:transform .12s linear,background-color .2s ease}
+.tc-mag:active{transform:translate3d(var(--tc-mx,0px),var(--tc-my,0px),0) scale(.97)}
+
+/* ② 카드 빛 따라가기 */
+.tc-spot-host{isolation:isolate}   /* 위치 기준(relative)은 JS 가 원래 static 일 때만 붙임 */
+.tc-spot{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;opacity:0;transition:opacity .45s ease}   /* 카드 바탕 위·글 아래 */
+.tc-spot::before{content:"";position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(520px circle at var(--tc-px,50%) var(--tc-py,50%),rgba(214,178,94,.11),transparent 62%)}
+.tc-spot::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+  background:radial-gradient(320px circle at var(--tc-px,50%) var(--tc-py,50%),rgba(232,201,128,.75),transparent 70%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.tc-spot-host:hover>.tc-spot{opacity:1}
+
+/* ③ 메뉴 미끄럼 바탕 */
+.tc-nav-ind{position:absolute;left:0;top:0;height:0;width:0;border-radius:999px;background:rgba(255,255,255,.075);pointer-events:none;z-index:0;opacity:0;
+  transform:translate3d(var(--tc-x,0px),var(--tc-y,0px),0);
+  transition:transform .38s cubic-bezier(.22,1,.36,1),width .38s cubic-bezier(.22,1,.36,1),height .38s cubic-bezier(.22,1,.36,1),opacity .25s ease}
+.tc-nav-ind.is-on{opacity:1}
+.tc-nav{isolation:isolate}
+.tc-nav-ind{z-index:-1}
+
+/* ④ 컴퓨터 전화 버튼: 번호 펼침·복사 */
+.tc-tel{overflow:hidden;transition:width .42s cubic-bezier(.22,1,.36,1),border-color .2s ease,color .2s ease}
+.tc-tel .tc-tel__a,.tc-tel .tc-tel__b{display:inline-flex;align-items:center;gap:8px;transition:opacity .25s ease,transform .42s cubic-bezier(.22,1,.36,1)}
+.tc-tel .tc-tel__b{position:absolute;inset:0;justify-content:center;opacity:0;transform:translateY(60%);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.tc-tel.is-open{border-color:rgba(232,201,128,.6);color:var(--text)}
+.tc-tel.is-open .tc-tel__a{opacity:0;transform:translateY(-60%)}
+.tc-tel.is-open .tc-tel__b{opacity:1;transform:none}
+.tc-tel__ok{color:var(--gold-hi,#e8c980);font-size:13px;font-weight:500}
+
+@media (prefers-reduced-motion:reduce){
+  .tc-mag,.tc-spot,.tc-nav-ind,.tc-tel,.tc-tel__a,.tc-tel__b{transition:none!important;transform:none!important}
+  .tc-spot,.tc-nav-ind{display:none}
+}
