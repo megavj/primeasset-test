@@ -421,11 +421,15 @@
     const o = opts || {}, locked = !!o.locked;
     const say = t => { if (status) status.textContent = t; };
     // 2026-11-17 UX: 복사가 되면 누른 버튼 글자도 잠깐 '복사했습니다'로 바뀐다(아래 안내 줄을 못 봐도 알 수 있게)
-    const done = (b, label) => { b.textContent = '복사했습니다'; b.classList.add('is-done'); clearTimeout(b._t); b._t = setTimeout(() => { b.textContent = label; b.classList.remove('is-done'); }, 2500); };
+    // TOUCH2-20261127: 누르는 동안 버튼 안 작은 원이 돌고(처리 중), 끝나면 체크 표시가 그려지며 '복사했습니다'. 버튼 폭은 그대로 유지(옆 버튼이 밀리지 않게).
+    const CHECK = '<svg class="art-act__ok" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const hold = b => { if (!b.style.minWidth) b.style.minWidth = Math.ceil(b.getBoundingClientRect().width) + 'px'; };
+    const busy = (b, on) => { if (on) { hold(b); b.classList.add('is-busy'); b.setAttribute('aria-busy', 'true'); } else { b.classList.remove('is-busy'); b.removeAttribute('aria-busy'); } };
+    const done = (b, label) => { hold(b); b.innerHTML = CHECK + '<span>복사했습니다</span>'; b.classList.add('is-done'); clearTimeout(b._t); b._t = setTimeout(() => { b.textContent = label; b.classList.remove('is-done'); b.style.minWidth = ''; }, 2500); };
     const mk = (label, title, fn, copies) => el('button', { type: 'button', class: 'g-btn g-btn--ghost art-act', disabled: locked, title, onclick: async ev => {
-      const b = ev.currentTarget; b.disabled = true;
-      try { await fn(b); if (copies) done(b, label); } catch (e) { console.debug('[art action]', e); say(e?.message === 'art_no_hashtags' ? '이 글에는 저장된 해시태그가 없습니다. 최신 내용 반영판을 만들면 새 초안에 해시태그가 포함됩니다.' : /image_/.test(e && e.message) ? '그림을 받지 못했습니다. 잠시 후 다시 눌러 주세요.' : '하지 못했습니다. 다시 눌러 주세요. 계속 안 되면 글을 직접 선택해 복사해 주세요.'); }
-      finally { b.disabled = locked; }
+      const b = ev.currentTarget; b.disabled = true; busy(b, true);
+      try { await fn(b); busy(b, false); if (copies) done(b, label); } catch (e) { console.debug('[art action]', e); say(e?.message === 'art_no_hashtags' ? '이 글에는 저장된 해시태그가 없습니다. 최신 내용 반영판을 만들면 새 초안에 해시태그가 포함됩니다.' : /image_/.test(e && e.message) ? '그림을 받지 못했습니다. 잠시 후 다시 눌러 주세요.' : '하지 못했습니다. 다시 눌러 주세요. 계속 안 되면 글을 직접 선택해 복사해 주세요.'); }
+      finally { busy(b, false); b.disabled = locked; }
     } }, label);
     const a = mk('HTML 복사', '홈페이지·워드프레스의 HTML(코드) 편집 칸에 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyHtml(getArticle); say('HTML을 복사했습니다. 홈페이지의 HTML 편집 칸, 워드프레스는 \'사용자 정의 HTML\' 블록(또는 코드 편집기), 티스토리는 HTML 모드에 붙여 넣으세요. 그림 주소도 들어 있습니다.');  }, true);
     const b = mk('서식 그대로 복사', '네이버 블로그 편집기에 그대로 붙여 넣는 형식', async () => { say('복사하는 중…'); await copyRich(getArticle); say(o.copyOnly ? '서식째 복사했습니다. 네이버 블로그 글쓰기 본문에 붙여 넣으세요(제목은 제목 칸에 따로). 그림이 안 들어오면 글 속 그림을 저장해 ▲ 설명 줄 위에 올려 주세요.' : '서식째 복사했습니다. 네이버 블로그 글쓰기 본문에 붙여 넣으세요(제목은 제목 칸에 따로). 그림이 안 들어오면 ▲ 설명 줄 위에 [그림 내려받기]로 받은 사진을 올려 주세요.'); }, true);

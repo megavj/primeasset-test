@@ -21,13 +21,7 @@
   mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
 .tc-spot-host:hover>.tc-spot{opacity:1}
 
-/* ③ 메뉴 미끄럼 바탕 */
-.tc-nav-ind{position:absolute;left:0;top:0;height:0;width:0;border-radius:999px;background:rgba(255,255,255,.075);pointer-events:none;z-index:0;opacity:0;
-  transform:translate3d(var(--tc-x,0px),var(--tc-y,0px),0);
-  transition:transform .38s cubic-bezier(.22,1,.36,1),width .38s cubic-bezier(.22,1,.36,1),height .38s cubic-bezier(.22,1,.36,1),opacity .25s ease}
-.tc-nav-ind.is-on{opacity:1}
-.tc-nav{isolation:isolate}
-.tc-nav-ind{z-index:-1}
+/* ③ 메뉴 미끄럼 바탕: 모든 페이지 공통으로 옮김(glass.css 끝 · site-nav.js, 2026-11-27) */
 
 /* ④ 컴퓨터 전화 버튼: 번호 펼침·복사 */
 .tc-tel{overflow:hidden;transition:width .42s cubic-bezier(.22,1,.36,1),border-color .2s ease,color .2s ease}
@@ -39,6 +33,6 @@
 .tc-tel__ok{color:var(--gold-hi,#e8c980);font-size:13px;font-weight:500}
 
 @media (prefers-reduced-motion:reduce){
-  .tc-mag,.tc-spot,.tc-nav-ind,.tc-tel,.tc-tel__a,.tc-tel__b{transition:none!important;transform:none!important}
-  .tc-spot,.tc-nav-ind{display:none}
+  .tc-mag,.tc-spot,.tc-tel,.tc-tel__a,.tc-tel__b{transition:none!important;transform:none!important}
+  .tc-spot{display:none}
 }

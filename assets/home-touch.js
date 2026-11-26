@@ -45,34 +45,7 @@
     }, { passive: true });
   });
 
-  /* ③ 메뉴 미끄럼 바탕(메뉴가 가로로 펼쳐진 넓은 화면에서만) — 메뉴는 site-nav.js 가 늦게 그릴 수 있어 기다림 */
-  function navInit(nav) {
-    if (nav.classList.contains('tc-nav')) return;
-    nav.classList.add('tc-nav'); if (getComputedStyle(nav).position === 'static') nav.style.position = 'relative';
-    var ind = document.createElement('span'); ind.className = 'tc-nav-ind'; ind.setAttribute('aria-hidden', 'true');
-    nav.insertBefore(ind, nav.firstChild);
-    function horizontal() { var t = document.getElementById('pa-nav-toggle'); return !t || getComputedStyle(t).display === 'none'; }
-    function to(el) {
-      if (!horizontal() || !el || el.hidden) { ind.classList.remove('is-on'); return; }
-      var nr = nav.getBoundingClientRect(), r = el.getBoundingClientRect();
-      if (!ind.classList.contains('is-on')) { ind.style.transition = 'none'; }
-      ind.style.setProperty('--tc-x', (r.left - nr.left) + 'px'); ind.style.setProperty('--tc-y', (r.top - nr.top) + 'px');
-      ind.style.width = r.width + 'px'; ind.style.height = r.height + 'px';
-      if (ind.style.transition === 'none') { void ind.offsetWidth; ind.style.transition = ''; }
-      ind.classList.add('is-on');
-    }
-    nav.addEventListener('pointerover', function (e) {
-      var a = e.target.closest('a,button'); if (a && a.parentNode === nav && !a.classList.contains('g-btn')) to(a);
-    });
-    nav.addEventListener('pointerleave', function () { ind.classList.remove('is-on'); });
-    nav.addEventListener('focusin', function (e) { if (e.target.parentNode === nav && e.target.matches(':focus-visible')) to(e.target); });
-    nav.addEventListener('focusout', function () { ind.classList.remove('is-on'); });
-  }
-  var tries = 0;
-  (function waitNav() {
-    var nav = document.getElementById('pa-nav-menu');
-    if (nav) navInit(nav); else if (tries++ < 40) setTimeout(waitNav, 100);
-  })();
+  /* ③ 메뉴 미끄럼 바탕은 모든 페이지 공통으로 옮김(site-nav.js · glass.css, 2026-11-27) */
 
   /* ④ 컴퓨터 '전화로 상담': 첫 클릭 = 번호 펼침 + 복사, 펼친 상태에서 다시 누르면 원래 전화 연결 */
   Array.prototype.forEach.call(document.querySelectorAll('#contact a.cl-tel[href^="tel:"]'), function (a) {

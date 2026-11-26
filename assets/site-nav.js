@@ -237,5 +237,29 @@
       status.hidden = false; logout.disabled = false;
     }
   });
+  // TOUCH2-20261127: 메뉴 미끄럼 바탕(마우스 화면 + 움직임 허용 + 메뉴가 가로로 펼쳐졌을 때만). 실패해도 메뉴 동작과 무관.
+  (function navTouch() {
+    const mm = window.matchMedia;
+    if (!mm || mm('(prefers-reduced-motion: reduce)').matches || !mm('(hover: hover) and (pointer: fine)').matches || menu.classList.contains('tc-nav')) return;
+    menu.classList.add('tc-nav');
+    if (getComputedStyle(menu).position === 'static') menu.style.position = 'relative';
+    const ind = document.createElement('span'); ind.className = 'tc-nav-ind'; ind.setAttribute('aria-hidden', 'true');
+    menu.insertBefore(ind, menu.firstChild);
+    const flat = () => !toggle || getComputedStyle(toggle).display === 'none';
+    const off = () => ind.classList.remove('is-on');
+    const to = el => {
+      if (!flat() || !el || el.hidden) return off();
+      const nr = menu.getBoundingClientRect(), r = el.getBoundingClientRect(), first = !ind.classList.contains('is-on');
+      if (first) ind.style.transition = 'none';
+      ind.style.setProperty('--tc-x', (r.left - nr.left) + 'px'); ind.style.setProperty('--tc-y', (r.top - nr.top) + 'px');
+      ind.style.width = r.width + 'px'; ind.style.height = r.height + 'px';
+      if (first) { void ind.offsetWidth; ind.style.transition = ''; }
+      ind.classList.add('is-on');
+    };
+    menu.addEventListener('pointerover', e => { const a = e.target.closest('a,button'); if (a && a.parentNode === menu && !a.classList.contains('g-btn')) to(a); });
+    menu.addEventListener('pointerleave', off);
+    menu.addEventListener('focusin', e => { if (e.target.parentNode === menu && e.target.matches(':focus-visible')) to(e.target); });
+    menu.addEventListener('focusout', off);
+  })();
   refresh();
 })();

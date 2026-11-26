@@ -354,3 +354,21 @@ body.art-page .art-guide-btn:hover{border-color:var(--accent);background:var(--a
 .geumso { margin:10px 0 0; padding:9px 12px; border-left:3px solid #c62828; border-radius:6px; background:#fdecec; color:#c62828; font-weight:700; font-size:14px; line-height:1.55; word-break:keep-all; }
 .ag-geumso { margin-top:8px; font-size:13px; }
 .art-guide .geumso { margin:0 0 10px; }
+
+/* TOUCH2-20261127 가져가기 버튼 반응: 처리 중 작은 원 + 끝나면 체크 그려짐(휴대폰 포함). 움직임 줄이기면 원·그리기 없이 바로 표시 */
+.art-act{position:relative;transition:background-color .25s ease,border-color .25s ease,color .25s ease,transform .15s ease}
+.art-act:active:not([disabled]){transform:scale(.97)}
+.art-act.is-busy,.art-act.is-busy[disabled]{opacity:1;cursor:progress;color:transparent}
+.art-act.is-busy::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:2px solid var(--line-2);border-top-color:var(--text-2);animation:art-spin .7s linear infinite}
+@keyframes art-spin{to{transform:rotate(360deg)}}
+.art-act.is-done{gap:6px}
+.art-act__ok{flex:none}
+.art-act__ok path{stroke-dasharray:24;stroke-dashoffset:24;animation:art-ok .42s cubic-bezier(.22,1,.36,1) .05s forwards}
+@keyframes art-ok{to{stroke-dashoffset:0}}
+.art-act.is-done{animation:art-pop .32s cubic-bezier(.22,1,.36,1)}
+@keyframes art-pop{40%{transform:scale(1.035)}}
+@media (prefers-reduced-motion:reduce){
+  .art-act.is-busy::after{animation:none;border-top-color:var(--line-2)}
+  .art-act__ok path{animation:none;stroke-dashoffset:0}
+  .art-act.is-done{animation:none}
+}
