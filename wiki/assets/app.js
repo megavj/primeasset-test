@@ -259,7 +259,7 @@ function render(){
     }
   }
   if(h.indexOf('~')>0){var _p=h.split('~');h=_p[0];if(!pendingTarget)pendingTarget=_p[1];}
-  if(window.WIKI_STATIC&&h!=='sales'&&h!=='home'&&h!=='glossary'&&h!=='lounge'){if(app.innerHTML!==staticBody)app.innerHTML=staticBody;updateAuthBtn();wireReveal();wireGloss();return;}
+  if(window.WIKI_STATIC&&h!=='sales'&&h!=='home'&&h!=='glossary'&&h!=='lounge'){if(app.innerHTML!==staticBody)app.innerHTML=staticBody;updateAuthBtn();wireReveal();wireGloss();wireTerms();return;}
   if(h==='home'){app.innerHTML=viewHome();wireHome();}
   else if(h==='sales'){app.innerHTML=viewSales();wireSales();navKey='sales';}
   else if(h==='glossary'){app.innerHTML=viewGlossary();wireGloss();navKey='glossary';}
@@ -352,6 +352,27 @@ function setMember(){member=false;toast('전용 자료는 승인된 설계사 �
 document.getElementById('authBtn').addEventListener('click',function(){if(signedIn())location.href='https://www.primeasset.info/members/#home';else openDialog(loginScrim);});
 document.getElementById('demoLogin').addEventListener('click',function(){location.href=MEMBER_WIKI;});
 loginScrim.addEventListener('click',function(e){if(e.target===loginScrim||e.target.hasAttribute('data-close'))closeDialog(loginScrim);});
+
+/* ================= TERMS (TOUCH3-20261127) =================
+   글 본문(.article)에서 용어집 단어가 처음 나오는 곳에 점선 밑줄을 달아, 마우스를 올리거나 누르면 짧은 설명이 뜨게 한다.
+   한 글에 용어마다 처음 한 번, 최대 8개. 제목·링크·버튼·잠긴 영역은 건드리지 않는다. 실패해도 본문은 그대로. */
+function wireTerms(){try{
+  var root=document.querySelector('#app .article');if(!root||root.dataset.terms)return;root.dataset.terms='1';
+  var list=GLOSS.map(function(g){return [g[0],g[1].split(' (')[0]];}).sort(function(a,b){return b[1].length-a[1].length;});
+  var used={},n=0,SKIP=/^(A|BUTTON|H1|H2|H3|H4|H5|H6|CODE|PRE|SUMMARY|LABEL|SCRIPT|STYLE|MARK|TEXTAREA|INPUT)$/;
+  function ok(node){for(var p=node.parentNode;p&&p!==root;p=p.parentNode){if(SKIP.test(p.nodeName)||(p.classList&&(p.classList.contains('term')||p.classList.contains('locked')||p.classList.contains('over')||p.classList.contains('crumbs'))))return false;}return true;}
+  function find(t){var best=null;list.forEach(function(x){if(used[x[0]])return;var w=x[1],from=0,i;
+    while((i=t.indexOf(w,from))>-1){var b=t.charAt(i-1),a=t.charAt(i+w.length);var bad=/[A-Za-z]/.test(w)?(/[A-Za-z0-9]/.test(b)||/[A-Za-z0-9]/.test(a)):((w==='갱신형'&&b==='비')||(w==='실효'&&/[성적]/.test(a))||(w==='부활'&&a==='절'));
+      if(!bad){if(!best||i<best.i)best={i:i,x:x};break;}from=i+1;}});return best;}
+  var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),nodes=[],nd;
+  while((nd=walker.nextNode()))if(nd.nodeValue.trim()&&ok(nd))nodes.push(nd);
+  for(var k=0;k<nodes.length&&n<8;k++){var node=nodes[k],m;
+    while(n<8&&(m=find(node.nodeValue))){used[m.x[0]]=1;n++;
+      var after=node.splitText(m.i),rest=after.splitText(m.x[1].length);
+      var sp=document.createElement('span');sp.className='term';sp.tabIndex=0;sp.setAttribute('data-t',m.x[0]);sp.setAttribute('role','button');sp.setAttribute('aria-label',m.x[1]+' 뜻 보기');sp.textContent=after.nodeValue;
+      after.parentNode.replaceChild(sp,after);node=rest;}}
+}catch(e){}}
+wireTerms();setTimeout(wireTerms,600);
 
 /* ================= TOOLTIP ================= */
 var tipPop=document.getElementById('tipPop'),tipFor=null;

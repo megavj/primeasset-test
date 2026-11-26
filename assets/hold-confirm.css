@@ -1,0 +1,10 @@
+/* TOUCH3-20261127 위험 버튼 길게 누르기(hold-confirm.js) */
+.adm-button--danger{position:relative;overflow:hidden;isolation:isolate;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.adm-button--danger::before{content:"";position:absolute;inset:0;z-index:-1;background:currentColor;opacity:.14;transform:scaleX(0);transform-origin:left center;pointer-events:none}
+.adm-button--danger.hc-holding::before{transform:scaleX(1);transition:transform .6s linear}
+.adm-button--danger.hc-fired::before{transform:scaleX(1);opacity:.22}
+.adm-button--danger.hc-nudge{animation:hc-nudge .32s ease}
+@keyframes hc-nudge{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+#hc-hint{position:fixed;z-index:9999;width:260px;padding:9px 12px;border-radius:10px;background:#1d2433;color:#fff;font-size:13px;line-height:1.4;text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.45);opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+#hc-hint.is-on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.adm-button--danger.hc-nudge{animation:none}#hc-hint{transition:none}.adm-button--danger.hc-holding::before{transition-timing-function:steps(3,end)}}

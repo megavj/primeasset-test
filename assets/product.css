@@ -109,3 +109,13 @@
 @media (max-width:800px) { .px-workspace { padding:20px 20px 0; } .px-header { padding:12px 20px; min-height:68px; } .px-layout { grid-template-columns:1fr; } .px-history { padding:24px; } .px-tabs { gap:24px; } .px-footer { display:block; } .px-footer p { margin-top:8px; } .px-header nav { gap:16px; } }
 @media (max-width:480px) { .px-header { flex-wrap:wrap; gap:4px; padding:12px 20px 8px; } .px-brand h1 { font-size:17px; } .px-header nav { justify-content:space-between; width:100%; } .px-header nav a { font-size:13px; } .px-workspace { padding:16px 16px 0; } .px-tabs { gap:0; justify-content:space-between; margin-bottom:16px; } .px-tabs button { font-size:14px; gap:5px; padding-bottom:12px; } .px-card { padding:20px; } .px-input-meta { font-size:12px; gap:12px; } .px-submit-row { flex-wrap:wrap; } .px-submit-row .px-small { display:none; } .px-primary { width:100%; } .px-example-list { grid-template-columns:1fr; } .px-filters .px-filter-heading { flex-wrap:wrap; } .px-filter-heading span { font-size:12px; } .px-filter-grid { grid-template-columns:1fr; } .px-desktop-break { display:none; } .px-answer h2 { font-size:21px; } }
 @media (prefers-reduced-motion:reduce) { .product-page { scroll-behavior:auto; } }
+
+/* TOUCH3-20261127 질문 처리 단계: 지금 단계 줄에 금빛이 흐르고, 끝난 단계엔 체크. 답변 카드는 부드럽게 나타남. 움직임 줄이기면 멈춘 표시만 */
+.px-steps li{position:relative;transition:color .3s ease,border-color .3s ease}
+.px-steps li[aria-current=step]::before{content:"";position:absolute;left:0;top:-2px;height:2px;width:100%;background:linear-gradient(90deg,transparent,rgba(255,236,190,.95),transparent);background-size:40% 100%;background-repeat:no-repeat;animation:px-flow 1.6s ease-in-out infinite}
+@keyframes px-flow{from{background-position:-60% 0}to{background-position:160% 0}}
+.px-steps li[data-done=true]::after{content:"";display:inline-block;width:9px;height:5px;margin-left:7px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:translateY(-3px) rotate(-45deg);animation:px-tick .35s cubic-bezier(.22,1,.36,1)}
+@keyframes px-tick{from{opacity:0;transform:translateY(-3px) rotate(-45deg) scale(.4)}}
+.px-answer:not([hidden]),.px-progress:not([hidden]){animation:px-in .45s cubic-bezier(.22,1,.36,1)}
+@keyframes px-in{from{opacity:0;transform:translateY(8px)}}
+@media (prefers-reduced-motion:reduce){.px-steps li[aria-current=step]::before{animation:none;background:none}.px-steps li[data-done=true]::after,.px-answer:not([hidden]),.px-progress:not([hidden]){animation:none}}
